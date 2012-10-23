@@ -37,15 +37,38 @@
     </developer>
   </developers>
 
+  <repositories>
+    <repository>
+      <id>google-api-services</id>
+      <url>http://mavenrepo.google-api-java-client.googlecode.com/hg</url>
+    </repository>
+  </repositories>
 
   <dependencies>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.10</version>
       <scope>test</scope>
     </dependency>
 
-
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-freebase</artifactId>
+      <version>v1-rev10-1.8.0-beta</version>
+    </dependency>
+    <dependency>
+      <artifactId>google-api-client</artifactId>
+      <groupId>com.google.api-client</groupId>
+      <type>jar</type>
+      <version>1.11.0-beta</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-jackson</artifactId>
+      <version>1.11.0-beta</version>
+    </dependency>
   </dependencies>
+
 </project>
