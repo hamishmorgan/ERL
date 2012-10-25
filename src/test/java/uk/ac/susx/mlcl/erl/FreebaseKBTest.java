@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
@@ -231,6 +232,210 @@ public class FreebaseKBTest {
                 + "}";
         runQuery(q);
     }
+
+    @Test()
+    public void testFinalCountryNationals() throws IOException {
+        String q = "{\n"
+                + "  \"type\" : \"/location/country\",\n"
+                + "  \"id\" : \"/en/united_kingdom\",\n"
+                + "  \"!/people/person/nationality\" : []\n"
+                + "}";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testLimit() throws IOException {
+        String q = "[{\n"
+                + "  \"type\":\"/music/artist\",\n"
+                + "  \"name\":null,\n"
+                + "  \"limit\":2000\n"
+                + "}]";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testLimit2() throws IOException {
+        String q = " [{\n"
+                + "  \"type\":\"/music/artist\",\n"
+                + "  \"name\":null,\n"
+                + "  \"track\":{\n"
+                + "    \"name\":\"Masters of War\",\n"
+                + "    \"limit\":0\n"
+                + "  },\n"
+                + "  \"limit\":3\n"
+                + "}]";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testFinalCountryNationalsWithLimit() throws IOException {
+        String q = "{\n"
+                + "  \"type\" : \"/location/country\",\n"
+                + "  \"id\" : \"/en/united_kingdom\",\n"
+                + "  \"!/people/person/nationality\" : [{\"name\":null, \"limit\":10}]\n"
+                + "}";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testCountCountryNationals() throws IOException {
+        String q = "{\n"
+                + "  \"type\" : \"/location/country\",\n"
+                + "  \"id\" : \"/en/united_kingdom\",\n"
+                + "  \"!/people/person/nationality\" : {\"return\":\"count\"}\n"
+                + "}";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testCountCountryNationals2() throws IOException {
+        String q = "{\n"
+                + "  \"type\" : \"/people/person\",\n"
+                + "  \"nationality\" : {\"id\" : \"/en/united_kingdom\"},\n"
+                + "  \"return\":\"count\" \n"
+                + "}";
+        runQuery(q);
+    }
+
+    @Test()
+    @Ignore("Causes 503 Baackend error. >_<")
+    public void testCountTopics() throws IOException {
+        String q = "{\n"
+                + "  \"type\" : \"/common/topic\",\n"
+                + "  \"return\":\"count\" \n"
+                + "}";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testEstimateCountTopics() throws IOException {
+        String q = "{\n"
+                + "  \"type\" : \"/common/topic\",\n"
+                + "  \"return\":\"estimate-count\" \n"
+                + "}";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testFindLongestTrack() throws IOException {
+        String q = "{\n"
+                + "  \"type\":\"/music/album\",\n"
+                + "  \"name\":\"Synchronicity\",\n"
+                + "  \"artist\":\"The Police\",\n"
+                + "  \"primary_release\" : { \n"
+                + "     \"track\": {\n"
+                + "         \"name\":null,\n"
+                + "         \"length\":null,\n"
+                + "         \"sort\":\"-length\",\n"
+                + "         \"limit\":1 \n"
+                + "     } \n"
+                + "  } \n"
+                + "} \n";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testFindLongestTrack2() throws IOException {
+        String q = "[{\n"
+                + "  \"type\":\"/music/track\",\n"
+                + "  \"artist\":\"The Police\",\n"
+                + "  \"name\":null,\n"
+                + "  \"length\":null,\n"
+                + "  \"sort\":[\"-length\",\"name\"], \n"
+                + "  \"limit\":10 \n"
+                + "}]";
+        runQuery(q);
+    }
+
+    @Test()
+    public void startingActorsOfPsycho() throws IOException {
+        String q = "[{\n"
+                + "  \"type\" : \"/film/film\",\n"
+                + "  \"name\" : \"Psycho\",\n"
+                + "  \"directed_by\":\"Alfred Hitchcock\",\n"
+                + "  \"starring\" : [{\n"
+                + "    \"actor\" : null,\n"
+                + "    \"character\" : null,\n"
+                + "    \"index\" : null,\n"
+                + "    \"sort\" : \"index\",\n"
+                + "    \"limit\" : 2\n"
+                + "  }]\n"
+                + "}]\n";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testOptional() throws IOException {
+        String q = "[{\n"
+                + "  \"type\" : \"/music/artist\",\n"
+                + "  \"name\" : null,\n"
+                + "  \"track\" : \"Masters of War\", \n"
+                + "  \"album\" : [{\n"
+                + "    \"name\" : \"Greatest Hits\",\n"
+                + "    \"optional\" : \"optional\"\n"
+                + "  }]\n"
+                + "}]\n";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testForbidden() throws IOException {
+        String q = "[{\n"
+                + "  \"type\" : \"/music/artist\",\n"
+                + "  \"name\" : null,\n"
+                + "  \"track\" : \"Masters of War\",\n"
+                + "  \"album\" : {\n"
+                + "    \"name\" : \"Greatest Hits\",\n"
+                + "    \"optional\" : \"forbidden\"\n"
+                + "  }\n"
+                + "}]\n";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testDateRange() throws IOException {
+        String q = "[{\n"
+                + "   \"type\":\"/music/album\",\n"
+                + "   \"name\":null,\n"
+                + "   \"artist\":null,\n"
+                + "   \"release_date>=\":\"1999-01-01\",\n"
+                + "   \"release_date<=\":\"1999-01-31\", \n"
+                + "   \"return\" : \"count\""
+                + "}]";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testPatterns() throws IOException {
+        String q = "[{\n"
+                + "  \"type\" : \"/music/artist\",\n"
+                + "  \"name\" : null,\n"
+                + "  \"name~=\" : \"^The * *s$\"\n"
+                + "}]";
+        runQuery(q);
+    }
+
+    @Test()
+    public void testCursor() throws IOException {
+        String q = "{\n"
+                + "  \"cursor\":true,\n"
+                + "  \"query\": [{ \n"
+                + "    \"type\" : \"/music/artist\",\n"
+                + "    \"name\" : null,\n"
+                + "    \"limit\" : 10 \n"
+                + "  }]\n"
+                + "}\n";
+        runQuery(q);
+    }
+//    {
+//  "cursor":true,
+//  "query": [{
+//    "type":"/music/album",
+//    "artist":"The Police",
+//    "name":null,
+//    "limit":10
+//  }]
+//}
 
     static String runQuery(String query) throws IOException {
         try {
