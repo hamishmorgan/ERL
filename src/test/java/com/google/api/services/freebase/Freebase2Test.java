@@ -2,41 +2,87 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.susx.mlcl.erl;
+package com.google.api.services.freebase;
 
+import com.google.api.client.googleapis.GoogleHeaders;
+import com.google.api.client.googleapis.batch.BatchCallback;
+import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.http.json.JsonHttpRequest;
+import com.google.api.client.http.json.JsonHttpRequestInitializer;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson.JacksonFactory;
-import com.google.api.client.util.Data;
+import com.google.api.services.freebase.SearchResultFormat;
+import com.google.api.services.freebase.model.ContentserviceGet;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Map;
-import junit.framework.Assert;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import java.nio.file.Paths;
 
 /**
- *
+ * A collection of tests, designed more to insure the APIs work as expected than
+ * to find bugs.
+ * <p/>
  * @author hiam20
  */
-public class FreebaseKBTest {
+public class Freebase2Test {
 
     private static TestName name;
+
     private static JsonFactory jsonFactory;
 
-    public FreebaseKBTest() {
+    private static Freebase2 freebase;
+
+    public Freebase2Test() {
     }
 
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws IOException {
         name = new TestName();
         jsonFactory = new JacksonFactory();
+
+        final String googleApiKey = Freebase2.loadGoogleApiKey(Paths.get(
+                ".googleApiKey.txt"));
+
+        JsonHttpRequestInitializer requestInitializer =
+                new JsonHttpRequestInitializer() {
+                    public void initialize(JsonHttpRequest request) {
+                        FreebaseRequest freebaseRequest =
+                                (FreebaseRequest) request;
+                        freebaseRequest.setPrettyPrint(true);
+                        if (request instanceof Freebase.Mqlread) {
+                            ((Freebase.Mqlread) request).setIndent(2L);
+                        }
+                        freebaseRequest.setKey(googleApiKey);
+                    }
+                };
+
+        jsonFactory = new JacksonFactory();
+
+
+
+        freebase = new Freebase2.Builder(
+                new NetHttpTransport(), jsonFactory, null)
+                .setApplicationName("ERL/1.0")
+                .setJsonHttpRequestInitializer(requestInitializer)
+                .setObjectParser(jsonFactory.createJsonObjectParser())
+                .build();
     }
 
     @AfterClass
@@ -46,7 +92,8 @@ public class FreebaseKBTest {
     @Before
     public void setUp() {
         System.out.println();
-        System.out.println(this.getClass().getName() + "#" + name.getMethodName());
+        System.out.println(this.getClass().getName()
+                + "#" + name.getMethodName());
         System.out.println();
     }
 
@@ -54,6 +101,197 @@ public class FreebaseKBTest {
     public void tearDown() {
     }
 
+    //
+    // =================================================================
+    //  Search tests
+    // =================================================================
+    //
+    @Test
+    public void testSearch() throws IOException {
+
+
+        Freebase2.Search search =
+                freebase.search("brighton");
+        search.setIndent(Boolean.TRUE);
+
+
+        InputStream is = search.executeAsInputStream();
+        String result = IOUtils.toString(is);
+        IOUtils.closeQuietly(is);
+
+
+        System.out.println(result);
+
+    }
+
+    @Test
+    public void testSearchWithObjects() throws IOException {
+
+
+        Freebase2.Search search = freebase.search("brighton");
+        search.setIndent(Boolean.TRUE);
+
+
+        SearchResult srs = search.executeAsSearchResultSet();
+
+        System.out.println(srs);
+    }
+
+    @Test
+    public void testSearchFormats() throws IOException {
+        for (SearchResultFormat format : SearchResultFormat.values()) {
+            System.out.println("Format: " + format);
+            Freebase2.Search search = freebase.search("brighton");
+            search.setIndent(Boolean.TRUE);
+            search.setFormat(format);
+
+            InputStream is = search.executeAsInputStream();
+            String result = IOUtils.toString(is);
+            IOUtils.closeQuietly(is);
+
+            System.out.println(result);
+        }
+    }
+
+    //
+    // =================================================================
+    //  Text tests
+    // =================================================================
+    //
+    @Test
+    public void testGetText() throws IOException {
+        final String id = "/en/brighton_hove";
+
+        final Freebase.Text.Get textGet =
+                freebase.text().get(Arrays.asList(id));
+
+//        textGet.setFormat("raw");
+//        textGet.setFormat("html");
+        textGet.setFormat("plain");
+        textGet.setMaxlength((long) Integer.MAX_VALUE);
+
+        final ContentserviceGet csGet = textGet.execute();
+
+        String result = csGet.getResult();
+
+        Assert.assertNotNull(result);
+        Assert.assertTrue(!result.isEmpty());
+
+        System.out.println(result);
+    }
+    //
+    // =================================================================
+    //  MQLRead tests
+    // =================================================================
+    //
+
+    @Test
+    public void testBasicMQLRead() throws IOException {
+        String query = ""
+                + "{\n"
+                + "  \"type\" : \"/music/artist\",\n"
+                + "  \"name\" : \"The Police\",\n"
+                + "  \"album\" : []\n"
+                + "}";
+
+        Freebase.Mqlread mlr = freebase.mqlread(query);
+
+        InputStream is = mlr.executeAsInputStream();
+        String result = IOUtils.toString(is);
+        IOUtils.closeQuietly(is);
+
+        System.out.println(result);
+    }
+
+    @Test
+    public void testCursorMQLRead() throws IOException {
+
+        String query = ""
+                + "[{\n"
+                + "  \"type\" : \"/music/artist\",\n"
+                + "  \"a:name~=\" : \"Tree\",\n"
+                + "  \"name\" : null,\n"
+                + "  \"limit\" : 5\n"
+                + "}]";
+
+
+        // Of course the empty string is true >_<
+        String cursor = "";
+
+        int i = 0;
+        while (i < 10 && !cursor.equals("false")) {
+
+            Freebase.Mqlread mlr = freebase.mqlread(query);
+
+            mlr.setCursor(cursor);
+
+            System.out.println(toJson(mlr));
+            System.out.println("Query = " + mlr.getQuery());
+
+            HttpResponse response = mlr.executeUnparsed();
+
+            InputStream is = response.getContent();
+            String result = IOUtils.toString(is);
+            IOUtils.closeQuietly(is);
+
+            System.out.println("Result = " + result);
+
+            // Extract the cursor
+            JsonParser parser = jsonFactory.createJsonParser(result);
+            parser.skipToKey("cursor");
+            cursor = parser.getText();
+
+        }
+    }
+    //
+    // =================================================================
+    //  Image tests
+    // =================================================================
+    //
+
+    @Test
+    public void testImage() throws IOException {
+
+        List<String> id = Arrays.asList("en/university_of_sussex");
+        Freebase.Image im = freebase.image(id);
+
+        // one of: fit, fill, fillcrop, fillcropmid
+        im.setMode("fit");
+
+        // 0,0 for original size
+        im.setMaxheight(0L);
+        im.setMaxwidth(0L);
+
+        im.setPad(false);
+
+        im.execute();
+
+        final String fileExtension;
+        String contentType = im.getLastResponseHeaders().getContentType();
+        if (contentType.equals("image/png")) {
+            fileExtension = "png";
+        } else if (contentType.equals("image/jpeg")) {
+            fileExtension = "jpeg";
+        } else if (contentType.equals("image/gif")) {
+            fileExtension = "gif";
+        } else {
+            throw new AssertionError(
+                    "Unknown image content type: " + contentType);
+        }
+
+        FileOutputStream out = new FileOutputStream("out." + fileExtension);
+        im.download(out);
+        out.flush();
+        out.close();
+
+
+    }
+
+    //
+    // =================================================================
+    //  MQL functionality tests
+    // =================================================================
+    //
     @Test
     public void getAlbumsByThePolice() throws IOException {
         String q = "{"
@@ -414,38 +652,99 @@ public class FreebaseKBTest {
                 + "}]";
         runQuery(q);
     }
+    //
+    // =================================================================
+    //  Batch queries
+    // =================================================================
+    //
 
-    @Test()
-    public void testCursor() throws IOException {
-        String q = "{\n"
-                + "  \"cursor\":true,\n"
-                + "  \"query\": [{ \n"
-                + "    \"type\" : \"/music/artist\",\n"
-                + "    \"name\" : null,\n"
-                + "    \"limit\" : 10 \n"
-                + "  }]\n"
-                + "}\n";
-        runQuery(q);
+    @Test
+    public void testBatchSearch() throws IOException {
+
+        BatchCallback<SearchResult, Void> callback =
+                new BatchCallback<SearchResult, Void>() {
+                    public void onSuccess(SearchResult t,
+                                          GoogleHeaders responseHeaders) {
+                        System.out.println(t.toPrettyString());
+                    }
+
+                    public void onFailure(Void e,
+                                          GoogleHeaders responseHeaders)
+                            throws IOException {
+                        throw new UnsupportedOperationException(
+                                "Not supported yet.");
+                    }
+                };
+
+        String[] words = new String[]{"trees", "flowers", "72368764",
+            "Anchovies", "brighton", "cheese burger", "lol", "shplah",
+            "java", "fire"};
+
+        BatchRequest batch = freebase.batch();
+
+        for (String word : words) {
+            batch.queue(freebase.search(word).buildHttpRequest(),
+                        SearchResult.class,
+                        Void.TYPE, callback);
+        }
+        batch.execute();
+
+
     }
-//    {
-//  "cursor":true,
-//  "query": [{
-//    "type":"/music/album",
-//    "artist":"The Police",
-//    "name":null,
-//    "limit":10
-//  }]
-//}
 
+    @Test
+    public void testBatchGetText() throws IOException {
+
+        BatchCallback<ContentserviceGet, Void> callback =
+                new BatchCallback<ContentserviceGet, Void>() {
+                    public void onSuccess(ContentserviceGet t,
+                                          GoogleHeaders responseHeaders) {
+                        System.out.println(t.getResult() + "\n\n");
+                    }
+
+                    public void onFailure(Void e,
+                                          GoogleHeaders responseHeaders)
+                            throws IOException {
+                        throw new UnsupportedOperationException(
+                                "Not supported yet.");
+                    }
+                };
+
+        String[] ids = new String[]{"/en/tree", "/en/flower", "/en/anchovy",
+            "/en/brighton", "/en/lol",
+            "/wikipedia/pt/Java_$0028linguagem_de_programa$00E7$00E3o$0029",
+            "/en/firefighter"};
+
+        BatchRequest batch = freebase.batch();
+
+        for (String word : ids) {
+            batch.queue(freebase.text().get(Arrays.asList(word))
+                    .buildHttpRequest(),
+                        ContentserviceGet.class,
+                        Void.TYPE, callback);
+        }
+        batch.execute();
+
+
+    }
+
+    //
+    // =================================================================
+    //  Utilities
+    // =================================================================
+    //
     static String runQuery(String query) throws IOException {
         try {
             System.out.println("Query: " + query);
-            FreebaseKB kb = new FreebaseKB();
-            kb.init();
 
-            String result = kb.rawMQLQuery(query);
-            Assert.assertTrue(result != null);
-            Assert.assertTrue(!result.isEmpty());
+            Freebase.Mqlread mlr = freebase.mqlread(query);
+
+            InputStream is = mlr.executeAsInputStream();
+            String result = IOUtils.toString(is);
+            IOUtils.closeQuietly(is);
+
+            junit.framework.Assert.assertTrue(result != null);
+            junit.framework.Assert.assertTrue(!result.isEmpty());
 
             System.out.println("Result: " + result);
             return result;
@@ -454,121 +753,13 @@ public class FreebaseKBTest {
             throw ex;
         }
     }
-//    static String formatSimpleQuery(String... strings) throws IOException {
-//        StringWriter writer = new StringWriter();
-//        JsonGenerator gen = jsonFactory.createJsonGenerator(writer);
-//
-//        gen.writeStartObject();
-//
-//        for (int i = 0; i < strings.length; i += 2) {
-//            gen.writeFieldName(strings[i]);
-//            if (strings[i + 1] == null) {
-//                gen.writeNull();
-//            } else {
-//                gen.writeString(strings[i + 1]);
-//            }
-//
-//        }
-//
-//        gen.writeEndObject();
-//        gen.flush();
-//        return writer.toString();
-//    }
-//    
-//    /**
-//     * Test of init method, of class FreebaseKB.
-//     */
-//    @Test
-//    public void testInit() throws Exception {
-//        System.out.println("init");
-//        FreebaseKB instance = new FreebaseKB();
-//        instance.init();
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getText method, of class FreebaseKB.
-//     */
-//    @Test
-//    public void testGetText() throws Exception {
-//        System.out.println("getText");
-//        String id = "";
-//        FreebaseKB instance = new FreebaseKB();
-//        String expResult = "";
-//        String result = instance.getText(id);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of buildMQLQuery method, of class FreebaseKB.
-//     */
-//    @Test
-//    public void testBuildMQLQuery() throws Exception {
-//        System.out.println("buildMQLQuery");
-//        String id = "";
-//        String name = "";
-//        String type = "";
-//        FreebaseKB instance = new FreebaseKB();
-//        String expResult = "";
-//        String result = instance.buildMQLQuery(id, name, type);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of rawMQLQuery method, of class FreebaseKB.
-//     */
-//    @Test
-//    public void testRawMQLQuery() throws Exception {
-//        System.out.println("rawMQLQuery");
-//        String query = "";
-//        FreebaseKB instance = new FreebaseKB();
-//        String expResult = "";
-//        String result = instance.rawMQLQuery(query);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getInstanceOfType method, of class FreebaseKB.
-//     */
-//    @Test
-//    public void testGetInstanceOfType() throws Exception {
-//        System.out.println("getInstanceOfType");
-//        String type = "";
-//        FreebaseKB instance = new FreebaseKB();
-//        instance.getInstanceOfType(type);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of foo method, of class FreebaseKB.
-//     */
-//    @Test
-//    public void testFoo() throws Exception {
-//        System.out.println("foo");
-//        FreebaseKB instance = new FreebaseKB();
-//        instance.foo();
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of loadGoogleApiKey method, of class FreebaseKB.
-//     */
-//    @Test
-//    public void testLoadGoogleApiKey() throws Exception {
-//        System.out.println("loadGoogleApiKey");
-//        String expResult = "";
-//        String result = FreebaseKB.loadGoogleApiKey();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
+
+    static String toJson(Object o) throws IOException {
+        StringWriter writer = new StringWriter();
+        JsonGenerator gen = jsonFactory.createJsonGenerator(writer);
+        gen.enablePrettyPrint();
+        gen.serialize(o);
+        gen.flush();
+        return writer.toString();
+    }
 }

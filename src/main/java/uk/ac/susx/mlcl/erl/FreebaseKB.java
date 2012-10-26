@@ -14,6 +14,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.services.freebase.Freebase;
 import com.google.api.services.freebase.Freebase.Text.Get;
+import com.google.api.services.freebase.Freebase2;
 import com.google.api.services.freebase.model.ContentserviceGet;
 import com.google.common.io.Closeables;
 import java.io.IOException;
@@ -21,8 +22,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +42,8 @@ public class FreebaseKB {
     }
 
     void init() throws IOException {
-        final String googleApiKey = loadGoogleApiKey();
+        final String googleApiKey = Freebase2.loadGoogleApiKey(
+                Paths.get(".googleApiKey.txt"));
         JsonHttpRequestInitializer credential = new GoogleKeyInitializer(googleApiKey);
         this.jsonFactory = new JacksonFactory();
         this.freebase = new Freebase.Builder(
@@ -171,16 +171,4 @@ public class FreebaseKB {
         }
     }
 
-    static String loadGoogleApiKey() throws IOException {
-        final String googleApiKey;
-        Path googleApiKeyPath = Paths.get(".google_api_key.txt");
-        if (Files.exists(googleApiKeyPath)) {
-            byte[] bytes = Files.readAllBytes(googleApiKeyPath);
-            googleApiKey = new String(bytes);
-        } else {
-            LOG.warn("google_api_key.txt does not exist");
-            googleApiKey = null;
-        }
-        return googleApiKey;
-    }
 }
