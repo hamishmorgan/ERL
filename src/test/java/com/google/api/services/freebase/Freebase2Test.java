@@ -16,12 +16,12 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson.JacksonFactory;
-import com.google.api.services.freebase.SearchResultFormat;
 import com.google.api.services.freebase.model.ContentserviceGet;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
@@ -31,19 +31,20 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.TestName;
-import java.nio.file.Paths;
+import uk.ac.susx.mlcl.erl.test.AbstractTest;
+import uk.ac.susx.mlcl.erl.test.Categories;
 
 /**
- * A collection of tests, designed more to insure the APIs work as expected than
- * to find bugs.
+ * A collection of tests, designed more to insure the APIs work as expected than to find bugs.
  * <p/>
  * @author hiam20
  */
-public class Freebase2Test {
-
-    private static TestName name;
+@Category(Categories.OnlineTests.class)
+public class Freebase2Test extends AbstractTest {
 
     private static JsonFactory jsonFactory;
 
@@ -54,7 +55,6 @@ public class Freebase2Test {
 
     @BeforeClass
     public static void setUpClass() throws IOException {
-        name = new TestName();
         jsonFactory = new JacksonFactory();
 
         final String googleApiKey = Freebase2.loadGoogleApiKey(Paths.get(
@@ -85,21 +85,6 @@ public class Freebase2Test {
                 .build();
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-        System.out.println();
-        System.out.println(this.getClass().getName()
-                + "#" + name.getMethodName());
-        System.out.println();
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     //
     // =================================================================
@@ -130,16 +115,17 @@ public class Freebase2Test {
 
         Freebase2.Search search = freebase.search("brighton");
         search.setIndent(Boolean.TRUE);
+        search.setFormat(SearchFormat.ENTITY);
 
-
-        SearchResult srs = search.executeAsSearchResultSet();
+        SearchFormat.EntityResult srs = search.executeParseObject(
+                SearchFormat.EntityResult.class);
 
         System.out.println(srs);
     }
 
     @Test
     public void testSearchFormats() throws IOException {
-        for (SearchResultFormat format : SearchResultFormat.values()) {
+        for (SearchFormat format : SearchFormat.values()) {
             System.out.println("Format: " + format);
             Freebase2.Search search = freebase.search("brighton");
             search.setIndent(Boolean.TRUE);
@@ -661,9 +647,9 @@ public class Freebase2Test {
     @Test
     public void testBatchSearch() throws IOException {
 
-        BatchCallback<SearchResult, Void> callback =
-                new BatchCallback<SearchResult, Void>() {
-                    public void onSuccess(SearchResult t,
+        BatchCallback<SearchFormat.EntityResult, Void> callback =
+                new BatchCallback<SearchFormat.EntityResult, Void>() {
+                    public void onSuccess(SearchFormat.EntityResult t,
                                           GoogleHeaders responseHeaders) {
                         System.out.println(t.toPrettyString());
                     }
@@ -684,7 +670,7 @@ public class Freebase2Test {
 
         for (String word : words) {
             batch.queue(freebase.search(word).buildHttpRequest(),
-                        SearchResult.class,
+                        SearchFormat.EntityResult.class,
                         Void.TYPE, callback);
         }
         batch.execute();

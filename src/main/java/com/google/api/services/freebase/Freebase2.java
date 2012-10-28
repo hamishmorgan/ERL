@@ -5,15 +5,18 @@
 package com.google.api.services.freebase;
 
 import com.google.api.client.googleapis.services.GoogleClient;
+import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpMethod;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.json.JsonHttpRequestInitializer;
+import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +53,27 @@ public class Freebase2 extends Freebase {
 
     public Freebase2.Search search(String query) {
         return new Search(query);
+    }
+
+    public List<String> searchGetMids(String query) throws IOException {
+        Search search = new Search(query);
+        search.setFormat(SearchFormat.MIDS);
+        return search.executeParseObject(
+                SearchFormat.IdsResult.class).getResults();
+    }
+
+    public List<String> searchGetIds(String query) throws IOException {
+        Search search = new Search(query);
+        search.setFormat(SearchFormat.IDS);
+        return search.executeParseObject(
+                SearchFormat.IdsResult.class).getResults();
+    }
+
+    public List<String> searchGetGuids(String query) throws IOException {
+        Search search = new Search(query);
+        search.setFormat(SearchFormat.GUIDS);
+        return search.executeParseObject(
+                SearchFormat.IdsResult.class).getResults();
     }
 
     public static String loadGoogleApiKey(Path path) throws IOException {
@@ -112,7 +136,7 @@ public class Freebase2 extends Freebase {
          */
         @com.google.api.client.util.Key
         @Nullable
-        private SearchResultFormat format;
+        private SearchFormat format;
 
         /**
          * Whether or not to HTML escape entities' names. (Default: False)
@@ -286,7 +310,7 @@ public class Freebase2 extends Freebase {
          *
          * @return
          */
-        public SearchResultFormat getFormat() {
+        public SearchFormat getFormat() {
             return format;
         }
 
@@ -295,7 +319,7 @@ public class Freebase2 extends Freebase {
          * @param format
          * @return self (allows method chaining)
          */
-        public Search setFormat(SearchResultFormat format) {
+        public Search setFormat(SearchFormat format) {
             this.format = format;
             return this;
         }
@@ -460,15 +484,18 @@ public class Freebase2 extends Freebase {
             return this;
         }
 
-        public SearchResult executeAsSearchResultSet() throws IOException {
-            final InputStream is = executeAsInputStream();
-            JsonObjectParser parser = getJsonObjectParser();
+        public <T> T executeParseObject(Class<T> dataClass) throws IOException {
 
+            final InputStream is = executeAsInputStream();
+
+            JsonObjectParser parser = getJsonObjectParser() == null
+                    ? getJsonFactory().createJsonObjectParser()
+                    : getJsonObjectParser();
+
+            // XXX: Not good
             Charset charset = Charset.defaultCharset();
 
-            SearchResult o = parser.parseAndClose(
-                    is, Charset.defaultCharset(), SearchResult.class);
-            return o;
+            return parser.parseAndClose(is, charset, dataClass);
 
         }
     }
