@@ -6,68 +6,68 @@ package edu.stanford.nlp;
 
 import edu.stanford.nlp.dcoref.CorefChain;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
+import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations.GenderAnnotation;
+import edu.stanford.nlp.ie.regexp.RegexNERSequenceClassifier;
+import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TrueCaseTextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
+import edu.stanford.nlp.pipeline.Annotator;
+import edu.stanford.nlp.pipeline.CleanXmlAnnotator;
+import edu.stanford.nlp.pipeline.DefaultPaths;
+import edu.stanford.nlp.pipeline.NERCombinerAnnotator;
+import edu.stanford.nlp.pipeline.PTBTokenizerAnnotator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.pipeline.TokenizerAnnotator;
+import edu.stanford.nlp.pipeline.TrueCaseAnnotator;
+import edu.stanford.nlp.pipeline.WhitespaceTokenizerAnnotator;
+import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator;
+import edu.stanford.nlp.process.Tokenizer;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.trees.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.Factory;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
 /**
- * 
- * 
- * 
- * @author hamish
+ * A collection of "tests" that experiment with the Stanford Core NLP library, and generally check
+ * that it works it as expected.
+ * <p/>
+ * @author Hamish Morgan
  */
-@Ignore
-
+//@Ignore
 public class StanfordNLPTest extends AbstractTest {
 
-    public StanfordNLPTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-
+    /**
+     * The one an only API usage example form the documentation... or at least the only one I've
+     * ever found. Good job!
+     * <p/>
+     * @throws IOException
+     */
     @Test
     @Category(Categories.SlowTests.class)
-    public void snlpUsageExample() {
+    public void snlpUsageExample() throws IOException {
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
         Properties props = new Properties();
         props.put("annotators",
@@ -76,7 +76,8 @@ public class StanfordNLPTest extends AbstractTest {
 
 
         // read some TEXT2 in the TEXT2 variable
-        String text = TEXT2; // Add your TEXT2 here!
+        String text = readTestData("freebase_brighton.txt");
+
 
         // create an empty Annotation just with the given TEXT2
         Annotation document = new Annotation(text);
@@ -122,8 +123,13 @@ public class StanfordNLPTest extends AbstractTest {
         System.out.println(graph);
     }
 
+    /**
+     * Run just the English tokeniser, on some wikipedia description of "Brighton" topic.
+     * <p/>
+     * @throws IOException
+     */
     @Test
-    public void testTokeniSe() {
+    public void testTokeniSe() throws IOException {
         Properties props = new Properties();
         props.put("annotators", "tokenize");
 
@@ -140,18 +146,12 @@ public class StanfordNLPTest extends AbstractTest {
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-        String text = TEXT1;
-
+        String text = readTestData("freebase_brighton.txt");
         Annotation document = new Annotation(text);
 
         pipeline.annotate(document);
 
-        System.out.println(document);
-
-        document.get(TokensAnnotation.class);
-
-        List<CoreLabel> tokens = document.get(TokensAnnotation.class);
-        for (CoreLabel token : tokens) {
+        for (CoreLabel token : document.get(TokensAnnotation.class)) {
             System.out.printf("[%d,%d] %s%n",
                               token.beginPosition(), token.endPosition(),
                               token.get(TextAnnotation.class));
@@ -159,7 +159,7 @@ public class StanfordNLPTest extends AbstractTest {
     }
 
     @Test
-    public void testSentenceSplit() {
+    public void testSentenceSplit() throws IOException {
 
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit");
@@ -178,7 +178,7 @@ public class StanfordNLPTest extends AbstractTest {
         //  props.put("ssplit.htmlBoundariesToDiscard", "");
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        String text = TEXT1;
+        String text = readTestData("freebase_brighton.txt");
 
         // create an empty Annotation just with the given TEXT2
         Annotation document = new Annotation(text);
@@ -186,13 +186,189 @@ public class StanfordNLPTest extends AbstractTest {
         // run all Annotators on this TEXT2
         pipeline.annotate(document);
 
-        System.out.println(document);
+        for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
+            System.out.println("BEGIN SENTENCE");
+            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+                String word = token.get(TextAnnotation.class);
+                System.out.printf("[%d,%d] %s%n",
+                                  token.beginPosition(), token.endPosition(), word);
+            }
+            System.out.println("END SENTENCE");
+        }
+    }
 
-        // these are all the sentences in this document
-        // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
-        List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+    @Test
+    public void testSentenceSplitSansProperties() throws IOException {
 
-        for (CoreMap sentence : sentences) {
+        final boolean verbose = false;
+
+        AnnotationPipeline pipeline = new AnnotationPipeline();
+
+        TokenizerAnnotator tokeniser = new PTBTokenizerAnnotator(verbose);
+        pipeline.addAnnotator(tokeniser);
+
+        WordsToSentencesAnnotator wts = new WordsToSentencesAnnotator(verbose);
+        wts.setOneSentence(false);
+        pipeline.addAnnotator(wts);
+
+        String text = readTestData("freebase_brighton.txt");
+
+        Annotation document = new Annotation(text);
+
+        pipeline.annotate(document);
+
+        for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
+            System.out.println("BEGIN SENTENCE");
+            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+                String word = token.get(TextAnnotation.class);
+                System.out.printf("[%d,%d] %s%n",
+                                  token.beginPosition(), token.endPosition(), word);
+            }
+            System.out.println("END SENTENCE");
+        }
+    }
+
+    public static class CharacterShapeAnnotation implements CoreAnnotation<String> {
+
+        public Class<String> getType() {
+            return String.class;
+        }
+    }
+
+    class CharacterShapeAnnotator implements Annotator {
+
+        public void annotate(Annotation annotation) {
+            if (!annotation.containsKey(TokensAnnotation.class))
+                throw new IllegalArgumentException("should be tokenised foo!");
+
+            for (CoreLabel token : annotation.get(TokensAnnotation.class)) {
+                String input = token.get(TextAnnotation.class);
+                StringBuilder output = new StringBuilder(input.length());
+
+                int offset = 0;
+                int codepoint = input.codePointAt(offset);
+
+                while (offset < input.length()) {
+
+                    final char replacement;
+                    final int type = Character.getType(codepoint);
+                    switch (type) {
+                        case Character.CURRENCY_SYMBOL:
+                            replacement = '$';
+                            break;
+                        case Character.COMBINING_SPACING_MARK:
+                        case Character.LINE_SEPARATOR:
+                        case Character.PARAGRAPH_SEPARATOR:
+                        case Character.SPACE_SEPARATOR:
+                        case Character.CONTROL: // includes line-feed
+                            replacement = ' ';
+                            break;
+                        case Character.DECIMAL_DIGIT_NUMBER:
+                        case Character.LETTER_NUMBER: // E.g Runic Arlaug
+                        case Character.OTHER_NUMBER: // E.g Superscript two
+                            replacement = '#';
+                            break;
+                        case Character.LOWERCASE_LETTER:
+                        case Character.OTHER_LETTER:
+                        case Character.MODIFIER_LETTER:
+                            replacement = 'a';
+                            break;
+                        case Character.UPPERCASE_LETTER:
+                        case Character.TITLECASE_LETTER:
+                            replacement = 'A';
+                            break;
+                        case Character.CONNECTOR_PUNCTUATION:
+                        case Character.DASH_PUNCTUATION:
+                        case Character.ENCLOSING_MARK:
+                        case Character.START_PUNCTUATION:
+                        case Character.END_PUNCTUATION:
+                        case Character.FINAL_QUOTE_PUNCTUATION:
+                        case Character.FORMAT:
+                        case Character.INITIAL_QUOTE_PUNCTUATION:
+                        case Character.MATH_SYMBOL:
+                        case Character.MODIFIER_SYMBOL:
+                        case Character.NON_SPACING_MARK:
+                        case Character.OTHER_PUNCTUATION:
+                        case Character.OTHER_SYMBOL:
+                            replacement = '.';
+                            break;
+                        case Character.SURROGATE:
+                        case Character.PRIVATE_USE:
+                        case Character.UNASSIGNED:
+                            replacement = '?';
+                        default:
+                            throw new AssertionError("Unknown character type "
+                                    + type + " for character " + Character.toChars(codepoint));
+                    }
+                    output.append(replacement);
+
+                    offset += Character.charCount(codepoint);
+                    if (offset < input.length())
+                        codepoint = input.codePointAt(offset);
+                }
+
+
+                token.set(CharacterShapeAnnotation.class, output.toString());
+            }
+        }
+    };
+
+    @Test
+    public void testCustomAnnotator() throws IOException {
+
+        final boolean verbose = false;
+
+        AnnotationPipeline pipeline = new AnnotationPipeline();
+
+        TokenizerAnnotator tokeniser = new PTBTokenizerAnnotator(verbose);
+        pipeline.addAnnotator(tokeniser);
+
+        final CharacterShapeAnnotator characterClassC18N = new CharacterShapeAnnotator();
+        pipeline.addAnnotator(characterClassC18N);
+
+        String text = readTestData("freebase_brighton.txt");
+
+        Annotation document = new Annotation(text);
+
+        pipeline.annotate(document);
+
+        for (CoreLabel token : document.get(TokensAnnotation.class)) {
+            String word = token.get(TextAnnotation.class);
+            String clazz = token.get(CharacterShapeAnnotation.class);
+            System.out.printf("[%d,%d] %s => %s%n",
+                              token.beginPosition(), token.endPosition(), word, clazz);
+        }
+    }
+
+    @Test
+    public void testCleanXML() throws IOException {
+        Properties props = new Properties();
+        props.put("annotators",
+                  StanfordCoreNLP.STANFORD_TOKENIZE
+                + "," + StanfordCoreNLP.STANFORD_CLEAN_XML
+                + "," + StanfordCoreNLP.STANFORD_SSPLIT);
+
+        props.put("clean.xmltags", ".*");
+        props.put("clean.sentenceendingtags", "p|div|br");
+        props.put("clean.allowflawedxml", CleanXmlAnnotator.DEFAULT_ALLOW_FLAWS);
+        props.put("clean.datetags", CleanXmlAnnotator.DEFAULT_DATE_TAGS);
+
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+
+        String text = readTestData("wikipedia_brighton.html");
+//        String text = IOUtils.toString(URI.create("http://en.wikipedia.org/wiki/Brighton"));
+
+        Annotation document = new Annotation(text);
+
+        pipeline.annotate(document);
+
+//        System.out.println(document);
+
+
+        document.get(TokensAnnotation.class);
+
+        for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
+
             // traversing the words in the current sentence
             // a CoreLabel is a CoreMap with additional token-specific methods
             System.out.println("BEGIN SENTENCE");
@@ -210,7 +386,7 @@ public class StanfordNLPTest extends AbstractTest {
     }
 
     @Test
-    public void testPOSTagger() {
+    public void testPOSTagger() throws IOException {
 
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos");
@@ -242,7 +418,7 @@ public class StanfordNLPTest extends AbstractTest {
 
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        String text = TEXT1;
+        String text = readTestData("freebase_brighton.txt");
 
         Annotation document = new Annotation(text);
 
@@ -269,7 +445,7 @@ public class StanfordNLPTest extends AbstractTest {
     }
 
     @Test
-    public void testLematisation() {
+    public void testLematisation() throws IOException {
 
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos, lemma");
@@ -277,7 +453,7 @@ public class StanfordNLPTest extends AbstractTest {
         // There are no options for the lematiser 
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        String text = TEXT1;
+        String text = readTestData("freebase_brighton.txt");
 
         Annotation document = new Annotation(text);
 
@@ -306,7 +482,7 @@ public class StanfordNLPTest extends AbstractTest {
     }
 
     @Test
-    public void testNER() {
+    public void testNER() throws IOException {
 
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos, lemma, ner");
@@ -351,8 +527,8 @@ public class StanfordNLPTest extends AbstractTest {
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
+        String text = readTestData("freebase_brighton.txt");
 
-        String text = TEXT1;
 
         Annotation document = new Annotation(text);
 
@@ -381,37 +557,134 @@ public class StanfordNLPTest extends AbstractTest {
 
     }
 
-    static String TEXT1 =
-            "A tree is a perennial woody plant. It most often has many secondary branches supported clear of the ground on a single main stem or trunk with clear apical dominance. A minimum height specification at maturity is cited by some authors, varying from 3?m to 6?m; some authors set a minimum of 10?cm trunk diameter (30?cm girth). Woody plants that do not meet these definitions by having multiple stems and/or small size are usually called shrubs, although many trees such as Mallee do not meet such definitions. Compared with most other plants, trees are long-lived, some reaching several thousand years old and growing to up to 115?m (379?ft) high.\n";
+    @Test
+    public void testRegexNER() throws IOException {
 
-    static String TEXT2 =
-            "A tree is a perennial woody plant. It most often has many secondary branches supported clear of the ground on a single main stem or trunk with clear apical dominance. A minimum height specification at maturity is cited by some authors, varying from 3?m to 6?m; some authors set a minimum of 10?cm trunk diameter (30?cm girth). Woody plants that do not meet these definitions by having multiple stems and/or small size are usually called shrubs, although many trees such as Mallee do not meet such definitions. Compared with most other plants, trees are long-lived, some reaching several thousand years old and growing to up to 115?m (379?ft) high.\n"
-            + "Trees are an important component of the natural landscape because of their prevention of erosion and the provision of a weather-sheltered ecosystem in and under their foliage. They also play an important role in producing oxygen and reducing carbon dioxide in the atmosphere, as well as moderating ground temperatures. They are also elements in landscaping and agriculture, both for their aesthetic appeal and their orchard crops (such as apples). Wood from trees is a building material, as well as a primary energy source in many developing countries.\n"
-            + "\n" + "\n"
-            + "A flower, sometimes known as a bloom or blossom, is the reproductive structure found in flowering plants (plants of the division Magnoliophyta, also called angiosperms). The biological function of a flower is to effect reproduction, usually by providing a mechanism for the union of sperm with eggs. Flowers may facilitate outcrossing (fusion of sperm and eggs from different individuals in a population) or allow selfing (fusion of sperm and egg from the same flower). Some flowers produce diaspores without fertilization (parthenocarpy). Flowers contain sporangia and are the site where gametophytes develop. Flowers give rise to fruit and seeds. Many flowers have evolved to be attractive to animals, so as to cause them to be vectors for the transfer of pollen.\n"
-            + "In addition to facilitating the reproduction of flowering plants, flowers have long been admired and used by humans to beautify their environment, and also as objects of romance, ritual, religion, medicine and as a source of food.\n"
-            + "A stereotypical flower consists of four kinds of structures attached to the tip of a short stalk. Each of these kinds of parts is arranged in a whorl on the receptacle. The four main whorls (starting\n"
-            + "\n" + "\n"
-            + "Anchovies are a family (Engraulidae) of small, common salt-water forage fish. There are 144 species in 17 genera, found in the Atlantic, Indian, and Pacific Oceans. Anchovies are usually classified as an oily fish.\n"
-            + "Anchovies are small, green fish with blue reflections due to a silver longitudinal stripe that runs from the base of the caudal fin. They range from 2 centimetres (0.79?in) to 40 centimetres (16?in) in adult length, and the body shape is variable with more slender fish in northern populations.\n"
-            + "The snout is blunt with tiny, sharp teeth in both jaws. The snout contains a unique rostral organ, believed to be sensory in nature, although its exact function is unknown. The mouth is larger than that of herrings and silversides, two fish anchovies closely resemble in other respects. The anchovy eats plankton and fry (recently-hatched fish).\n"
-            + "Anchovies are found in scattered areas throughout the world's oceans, but are concentrated in temperate waters, and are rare or absent in very cold or very warm seas. They are generally very accepting of a wide range of temperatures and salinity. Large schools can be found in shallow, brackish areas with muddy bottoms, as in estuaries and\n"
-            + "\n" + "\n"
-            + "Brighton /?bra?t?n/ is the major part of the city of Brighton and Hove (formed from the previous towns of Brighton, Hove, Portslade and several other villages) in East Sussex, England on the south coast of Great Britain. For administrative purposes, Brighton and Hove is not part of the non-metropolitan county of East Sussex, but remains part of the ceremonial county of East Sussex, within the historic county of Sussex.\n"
-            + "The ancient settlement of Brighthelmstone dates from before Domesday Book (1086), but it emerged as a health resort featuring sea bathing during the 18th century and became a destination for day-trippers from London after the arrival of the railway in 1841. Brighton experienced rapid population growth, reaching a peak of over 160,000 by 1961. Modern Brighton forms part of the Brighton/Worthing/Littlehampton conurbation stretching along the coast, with a population of around 480,000.\n"
-            + "Brighton has two universities and a medical school (which is operated jointly by both universities).\n"
-            + "In the Domesday Book, Brighton was called Bristelmestune and a rent of 4,000 herring was established. In June 1514 Brighthelmstone was burnt to the ground by French raiders during a war\n"
-            + "\n" + "\n"
-            + "LOL, an abbreviation for laughing out loud, or laugh out loud, is a common element of Internet slang. It was used historically on Usenet but is now widespread in other forms of computer-mediated communication, and even face-to-face communication. It is one of many initialisms for expressing bodily reactions, in particular laughter, as text, including initialisms for more emphatic expressions of laughter such as LMAO (\"laugh(ing) my ass off\"), and ROTFL or ROFL (\"roll(ing) on the floor laughing\"). Other unrelated expansions include the now mostly historical \"lots of luck\" or \"lots of love\" used in letter-writing.\n"
-            + "The list of acronyms \"grows by the month\" and they are collected along with emoticons and smileys into folk dictionaries that are circulated informally amongst users of Usenet, IRC, and other forms of (textual) computer-mediated communication. These initialisms are controversial, and several authors recommend against their use, either in general or in specific contexts such as business communications.\n"
-            + "LOL was first documented in the Oxford English Dictionary in March 2011.\n"
-            + "Laccetti (professor of humanities at Stevens Institute of Technology) and Molski, in their essay\n"
-            + "\n" + "\n"
-            + "Java is a programming language originally developed by James Gosling at Sun Microsystems (which has since merged into Oracle Corporation) and released in 1995 as a core component of Sun Microsystems' Java platform. The language derives much of its syntax from C and C++ but has a simpler object model and fewer low-level facilities. Java applications are typically compiled to bytecode (class file) that can run on any Java Virtual Machine (JVM) regardless of computer architecture. Java is a general-purpose, concurrent, class-based, object-oriented language that is specifically designed to have as few implementation dependencies as possible. It is intended to let application developers \"write once, run anywhere\" (WORA), meaning that code that runs on one platform does not need to be recompiled to run on another. Java is as of 2012 one of the most popular programming languages in use, particularly for client-server web applications, with a reported 10 million users.\n"
-            + "The original and reference implementation Java compilers, virtual machines, and class libraries were developed by Sun from 1995. As of May 2007, in compliance with the specifications of the Java Community Process, Sun\n"
-            + "\n" + "\n"
-            + "Firefighters (historically firemen) are rescuers extensively trained primarily to extinguish hazardous fires that threaten civilian populations and property, and to rescue people from dangerous incidents, such as collapsed and burning buildings. The increasing complexity of modern industrialized life with an increase in the scale of hazards has created an increase in the skills needed in firefighting technology and a broadening of the firefighter-rescuer's remit. They sometimes provide emergency medical services. The fire service, or fire and rescue service, also known in some countries as the fire brigade or fire department, is one of the main emergency services. Firefighting and firefighters have become ubiquitous around the world, from wildland areas to urban areas, and aboard ships.\n"
-            + "According to Merriam-Webster's Dictionary, the English word \"firefighter\" has been used since 1903. In recent decades it has become the preferred term, replacing the older \"fireman\", since many women serve as firefighters, and also because the term \"fireman\" can have other meanings, including someone who sets or stokes fires - exactly the opposite of the firefighting role.\n"
-            + "In some countries,";
+        Properties props = new Properties();
+        props.put("annotators", "tokenize, ssplit, pos, regexner");
 
+        // "edu/stanford/nlp/models/regexner/type_map_clean"
+        // 
+        props.put("regexner.mapping", "src/test/models/edu/stanford/nlp/models/brighton_type_map");
+
+        props.put("regexner.ignorecase", "false");
+
+        props.put("regexner.validpospattern", RegexNERSequenceClassifier.DEFAULT_VALID_POS);
+
+        // props.put("ssplit.boundariesToDiscard", "");
+
+        //  props.put("ssplit.htmlBoundariesToDiscard", "");
+
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        String text = readTestData("freebase_brighton.txt");
+
+        // create an empty Annotation just with the given TEXT2
+        Annotation document = new Annotation(text);
+
+        // run all Annotators on this TEXT2
+        pipeline.annotate(document);
+
+//        RegexNERAnnotator
+
+        // these are all the sentences in this document
+        // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
+        List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+
+        for (CoreMap sentence : sentences) {
+            // traversing the words in the current sentence
+            // a CoreLabel is a CoreMap with additional token-specific methods
+            System.out.println("BEGIN SENTENCE");
+
+            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+
+                String word = token.get(TextAnnotation.class);
+                String ne = token.get(NamedEntityTagAnnotation.class);
+
+                System.out.printf("[%d,%d] %s\t%s%n",
+                                  token.beginPosition(), token.endPosition(),
+                                  token.get(TextAnnotation.class), ne);
+            }
+            System.out.println("END SENTENCE");
+        }
+    }
+
+    @Test
+    public void testGender() throws IOException {
+
+        Properties props = new Properties();
+        props.put("annotators", "tokenize, ssplit, pos, gender");
+
+        props.put("gender.firstnames", DefaultPaths.DEFAULT_GENDER_FIRST_NAMES);
+
+
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        String text = readTestData("popular_names.txt");
+
+        Annotation document = new Annotation(text);
+
+        pipeline.annotate(document);
+
+        for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
+            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+
+                String word = token.get(TextAnnotation.class);
+                String gender = token.get(GenderAnnotation.class);
+
+                System.out.printf("[%4d|%4d] %10s\t%6s%n",
+                                  token.beginPosition(), token.endPosition(),
+                                  word, gender == null ? "" : gender);
+            }
+        }
+    }
+
+    @Test
+    public void testTrueCase() throws IOException {
+
+        Properties props = new Properties();
+        props.put("annotators", "tokenize, ssplit, pos, lemma, truecase");
+
+        props.put("truecase.model", DefaultPaths.DEFAULT_TRUECASE_MODEL);
+        props.put("truecase.bias", TrueCaseAnnotator.DEFAULT_MODEL_BIAS);
+        props.put("truecase.mixedcasefile", DefaultPaths.DEFAULT_TRUECASE_DISAMBIGUATION_LIST);
+
+
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        String text = readTestData("popular_names.txt");
+
+        Annotation document = new Annotation(text);
+
+        pipeline.annotate(document);
+
+        for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
+            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+
+                String word = token.get(TextAnnotation.class);
+                String truecase = token.get(TrueCaseTextAnnotation.class);
+
+                System.out.printf("[%4d|%4d] %10s\t%6s%n",
+                                  token.beginPosition(), token.endPosition(),
+                                  truecase);
+            }
+        }
+    }
+
+    private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
+    private static final File TEST_DATA_PATH = new File("src/test/data");
+
+    static String readTestData(String path) {
+        return readTestData(path, DEFAULT_CHARSET);
+    }
+
+    static String readTestData(String path, Charset charset) {
+        try {
+            return IOUtils.toString(new File(TEST_DATA_PATH, path).toURI(), charset);
+        } catch (IOException ex) {
+            // Should throw an assumption exception
+            Assume.assumeNoException(ex);
+            // ...so this never happens
+            throw new AssertionError(ex);
+        }
+
+    }
 }

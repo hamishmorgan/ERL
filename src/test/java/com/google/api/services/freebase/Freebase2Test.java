@@ -25,16 +25,11 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.TestName;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
@@ -84,7 +79,6 @@ public class Freebase2Test extends AbstractTest {
                 .setObjectParser(jsonFactory.createJsonObjectParser())
                 .build();
     }
-
 
     //
     // =================================================================
@@ -165,12 +159,31 @@ public class Freebase2Test extends AbstractTest {
 
         System.out.println(result);
     }
+
+    @Test
+    public void testGetHtml() throws IOException {
+        final String id = "/en/brighton";
+
+        final Freebase.Text.Get textGet =
+                freebase.text().get(Arrays.asList(id));
+
+        textGet.setFormat("html");
+
+        final ContentserviceGet csGet = textGet.execute();
+
+        String result = csGet.getResult();
+
+        Assert.assertNotNull(result);
+        Assert.assertTrue(!result.isEmpty());
+
+        System.out.println(result);
+    }
+
     //
     // =================================================================
     //  MQLRead tests
     // =================================================================
     //
-
     @Test
     public void testBasicMQLRead() throws IOException {
         String query = ""
