@@ -81,7 +81,7 @@ public class Freebase2 extends Freebase {
         Path googleApiKeyPath = Paths.get(".google_api_key.txt");
         if (Files.exists(googleApiKeyPath)) {
             byte[] bytes = Files.readAllBytes(googleApiKeyPath);
-            googleApiKey = new String(bytes);
+            googleApiKey = new String(bytes, Charset.forName("ASCII"));
         } else {
             System.err.println(googleApiKeyPath + " doesn't exist");
             googleApiKey = null;

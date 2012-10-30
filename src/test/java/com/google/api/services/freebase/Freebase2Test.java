@@ -16,7 +16,9 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.services.freebase.SearchFormat.EntityResult;
 import com.google.api.services.freebase.model.ContentserviceGet;
+import com.google.common.base.Preconditions;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,8 +60,9 @@ public class Freebase2Test extends AbstractTest {
         JsonHttpRequestInitializer requestInitializer =
                 new JsonHttpRequestInitializer() {
                     public void initialize(JsonHttpRequest request) {
-                        FreebaseRequest freebaseRequest =
-                                (FreebaseRequest) request;
+                        if(!(request instanceof FreebaseRequest))
+                            throw new IllegalArgumentException();
+                        FreebaseRequest freebaseRequest = (FreebaseRequest) request;
                         freebaseRequest.setPrettyPrint(true);
                         if (request instanceof Freebase.Mqlread) {
                             ((Freebase.Mqlread) request).setIndent(2L);
@@ -278,10 +281,14 @@ public class Freebase2Test extends AbstractTest {
                     "Unknown image content type: " + contentType);
         }
 
-        FileOutputStream out = new FileOutputStream("out." + fileExtension);
-        im.download(out);
-        out.flush();
-        out.close();
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream("out." + fileExtension);
+            im.download(out);
+            out.flush();
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
 
 
     }
@@ -661,19 +668,7 @@ public class Freebase2Test extends AbstractTest {
     public void testBatchSearch() throws IOException {
 
         BatchCallback<SearchFormat.EntityResult, Void> callback =
-                new BatchCallback<SearchFormat.EntityResult, Void>() {
-                    public void onSuccess(SearchFormat.EntityResult t,
-                                          GoogleHeaders responseHeaders) {
-                        System.out.println(t.toPrettyString());
-                    }
-
-                    public void onFailure(Void e,
-                                          GoogleHeaders responseHeaders)
-                            throws IOException {
-                        throw new UnsupportedOperationException(
-                                "Not supported yet.");
-                    }
-                };
+                new SearchBatchCallbackImpl();
 
         String[] words = new String[]{"trees", "flowers", "72368764",
             "Anchovies", "brighton", "cheese burger", "lol", "shplah",
@@ -691,23 +686,21 @@ public class Freebase2Test extends AbstractTest {
 
     }
 
+    private static class SearchBatchCallbackImpl implements BatchCallback<EntityResult, Void> {
+
+        public void onSuccess(SearchFormat.EntityResult t, GoogleHeaders responseHeaders) {
+            System.out.println(t.toPrettyString());
+        }
+
+        public void onFailure(Void e, GoogleHeaders responseHeaders) throws IOException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
     @Test
     public void testBatchGetText() throws IOException {
 
-        BatchCallback<ContentserviceGet, Void> callback =
-                new BatchCallback<ContentserviceGet, Void>() {
-                    public void onSuccess(ContentserviceGet t,
-                                          GoogleHeaders responseHeaders) {
-                        System.out.println(t.getResult() + "\n\n");
-                    }
-
-                    public void onFailure(Void e,
-                                          GoogleHeaders responseHeaders)
-                            throws IOException {
-                        throw new UnsupportedOperationException(
-                                "Not supported yet.");
-                    }
-                };
+        BatchCallback<ContentserviceGet, Void> callback = new GetTextBatchCallbackImpl();
 
         String[] ids = new String[]{"/en/tree", "/en/flower", "/en/anchovy",
             "/en/brighton", "/en/lol",
@@ -723,8 +716,18 @@ public class Freebase2Test extends AbstractTest {
                         Void.TYPE, callback);
         }
         batch.execute();
+    }
 
+    private static class GetTextBatchCallbackImpl
+            implements BatchCallback<ContentserviceGet, Void> {
 
+        public void onSuccess(ContentserviceGet t, GoogleHeaders responseHeaders) {
+            System.out.println(t.getResult() + "\n\n");
+        }
+
+        public void onFailure(Void e, GoogleHeaders responseHeaders) throws IOException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 
     //
