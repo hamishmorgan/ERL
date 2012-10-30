@@ -8,11 +8,14 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import org.apache.commons.io.IOUtils;
 import static org.junit.Assert.*;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -103,12 +106,14 @@ public class AbstractTest {
 
     }
 
+    
     protected static void assertExhaustedIterator(Iterator<?> it) {
         try {
             it.next();
             fail("Expected iterator to be exhausted by next() succeeded.");
         } catch (NoSuchElementException e) {
             // this is supposed to happen
+            assertNotNull(e);
         }
     }
 
@@ -120,10 +125,23 @@ public class AbstractTest {
         return rand;
     }
 
-    private static int[] randomIntArray(Random rand, int maxValue, int size) {
-        final int[] arr = new int[size];
-        for (int i = 0; i < size; i++)
-            arr[i] = rand.nextInt(maxValue);
-        return arr;
+    public  static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
+    public  static final File TEST_DATA_PATH = new File("src/test/data");
+
+    public static String readTestData(String path) {
+        return readTestData(path, DEFAULT_CHARSET);
+    }
+
+    public static String readTestData(String path, Charset charset) {
+        try {
+            return IOUtils.toString(new File(TEST_DATA_PATH, path).toURI(), charset);
+        } catch (IOException ex) {
+            // Should throw an assumption exception
+            Assume.assumeNoException(ex);
+            // ...so this never happens
+            throw new AssertionError(ex);
+        }
+
     }
 }

@@ -4,12 +4,10 @@
  */
 package edu.stanford.nlp;
 
-import uk.ac.susx.mlcl.erl.snlp.CharacterShapeAnnotator;
 import edu.stanford.nlp.dcoref.CorefChain;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
 import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations.GenderAnnotation;
 import edu.stanford.nlp.ie.regexp.RegexNERSequenceClassifier;
-import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
@@ -20,7 +18,6 @@ import edu.stanford.nlp.ling.CoreAnnotations.TrueCaseTextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
-import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.CleanXmlAnnotator;
 import edu.stanford.nlp.pipeline.DefaultPaths;
 import edu.stanford.nlp.pipeline.PTBTokenizerAnnotator;
@@ -33,23 +30,18 @@ import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.trees.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.util.CoreMap;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assume;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
 /**
- * A collection of "tests" that experiment with the Stanford Core NLP library,
- * and generally check that it works it as expected.
+ * A collection of "tests" that experiment with the Stanford Core NLP library, and generally check
+ * that it works it as expected.
  * <p/>
  * @author Hamish Morgan
  */
@@ -57,8 +49,8 @@ import uk.ac.susx.mlcl.erl.test.Categories;
 public class StanfordNLPTest extends AbstractTest {
 
     /**
-     * The one an only API usage example form the documentation... or at least
-     * the only one I've ever found. Good job!
+     * The one an only API usage example form the documentation... or at least the only one I've
+     * ever found. Good job!
      * <p/>
      * @throws IOException
      */
@@ -68,7 +60,7 @@ public class StanfordNLPTest extends AbstractTest {
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
         Properties props = new Properties();
         props.put("annotators",
-                "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+                  "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 
@@ -100,15 +92,19 @@ public class StanfordNLPTest extends AbstractTest {
                 String ne = token.get(NamedEntityTagAnnotation.class);
 
                 System.out.printf("%s\t%s\t%s\t%s%n",
-                        token.originalText(), word, pos, ne);
+                                  token.originalText(), word, pos, ne);
             }
 
             // this is the parse tree of the current sentence
             Tree tree = sentence.get(TreeAnnotation.class);
 
+            System.out.println("tree: " + tree);
+
             // this is the Stanford dependency graph of the current sentence
             SemanticGraph dependencies = sentence
                     .get(CollapsedCCProcessedDependenciesAnnotation.class);
+
+            System.out.println("dependencies: " + dependencies);
         }
 
         // This is the coreference link graph
@@ -121,8 +117,7 @@ public class StanfordNLPTest extends AbstractTest {
     }
 
     /**
-     * Run just the English tokeniser, on some wikipedia description of
-     * "Brighton" topic.
+     * Run just the English tokeniser, on some wikipedia description of "Brighton" topic.
      * <p/>
      * @throws IOException
      */
@@ -151,8 +146,8 @@ public class StanfordNLPTest extends AbstractTest {
 
         for (CoreLabel token : document.get(TokensAnnotation.class)) {
             System.out.printf("[%d,%d] %s%n",
-                    token.beginPosition(), token.endPosition(),
-                    token.get(TextAnnotation.class));
+                              token.beginPosition(), token.endPosition(),
+                              token.get(TextAnnotation.class));
         }
     }
 
@@ -189,7 +184,7 @@ public class StanfordNLPTest extends AbstractTest {
             for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
                 String word = token.get(TextAnnotation.class);
                 System.out.printf("[%d,%d] %s%n",
-                        token.beginPosition(), token.endPosition(), word);
+                                  token.beginPosition(), token.endPosition(), word);
             }
             System.out.println("END SENTENCE");
         }
@@ -220,36 +215,9 @@ public class StanfordNLPTest extends AbstractTest {
             for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
                 String word = token.get(TextAnnotation.class);
                 System.out.printf("[%d,%d] %s%n",
-                        token.beginPosition(), token.endPosition(), word);
+                                  token.beginPosition(), token.endPosition(), word);
             }
             System.out.println("END SENTENCE");
-        }
-    }
-
-    @Test
-    public void testCustomAnnotator() throws IOException {
-
-        final boolean verbose = false;
-
-        AnnotationPipeline pipeline = new AnnotationPipeline();
-
-        TokenizerAnnotator tokeniser = new PTBTokenizerAnnotator(verbose);
-        pipeline.addAnnotator(tokeniser);
-
-        final CharacterShapeAnnotator characterClassC18N = new CharacterShapeAnnotator();
-        pipeline.addAnnotator(characterClassC18N);
-
-        String text = readTestData("freebase_brighton.txt");
-
-        Annotation document = new Annotation(text);
-
-        pipeline.annotate(document);
-
-        for (CoreLabel token : document.get(TokensAnnotation.class)) {
-            String word = token.get(TextAnnotation.class);
-            String clazz = token.get(CharacterShapeAnnotator.Annotation.class);
-            System.out.printf("[%d,%d] %s => %s%n",
-                    token.beginPosition(), token.endPosition(), word, clazz);
         }
     }
 
@@ -257,7 +225,7 @@ public class StanfordNLPTest extends AbstractTest {
     public void testCleanXML() throws IOException {
         Properties props = new Properties();
         props.put("annotators",
-                StanfordCoreNLP.STANFORD_TOKENIZE
+                  StanfordCoreNLP.STANFORD_TOKENIZE
                 + "," + StanfordCoreNLP.STANFORD_CLEAN_XML
                 + "," + StanfordCoreNLP.STANFORD_SSPLIT);
 
@@ -291,8 +259,7 @@ public class StanfordNLPTest extends AbstractTest {
                 String word = token.get(TextAnnotation.class);
 
                 System.out.printf("[%d,%d] %s%n",
-                        token.beginPosition(), token.endPosition(),
-                        token.get(TextAnnotation.class));
+                                  token.beginPosition(), token.endPosition(), word);
             }
             System.out.println("END SENTENCE");
         }
@@ -350,8 +317,8 @@ public class StanfordNLPTest extends AbstractTest {
                 String pos = token.get(PartOfSpeechAnnotation.class);
 
                 System.out.printf("[%d,%d] %s\t%s%n",
-                        token.beginPosition(), token.endPosition(),
-                        token.get(TextAnnotation.class), pos);
+                                  token.beginPosition(), token.endPosition(),
+                                  word, pos);
             }
             System.out.println("END SENTENCE");
         }
@@ -387,8 +354,8 @@ public class StanfordNLPTest extends AbstractTest {
                 String lemma = token.get(LemmaAnnotation.class);
 
                 System.out.printf("[%d,%d] %s\t%s\t%s%n",
-                        token.beginPosition(), token.endPosition(),
-                        token.get(TextAnnotation.class), pos, lemma);
+                                  token.beginPosition(), token.endPosition(),
+                                  word, pos, lemma);
             }
             System.out.println("END SENTENCE");
         }
@@ -462,8 +429,8 @@ public class StanfordNLPTest extends AbstractTest {
 
 
                 System.out.printf("[%d,%d] %s\t%s\t%s\t%s%n",
-                        token.beginPosition(), token.endPosition(),
-                        token.get(TextAnnotation.class), pos, lemma, ne);
+                                  token.beginPosition(), token.endPosition(),
+                                  word, pos, lemma, ne);
             }
 
         }
@@ -514,8 +481,8 @@ public class StanfordNLPTest extends AbstractTest {
                 String ne = token.get(NamedEntityTagAnnotation.class);
 
                 System.out.printf("[%d,%d] %s\t%s%n",
-                        token.beginPosition(), token.endPosition(),
-                        token.get(TextAnnotation.class), ne);
+                                  token.beginPosition(), token.endPosition(),
+                                  word, ne);
             }
             System.out.println("END SENTENCE");
         }
@@ -544,8 +511,8 @@ public class StanfordNLPTest extends AbstractTest {
                 String gender = token.get(GenderAnnotation.class);
 
                 System.out.printf("[%4d|%4d] %10s\t%6s%n",
-                        token.beginPosition(), token.endPosition(),
-                        word, gender == null ? "" : gender);
+                                  token.beginPosition(), token.endPosition(),
+                                  word, gender == null ? "" : gender);
             }
         }
     }
@@ -575,27 +542,9 @@ public class StanfordNLPTest extends AbstractTest {
                 String truecase = token.get(TrueCaseTextAnnotation.class);
 
                 System.out.printf("[%4d|%4d] %10s\t%6s%n",
-                        token.beginPosition(), token.endPosition(),
-                        truecase);
+                                  token.beginPosition(), token.endPosition(),
+                                  word, truecase);
             }
         }
-    }
-    private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-    private static final File TEST_DATA_PATH = new File("src/test/data");
-
-    static String readTestData(String path) {
-        return readTestData(path, DEFAULT_CHARSET);
-    }
-
-    static String readTestData(String path, Charset charset) {
-        try {
-            return IOUtils.toString(new File(TEST_DATA_PATH, path).toURI(), charset);
-        } catch (IOException ex) {
-            // Should throw an assumption exception
-            Assume.assumeNoException(ex);
-            // ...so this never happens
-            throw new AssertionError(ex);
-        }
-
     }
 }
