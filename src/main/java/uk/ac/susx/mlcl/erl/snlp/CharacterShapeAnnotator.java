@@ -25,15 +25,15 @@ import javax.annotation.Nonnull;
  * <tt>'#'</tt> (hash) character, and upper case alphabetical letters are replaced with <tt>'A'</tt>
  * character. Each character is replaced individually to produce a new string of the same length; so
  * for example the string <tt>12 O'Clock</tt> becomes <tt>## A.Aaaaa</tt>.
- *
+ * <p/>
  * This annotator expects the Annotation to include the TokensAnnotation at the very least. If
  * LemmaAnnotation is present, and if {@link #setLemmaUsed(boolean)} is set <tt>true</tt>, the lemma
  * string will be used instead of the token.
- *
+ * <p/>
  * Instance of {@code CharacterShapeAnnotator} are <em>not</em> generally thread safe. However they
  * can be considered thread-safe if the configuration is not changed, since the configuration fields
  * are the only mutable state.
- *
+ * <p/>
  * @author Hamish Morgan
  */
 @Nonnull
@@ -46,18 +46,28 @@ public class CharacterShapeAnnotator implements Annotator {
     /*
      * The following define the replacement output characters for codepoints of various types.
      */
+
     private static final Character WHITESPACE = ' ';
+
     private static final Character CURRENCY = '$';
+
     private static final Character DIGIT = '#';
+
     private static final Character LOWERCASE_LETTER = 'a';
+
     private static final Character UPERCASE_LETTER = 'A';
+
     private static final Character PUNCTUATION = '.';
+
     private static final Character UNKNOWN = '?';
     /*
      * Instead of reading the shape from the token, use the lemma string.
      */
-    private static final String LEMMA_USED_KEY = PROPERTY_KEY_PREFIX + "lemmaUsed";
-    private static final boolean LEMMA_USED_DEFAULT_VALUE = false;
+
+    public static final String LEMMA_USED_KEY = PROPERTY_KEY_PREFIX + "lemmaUsed";
+
+    public static final boolean LEMMA_USED_DEFAULT_VALUE = false;
+
     private boolean lemmaUsed;
 
     /**
@@ -70,7 +80,7 @@ public class CharacterShapeAnnotator implements Annotator {
     /**
      * Construct a new {@code CharacterShapeAnnotator} configuring it with the given properties
      * object.
-     *
+     * <p/>
      * @param props configuration to load
      */
     public CharacterShapeAnnotator(Properties props) {
@@ -80,30 +90,33 @@ public class CharacterShapeAnnotator implements Annotator {
 
     /**
      * Configure (or re-configure) this object with the given properties.
-     *
+     * <p/>
      * @param props configuration to load
      */
     public final void configure(Properties props) {
+        Preconditions.checkNotNull(props, "props");
+
         if (props.containsKey(LEMMA_USED_KEY)) {
-            lemmaUsed = Boolean.valueOf(props.getProperty(LEMMA_USED_KEY));
+            setLemmaUsed(Boolean.valueOf(props.getProperty(LEMMA_USED_KEY)));
         }
     }
 
     /**
      * Get a collection of all the annotation types that are required to already have been produced
      * before this annotator is used.
-     *
+     * <p/>
      * NB: If everything implemented this method it could be a relatively sane way of doing
      * dependence management, unless I'm missing something, which is more than likely.
-     *
+     * <p/>
      * @return annotations that must be produced before this annotator is used.
      */
-    public Set<Class<? extends CoreAnnotation>> getRequiredAnnotations() {
+    public Set<Class<? extends CoreAnnotation<?>>> getRequiredAnnotations() {
         if (!isLemmaUsed()) {
-            return Collections.<Class<? extends CoreAnnotation>>singleton(TokensAnnotation.class);
+            return Collections.<Class<? extends CoreAnnotation<?>>>singleton(
+                    TokensAnnotation.class);
         } else {
-            final Set<Class<? extends CoreAnnotation>> requirements =
-                    new HashSet<Class<? extends CoreAnnotation>>();
+            final Set<Class<? extends CoreAnnotation<?>>> requirements =
+                    new HashSet<Class<? extends CoreAnnotation<?>>>();
             requirements.add(TokensAnnotation.class);
             requirements.add(LemmaAnnotation.class);
             return requirements;
@@ -113,7 +126,7 @@ public class CharacterShapeAnnotator implements Annotator {
     /**
      * Set the lemmaUsed property. When true the shape will be derived from the lemma string instead
      * of the token string (in which case LemmaAnnotation must be present).
-     *
+     * <p/>
      * @param lemmaUsed whether to use the lemma string instead of the token string.
      */
     public void setLemmaUsed(boolean lemmaUsed) {
@@ -122,7 +135,7 @@ public class CharacterShapeAnnotator implements Annotator {
 
     /**
      * Get whether or not the lemma string should be used instead of the token string.
-     *
+     * <p/>
      * @return true if the lemma string instead of the token string, false otherwise.
      */
     public boolean isLemmaUsed() {
@@ -132,17 +145,19 @@ public class CharacterShapeAnnotator implements Annotator {
     /**
      * Process the given {@code annotation }, adding a new layer of type
      * {@code CharacterShapeAnnotator.Annotation} that represents the character shape pattern.
-     *
-     * @param annotation 
+     * <p/>
+     * @param annotation document to annotate
      * @throws IllegalArgumentException when annotation is null or does not contain required keys
      */
     public void annotate(final edu.stanford.nlp.pipeline.Annotation annotation)
             throws IllegalArgumentException {
         Preconditions.checkNotNull(annotation, "annotation");
+
+        // Check requirements
         Preconditions.checkArgument(annotation.containsKey(TokensAnnotation.class),
-                "TokensAnnotation is not present.");
+                                    "TokensAnnotation is not present.");
         Preconditions.checkArgument(!isLemmaUsed() || annotation.containsKey(LemmaAnnotation.class),
-                "useLemma is true but LemmaAnnotation is not present.");
+                                    "useLemma is true but LemmaAnnotation is not present.");
 
         for (CoreLabel token : annotation.get(TokensAnnotation.class)) {
 
@@ -152,56 +167,45 @@ public class CharacterShapeAnnotator implements Annotator {
 
             final StringBuilder output = new StringBuilder(input.length());
 
-            int offset = 0;
-            int codepoint = input.codePointAt(offset);
-            while (offset < input.length()) {
+            // Interate over codepoints in the character input. 
+            int cp;
+            for (int i = 0; i < input.length(); i += Character.charCount(cp)) {
+                cp = input.codePointAt(i);
 
-                output.append(replacementForCodepoint(codepoint));
-                
-                offset += Character.charCount(codepoint);
-                if (offset < input.length()) {
-                    codepoint = input.codePointAt(offset);
-                }
+                output.append(replacementForCodepoint(cp));
             }
-            
+
             token.set(CharacterShapeAnnotator.Annotation.class, output.toString());
         }
     }
 
     /**
      * Get the replacement character for the given code-point.
-     *
+     * <p/>
      * @param codepoint character to find a replacement for
      * @return replacement
      */
     private static char replacementForCodepoint(final int codepoint) {
-        final char replacement;
-        final int type = Character.getType(codepoint);
-        switch (type) {
+        switch (Character.getType(codepoint)) {
             case Character.CURRENCY_SYMBOL:
-                replacement = CURRENCY;
-                break;
+                return CURRENCY;
             case Character.COMBINING_SPACING_MARK:
             case Character.LINE_SEPARATOR:
             case Character.PARAGRAPH_SEPARATOR:
             case Character.SPACE_SEPARATOR:
             case Character.CONTROL: // includes line-feed
-                replacement = WHITESPACE;
-                break;
+                return WHITESPACE;
             case Character.DECIMAL_DIGIT_NUMBER:
             case Character.LETTER_NUMBER: // E.g Runic Arlaug
             case Character.OTHER_NUMBER: // E.g Superscript two
-                replacement = DIGIT;
-                break;
+                return DIGIT;
             case Character.LOWERCASE_LETTER:
             case Character.OTHER_LETTER:
             case Character.MODIFIER_LETTER:
-                replacement = LOWERCASE_LETTER;
-                break;
+                return LOWERCASE_LETTER;
             case Character.UPPERCASE_LETTER:
             case Character.TITLECASE_LETTER:
-                replacement = UPERCASE_LETTER;
-                break;
+                return UPERCASE_LETTER;
             case Character.CONNECTOR_PUNCTUATION:
             case Character.DASH_PUNCTUATION:
             case Character.ENCLOSING_MARK:
@@ -215,18 +219,16 @@ public class CharacterShapeAnnotator implements Annotator {
             case Character.NON_SPACING_MARK:
             case Character.OTHER_PUNCTUATION:
             case Character.OTHER_SYMBOL:
-                replacement = PUNCTUATION;
-                break;
+                return PUNCTUATION;
             case Character.SURROGATE:
             case Character.PRIVATE_USE:
             case Character.UNASSIGNED:
-                replacement = UNKNOWN;
+                return UNKNOWN;
             default:
                 throw new AssertionError(MessageFormat.format(
                         "Unknown character type {0} for character '{1}' (cp: {2}).",
-                        type, Character.toChars(codepoint), codepoint));
+                        Character.getType(codepoint), Character.toChars(codepoint), codepoint));
         }
-        return replacement;
     }
 
     /**
@@ -235,6 +237,8 @@ public class CharacterShapeAnnotator implements Annotator {
      */
     public static final class Factory implements edu.stanford.nlp.util.Factory<CharacterShapeAnnotator> {
 
+        private static final long serialVersionUID = 1L;
+
         private final Properties props;
 
         public Factory() {
@@ -242,6 +246,7 @@ public class CharacterShapeAnnotator implements Annotator {
         }
 
         public Factory(Properties props) {
+            Preconditions.checkNotNull(props, "props");
             this.props = props;
         }
 
@@ -254,7 +259,7 @@ public class CharacterShapeAnnotator implements Annotator {
 
     /**
      * The CoreMap key for getting the character shape strings contained by an annotation.
-     *
+     * <p/>
      * This key is typically set only on token annotations.
      */
     public static final class Annotation implements CoreAnnotation<String> {
