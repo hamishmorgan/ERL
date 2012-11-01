@@ -6,6 +6,9 @@ package edu.stanford.nlp;
 
 import edu.stanford.nlp.dcoref.CorefChain;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
+import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefClusterAnnotation;
+import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefClusterIdAnnotation;
+import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefGraphAnnotation;
 import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations.GenderAnnotation;
 import edu.stanford.nlp.ie.regexp.RegexNERSequenceClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
@@ -16,11 +19,13 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TrueCaseTextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.CleanXmlAnnotator;
 import edu.stanford.nlp.pipeline.DefaultPaths;
 import edu.stanford.nlp.pipeline.PTBTokenizerAnnotator;
+import edu.stanford.nlp.pipeline.ParserAnnotator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.pipeline.TokenizerAnnotator;
 import edu.stanford.nlp.pipeline.TrueCaseAnnotator;
@@ -28,12 +33,19 @@ import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.trees.semgraph.SemanticGraph;
+import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
 import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
+import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.IntTuple;
+import edu.stanford.nlp.util.Pair;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
@@ -518,6 +530,7 @@ public class StanfordNLPTest extends AbstractTest {
     }
 
     @Test
+    @Ignore("hoses my machine for some reason...")
     public void testTrueCase() throws IOException {
 
         Properties props = new Properties();
@@ -529,7 +542,7 @@ public class StanfordNLPTest extends AbstractTest {
 
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        String text = readTestData("popular_names.txt");
+        String text = readTestData("freebase_brighton.txt");
 
         Annotation document = new Annotation(text);
 
@@ -546,5 +559,168 @@ public class StanfordNLPTest extends AbstractTest {
                                   word, truecase);
             }
         }
+    }
+
+    /**
+     * Run the Stanford parse annotator.
+     * <p/>
+     * Provides full syntactic analysis, using both the constituent and the dependency
+     * representations. The constituent-based output is saved in TreeAnnotation. We generate three
+     * dependency-based outputs, as follows: basic, uncollapsed dependencies, saved in
+     * BasicDependenciesAnnotation; collapsed dependencies saved in CollapsedDependenciesAnnotation;
+     * and collapsed dependencies with processed coordinations, in
+     * CollapsedCCProcessedDependenciesAnnotation. Most users of our parser will prefer the latter
+     * representation. For more details on the parser, please see this page. For more details about
+     * the dependencies, please refer to this page.
+     * <p/>
+     * <
+     * p/> Generated annotations: TreeAnnotation, BasicDependenciesAnnotation,
+     * CollapsedDependenciesAnnotation, CollapsedCCProcessedDependenciesAnnotation
+     * <p/>
+     * @throws IOException
+     */
+    @Test
+    public void testStanfordParser() throws IOException {
+
+        Properties props = new Properties();
+        props.put("annotators", "tokenize, ssplit, parse");
+
+        // stanford, charniak
+        props.put("parser.type", "stanford");
+
+        /*
+         * parser.maxlen: if set, the annotator parses only sentences shorter (in terms of number of
+         * tokens) than this number. For longer sentences, the parser creates a flat structure,
+         * where every token is assigned to the non-terminal X. This is useful when parsing noisy
+         * web text, which may generate arbitrarily long sentences. By default, this option is not
+         * set.
+         */
+        props.put("parser.maxlen", Integer.toString(Integer.MAX_VALUE));
+
+        /*
+         * parser.model: parsing model to use. There is no need to explicitly set this option,
+         * unless you want to use a different parsing model (for advanced developers only). By
+         * default, this is set to the parsing model included in the stanford-corenlp-models JAR
+         * file.
+         */
+        props.put("parse.model", LexicalizedParser.DEFAULT_PARSER_LOC);
+
+
+
+        props.put("props.debug", Boolean.toString(false));
+
+
+        props.put("props.flags", ParserAnnotator.DEFAULT_FLAGS);
+
+        // Function<Tree, Tree>
+//        props.put("props.treemap", null);
+
+
+        props.put("parser.maxtime", Integer.toString(Integer.MAX_VALUE));
+
+
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        String text = readTestData("freebase_brighton.txt");
+
+        Annotation document = new Annotation(text);
+
+        pipeline.annotate(document);
+
+        for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
+
+            Tree tree = sentence.get(TreeAnnotation.class);
+
+            System.out.println("tree: " + tree);
+
+            SemanticGraph dep1 = sentence.get(BasicDependenciesAnnotation.class);
+            System.out.println("basic dependencies: " + dep1);
+
+            SemanticGraph dep2 = sentence.get(CollapsedDependenciesAnnotation.class);
+            System.out.println("collapsed dependencies: " + dep2);
+
+            // this is the Stanford dependency graph of the current sentence
+            SemanticGraph dep3 = sentence
+                    .get(CollapsedCCProcessedDependenciesAnnotation.class);
+            System.out.println("collaprsed ccp dependencies: " + dep3);
+
+        }
+    }
+
+    @Test
+    public void testDCoref() throws IOException {
+
+        Properties props = new Properties();
+        props.put("annotators", "tokenize, ssplit, parse, lemma, ner, dcoref");
+
+
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        String text = readTestData("freebase_brighton.txt");
+
+        Annotation document = new Annotation(text);
+
+        pipeline.annotate(document);
+
+
+//import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
+//import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefClusterAnnotation;
+//import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefGraphAnnotation;
+
+        System.out.println("\n\nCorefChainAnnotation:\n");
+        Map<Integer, CorefChain> chains = document.get(CorefChainAnnotation.class);
+        for (Entry<Integer, CorefChain> entries : chains.entrySet()) {
+            if (entries.getValue().getCorefMentions().size() > 1) {
+                System.out.println(entries.getKey());
+                System.out.println(entries.getValue());
+                System.out.println();
+            }
+        }
+
+        System.out.println("\n\nCorefGraphAnnotation:\n");
+        List<Pair<IntTuple, IntTuple>> graph = document.get(CorefGraphAnnotation.class);
+        System.out.println(graph);
+
+
+        System.out.println("\n\nCorefClusterAnnotation:\n");
+        for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
+
+            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+
+                String word = token.get(TextAnnotation.class);
+
+                Integer clusterId = token.get(CorefClusterIdAnnotation.class);
+
+                Set<CoreLabel> cluster = token.get(CorefClusterAnnotation.class);
+
+
+                System.out.printf("%s %s %s",
+                                  word, 
+                                  clusterId == null ? "" : Integer.toString(clusterId),
+                                  cluster == null ? "" : cluster.toString());
+
+//                
+//                
+//                Set<CoreLabel> cluster = token.get(CorefClusterAnnotation.class);
+//                System.out.println(cluster);
+//                
+//                CorefClusterIdAnnotation
+//                
+//                List<Pair<IntTuple, IntTuple>> graph = token.get(CorefGraphAnnotation.class);
+//                System.out.println(graph);
+
+//                
+//                
+//                System.out.printf("[%4d|%4d] %10s\t%6s%n",
+//                                  token.beginPosition(), token.endPosition(),
+//                                  word, cluster.toString());
+//
+//
+//                System.out.printf("[%4d|%4d] %10s\t%6s%n",
+//                                  token.beginPosition(), token.endPosition(),
+//                                  word, graph.toString());
+            }
+
+
+        }
+
     }
 }

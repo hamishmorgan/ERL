@@ -5,18 +5,15 @@
 package com.google.api.services.freebase;
 
 import com.google.api.client.googleapis.services.GoogleClient;
-import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpMethod;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.json.JsonHttpRequestInitializer;
-import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
