@@ -37,7 +37,7 @@ import javax.annotation.Nonnull;
  * @author Hamish Morgan
  */
 @Nonnull
-public class CharacterShapeAnnotator implements Annotator {
+public class CharacterShapeAnnotator implements Annotator, Configurable {
 
     /**
      * Common prefix to all properties accessed by this annotator.
@@ -121,6 +121,15 @@ public class CharacterShapeAnnotator implements Annotator {
             requirements.add(LemmaAnnotation.class);
             return requirements;
         }
+    }
+
+    /**
+     * Get a collection of all the annotation types that are produced by this annotator.
+     * 
+     * @return annotations produced by the annotator
+     */    
+    public Set<Class<? extends CoreAnnotation<?>>> getSuppliedAnnotations() {
+        return Collections.<Class<? extends CoreAnnotation<?>>>singleton(Annotation.class);
     }
 
     /**
