@@ -23,6 +23,7 @@ import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.CleanXmlAnnotator;
+import edu.stanford.nlp.pipeline.CustomAnnotationSerializer;
 import edu.stanford.nlp.pipeline.DefaultPaths;
 import edu.stanford.nlp.pipeline.PTBTokenizerAnnotator;
 import edu.stanford.nlp.pipeline.ParserAnnotator;
@@ -33,21 +34,29 @@ import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.trees.semgraph.SemanticGraph;
-import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
-import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
-import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation;
+import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.IntTuple;
 import edu.stanford.nlp.util.Pair;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import uk.ac.susx.mlcl.erl.snlp.AnnotationToXMLSerializer;
+import uk.ac.susx.mlcl.erl.snlp.StanfordAnnotationToXML;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
@@ -59,6 +68,90 @@ import uk.ac.susx.mlcl.erl.test.Categories;
  */
 //@Ignore
 public class StanfordNLPTest extends AbstractTest {
+
+    public static void saveAnnotation(Annotation document, File file) throws IOException {
+        boolean compressed = file.getName().endsWith(".gz");
+        CustomAnnotationSerializer ser = new CustomAnnotationSerializer(compressed, true);
+        OutputStream os = null;
+        try {
+            os = new BufferedOutputStream(new FileOutputStream(file));
+            ser.save(document, os);
+            os.flush();
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
+    }
+
+    public static Annotation loadAnnotation(File file)
+            throws IOException, ClassNotFoundException {
+        final boolean compressed = file.getName().endsWith(".gz");
+        final CustomAnnotationSerializer ser =
+                new CustomAnnotationSerializer(compressed, true);
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream(file));
+            Annotation document = ser.load(is);
+            return document;
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+//
+//    @Test
+//    @Category(Categories.IntegrationTests.class)
+//    public void foo() throws IOException {
+//
+//        final boolean verbose = false;
+//
+//        String path = "freebase_brighton.txt";
+//        String text = readTestData(path);
+//        Annotation document = new Annotation(text);
+//
+//        String ext = ".s.gz";
+//        {
+//            TokenizerAnnotator tokeniser = new PTBTokenizerAnnotator(verbose);
+//            tokeniser.annotate(document);
+//        }
+//        {
+//            WordsToSentencesAnnotator wts = new WordsToSentencesAnnotator(verbose);
+//            wts.annotate(document);
+//        }
+//
+//        saveAnnotation(document, new File(TEST_DATA_PATH, path + "-tok-ss" + ext));
+//
+//        {
+//            POSTaggerAnnotator pta = new POSTaggerAnnotator(
+//                    DefaultPaths.DEFAULT_POS_MODEL, verbose, Integer.MAX_VALUE);
+//            pta.annotate(document);
+//        }
+//        saveAnnotation(document, new File(TEST_DATA_PATH, path + "-tok-ss-pos" + ext));
+//
+//        {
+//            MorphaAnnotator morph = new MorphaAnnotator(verbose);
+//            morph.annotate(document);
+//        }
+//
+//        saveAnnotation(document, new File(TEST_DATA_PATH, path + "-tok-ss-pos-lemma" + ext));
+//        
+////        
+////
+////        final CharacterShapeAnnotator characterClassC18N = new CharacterShapeAnnotator();
+////        pipeline.addAnnotator(characterClassC18N);
+////
+////        pipeline.annotate(document);
+////
+////        for (CoreLabel token : document.get(CoreAnnotations.TokensAnnotation.class)) {
+////            String word = token.get(CoreAnnotations.TextAnnotation.class);
+////            String clazz = token.get(CharacterShapeAnnotator.Annotation.class);
+////
+////            Assert.assertNotNull(word);
+////            Assert.assertNotNull(clazz);
+////            Assert.assertEquals(clazz.length(), word.length());
+////
+////            System.out.printf("[%d,%d] %s => %s%n",
+////                              token.beginPosition(), token.endPosition(), word, clazz);
+////        }
+//    }
 
     /**
      * The one an only API usage example form the documentation... or at least the only one I've
@@ -114,7 +207,8 @@ public class StanfordNLPTest extends AbstractTest {
 
             // this is the Stanford dependency graph of the current sentence
             SemanticGraph dependencies = sentence
-                    .get(CollapsedCCProcessedDependenciesAnnotation.class);
+                    .get(
+                    SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
             System.out.println("dependencies: " + dependencies);
         }
@@ -161,6 +255,7 @@ public class StanfordNLPTest extends AbstractTest {
                               token.beginPosition(), token.endPosition(),
                               token.get(TextAnnotation.class));
         }
+
     }
 
     @Test
@@ -200,6 +295,7 @@ public class StanfordNLPTest extends AbstractTest {
             }
             System.out.println("END SENTENCE");
         }
+
     }
 
     @Test
@@ -419,12 +515,18 @@ public class StanfordNLPTest extends AbstractTest {
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-        String text = readTestData("freebase_brighton.txt");
+        String path = "freebase_brighton.txt";
+        String ext = ".s.gz";
+        String text = readTestData(path);
 
 
         Annotation document = new Annotation(text);
 
         pipeline.annotate(document);
+
+        saveAnnotation(document, new File(TEST_DATA_PATH,
+                                          path + "-tok-sent-pos-lemma-ner" + ext));
+
 
         System.out.println(document);
 
@@ -446,6 +548,8 @@ public class StanfordNLPTest extends AbstractTest {
             }
 
         }
+
+
 
     }
 
@@ -632,22 +736,32 @@ public class StanfordNLPTest extends AbstractTest {
 
             System.out.println("tree: " + tree);
 
-            SemanticGraph dep1 = sentence.get(BasicDependenciesAnnotation.class);
+            SemanticGraph dep1 = sentence
+                    .get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
             System.out.println("basic dependencies: " + dep1);
 
-            SemanticGraph dep2 = sentence.get(CollapsedDependenciesAnnotation.class);
+            SemanticGraph dep2 = sentence
+                    .get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class);
             System.out.println("collapsed dependencies: " + dep2);
 
             // this is the Stanford dependency graph of the current sentence
             SemanticGraph dep3 = sentence
-                    .get(CollapsedCCProcessedDependenciesAnnotation.class);
+                    .get(
+                    SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
             System.out.println("collaprsed ccp dependencies: " + dep3);
 
         }
+
+
+        saveAnnotation(document,
+                       new File(TEST_DATA_PATH,
+                                "freebase_brighton.txt-tok-sent-parse.s.gz"));
+
+
     }
 
     @Test
-    public void testDCoref() throws IOException {
+    public void testDCoref() throws IOException, Exception {
 
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit, parse, lemma, ner, dcoref");
@@ -693,7 +807,7 @@ public class StanfordNLPTest extends AbstractTest {
 
 
                 System.out.printf("%s %s %s",
-                                  word, 
+                                  word,
                                   clusterId == null ? "" : Integer.toString(clusterId),
                                   cluster == null ? "" : cluster.toString());
 
@@ -722,5 +836,19 @@ public class StanfordNLPTest extends AbstractTest {
 
         }
 
+
+
+        saveAnnotation(document,
+                       new File(TEST_DATA_PATH,
+                                "freebase_brighton.txt-tok-sent-parse-lemma-ner-dcoref.s.gz"));
+
+
+//
+//        StanfordAnnotationToXML ax = new StanfordAnnotationToXML();
+//        ax.xmlPrint(document, System.out);
+
+
+        AnnotationToXMLSerializer ax2 = AnnotationToXMLSerializer.builder().build();
+        ax2.xmlPrint(document, System.out);
     }
 }

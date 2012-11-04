@@ -1,0 +1,2666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="CoreNLP-to-HTML.xsl" type="text/xsl"?>
+<root>
+  <document>
+    <sentences>
+      <sentence id="1">
+        <tokens>
+          <token id="1">
+            <word>Brighton</word>
+            <CharacterOffsetBegin>0</CharacterOffsetBegin>
+            <CharacterOffsetEnd>8</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="2">
+            <word>i</word>
+            <CharacterOffsetBegin>9</CharacterOffsetBegin>
+            <CharacterOffsetEnd>10</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="3">
+            <word>\/</word>
+            <CharacterOffsetBegin>10</CharacterOffsetBegin>
+            <CharacterOffsetEnd>11</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="4">
+            <word>?bra?t?n</word>
+            <CharacterOffsetBegin>11</CharacterOffsetBegin>
+            <CharacterOffsetEnd>19</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="5">
+            <word>\/</word>
+            <CharacterOffsetBegin>19</CharacterOffsetBegin>
+            <CharacterOffsetEnd>20</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="6">
+            <word>is</word>
+            <CharacterOffsetBegin>21</CharacterOffsetBegin>
+            <CharacterOffsetEnd>23</CharacterOffsetEnd>
+            <POS>VBZ</POS>
+          </token>
+          <token id="7">
+            <word>the</word>
+            <CharacterOffsetBegin>24</CharacterOffsetBegin>
+            <CharacterOffsetEnd>27</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="8">
+            <word>major</word>
+            <CharacterOffsetBegin>28</CharacterOffsetBegin>
+            <CharacterOffsetEnd>33</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="9">
+            <word>part</word>
+            <CharacterOffsetBegin>34</CharacterOffsetBegin>
+            <CharacterOffsetEnd>38</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="10">
+            <word>of</word>
+            <CharacterOffsetBegin>39</CharacterOffsetBegin>
+            <CharacterOffsetEnd>41</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="11">
+            <word>the</word>
+            <CharacterOffsetBegin>42</CharacterOffsetBegin>
+            <CharacterOffsetEnd>45</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="12">
+            <word>city</word>
+            <CharacterOffsetBegin>46</CharacterOffsetBegin>
+            <CharacterOffsetEnd>50</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="13">
+            <word>and</word>
+            <CharacterOffsetBegin>51</CharacterOffsetBegin>
+            <CharacterOffsetEnd>54</CharacterOffsetEnd>
+            <POS>CC</POS>
+          </token>
+          <token id="14">
+            <word>unitary</word>
+            <CharacterOffsetBegin>55</CharacterOffsetBegin>
+            <CharacterOffsetEnd>62</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="15">
+            <word>authority</word>
+            <CharacterOffsetBegin>63</CharacterOffsetBegin>
+            <CharacterOffsetEnd>72</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="16">
+            <word>of</word>
+            <CharacterOffsetBegin>73</CharacterOffsetBegin>
+            <CharacterOffsetEnd>75</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="17">
+            <word>Brighton</word>
+            <CharacterOffsetBegin>76</CharacterOffsetBegin>
+            <CharacterOffsetEnd>84</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="18">
+            <word>and</word>
+            <CharacterOffsetBegin>85</CharacterOffsetBegin>
+            <CharacterOffsetEnd>88</CharacterOffsetEnd>
+            <POS>CC</POS>
+          </token>
+          <token id="19">
+            <word>Hove</word>
+            <CharacterOffsetBegin>89</CharacterOffsetBegin>
+            <CharacterOffsetEnd>93</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="20">
+            <word>-LRB-</word>
+            <CharacterOffsetBegin>94</CharacterOffsetBegin>
+            <CharacterOffsetEnd>95</CharacterOffsetEnd>
+            <POS>-LRB-</POS>
+          </token>
+          <token id="21">
+            <word>formed</word>
+            <CharacterOffsetBegin>95</CharacterOffsetBegin>
+            <CharacterOffsetEnd>101</CharacterOffsetEnd>
+            <POS>VBN</POS>
+          </token>
+          <token id="22">
+            <word>from</word>
+            <CharacterOffsetBegin>102</CharacterOffsetBegin>
+            <CharacterOffsetEnd>106</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="23">
+            <word>the</word>
+            <CharacterOffsetBegin>107</CharacterOffsetBegin>
+            <CharacterOffsetEnd>110</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="24">
+            <word>previous</word>
+            <CharacterOffsetBegin>111</CharacterOffsetBegin>
+            <CharacterOffsetEnd>119</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="25">
+            <word>towns</word>
+            <CharacterOffsetBegin>120</CharacterOffsetBegin>
+            <CharacterOffsetEnd>125</CharacterOffsetEnd>
+            <POS>NNS</POS>
+          </token>
+          <token id="26">
+            <word>of</word>
+            <CharacterOffsetBegin>126</CharacterOffsetBegin>
+            <CharacterOffsetEnd>128</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="27">
+            <word>Brighton</word>
+            <CharacterOffsetBegin>129</CharacterOffsetBegin>
+            <CharacterOffsetEnd>137</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="28">
+            <word>,</word>
+            <CharacterOffsetBegin>137</CharacterOffsetBegin>
+            <CharacterOffsetEnd>138</CharacterOffsetEnd>
+            <POS>,</POS>
+          </token>
+          <token id="29">
+            <word>Hove</word>
+            <CharacterOffsetBegin>139</CharacterOffsetBegin>
+            <CharacterOffsetEnd>143</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="30">
+            <word>,</word>
+            <CharacterOffsetBegin>143</CharacterOffsetBegin>
+            <CharacterOffsetEnd>144</CharacterOffsetEnd>
+            <POS>,</POS>
+          </token>
+          <token id="31">
+            <word>Portslade</word>
+            <CharacterOffsetBegin>145</CharacterOffsetBegin>
+            <CharacterOffsetEnd>154</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="32">
+            <word>and</word>
+            <CharacterOffsetBegin>155</CharacterOffsetBegin>
+            <CharacterOffsetEnd>158</CharacterOffsetEnd>
+            <POS>CC</POS>
+          </token>
+          <token id="33">
+            <word>several</word>
+            <CharacterOffsetBegin>159</CharacterOffsetBegin>
+            <CharacterOffsetEnd>166</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="34">
+            <word>other</word>
+            <CharacterOffsetBegin>167</CharacterOffsetBegin>
+            <CharacterOffsetEnd>172</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="35">
+            <word>villages</word>
+            <CharacterOffsetBegin>173</CharacterOffsetBegin>
+            <CharacterOffsetEnd>181</CharacterOffsetEnd>
+            <POS>NNS</POS>
+          </token>
+          <token id="36">
+            <word>-RRB-</word>
+            <CharacterOffsetBegin>181</CharacterOffsetBegin>
+            <CharacterOffsetEnd>182</CharacterOffsetEnd>
+            <POS>-RRB-</POS>
+          </token>
+          <token id="37">
+            <word>on</word>
+            <CharacterOffsetBegin>183</CharacterOffsetBegin>
+            <CharacterOffsetEnd>185</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="38">
+            <word>the</word>
+            <CharacterOffsetBegin>186</CharacterOffsetBegin>
+            <CharacterOffsetEnd>189</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="39">
+            <word>south</word>
+            <CharacterOffsetBegin>190</CharacterOffsetBegin>
+            <CharacterOffsetEnd>195</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="40">
+            <word>coast</word>
+            <CharacterOffsetBegin>196</CharacterOffsetBegin>
+            <CharacterOffsetEnd>201</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="41">
+            <word>of</word>
+            <CharacterOffsetBegin>202</CharacterOffsetBegin>
+            <CharacterOffsetEnd>204</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="42">
+            <word>Great</word>
+            <CharacterOffsetBegin>205</CharacterOffsetBegin>
+            <CharacterOffsetEnd>210</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="43">
+            <word>Britain</word>
+            <CharacterOffsetBegin>211</CharacterOffsetBegin>
+            <CharacterOffsetEnd>218</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="44">
+            <word>.</word>
+            <CharacterOffsetBegin>218</CharacterOffsetBegin>
+            <CharacterOffsetEnd>219</CharacterOffsetEnd>
+            <POS>.</POS>
+          </token>
+        </tokens>
+        <parse>(ROOT (S (NP (NNP Brighton) (NNP i) (NNP \/) (NNP ?bra?t?n) (NNP \/)) (VP (VBZ is) (NP (NP (DT the) (JJ major) (NN part)) (PP (IN of) (NP (NP (DT the) (NP (NN city) (CC and) (JJ unitary)) (NN authority)) (PP (IN of) (NP (NNP Brighton) (CC and) (NNP Hove))))) (PRN (-LRB- -LRB-) (VP (VBN formed) (PP (IN from) (NP (NP (DT the) (JJ previous) (NNS towns)) (PP (IN of) (NP (NP (NNP Brighton)) (, ,) (NP (NNP Hove)) (, ,) (NP (NNP Portslade)) (CC and) (NP (JJ several) (JJ other) (NNS villages))))))) (-RRB- -RRB-)) (PP (IN on) (NP (NP (DT the) (JJ south) (NN coast)) (PP (IN of) (NP (NNP Great) (NNP Britain))))))) (. .))) </parse>
+        <basic-dependencies>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="1">Brighton</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="2">i</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="3">\/</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="4">?bra?t?n</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="9">part</governor>
+            <dependent idx="5">\/</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="9">part</governor>
+            <dependent idx="6">is</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="9">part</governor>
+            <dependent idx="7">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="9">part</governor>
+            <dependent idx="8">major</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="9">part</governor>
+            <dependent idx="10">of</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="15">authority</governor>
+            <dependent idx="11">the</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="15">authority</governor>
+            <dependent idx="12">city</dependent>
+          </dep>
+          <dep type="cc">
+            <governor idx="12">city</governor>
+            <dependent idx="13">and</dependent>
+          </dep>
+          <dep type="conj">
+            <governor idx="12">city</governor>
+            <dependent idx="14">unitary</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="10">of</governor>
+            <dependent idx="15">authority</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="15">authority</governor>
+            <dependent idx="16">of</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="16">of</governor>
+            <dependent idx="17">Brighton</dependent>
+          </dep>
+          <dep type="cc">
+            <governor idx="17">Brighton</governor>
+            <dependent idx="18">and</dependent>
+          </dep>
+          <dep type="conj">
+            <governor idx="17">Brighton</governor>
+            <dependent idx="19">Hove</dependent>
+          </dep>
+          <dep type="dep">
+            <governor idx="9">part</governor>
+            <dependent idx="21">formed</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="21">formed</governor>
+            <dependent idx="22">from</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="25">towns</governor>
+            <dependent idx="23">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="25">towns</governor>
+            <dependent idx="24">previous</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="22">from</governor>
+            <dependent idx="25">towns</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="25">towns</governor>
+            <dependent idx="26">of</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="26">of</governor>
+            <dependent idx="27">Brighton</dependent>
+          </dep>
+          <dep type="conj">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="29">Hove</dependent>
+          </dep>
+          <dep type="conj">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="31">Portslade</dependent>
+          </dep>
+          <dep type="cc">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="32">and</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="35">villages</governor>
+            <dependent idx="33">several</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="35">villages</governor>
+            <dependent idx="34">other</dependent>
+          </dep>
+          <dep type="conj">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="35">villages</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="9">part</governor>
+            <dependent idx="37">on</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="40">coast</governor>
+            <dependent idx="38">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="40">coast</governor>
+            <dependent idx="39">south</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="37">on</governor>
+            <dependent idx="40">coast</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="40">coast</governor>
+            <dependent idx="41">of</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="43">Britain</governor>
+            <dependent idx="42">Great</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="41">of</governor>
+            <dependent idx="43">Britain</dependent>
+          </dep>
+        </basic-dependencies>
+        <collapsed-dependencies>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="1">Brighton</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="2">i</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="3">\/</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="4">?bra?t?n</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="9">part</governor>
+            <dependent idx="5">\/</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="9">part</governor>
+            <dependent idx="6">is</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="9">part</governor>
+            <dependent idx="7">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="9">part</governor>
+            <dependent idx="8">major</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="15">authority</governor>
+            <dependent idx="11">the</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="15">authority</governor>
+            <dependent idx="12">city</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="12">city</governor>
+            <dependent idx="14">unitary</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="9">part</governor>
+            <dependent idx="15">authority</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="15">authority</governor>
+            <dependent idx="17">Brighton</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="17">Brighton</governor>
+            <dependent idx="19">Hove</dependent>
+          </dep>
+          <dep type="dep">
+            <governor idx="9">part</governor>
+            <dependent idx="21">formed</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="25">towns</governor>
+            <dependent idx="23">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="25">towns</governor>
+            <dependent idx="24">previous</dependent>
+          </dep>
+          <dep type="prep_from">
+            <governor idx="21">formed</governor>
+            <dependent idx="25">towns</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="25">towns</governor>
+            <dependent idx="27">Brighton</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="29">Hove</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="31">Portslade</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="35">villages</governor>
+            <dependent idx="33">several</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="35">villages</governor>
+            <dependent idx="34">other</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="35">villages</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="40">coast</governor>
+            <dependent idx="38">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="40">coast</governor>
+            <dependent idx="39">south</dependent>
+          </dep>
+          <dep type="prep_on">
+            <governor idx="9">part</governor>
+            <dependent idx="40">coast</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="43">Britain</governor>
+            <dependent idx="42">Great</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="40">coast</governor>
+            <dependent idx="43">Britain</dependent>
+          </dep>
+        </collapsed-dependencies>
+        <collapsed-ccprocessed-dependencies>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="1">Brighton</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="2">i</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="3">\/</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">\/</governor>
+            <dependent idx="4">?bra?t?n</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="9">part</governor>
+            <dependent idx="5">\/</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="9">part</governor>
+            <dependent idx="6">is</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="9">part</governor>
+            <dependent idx="7">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="9">part</governor>
+            <dependent idx="8">major</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="15">authority</governor>
+            <dependent idx="11">the</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="15">authority</governor>
+            <dependent idx="12">city</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="12">city</governor>
+            <dependent idx="14">unitary</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="15">authority</governor>
+            <dependent idx="14">unitary</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="9">part</governor>
+            <dependent idx="15">authority</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="15">authority</governor>
+            <dependent idx="17">Brighton</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="15">authority</governor>
+            <dependent idx="19">Hove</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="17">Brighton</governor>
+            <dependent idx="19">Hove</dependent>
+          </dep>
+          <dep type="dep">
+            <governor idx="9">part</governor>
+            <dependent idx="21">formed</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="25">towns</governor>
+            <dependent idx="23">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="25">towns</governor>
+            <dependent idx="24">previous</dependent>
+          </dep>
+          <dep type="prep_from">
+            <governor idx="21">formed</governor>
+            <dependent idx="25">towns</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="25">towns</governor>
+            <dependent idx="27">Brighton</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="25">towns</governor>
+            <dependent idx="29">Hove</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="29">Hove</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="25">towns</governor>
+            <dependent idx="31">Portslade</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="31">Portslade</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="35">villages</governor>
+            <dependent idx="33">several</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="35">villages</governor>
+            <dependent idx="34">other</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="25">towns</governor>
+            <dependent idx="35">villages</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="27">Brighton</governor>
+            <dependent idx="35">villages</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="40">coast</governor>
+            <dependent idx="38">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="40">coast</governor>
+            <dependent idx="39">south</dependent>
+          </dep>
+          <dep type="prep_on">
+            <governor idx="9">part</governor>
+            <dependent idx="40">coast</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="43">Britain</governor>
+            <dependent idx="42">Great</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="40">coast</governor>
+            <dependent idx="43">Britain</dependent>
+          </dep>
+        </collapsed-ccprocessed-dependencies>
+      </sentence>
+      <sentence id="2">
+        <tokens>
+          <token id="1">
+            <word>Formerly</word>
+            <CharacterOffsetBegin>220</CharacterOffsetBegin>
+            <CharacterOffsetEnd>228</CharacterOffsetEnd>
+            <POS>RB</POS>
+          </token>
+          <token id="2">
+            <word>part</word>
+            <CharacterOffsetBegin>229</CharacterOffsetBegin>
+            <CharacterOffsetEnd>233</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="3">
+            <word>of</word>
+            <CharacterOffsetBegin>234</CharacterOffsetBegin>
+            <CharacterOffsetEnd>236</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="4">
+            <word>the</word>
+            <CharacterOffsetBegin>237</CharacterOffsetBegin>
+            <CharacterOffsetEnd>240</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="5">
+            <word>non-metropolitan</word>
+            <CharacterOffsetBegin>241</CharacterOffsetBegin>
+            <CharacterOffsetEnd>257</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="6">
+            <word>county</word>
+            <CharacterOffsetBegin>258</CharacterOffsetBegin>
+            <CharacterOffsetEnd>264</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="7">
+            <word>of</word>
+            <CharacterOffsetBegin>265</CharacterOffsetBegin>
+            <CharacterOffsetEnd>267</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="8">
+            <word>East</word>
+            <CharacterOffsetBegin>268</CharacterOffsetBegin>
+            <CharacterOffsetEnd>272</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="9">
+            <word>Sussex</word>
+            <CharacterOffsetBegin>273</CharacterOffsetBegin>
+            <CharacterOffsetEnd>279</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="10">
+            <word>,</word>
+            <CharacterOffsetBegin>279</CharacterOffsetBegin>
+            <CharacterOffsetEnd>280</CharacterOffsetEnd>
+            <POS>,</POS>
+          </token>
+          <token id="11">
+            <word>it</word>
+            <CharacterOffsetBegin>281</CharacterOffsetBegin>
+            <CharacterOffsetEnd>283</CharacterOffsetEnd>
+            <POS>PRP</POS>
+          </token>
+          <token id="12">
+            <word>remains</word>
+            <CharacterOffsetBegin>284</CharacterOffsetBegin>
+            <CharacterOffsetEnd>291</CharacterOffsetEnd>
+            <POS>VBZ</POS>
+          </token>
+          <token id="13">
+            <word>part</word>
+            <CharacterOffsetBegin>292</CharacterOffsetBegin>
+            <CharacterOffsetEnd>296</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="14">
+            <word>of</word>
+            <CharacterOffsetBegin>297</CharacterOffsetBegin>
+            <CharacterOffsetEnd>299</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="15">
+            <word>the</word>
+            <CharacterOffsetBegin>300</CharacterOffsetBegin>
+            <CharacterOffsetEnd>303</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="16">
+            <word>ceremonial</word>
+            <CharacterOffsetBegin>304</CharacterOffsetBegin>
+            <CharacterOffsetEnd>314</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="17">
+            <word>county</word>
+            <CharacterOffsetBegin>315</CharacterOffsetBegin>
+            <CharacterOffsetEnd>321</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="18">
+            <word>of</word>
+            <CharacterOffsetBegin>322</CharacterOffsetBegin>
+            <CharacterOffsetEnd>324</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="19">
+            <word>East</word>
+            <CharacterOffsetBegin>325</CharacterOffsetBegin>
+            <CharacterOffsetEnd>329</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="20">
+            <word>Sussex</word>
+            <CharacterOffsetBegin>330</CharacterOffsetBegin>
+            <CharacterOffsetEnd>336</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="21">
+            <word>,</word>
+            <CharacterOffsetBegin>336</CharacterOffsetBegin>
+            <CharacterOffsetEnd>337</CharacterOffsetEnd>
+            <POS>,</POS>
+          </token>
+          <token id="22">
+            <word>within</word>
+            <CharacterOffsetBegin>338</CharacterOffsetBegin>
+            <CharacterOffsetEnd>344</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="23">
+            <word>the</word>
+            <CharacterOffsetBegin>345</CharacterOffsetBegin>
+            <CharacterOffsetEnd>348</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="24">
+            <word>historic</word>
+            <CharacterOffsetBegin>349</CharacterOffsetBegin>
+            <CharacterOffsetEnd>357</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="25">
+            <word>county</word>
+            <CharacterOffsetBegin>358</CharacterOffsetBegin>
+            <CharacterOffsetEnd>364</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="26">
+            <word>of</word>
+            <CharacterOffsetBegin>365</CharacterOffsetBegin>
+            <CharacterOffsetEnd>367</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="27">
+            <word>Sussex</word>
+            <CharacterOffsetBegin>368</CharacterOffsetBegin>
+            <CharacterOffsetEnd>374</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="28">
+            <word>.</word>
+            <CharacterOffsetBegin>374</CharacterOffsetBegin>
+            <CharacterOffsetEnd>375</CharacterOffsetEnd>
+            <POS>.</POS>
+          </token>
+        </tokens>
+        <parse>(ROOT (S (S (ADVP (RB Formerly)) (NP (NP (NN part)) (PP (IN of) (NP (NP (DT the) (JJ non-metropolitan) (NN county)) (PP (IN of) (NP (NNP East) (NNP Sussex))))))) (, ,) (NP (PRP it)) (VP (VBZ remains) (NP (NP (NN part)) (PP (IN of) (NP (NP (DT the) (JJ ceremonial) (NN county)) (PP (IN of) (NP (NNP East) (NNP Sussex)))))) (, ,) (PP (IN within) (NP (NP (DT the) (JJ historic) (NN county)) (PP (IN of) (NP (NNP Sussex)))))) (. .))) </parse>
+        <basic-dependencies>
+          <dep type="advmod">
+            <governor idx="2">part</governor>
+            <dependent idx="1">Formerly</dependent>
+          </dep>
+          <dep type="ccomp">
+            <governor idx="13">part</governor>
+            <dependent idx="2">part</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="2">part</governor>
+            <dependent idx="3">of</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="6">county</governor>
+            <dependent idx="4">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="6">county</governor>
+            <dependent idx="5">non-metropolitan</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="3">of</governor>
+            <dependent idx="6">county</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="6">county</governor>
+            <dependent idx="7">of</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="9">Sussex</governor>
+            <dependent idx="8">East</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="7">of</governor>
+            <dependent idx="9">Sussex</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="13">part</governor>
+            <dependent idx="11">it</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="13">part</governor>
+            <dependent idx="12">remains</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="13">part</governor>
+            <dependent idx="14">of</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="17">county</governor>
+            <dependent idx="15">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="17">county</governor>
+            <dependent idx="16">ceremonial</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="14">of</governor>
+            <dependent idx="17">county</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="17">county</governor>
+            <dependent idx="18">of</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="20">Sussex</governor>
+            <dependent idx="19">East</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="18">of</governor>
+            <dependent idx="20">Sussex</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="13">part</governor>
+            <dependent idx="22">within</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="25">county</governor>
+            <dependent idx="23">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="25">county</governor>
+            <dependent idx="24">historic</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="22">within</governor>
+            <dependent idx="25">county</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="25">county</governor>
+            <dependent idx="26">of</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="26">of</governor>
+            <dependent idx="27">Sussex</dependent>
+          </dep>
+        </basic-dependencies>
+        <collapsed-dependencies>
+          <dep type="advmod">
+            <governor idx="2">part</governor>
+            <dependent idx="1">Formerly</dependent>
+          </dep>
+          <dep type="ccomp">
+            <governor idx="13">part</governor>
+            <dependent idx="2">part</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="6">county</governor>
+            <dependent idx="4">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="6">county</governor>
+            <dependent idx="5">non-metropolitan</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="2">part</governor>
+            <dependent idx="6">county</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="9">Sussex</governor>
+            <dependent idx="8">East</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="6">county</governor>
+            <dependent idx="9">Sussex</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="13">part</governor>
+            <dependent idx="11">it</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="13">part</governor>
+            <dependent idx="12">remains</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="17">county</governor>
+            <dependent idx="15">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="17">county</governor>
+            <dependent idx="16">ceremonial</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="13">part</governor>
+            <dependent idx="17">county</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="20">Sussex</governor>
+            <dependent idx="19">East</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="17">county</governor>
+            <dependent idx="20">Sussex</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="25">county</governor>
+            <dependent idx="23">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="25">county</governor>
+            <dependent idx="24">historic</dependent>
+          </dep>
+          <dep type="prep_within">
+            <governor idx="13">part</governor>
+            <dependent idx="25">county</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="25">county</governor>
+            <dependent idx="27">Sussex</dependent>
+          </dep>
+        </collapsed-dependencies>
+        <collapsed-ccprocessed-dependencies>
+          <dep type="advmod">
+            <governor idx="2">part</governor>
+            <dependent idx="1">Formerly</dependent>
+          </dep>
+          <dep type="ccomp">
+            <governor idx="13">part</governor>
+            <dependent idx="2">part</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="6">county</governor>
+            <dependent idx="4">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="6">county</governor>
+            <dependent idx="5">non-metropolitan</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="2">part</governor>
+            <dependent idx="6">county</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="9">Sussex</governor>
+            <dependent idx="8">East</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="6">county</governor>
+            <dependent idx="9">Sussex</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="13">part</governor>
+            <dependent idx="11">it</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="13">part</governor>
+            <dependent idx="12">remains</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="17">county</governor>
+            <dependent idx="15">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="17">county</governor>
+            <dependent idx="16">ceremonial</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="13">part</governor>
+            <dependent idx="17">county</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="20">Sussex</governor>
+            <dependent idx="19">East</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="17">county</governor>
+            <dependent idx="20">Sussex</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="25">county</governor>
+            <dependent idx="23">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="25">county</governor>
+            <dependent idx="24">historic</dependent>
+          </dep>
+          <dep type="prep_within">
+            <governor idx="13">part</governor>
+            <dependent idx="25">county</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="25">county</governor>
+            <dependent idx="27">Sussex</dependent>
+          </dep>
+        </collapsed-ccprocessed-dependencies>
+      </sentence>
+      <sentence id="3">
+        <tokens>
+          <token id="1">
+            <word>The</word>
+            <CharacterOffsetBegin>377</CharacterOffsetBegin>
+            <CharacterOffsetEnd>380</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="2">
+            <word>ancient</word>
+            <CharacterOffsetBegin>381</CharacterOffsetBegin>
+            <CharacterOffsetEnd>388</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="3">
+            <word>settlement</word>
+            <CharacterOffsetBegin>389</CharacterOffsetBegin>
+            <CharacterOffsetEnd>399</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="4">
+            <word>of</word>
+            <CharacterOffsetBegin>400</CharacterOffsetBegin>
+            <CharacterOffsetEnd>402</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="5">
+            <word>Brighthelmstone</word>
+            <CharacterOffsetBegin>403</CharacterOffsetBegin>
+            <CharacterOffsetEnd>418</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="6">
+            <word>dates</word>
+            <CharacterOffsetBegin>419</CharacterOffsetBegin>
+            <CharacterOffsetEnd>424</CharacterOffsetEnd>
+            <POS>VBZ</POS>
+          </token>
+          <token id="7">
+            <word>from</word>
+            <CharacterOffsetBegin>425</CharacterOffsetBegin>
+            <CharacterOffsetEnd>429</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="8">
+            <word>before</word>
+            <CharacterOffsetBegin>430</CharacterOffsetBegin>
+            <CharacterOffsetEnd>436</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="9">
+            <word>Domesday</word>
+            <CharacterOffsetBegin>437</CharacterOffsetBegin>
+            <CharacterOffsetEnd>445</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="10">
+            <word>Book</word>
+            <CharacterOffsetBegin>446</CharacterOffsetBegin>
+            <CharacterOffsetEnd>450</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="11">
+            <word>-LRB-</word>
+            <CharacterOffsetBegin>451</CharacterOffsetBegin>
+            <CharacterOffsetEnd>452</CharacterOffsetEnd>
+            <POS>-LRB-</POS>
+          </token>
+          <token id="12">
+            <word>1086</word>
+            <CharacterOffsetBegin>452</CharacterOffsetBegin>
+            <CharacterOffsetEnd>456</CharacterOffsetEnd>
+            <POS>CD</POS>
+          </token>
+          <token id="13">
+            <word>-RRB-</word>
+            <CharacterOffsetBegin>456</CharacterOffsetBegin>
+            <CharacterOffsetEnd>457</CharacterOffsetEnd>
+            <POS>-RRB-</POS>
+          </token>
+          <token id="14">
+            <word>,</word>
+            <CharacterOffsetBegin>457</CharacterOffsetBegin>
+            <CharacterOffsetEnd>458</CharacterOffsetEnd>
+            <POS>,</POS>
+          </token>
+          <token id="15">
+            <word>but</word>
+            <CharacterOffsetBegin>459</CharacterOffsetBegin>
+            <CharacterOffsetEnd>462</CharacterOffsetEnd>
+            <POS>CC</POS>
+          </token>
+          <token id="16">
+            <word>it</word>
+            <CharacterOffsetBegin>463</CharacterOffsetBegin>
+            <CharacterOffsetEnd>465</CharacterOffsetEnd>
+            <POS>PRP</POS>
+          </token>
+          <token id="17">
+            <word>emerged</word>
+            <CharacterOffsetBegin>466</CharacterOffsetBegin>
+            <CharacterOffsetEnd>473</CharacterOffsetEnd>
+            <POS>VBD</POS>
+          </token>
+          <token id="18">
+            <word>as</word>
+            <CharacterOffsetBegin>474</CharacterOffsetBegin>
+            <CharacterOffsetEnd>476</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="19">
+            <word>a</word>
+            <CharacterOffsetBegin>477</CharacterOffsetBegin>
+            <CharacterOffsetEnd>478</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="20">
+            <word>health</word>
+            <CharacterOffsetBegin>479</CharacterOffsetBegin>
+            <CharacterOffsetEnd>485</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="21">
+            <word>resort</word>
+            <CharacterOffsetBegin>486</CharacterOffsetBegin>
+            <CharacterOffsetEnd>492</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="22">
+            <word>featuring</word>
+            <CharacterOffsetBegin>493</CharacterOffsetBegin>
+            <CharacterOffsetEnd>502</CharacterOffsetEnd>
+            <POS>VBG</POS>
+          </token>
+          <token id="23">
+            <word>sea</word>
+            <CharacterOffsetBegin>503</CharacterOffsetBegin>
+            <CharacterOffsetEnd>506</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="24">
+            <word>bathing</word>
+            <CharacterOffsetBegin>507</CharacterOffsetBegin>
+            <CharacterOffsetEnd>514</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="25">
+            <word>during</word>
+            <CharacterOffsetBegin>515</CharacterOffsetBegin>
+            <CharacterOffsetEnd>521</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="26">
+            <word>the</word>
+            <CharacterOffsetBegin>522</CharacterOffsetBegin>
+            <CharacterOffsetEnd>525</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="27">
+            <word>18th</word>
+            <CharacterOffsetBegin>526</CharacterOffsetBegin>
+            <CharacterOffsetEnd>530</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="28">
+            <word>century</word>
+            <CharacterOffsetBegin>531</CharacterOffsetBegin>
+            <CharacterOffsetEnd>538</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="29">
+            <word>and</word>
+            <CharacterOffsetBegin>539</CharacterOffsetBegin>
+            <CharacterOffsetEnd>542</CharacterOffsetEnd>
+            <POS>CC</POS>
+          </token>
+          <token id="30">
+            <word>became</word>
+            <CharacterOffsetBegin>543</CharacterOffsetBegin>
+            <CharacterOffsetEnd>549</CharacterOffsetEnd>
+            <POS>VBD</POS>
+          </token>
+          <token id="31">
+            <word>a</word>
+            <CharacterOffsetBegin>550</CharacterOffsetBegin>
+            <CharacterOffsetEnd>551</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="32">
+            <word>destination</word>
+            <CharacterOffsetBegin>552</CharacterOffsetBegin>
+            <CharacterOffsetEnd>563</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="33">
+            <word>for</word>
+            <CharacterOffsetBegin>564</CharacterOffsetBegin>
+            <CharacterOffsetEnd>567</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="34">
+            <word>day-trippers</word>
+            <CharacterOffsetBegin>568</CharacterOffsetBegin>
+            <CharacterOffsetEnd>580</CharacterOffsetEnd>
+            <POS>NNS</POS>
+          </token>
+          <token id="35">
+            <word>from</word>
+            <CharacterOffsetBegin>581</CharacterOffsetBegin>
+            <CharacterOffsetEnd>585</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="36">
+            <word>London</word>
+            <CharacterOffsetBegin>586</CharacterOffsetBegin>
+            <CharacterOffsetEnd>592</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="37">
+            <word>after</word>
+            <CharacterOffsetBegin>593</CharacterOffsetBegin>
+            <CharacterOffsetEnd>598</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="38">
+            <word>the</word>
+            <CharacterOffsetBegin>599</CharacterOffsetBegin>
+            <CharacterOffsetEnd>602</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="39">
+            <word>arrival</word>
+            <CharacterOffsetBegin>603</CharacterOffsetBegin>
+            <CharacterOffsetEnd>610</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="40">
+            <word>of</word>
+            <CharacterOffsetBegin>611</CharacterOffsetBegin>
+            <CharacterOffsetEnd>613</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="41">
+            <word>the</word>
+            <CharacterOffsetBegin>614</CharacterOffsetBegin>
+            <CharacterOffsetEnd>617</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="42">
+            <word>railway</word>
+            <CharacterOffsetBegin>618</CharacterOffsetBegin>
+            <CharacterOffsetEnd>625</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="43">
+            <word>in</word>
+            <CharacterOffsetBegin>626</CharacterOffsetBegin>
+            <CharacterOffsetEnd>628</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="44">
+            <word>1841</word>
+            <CharacterOffsetBegin>629</CharacterOffsetBegin>
+            <CharacterOffsetEnd>633</CharacterOffsetEnd>
+            <POS>CD</POS>
+          </token>
+          <token id="45">
+            <word>.</word>
+            <CharacterOffsetBegin>633</CharacterOffsetBegin>
+            <CharacterOffsetEnd>634</CharacterOffsetEnd>
+            <POS>.</POS>
+          </token>
+        </tokens>
+        <parse>(ROOT (S (S (NP (NP (DT The) (JJ ancient) (NN settlement)) (PP (IN of) (NP (NNP Brighthelmstone)))) (VP (VBZ dates) (PP (IN from) (PP (IN before) (NP (NP (NNP Domesday) (NNP Book)) (PRN (-LRB- -LRB-) (NP (CD 1086)) (-RRB- -RRB-))))))) (, ,) (CC but) (S (NP (PRP it)) (VP (VP (VBD emerged) (PP (IN as) (NP (DT a) (NN health) (NN resort))) (S (VP (VBG featuring) (NP (NN sea) (NN bathing)) (PP (IN during) (NP (DT the) (JJ 18th) (NN century)))))) (CC and) (VP (VBD became) (NP (DT a) (NN destination)) (PP (IN for) (NP (NP (NNS day-trippers)) (PP (IN from) (NP (NNP London))))) (PP (IN after) (NP (NP (DT the) (NN arrival)) (PP (IN of) (NP (NP (DT the) (NN railway)) (PP (IN in) (NP (CD 1841)))))))))) (. .))) </parse>
+        <basic-dependencies>
+          <dep type="det">
+            <governor idx="3">settlement</governor>
+            <dependent idx="1">The</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="3">settlement</governor>
+            <dependent idx="2">ancient</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="6">dates</governor>
+            <dependent idx="3">settlement</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="3">settlement</governor>
+            <dependent idx="4">of</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="4">of</governor>
+            <dependent idx="5">Brighthelmstone</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="6">dates</governor>
+            <dependent idx="7">from</dependent>
+          </dep>
+          <dep type="pcomp">
+            <governor idx="7">from</governor>
+            <dependent idx="8">before</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="10">Book</governor>
+            <dependent idx="9">Domesday</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="8">before</governor>
+            <dependent idx="10">Book</dependent>
+          </dep>
+          <dep type="appos">
+            <governor idx="10">Book</governor>
+            <dependent idx="12">1086</dependent>
+          </dep>
+          <dep type="cc">
+            <governor idx="6">dates</governor>
+            <dependent idx="15">but</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="17">emerged</governor>
+            <dependent idx="16">it</dependent>
+          </dep>
+          <dep type="conj">
+            <governor idx="6">dates</governor>
+            <dependent idx="17">emerged</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="17">emerged</governor>
+            <dependent idx="18">as</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="21">resort</governor>
+            <dependent idx="19">a</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="21">resort</governor>
+            <dependent idx="20">health</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="18">as</governor>
+            <dependent idx="21">resort</dependent>
+          </dep>
+          <dep type="xcomp">
+            <governor idx="17">emerged</governor>
+            <dependent idx="22">featuring</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="24">bathing</governor>
+            <dependent idx="23">sea</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="22">featuring</governor>
+            <dependent idx="24">bathing</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="22">featuring</governor>
+            <dependent idx="25">during</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="28">century</governor>
+            <dependent idx="26">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="28">century</governor>
+            <dependent idx="27">18th</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="25">during</governor>
+            <dependent idx="28">century</dependent>
+          </dep>
+          <dep type="cc">
+            <governor idx="17">emerged</governor>
+            <dependent idx="29">and</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="32">destination</governor>
+            <dependent idx="30">became</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="32">destination</governor>
+            <dependent idx="31">a</dependent>
+          </dep>
+          <dep type="conj">
+            <governor idx="17">emerged</governor>
+            <dependent idx="32">destination</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="32">destination</governor>
+            <dependent idx="33">for</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="33">for</governor>
+            <dependent idx="34">day-trippers</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="34">day-trippers</governor>
+            <dependent idx="35">from</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="35">from</governor>
+            <dependent idx="36">London</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="32">destination</governor>
+            <dependent idx="37">after</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="39">arrival</governor>
+            <dependent idx="38">the</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="37">after</governor>
+            <dependent idx="39">arrival</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="39">arrival</governor>
+            <dependent idx="40">of</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="42">railway</governor>
+            <dependent idx="41">the</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="40">of</governor>
+            <dependent idx="42">railway</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="42">railway</governor>
+            <dependent idx="43">in</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="43">in</governor>
+            <dependent idx="44">1841</dependent>
+          </dep>
+        </basic-dependencies>
+        <collapsed-dependencies>
+          <dep type="det">
+            <governor idx="3">settlement</governor>
+            <dependent idx="1">The</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="3">settlement</governor>
+            <dependent idx="2">ancient</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="6">dates</governor>
+            <dependent idx="3">settlement</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="3">settlement</governor>
+            <dependent idx="5">Brighthelmstone</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="6">dates</governor>
+            <dependent idx="7">from</dependent>
+          </dep>
+          <dep type="pcomp">
+            <governor idx="7">from</governor>
+            <dependent idx="8">before</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="10">Book</governor>
+            <dependent idx="9">Domesday</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="8">before</governor>
+            <dependent idx="10">Book</dependent>
+          </dep>
+          <dep type="appos">
+            <governor idx="10">Book</governor>
+            <dependent idx="12">1086</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="17">emerged</governor>
+            <dependent idx="16">it</dependent>
+          </dep>
+          <dep type="conj_but">
+            <governor idx="6">dates</governor>
+            <dependent idx="17">emerged</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="21">resort</governor>
+            <dependent idx="19">a</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="21">resort</governor>
+            <dependent idx="20">health</dependent>
+          </dep>
+          <dep type="prep_as">
+            <governor idx="17">emerged</governor>
+            <dependent idx="21">resort</dependent>
+          </dep>
+          <dep type="xcomp">
+            <governor idx="17">emerged</governor>
+            <dependent idx="22">featuring</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="24">bathing</governor>
+            <dependent idx="23">sea</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="22">featuring</governor>
+            <dependent idx="24">bathing</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="28">century</governor>
+            <dependent idx="26">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="28">century</governor>
+            <dependent idx="27">18th</dependent>
+          </dep>
+          <dep type="prep_during">
+            <governor idx="22">featuring</governor>
+            <dependent idx="28">century</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="32">destination</governor>
+            <dependent idx="30">became</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="32">destination</governor>
+            <dependent idx="31">a</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="17">emerged</governor>
+            <dependent idx="32">destination</dependent>
+          </dep>
+          <dep type="prep_for">
+            <governor idx="32">destination</governor>
+            <dependent idx="34">day-trippers</dependent>
+          </dep>
+          <dep type="prep_from">
+            <governor idx="34">day-trippers</governor>
+            <dependent idx="36">London</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="39">arrival</governor>
+            <dependent idx="38">the</dependent>
+          </dep>
+          <dep type="prep_after">
+            <governor idx="32">destination</governor>
+            <dependent idx="39">arrival</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="42">railway</governor>
+            <dependent idx="41">the</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="39">arrival</governor>
+            <dependent idx="42">railway</dependent>
+          </dep>
+          <dep type="prep_in">
+            <governor idx="42">railway</governor>
+            <dependent idx="44">1841</dependent>
+          </dep>
+        </collapsed-dependencies>
+        <collapsed-ccprocessed-dependencies>
+          <dep type="det">
+            <governor idx="3">settlement</governor>
+            <dependent idx="1">The</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="3">settlement</governor>
+            <dependent idx="2">ancient</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="6">dates</governor>
+            <dependent idx="3">settlement</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="3">settlement</governor>
+            <dependent idx="5">Brighthelmstone</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="6">dates</governor>
+            <dependent idx="7">from</dependent>
+          </dep>
+          <dep type="pcomp">
+            <governor idx="7">from</governor>
+            <dependent idx="8">before</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="10">Book</governor>
+            <dependent idx="9">Domesday</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="8">before</governor>
+            <dependent idx="10">Book</dependent>
+          </dep>
+          <dep type="appos">
+            <governor idx="10">Book</governor>
+            <dependent idx="12">1086</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="17">emerged</governor>
+            <dependent idx="16">it</dependent>
+          </dep>
+          <dep type="conj_but">
+            <governor idx="6">dates</governor>
+            <dependent idx="17">emerged</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="21">resort</governor>
+            <dependent idx="19">a</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="21">resort</governor>
+            <dependent idx="20">health</dependent>
+          </dep>
+          <dep type="prep_as">
+            <governor idx="17">emerged</governor>
+            <dependent idx="21">resort</dependent>
+          </dep>
+          <dep type="xcomp">
+            <governor idx="17">emerged</governor>
+            <dependent idx="22">featuring</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="24">bathing</governor>
+            <dependent idx="23">sea</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="22">featuring</governor>
+            <dependent idx="24">bathing</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="28">century</governor>
+            <dependent idx="26">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="28">century</governor>
+            <dependent idx="27">18th</dependent>
+          </dep>
+          <dep type="prep_during">
+            <governor idx="22">featuring</governor>
+            <dependent idx="28">century</dependent>
+          </dep>
+          <dep type="cop">
+            <governor idx="32">destination</governor>
+            <dependent idx="30">became</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="32">destination</governor>
+            <dependent idx="31">a</dependent>
+          </dep>
+          <dep type="conj_but">
+            <governor idx="6">dates</governor>
+            <dependent idx="32">destination</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="17">emerged</governor>
+            <dependent idx="32">destination</dependent>
+          </dep>
+          <dep type="prep_for">
+            <governor idx="32">destination</governor>
+            <dependent idx="34">day-trippers</dependent>
+          </dep>
+          <dep type="prep_from">
+            <governor idx="34">day-trippers</governor>
+            <dependent idx="36">London</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="39">arrival</governor>
+            <dependent idx="38">the</dependent>
+          </dep>
+          <dep type="prep_after">
+            <governor idx="32">destination</governor>
+            <dependent idx="39">arrival</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="42">railway</governor>
+            <dependent idx="41">the</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="39">arrival</governor>
+            <dependent idx="42">railway</dependent>
+          </dep>
+          <dep type="prep_in">
+            <governor idx="42">railway</governor>
+            <dependent idx="44">1841</dependent>
+          </dep>
+        </collapsed-ccprocessed-dependencies>
+      </sentence>
+      <sentence id="4">
+        <tokens>
+          <token id="1">
+            <word>Brighton</word>
+            <CharacterOffsetBegin>635</CharacterOffsetBegin>
+            <CharacterOffsetEnd>643</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="2">
+            <word>experienced</word>
+            <CharacterOffsetBegin>644</CharacterOffsetBegin>
+            <CharacterOffsetEnd>655</CharacterOffsetEnd>
+            <POS>VBD</POS>
+          </token>
+          <token id="3">
+            <word>rapid</word>
+            <CharacterOffsetBegin>656</CharacterOffsetBegin>
+            <CharacterOffsetEnd>661</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="4">
+            <word>population</word>
+            <CharacterOffsetBegin>662</CharacterOffsetBegin>
+            <CharacterOffsetEnd>672</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="5">
+            <word>growth</word>
+            <CharacterOffsetBegin>673</CharacterOffsetBegin>
+            <CharacterOffsetEnd>679</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="6">
+            <word>,</word>
+            <CharacterOffsetBegin>679</CharacterOffsetBegin>
+            <CharacterOffsetEnd>680</CharacterOffsetEnd>
+            <POS>,</POS>
+          </token>
+          <token id="7">
+            <word>reaching</word>
+            <CharacterOffsetBegin>681</CharacterOffsetBegin>
+            <CharacterOffsetEnd>689</CharacterOffsetEnd>
+            <POS>VBG</POS>
+          </token>
+          <token id="8">
+            <word>a</word>
+            <CharacterOffsetBegin>690</CharacterOffsetBegin>
+            <CharacterOffsetEnd>691</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="9">
+            <word>peak</word>
+            <CharacterOffsetBegin>692</CharacterOffsetBegin>
+            <CharacterOffsetEnd>696</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="10">
+            <word>of</word>
+            <CharacterOffsetBegin>697</CharacterOffsetBegin>
+            <CharacterOffsetEnd>699</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="11">
+            <word>over</word>
+            <CharacterOffsetBegin>700</CharacterOffsetBegin>
+            <CharacterOffsetEnd>704</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="12">
+            <word>160,000</word>
+            <CharacterOffsetBegin>705</CharacterOffsetBegin>
+            <CharacterOffsetEnd>712</CharacterOffsetEnd>
+            <POS>CD</POS>
+          </token>
+          <token id="13">
+            <word>by</word>
+            <CharacterOffsetBegin>713</CharacterOffsetBegin>
+            <CharacterOffsetEnd>715</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="14">
+            <word>1961</word>
+            <CharacterOffsetBegin>716</CharacterOffsetBegin>
+            <CharacterOffsetEnd>720</CharacterOffsetEnd>
+            <POS>CD</POS>
+          </token>
+          <token id="15">
+            <word>.</word>
+            <CharacterOffsetBegin>720</CharacterOffsetBegin>
+            <CharacterOffsetEnd>721</CharacterOffsetEnd>
+            <POS>.</POS>
+          </token>
+        </tokens>
+        <parse>(ROOT (S (NP (NNP Brighton)) (VP (VBD experienced) (NP (JJ rapid) (NN population) (NN growth)) (, ,) (S (VP (VBG reaching) (NP (NP (DT a) (NN peak)) (PP (IN of) (NP (QP (IN over) (CD 160,000))))) (PP (IN by) (NP (CD 1961)))))) (. .))) </parse>
+        <basic-dependencies>
+          <dep type="nsubj">
+            <governor idx="2">experienced</governor>
+            <dependent idx="1">Brighton</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="5">growth</governor>
+            <dependent idx="3">rapid</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">growth</governor>
+            <dependent idx="4">population</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="2">experienced</governor>
+            <dependent idx="5">growth</dependent>
+          </dep>
+          <dep type="partmod">
+            <governor idx="2">experienced</governor>
+            <dependent idx="7">reaching</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="9">peak</governor>
+            <dependent idx="8">a</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="7">reaching</governor>
+            <dependent idx="9">peak</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="9">peak</governor>
+            <dependent idx="10">of</dependent>
+          </dep>
+          <dep type="quantmod">
+            <governor idx="12">160,000</governor>
+            <dependent idx="11">over</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="10">of</governor>
+            <dependent idx="12">160,000</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="7">reaching</governor>
+            <dependent idx="13">by</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="13">by</governor>
+            <dependent idx="14">1961</dependent>
+          </dep>
+        </basic-dependencies>
+        <collapsed-dependencies>
+          <dep type="nsubj">
+            <governor idx="2">experienced</governor>
+            <dependent idx="1">Brighton</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="5">growth</governor>
+            <dependent idx="3">rapid</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">growth</governor>
+            <dependent idx="4">population</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="2">experienced</governor>
+            <dependent idx="5">growth</dependent>
+          </dep>
+          <dep type="partmod">
+            <governor idx="2">experienced</governor>
+            <dependent idx="7">reaching</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="9">peak</governor>
+            <dependent idx="8">a</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="7">reaching</governor>
+            <dependent idx="9">peak</dependent>
+          </dep>
+          <dep type="quantmod">
+            <governor idx="12">160,000</governor>
+            <dependent idx="11">over</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="9">peak</governor>
+            <dependent idx="12">160,000</dependent>
+          </dep>
+          <dep type="agent">
+            <governor idx="7">reaching</governor>
+            <dependent idx="14">1961</dependent>
+          </dep>
+        </collapsed-dependencies>
+        <collapsed-ccprocessed-dependencies>
+          <dep type="nsubj">
+            <governor idx="2">experienced</governor>
+            <dependent idx="1">Brighton</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="5">growth</governor>
+            <dependent idx="3">rapid</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">growth</governor>
+            <dependent idx="4">population</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="2">experienced</governor>
+            <dependent idx="5">growth</dependent>
+          </dep>
+          <dep type="partmod">
+            <governor idx="2">experienced</governor>
+            <dependent idx="7">reaching</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="9">peak</governor>
+            <dependent idx="8">a</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="7">reaching</governor>
+            <dependent idx="9">peak</dependent>
+          </dep>
+          <dep type="quantmod">
+            <governor idx="12">160,000</governor>
+            <dependent idx="11">over</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="9">peak</governor>
+            <dependent idx="12">160,000</dependent>
+          </dep>
+          <dep type="agent">
+            <governor idx="7">reaching</governor>
+            <dependent idx="14">1961</dependent>
+          </dep>
+        </collapsed-ccprocessed-dependencies>
+      </sentence>
+      <sentence id="5">
+        <tokens>
+          <token id="1">
+            <word>-LRB-</word>
+            <CharacterOffsetBegin>721</CharacterOffsetBegin>
+            <CharacterOffsetEnd>722</CharacterOffsetEnd>
+            <POS>-LRB-</POS>
+          </token>
+          <token id="2">
+            <word>2</word>
+            <CharacterOffsetBegin>722</CharacterOffsetBegin>
+            <CharacterOffsetEnd>723</CharacterOffsetEnd>
+            <POS>LS</POS>
+          </token>
+          <token id="3">
+            <word>-RRB-</word>
+            <CharacterOffsetBegin>723</CharacterOffsetBegin>
+            <CharacterOffsetEnd>724</CharacterOffsetEnd>
+            <POS>-RRB-</POS>
+          </token>
+          <token id="4">
+            <word>Modern</word>
+            <CharacterOffsetBegin>725</CharacterOffsetBegin>
+            <CharacterOffsetEnd>731</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="5">
+            <word>Brighton</word>
+            <CharacterOffsetBegin>732</CharacterOffsetBegin>
+            <CharacterOffsetEnd>740</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="6">
+            <word>forms</word>
+            <CharacterOffsetBegin>741</CharacterOffsetBegin>
+            <CharacterOffsetEnd>746</CharacterOffsetEnd>
+            <POS>VBZ</POS>
+          </token>
+          <token id="7">
+            <word>part</word>
+            <CharacterOffsetBegin>747</CharacterOffsetBegin>
+            <CharacterOffsetEnd>751</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="8">
+            <word>of</word>
+            <CharacterOffsetBegin>752</CharacterOffsetBegin>
+            <CharacterOffsetEnd>754</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="9">
+            <word>the</word>
+            <CharacterOffsetBegin>755</CharacterOffsetBegin>
+            <CharacterOffsetEnd>758</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="10">
+            <word>Brighton\/Worthing\/Littlehampton</word>
+            <CharacterOffsetBegin>759</CharacterOffsetBegin>
+            <CharacterOffsetEnd>790</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="11">
+            <word>conurbation</word>
+            <CharacterOffsetBegin>791</CharacterOffsetBegin>
+            <CharacterOffsetEnd>802</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="12">
+            <word>stretching</word>
+            <CharacterOffsetBegin>803</CharacterOffsetBegin>
+            <CharacterOffsetEnd>813</CharacterOffsetEnd>
+            <POS>VBG</POS>
+          </token>
+          <token id="13">
+            <word>along</word>
+            <CharacterOffsetBegin>814</CharacterOffsetBegin>
+            <CharacterOffsetEnd>819</CharacterOffsetEnd>
+            <POS>RP</POS>
+          </token>
+          <token id="14">
+            <word>the</word>
+            <CharacterOffsetBegin>820</CharacterOffsetBegin>
+            <CharacterOffsetEnd>823</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="15">
+            <word>coast</word>
+            <CharacterOffsetBegin>824</CharacterOffsetBegin>
+            <CharacterOffsetEnd>829</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="16">
+            <word>,</word>
+            <CharacterOffsetBegin>829</CharacterOffsetBegin>
+            <CharacterOffsetEnd>830</CharacterOffsetEnd>
+            <POS>,</POS>
+          </token>
+          <token id="17">
+            <word>with</word>
+            <CharacterOffsetBegin>831</CharacterOffsetBegin>
+            <CharacterOffsetEnd>835</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="18">
+            <word>a</word>
+            <CharacterOffsetBegin>836</CharacterOffsetBegin>
+            <CharacterOffsetEnd>837</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="19">
+            <word>population</word>
+            <CharacterOffsetBegin>838</CharacterOffsetBegin>
+            <CharacterOffsetEnd>848</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="20">
+            <word>of</word>
+            <CharacterOffsetBegin>849</CharacterOffsetBegin>
+            <CharacterOffsetEnd>851</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="21">
+            <word>around</word>
+            <CharacterOffsetBegin>852</CharacterOffsetBegin>
+            <CharacterOffsetEnd>858</CharacterOffsetEnd>
+            <POS>RB</POS>
+          </token>
+          <token id="22">
+            <word>480,000</word>
+            <CharacterOffsetBegin>859</CharacterOffsetBegin>
+            <CharacterOffsetEnd>866</CharacterOffsetEnd>
+            <POS>CD</POS>
+          </token>
+          <token id="23">
+            <word>.</word>
+            <CharacterOffsetBegin>866</CharacterOffsetBegin>
+            <CharacterOffsetEnd>867</CharacterOffsetEnd>
+            <POS>.</POS>
+          </token>
+        </tokens>
+        <parse>(ROOT (S (LST (-LRB- -LRB-) (LS 2) (-RRB- -RRB-)) (NP (NNP Modern) (NNP Brighton)) (VP (VBZ forms) (NP (NP (NN part)) (PP (IN of) (NP (NP (DT the) (JJ Brighton\/Worthing\/Littlehampton) (NN conurbation)) (VP (VBG stretching) (PRT (RP along)) (NP (DT the) (NN coast)) (, ,) (PP (IN with) (NP (NP (DT a) (NN population)) (PP (IN of) (NP (QP (RB around) (CD 480,000))))))))))) (. .))) </parse>
+        <basic-dependencies>
+          <dep type="dep">
+            <governor idx="6">forms</governor>
+            <dependent idx="2">2</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">Brighton</governor>
+            <dependent idx="4">Modern</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="6">forms</governor>
+            <dependent idx="5">Brighton</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="6">forms</governor>
+            <dependent idx="7">part</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="7">part</governor>
+            <dependent idx="8">of</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="9">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="10">Brighton\/Worthing\/Littlehampton</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="8">of</governor>
+            <dependent idx="11">conurbation</dependent>
+          </dep>
+          <dep type="partmod">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="12">stretching</dependent>
+          </dep>
+          <dep type="prt">
+            <governor idx="12">stretching</governor>
+            <dependent idx="13">along</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="15">coast</governor>
+            <dependent idx="14">the</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="12">stretching</governor>
+            <dependent idx="15">coast</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="12">stretching</governor>
+            <dependent idx="17">with</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="19">population</governor>
+            <dependent idx="18">a</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="17">with</governor>
+            <dependent idx="19">population</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="19">population</governor>
+            <dependent idx="20">of</dependent>
+          </dep>
+          <dep type="quantmod">
+            <governor idx="22">480,000</governor>
+            <dependent idx="21">around</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="20">of</governor>
+            <dependent idx="22">480,000</dependent>
+          </dep>
+        </basic-dependencies>
+        <collapsed-dependencies>
+          <dep type="dep">
+            <governor idx="6">forms</governor>
+            <dependent idx="2">2</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">Brighton</governor>
+            <dependent idx="4">Modern</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="6">forms</governor>
+            <dependent idx="5">Brighton</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="6">forms</governor>
+            <dependent idx="7">part</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="9">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="10">Brighton\/Worthing\/Littlehampton</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="7">part</governor>
+            <dependent idx="11">conurbation</dependent>
+          </dep>
+          <dep type="partmod">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="12">stretching</dependent>
+          </dep>
+          <dep type="prt">
+            <governor idx="12">stretching</governor>
+            <dependent idx="13">along</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="15">coast</governor>
+            <dependent idx="14">the</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="12">stretching</governor>
+            <dependent idx="15">coast</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="19">population</governor>
+            <dependent idx="18">a</dependent>
+          </dep>
+          <dep type="prep_with">
+            <governor idx="12">stretching</governor>
+            <dependent idx="19">population</dependent>
+          </dep>
+          <dep type="quantmod">
+            <governor idx="22">480,000</governor>
+            <dependent idx="21">around</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="19">population</governor>
+            <dependent idx="22">480,000</dependent>
+          </dep>
+        </collapsed-dependencies>
+        <collapsed-ccprocessed-dependencies>
+          <dep type="dep">
+            <governor idx="6">forms</governor>
+            <dependent idx="2">2</dependent>
+          </dep>
+          <dep type="nn">
+            <governor idx="5">Brighton</governor>
+            <dependent idx="4">Modern</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="6">forms</governor>
+            <dependent idx="5">Brighton</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="6">forms</governor>
+            <dependent idx="7">part</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="9">the</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="10">Brighton\/Worthing\/Littlehampton</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="7">part</governor>
+            <dependent idx="11">conurbation</dependent>
+          </dep>
+          <dep type="partmod">
+            <governor idx="11">conurbation</governor>
+            <dependent idx="12">stretching</dependent>
+          </dep>
+          <dep type="prt">
+            <governor idx="12">stretching</governor>
+            <dependent idx="13">along</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="15">coast</governor>
+            <dependent idx="14">the</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="12">stretching</governor>
+            <dependent idx="15">coast</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="19">population</governor>
+            <dependent idx="18">a</dependent>
+          </dep>
+          <dep type="prep_with">
+            <governor idx="12">stretching</governor>
+            <dependent idx="19">population</dependent>
+          </dep>
+          <dep type="quantmod">
+            <governor idx="22">480,000</governor>
+            <dependent idx="21">around</dependent>
+          </dep>
+          <dep type="prep_of">
+            <governor idx="19">population</governor>
+            <dependent idx="22">480,000</dependent>
+          </dep>
+        </collapsed-ccprocessed-dependencies>
+      </sentence>
+      <sentence id="6">
+        <tokens>
+          <token id="1">
+            <word>-LRB-</word>
+            <CharacterOffsetBegin>867</CharacterOffsetBegin>
+            <CharacterOffsetEnd>868</CharacterOffsetEnd>
+            <POS>-LRB-</POS>
+          </token>
+          <token id="2">
+            <word>3</word>
+            <CharacterOffsetBegin>868</CharacterOffsetBegin>
+            <CharacterOffsetEnd>869</CharacterOffsetEnd>
+            <POS>LS</POS>
+          </token>
+          <token id="3">
+            <word>-RRB-</word>
+            <CharacterOffsetBegin>869</CharacterOffsetBegin>
+            <CharacterOffsetEnd>870</CharacterOffsetEnd>
+            <POS>-RRB-</POS>
+          </token>
+          <token id="4">
+            <word>Brighton</word>
+            <CharacterOffsetBegin>872</CharacterOffsetBegin>
+            <CharacterOffsetEnd>880</CharacterOffsetEnd>
+            <POS>NNP</POS>
+          </token>
+          <token id="5">
+            <word>has</word>
+            <CharacterOffsetBegin>881</CharacterOffsetBegin>
+            <CharacterOffsetEnd>884</CharacterOffsetEnd>
+            <POS>VBZ</POS>
+          </token>
+          <token id="6">
+            <word>two</word>
+            <CharacterOffsetBegin>885</CharacterOffsetBegin>
+            <CharacterOffsetEnd>888</CharacterOffsetEnd>
+            <POS>CD</POS>
+          </token>
+          <token id="7">
+            <word>universities</word>
+            <CharacterOffsetBegin>889</CharacterOffsetBegin>
+            <CharacterOffsetEnd>901</CharacterOffsetEnd>
+            <POS>NNS</POS>
+          </token>
+          <token id="8">
+            <word>and</word>
+            <CharacterOffsetBegin>902</CharacterOffsetBegin>
+            <CharacterOffsetEnd>905</CharacterOffsetEnd>
+            <POS>CC</POS>
+          </token>
+          <token id="9">
+            <word>a</word>
+            <CharacterOffsetBegin>906</CharacterOffsetBegin>
+            <CharacterOffsetEnd>907</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="10">
+            <word>medical</word>
+            <CharacterOffsetBegin>908</CharacterOffsetBegin>
+            <CharacterOffsetEnd>915</CharacterOffsetEnd>
+            <POS>JJ</POS>
+          </token>
+          <token id="11">
+            <word>school</word>
+            <CharacterOffsetBegin>916</CharacterOffsetBegin>
+            <CharacterOffsetEnd>922</CharacterOffsetEnd>
+            <POS>NN</POS>
+          </token>
+          <token id="12">
+            <word>-LRB-</word>
+            <CharacterOffsetBegin>923</CharacterOffsetBegin>
+            <CharacterOffsetEnd>924</CharacterOffsetEnd>
+            <POS>-LRB-</POS>
+          </token>
+          <token id="13">
+            <word>which</word>
+            <CharacterOffsetBegin>924</CharacterOffsetBegin>
+            <CharacterOffsetEnd>929</CharacterOffsetEnd>
+            <POS>WDT</POS>
+          </token>
+          <token id="14">
+            <word>is</word>
+            <CharacterOffsetBegin>930</CharacterOffsetBegin>
+            <CharacterOffsetEnd>932</CharacterOffsetEnd>
+            <POS>VBZ</POS>
+          </token>
+          <token id="15">
+            <word>operated</word>
+            <CharacterOffsetBegin>933</CharacterOffsetBegin>
+            <CharacterOffsetEnd>941</CharacterOffsetEnd>
+            <POS>VBN</POS>
+          </token>
+          <token id="16">
+            <word>jointly</word>
+            <CharacterOffsetBegin>942</CharacterOffsetBegin>
+            <CharacterOffsetEnd>949</CharacterOffsetEnd>
+            <POS>RB</POS>
+          </token>
+          <token id="17">
+            <word>by</word>
+            <CharacterOffsetBegin>950</CharacterOffsetBegin>
+            <CharacterOffsetEnd>952</CharacterOffsetEnd>
+            <POS>IN</POS>
+          </token>
+          <token id="18">
+            <word>both</word>
+            <CharacterOffsetBegin>953</CharacterOffsetBegin>
+            <CharacterOffsetEnd>957</CharacterOffsetEnd>
+            <POS>DT</POS>
+          </token>
+          <token id="19">
+            <word>universities</word>
+            <CharacterOffsetBegin>958</CharacterOffsetBegin>
+            <CharacterOffsetEnd>970</CharacterOffsetEnd>
+            <POS>NNS</POS>
+          </token>
+          <token id="20">
+            <word>-RRB-</word>
+            <CharacterOffsetBegin>970</CharacterOffsetBegin>
+            <CharacterOffsetEnd>971</CharacterOffsetEnd>
+            <POS>-RRB-</POS>
+          </token>
+          <token id="21">
+            <word>.</word>
+            <CharacterOffsetBegin>971</CharacterOffsetBegin>
+            <CharacterOffsetEnd>972</CharacterOffsetEnd>
+            <POS>.</POS>
+          </token>
+        </tokens>
+        <parse>(ROOT (S (LST (-LRB- -LRB-) (LS 3) (-RRB- -RRB-)) (NP (NNP Brighton)) (VP (VBZ has) (NP (NP (NP (CD two) (NNS universities)) (CC and) (NP (DT a) (JJ medical) (NN school))) (PRN (-LRB- -LRB-) (SBAR (WHNP (WDT which)) (S (VP (VBZ is) (VP (VBN operated) (ADVP (RB jointly)) (PP (IN by) (NP (DT both) (NNS universities))))))) (-RRB- -RRB-)))) (. .))) </parse>
+        <basic-dependencies>
+          <dep type="dep">
+            <governor idx="5">has</governor>
+            <dependent idx="2">3</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="5">has</governor>
+            <dependent idx="4">Brighton</dependent>
+          </dep>
+          <dep type="num">
+            <governor idx="7">universities</governor>
+            <dependent idx="6">two</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="5">has</governor>
+            <dependent idx="7">universities</dependent>
+          </dep>
+          <dep type="cc">
+            <governor idx="7">universities</governor>
+            <dependent idx="8">and</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="11">school</governor>
+            <dependent idx="9">a</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="11">school</governor>
+            <dependent idx="10">medical</dependent>
+          </dep>
+          <dep type="conj">
+            <governor idx="7">universities</governor>
+            <dependent idx="11">school</dependent>
+          </dep>
+          <dep type="nsubjpass">
+            <governor idx="15">operated</governor>
+            <dependent idx="13">which</dependent>
+          </dep>
+          <dep type="auxpass">
+            <governor idx="15">operated</governor>
+            <dependent idx="14">is</dependent>
+          </dep>
+          <dep type="dep">
+            <governor idx="7">universities</governor>
+            <dependent idx="15">operated</dependent>
+          </dep>
+          <dep type="advmod">
+            <governor idx="15">operated</governor>
+            <dependent idx="16">jointly</dependent>
+          </dep>
+          <dep type="prep">
+            <governor idx="15">operated</governor>
+            <dependent idx="17">by</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="19">universities</governor>
+            <dependent idx="18">both</dependent>
+          </dep>
+          <dep type="pobj">
+            <governor idx="17">by</governor>
+            <dependent idx="19">universities</dependent>
+          </dep>
+        </basic-dependencies>
+        <collapsed-dependencies>
+          <dep type="dep">
+            <governor idx="5">has</governor>
+            <dependent idx="2">3</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="5">has</governor>
+            <dependent idx="4">Brighton</dependent>
+          </dep>
+          <dep type="num">
+            <governor idx="7">universities</governor>
+            <dependent idx="6">two</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="5">has</governor>
+            <dependent idx="7">universities</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="11">school</governor>
+            <dependent idx="9">a</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="11">school</governor>
+            <dependent idx="10">medical</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="7">universities</governor>
+            <dependent idx="11">school</dependent>
+          </dep>
+          <dep type="nsubjpass">
+            <governor idx="15">operated</governor>
+            <dependent idx="13">which</dependent>
+          </dep>
+          <dep type="auxpass">
+            <governor idx="15">operated</governor>
+            <dependent idx="14">is</dependent>
+          </dep>
+          <dep type="dep">
+            <governor idx="7">universities</governor>
+            <dependent idx="15">operated</dependent>
+          </dep>
+          <dep type="advmod">
+            <governor idx="15">operated</governor>
+            <dependent idx="16">jointly</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="19">universities</governor>
+            <dependent idx="18">both</dependent>
+          </dep>
+          <dep type="agent">
+            <governor idx="15">operated</governor>
+            <dependent idx="19">universities</dependent>
+          </dep>
+        </collapsed-dependencies>
+        <collapsed-ccprocessed-dependencies>
+          <dep type="dep">
+            <governor idx="5">has</governor>
+            <dependent idx="2">3</dependent>
+          </dep>
+          <dep type="nsubj">
+            <governor idx="5">has</governor>
+            <dependent idx="4">Brighton</dependent>
+          </dep>
+          <dep type="num">
+            <governor idx="7">universities</governor>
+            <dependent idx="6">two</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="5">has</governor>
+            <dependent idx="7">universities</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="11">school</governor>
+            <dependent idx="9">a</dependent>
+          </dep>
+          <dep type="amod">
+            <governor idx="11">school</governor>
+            <dependent idx="10">medical</dependent>
+          </dep>
+          <dep type="dobj">
+            <governor idx="5">has</governor>
+            <dependent idx="11">school</dependent>
+          </dep>
+          <dep type="conj_and">
+            <governor idx="7">universities</governor>
+            <dependent idx="11">school</dependent>
+          </dep>
+          <dep type="nsubjpass">
+            <governor idx="15">operated</governor>
+            <dependent idx="13">which</dependent>
+          </dep>
+          <dep type="auxpass">
+            <governor idx="15">operated</governor>
+            <dependent idx="14">is</dependent>
+          </dep>
+          <dep type="dep">
+            <governor idx="7">universities</governor>
+            <dependent idx="15">operated</dependent>
+          </dep>
+          <dep type="advmod">
+            <governor idx="15">operated</governor>
+            <dependent idx="16">jointly</dependent>
+          </dep>
+          <dep type="det">
+            <governor idx="19">universities</governor>
+            <dependent idx="18">both</dependent>
+          </dep>
+          <dep type="agent">
+            <governor idx="15">operated</governor>
+            <dependent idx="19">universities</dependent>
+          </dep>
+        </collapsed-ccprocessed-dependencies>
+      </sentence>
+    </sentences>
+  </document>
+</root>

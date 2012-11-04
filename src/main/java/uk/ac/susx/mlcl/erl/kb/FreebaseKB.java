@@ -26,6 +26,10 @@ public class FreebaseKB implements KnowledgeBase {
 
     private static final Log LOG = LogFactory.getLog(FreebaseKB.class);
 
+    private static final String APPLICATION_NAME = "ERL/1.0";
+
+    private static final String API_KEY_FILE = ".google_api_key.txt";
+
     private Freebase2 freebase;
 
     FreebaseKB(Freebase2 freebase) {
@@ -34,7 +38,7 @@ public class FreebaseKB implements KnowledgeBase {
 
     public static FreebaseKB newInstance() throws IOException {
         final String googleApiKey = Freebase2.loadGoogleApiKey(
-                Paths.get(".googleApiKey.txt"));
+                Paths.get(API_KEY_FILE));
 
         JsonHttpRequestInitializer credential =
                 new GoogleKeyInitializer(googleApiKey);
@@ -43,7 +47,7 @@ public class FreebaseKB implements KnowledgeBase {
 
         Freebase2 freebase = new Freebase2.Builder(
                 new NetHttpTransport(), jsonFactory, null)
-                .setApplicationName("ERL/1.0")
+                .setApplicationName(APPLICATION_NAME)
                 .setJsonHttpRequestInitializer(credential)
                 .build();
 
