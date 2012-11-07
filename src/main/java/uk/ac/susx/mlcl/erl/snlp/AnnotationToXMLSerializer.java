@@ -534,7 +534,11 @@ public class AnnotationToXMLSerializer {
         private String namespaceURI = null;
 
         private String stylesheetName = "CoreNLP-to-HTML.xsl";
+        
+            Set<Class<? extends CoreAnnotation>> annotationBlacklist =
+                    new HashSet<Class<? extends CoreAnnotation>>();
 
+            
         public Builder() {
         }
 
@@ -605,8 +609,6 @@ public class AnnotationToXMLSerializer {
 
             }
 
-            Set<Class<? extends CoreAnnotation>> annotationBlacklist =
-                    new HashSet<Class<? extends CoreAnnotation>>();
             annotationBlacklist.add(CoreAnnotations.ValueAnnotation.class);
             annotationBlacklist.add(CoreAnnotations.OriginalTextAnnotation.class);
             annotationBlacklist.add(CoreAnnotations.BeforeAnnotation.class);
@@ -660,6 +662,9 @@ public class AnnotationToXMLSerializer {
                     nodeFilter);
         }
 
+        public void addAnnotationToIgnore(Class<? extends CoreAnnotation<?>> annotationClass) {
+            annotationBlacklist.add(annotationClass);
+        }
         public Builder disableDefaultSerializers() {
             useDefaultSerializers = false;
             return this;
