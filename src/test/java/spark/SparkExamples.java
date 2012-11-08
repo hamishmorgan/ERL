@@ -4,6 +4,9 @@
  */
 package spark;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
+import com.google.common.net.MediaType;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -13,8 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -29,7 +34,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -45,11 +49,17 @@ import org.junit.Test;
 public class SparkExamples {
 
     private static final Log LOG = LogFactory.getLog(SparkExamples.class);
+
     private static final File FAVICON_PATH = new File("src/test/resources/spark/favicon.ico");
+
     private static String PROTOCOL;
+
     private static int PORT;
+
     private static String HOST;
+
     private static URL ROOT_URL;
+
     private static Charset CHARSET;
 
     @BeforeClass
@@ -81,9 +91,9 @@ public class SparkExamples {
                 try {
                     in = new BufferedInputStream(new FileInputStream(FAVICON_PATH));
                     out = new BufferedOutputStream(response.raw().getOutputStream());
-                    response.raw().setContentType("image/vnd.microsoft.icon");
+                    response.raw().setContentType(MediaType.ICO.toString());
                     response.status(200);
-                    IOUtils.copy(in, out);
+                    ByteStreams.copy(in, out);
                     out.flush();
                     return "";
                 } catch (FileNotFoundException ex) {
@@ -95,7 +105,7 @@ public class SparkExamples {
                     response.status(500);
                     return ex.getMessage();
                 } finally {
-                    IOUtils.closeQuietly(in);
+                    Closeables.closeQuietly(in);
                 }
             }
         });
@@ -141,7 +151,7 @@ public class SparkExamples {
         });
 
         Assert.assertEquals("Hello World: ",
-                runHttpPostInput(url, ""));
+                            runHttpPostInput(url, ""));
     }
 
     @Test
@@ -173,7 +183,7 @@ public class SparkExamples {
         });
 
         Assert.assertEquals("Selected user: hamish",
-                runHttpGetString(new URL(ROOT_URL, "/users/hamish")));
+                            runHttpGetString(new URL(ROOT_URL, "/users/hamish")));
     }
 
     @Test
@@ -183,12 +193,13 @@ public class SparkExamples {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("text/xml");
-                return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>" + request.params("section") + "</news>";
+                return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>" + request
+                        .params("section") + "</news>";
             }
         });
 
         Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>things</news>",
-                runHttpGetString(new URL(ROOT_URL, "/news/things")));
+                            runHttpGetString(new URL(ROOT_URL, "/news/things")));
     }
 
     @Test
@@ -236,24 +247,25 @@ public class SparkExamples {
     }
 
     /*
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
      */
     static class Book {
 
         private String author;
+
         private String title;
 
         public Book(String author, String title) {
@@ -500,7 +512,8 @@ public class SparkExamples {
     }
 
     private static String asXml(String name, Object value) {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><" + name + ">" + value + "</" + name + ">";
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><" + name + ">" + value + "</" + name
+                + ">";
     }
 
     private static String asJson(String name, Object value) {
@@ -514,7 +527,7 @@ public class SparkExamples {
         final URL url = new URL(ROOT_URL, "/favicon.ico");
 
         InputStream in = new FileInputStream(FAVICON_PATH);
-        byte[] expected = IOUtils.toByteArray(in);
+        byte[] expected = ByteStreams.toByteArray(in);
 
         byte[] actual = runHttpGetBytes(url);
         System.out.println(actual);
@@ -542,20 +555,20 @@ public class SparkExamples {
     }
 
     /*
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
      */
     static String runHttpGetString(URL url) throws IOException {
         InputStream in = null;
@@ -563,7 +576,7 @@ public class SparkExamples {
             in = url.openStream();
             return readAll(in);
         } finally {
-            IOUtils.closeQuietly(in);
+            Closeables.closeQuietly(in);
         }
 
     }
@@ -585,9 +598,9 @@ public class SparkExamples {
             InputStream in = null;
             try {
                 in = connection.getInputStream();
-                return IOUtils.toByteArray(in);
+                return ByteStreams.toByteArray(in);
             } finally {
-                IOUtils.closeQuietly(in);
+                Closeables.closeQuietly(in);
             }
 
         } finally {
@@ -628,13 +641,14 @@ public class SparkExamples {
             connection.connect();
 
             if (!body.isEmpty()) {
-                OutputStream out = null;
+                Writer out = null;
                 try {
-                    out = new BufferedOutputStream(connection.getOutputStream());
-                    IOUtils.write(body, out);
+                    out = new OutputStreamWriter(new BufferedOutputStream(
+                            connection.getOutputStream()));
+                    out.append(body);
                     out.flush();
                 } finally {
-                    IOUtils.closeQuietly(out);
+                    Closeables.closeQuietly(out);
                 }
             }
 
@@ -644,7 +658,7 @@ public class SparkExamples {
                 in = connection.getInputStream();
                 return readAll(in);
             } finally {
-                IOUtils.closeQuietly(in);
+                Closeables.closeQuietly(in);
             }
 
         } finally {
@@ -677,11 +691,12 @@ public class SparkExamples {
 
         UNKNOWN,
         AVAILABLE,
-        UNAVAILABLE,}
+        UNAVAILABLE,
+    }
 
     static void waitForConnectionStatus(URL url,
-            long timeoutDuration, TimeUnit timeoutUnits,
-            ConnectionStatus desiredStatus)
+                                        long timeoutDuration, TimeUnit timeoutUnits,
+                                        ConnectionStatus desiredStatus)
             throws IOException, TimeoutException {
 
         // Time in millis that this method should stop trying the connection

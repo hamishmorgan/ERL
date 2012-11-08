@@ -4,6 +4,7 @@
  */
 package edu.stanford.nlp;
 
+import com.google.common.io.Closeables;
 import edu.stanford.nlp.dcoref.CorefChain;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefClusterAnnotation;
@@ -51,12 +52,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import uk.ac.susx.mlcl.erl.snlp.AnnotationToXMLSerializer;
-import uk.ac.susx.mlcl.erl.snlp.StanfordAnnotationToXML;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
@@ -78,7 +77,7 @@ public class StanfordNLPTest extends AbstractTest {
             ser.save(document, os);
             os.flush();
         } finally {
-            IOUtils.closeQuietly(os);
+            Closeables.closeQuietly(os);
         }
     }
 
@@ -93,7 +92,7 @@ public class StanfordNLPTest extends AbstractTest {
             Annotation document = ser.load(is);
             return document;
         } finally {
-            IOUtils.closeQuietly(is);
+            Closeables.closeQuietly(is);
         }
     }
 //

@@ -14,6 +14,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.util.CoreMap;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -124,5 +125,18 @@ public class EntityLinkingAnnotator implements Annotator {
         public Class<String> getType() {
             return String.class;
         }
+    }
+    
+    public static class Factory implements edu.stanford.nlp.util.Factory<Annotator>, Serializable {
+
+        private static final long serialVersionUID = 1L;
+        public Annotator create() {
+            try {
+                return EntityLinkingAnnotator.newInstance();
+            } catch (IOException ex) {
+                 throw new RuntimeException(ex);
+            }
+        }
+        
     }
 }

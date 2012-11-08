@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.snlp;
 
+import com.google.common.io.Closeables;
 import edu.stanford.nlp.StanfordNLPTest;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -15,10 +16,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -110,11 +109,11 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
             Properties props = new Properties();
             props.put("annotators", "tokenize");
             StanfordCoreNLP s = new StanfordCoreNLP(props);
-            
+
             s.xmlPrint(document, os);
             os.flush();
         } finally {
-            IOUtils.closeQuietly(os);
+            Closeables.closeQuietly(os);
         }
 
 //        
@@ -142,8 +141,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
         ax.xmlPrint(document, System.out);
     }
 
-    
-      @Test
+    @Test
     public void foo2() throws IOException, ClassNotFoundException, InstantiationException, Exception {
 
 
@@ -156,7 +154,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
         ax.xmlPrint(document, System.out);
     }
 
-      @Test
+    @Test
     public void foo3() throws IOException, ClassNotFoundException, InstantiationException, Exception {
 
 
@@ -164,12 +162,11 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
                 new File(TEST_DATA_PATH,
                          "freebase_brighton.txt-tok-sent-parse-lemma-ner-dcoref.s.gz"));
 
-      
+
         AnnotationToXMLSerializer ax = AnnotationToXMLSerializer.builder().build();
 
         ax.xmlPrint(document, System.out);
     }
-
 //    
 //    /**
 //     * Test of newInstance method, of class EntityLinkingAnnotator.

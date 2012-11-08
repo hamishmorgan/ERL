@@ -18,15 +18,18 @@ import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.freebase.SearchFormat.EntityResult;
 import com.google.api.services.freebase.model.ContentserviceGet;
-import com.google.common.base.Preconditions;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
+import edu.stanford.nlp.io.IOUtils;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -60,7 +63,7 @@ public class Freebase2Test extends AbstractTest {
         JsonHttpRequestInitializer requestInitializer =
                 new JsonHttpRequestInitializer() {
                     public void initialize(JsonHttpRequest request) {
-                        if(!(request instanceof FreebaseRequest))
+                        if (!(request instanceof FreebaseRequest))
                             throw new IllegalArgumentException();
                         FreebaseRequest freebaseRequest = (FreebaseRequest) request;
                         freebaseRequest.setPrettyPrint(true);
@@ -98,8 +101,10 @@ public class Freebase2Test extends AbstractTest {
 
 
         InputStream is = search.executeAsInputStream();
-        String result = IOUtils.toString(is);
-        IOUtils.closeQuietly(is);
+
+        String result = CharStreams.toString(
+                new InputStreamReader(is, DEFAULT_CHARSET));
+        Closeables.closeQuietly(is);
 
 
         System.out.println(result);
@@ -129,8 +134,11 @@ public class Freebase2Test extends AbstractTest {
             search.setFormat(format);
 
             InputStream is = search.executeAsInputStream();
-            String result = IOUtils.toString(is);
-            IOUtils.closeQuietly(is);
+
+
+            String result = CharStreams.toString(
+                    new InputStreamReader(is, DEFAULT_CHARSET));
+            Closeables.closeQuietly(is);
 
             System.out.println(result);
         }
@@ -199,8 +207,10 @@ public class Freebase2Test extends AbstractTest {
         Freebase.Mqlread mlr = freebase.mqlread(query);
 
         InputStream is = mlr.executeAsInputStream();
-        String result = IOUtils.toString(is);
-        IOUtils.closeQuietly(is);
+
+        String result = CharStreams.toString(
+                new InputStreamReader(is, DEFAULT_CHARSET));
+        Closeables.closeQuietly(is);
 
         System.out.println(result);
     }
@@ -233,8 +243,10 @@ public class Freebase2Test extends AbstractTest {
             HttpResponse response = mlr.executeUnparsed();
 
             InputStream is = response.getContent();
-            String result = IOUtils.toString(is);
-            IOUtils.closeQuietly(is);
+
+            String result = CharStreams.toString(
+                    new InputStreamReader(is, DEFAULT_CHARSET));
+            Closeables.closeQuietly(is);
 
             System.out.println("Result = " + result);
 
@@ -287,7 +299,7 @@ public class Freebase2Test extends AbstractTest {
             im.download(out);
             out.flush();
         } finally {
-            IOUtils.closeQuietly(out);
+            Closeables.closeQuietly(out);
         }
 
 
@@ -742,8 +754,10 @@ public class Freebase2Test extends AbstractTest {
             Freebase.Mqlread mlr = freebase.mqlread(query);
 
             InputStream is = mlr.executeAsInputStream();
-            String result = IOUtils.toString(is);
-            IOUtils.closeQuietly(is);
+
+            String result = CharStreams.toString(
+                    new InputStreamReader(is, DEFAULT_CHARSET));
+            Closeables.closeQuietly(is);
 
             junit.framework.Assert.assertTrue(result != null);
             junit.framework.Assert.assertTrue(!result.isEmpty());
