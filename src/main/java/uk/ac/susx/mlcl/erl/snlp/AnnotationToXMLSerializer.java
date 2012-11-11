@@ -4,36 +4,28 @@
  */
 package uk.ac.susx.mlcl.erl.snlp;
 
+import eu.ac.susx.mlcl.xom.XomUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import edu.stanford.nlp.dcoref.CoNLL2011DocumentReader;
 import edu.stanford.nlp.dcoref.CorefChain;
-import edu.stanford.nlp.dcoref.CorefCoreAnnotations;
-import edu.stanford.nlp.dcoref.Mention;
-import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.tokensregex.types.Tags;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.process.Morphology;
-import edu.stanford.nlp.time.TimeAnnotations;
-import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.time.Timex;
-import edu.stanford.nlp.trees.EnglishGrammaticalRelations;
-import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.trees.TreePrint;
-import edu.stanford.nlp.trees.international.pennchinese.ChineseGrammaticalRelations;
 import edu.stanford.nlp.trees.semgraph.SemanticGraph;
-import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.trees.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.Factory;
 import edu.stanford.nlp.util.Filter;
 import edu.stanford.nlp.util.Filters;
+import eu.ac.susx.mlcl.xom.XomB;
+import eu.ac.susx.mlcl.xom.XomB.DocumentBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,8 +34,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -51,18 +43,16 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.annotation.concurrent.Immutable;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
-import nu.xom.Node;
 import nu.xom.NodeFactory;
 import nu.xom.Nodes;
 import nu.xom.Serializer;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Save annotations to XML
@@ -75,6 +65,7 @@ import nu.xom.Serializer;
  * @author hamish
  */
 @Nonnull
+@Immutable
 public class AnnotationToXMLSerializer {
 
     /**
@@ -92,53 +83,61 @@ public class AnnotationToXMLSerializer {
      * Map from CoreAnnotation types to simplified elements names used in the XML. Without
      * simplified names the full canonical class name will used.
      */
-    private final Map<Class<? extends CoreAnnotation>, String> simpleNames;
+    private final Map<Class<? extends CoreAnnotation<?>>, String> simpleNamesMap;
 
     /**
      * Map from CoreAnnotation types to special custom serializes that will be called for all
      * annotations of that type. This allows special behavior for particular annotators such as the
      * CorefChainAnnotation.
      */
-    private final Map<Class<? extends CoreAnnotation<?>>, XmlSerializer<?>> customSerializers;
+//    private final Map<Class<? extends CoreAnnotation<?>>, Class<? extends CustomGenerator<?>>> customSerializers;
+    private final InstancePool<Class<? extends CoreAnnotation<?>>, ? extends CustomGenerator<?>> customSerializerPool;
 
-    private final Filter<Class<? extends CoreAnnotation>> annotationFilter;
-//    private final Filter<Class<? extends CoreAnnotation>> annotationFilter;
+//        private final TypeToInstanceMap<?> customSerializerPool;
+    private final Filter<Class<? extends CoreAnnotation<?>>> annotationFilter;
 
-    private final Filter<Node> nodeFilter;
+    private final Set<String> nodeFilters;
 
-    private final NodeFactory nodeFactory = new NodeFactory();
+//    private final NodeFactory nodeFactory;
+    private final XomB x;
 
     /**
      * Dependence inject constructor. Use the associated builder {
      * @link AnnotationToXMLSerializer#builder()} < p/>
      * <p/>
+     * @param nodeFactory
      * @param namespaceURI      Namespace URI
      * @param stylesheetName    Name of the style sheet used from XML to XHTML transformation
      * @param simpleNames       Map from CoreAnnotation types to simplified elements names used in
      *                          the XML
      * @param customSerializers Map from CoreAnnotation types to special custom serializes that will
      *                          be called for all annotations of that type.
+     * @param nodeFilters
+     * @param annotationFilter
      * @throws NullPointerException if stylesheetName, simpleNames, or customSerializers is null
      */
     protected AnnotationToXMLSerializer(
+            NodeFactory nodeFactory,
             @Nullable String namespaceURI,
             String stylesheetName,
-            Map<Class<? extends CoreAnnotation>, String> simpleNames,
-            Map<Class<? extends CoreAnnotation<?>>, XmlSerializer<?>> customSerializers,
-            Filter<Class<? extends CoreAnnotation>> annotationFilter,
-            Filter<Node> nodeFilter) {
+            Map<Class<? extends CoreAnnotation<?>>, String> simpleNames,
+            InstancePool<Class<? extends CoreAnnotation<?>>, ? extends CustomGenerator<?>> customSerializers,
+//                    
+//            Map<Class<? extends CoreAnnotation<?>>, Class<? extends CustomGenerator<?>>> customSerializers,
+            Filter<Class<? extends CoreAnnotation<?>>> annotationFilter,
+            Set<String> nodeFilters) {
         Preconditions.checkNotNull(stylesheetName, "stylesheetName");
         Preconditions.checkNotNull(simpleNames, "simpleNames");
         Preconditions.checkNotNull(customSerializers, "customSerializers");
 
-
-
+        this.x = new XomB(nodeFactory);
         this.namespaceURI = namespaceURI;
         this.stylesheetName = stylesheetName;
-        this.simpleNames = simpleNames;
-        this.customSerializers = customSerializers;
+        this.simpleNamesMap = simpleNames;
+//        this.customSerializers = customSerializers;
         this.annotationFilter = annotationFilter;
-        this.nodeFilter = nodeFilter;
+        this.nodeFilters = nodeFilters;
+        this.customSerializerPool = customSerializers;
     }
 
     /**
@@ -156,7 +155,7 @@ public class AnnotationToXMLSerializer {
      * @param writer     The Writer to send the output to
      * @throws IOException
      */
-    public void xmlPrint(Annotation annotation, Writer writer) throws IOException {
+    public void xmlPrint(Annotation annotation, Writer writer) throws IOException, InstantiationException {
         Preconditions.checkNotNull(annotation, "annotation");
         Preconditions.checkNotNull(writer, "writer");
 
@@ -173,11 +172,17 @@ public class AnnotationToXMLSerializer {
      * @param outputStream The output stream
      * @throws IOException
      */
-    public void xmlPrint(Annotation annotation, OutputStream outputStream) throws IOException {
+    public void xmlPrint(Annotation annotation, OutputStream outputStream) throws IOException, InstantiationException {
         Preconditions.checkNotNull(annotation, "annotation");
         Preconditions.checkNotNull(outputStream, "outputStream");
 
-        Document xmlDoc = annotationToDoc(annotation);
+        xmlPrint(toDocument(annotation), outputStream);
+    }
+
+    public void xmlPrint(Document xmlDoc, OutputStream outputStream) throws IOException {
+        Preconditions.checkNotNull(xmlDoc, "xmlDoc");
+        Preconditions.checkNotNull(outputStream, "outputStream");
+
         Serializer ser = new Serializer(outputStream, "UTF-8");
         ser.setIndent(2);
         ser.setMaxLength(0);
@@ -190,39 +195,52 @@ public class AnnotationToXMLSerializer {
      * <p/>
      * @param annotation
      * @return
+     * @throws InstantiationException
      */
-    public Document annotationToDoc(Annotation annotation) {
+    public Document toDocument(Annotation annotation)
+            throws InstantiationException {
         Preconditions.checkNotNull(annotation, "annotation");
 
+        
+        DocumentBuilder xmlDoc = x.newDocument();
+        
+//        Document xmlDoc = nodeFactory.startMakingDocument();
 
-//        Element root = new Element("root", namespaceURI);
 
-        Document xmlDoc = nodeFactory.startMakingDocument();
+        if (stylesheetName != null && !stylesheetName.isEmpty()) {
+            xmlDoc.appendPI(namespaceURI, namespaceURI)
+            
+            Nodes pi = nodeFactory.makeProcessingInstruction(
+                    "xml-stylesheet", "href=\"" + stylesheetName + "\" type=\"text/xsl\"");
+            for (int i = 0; i < pi.size(); i++)
+                xmlDoc.insertChild(pi.get(i), xmlDoc.getChildCount() - 1);
+        }
 
         Element root = nodeFactory.makeRootElement("root", namespaceURI);
 
         xmlDoc.setRootElement(root);
 
-
-
-//        Document xmlDoc = new Document(root);
-
-        Nodes pi = nodeFactory.makeProcessingInstruction(
-                "xml-stylesheet", "href=\"" + stylesheetName + "\" type=\"text/xsl\"");
-
-//        xmlDoc.
-
-//        xmlDoc.
-//        xmlDoc.insertChild(pi, 0);
-
-
-
         Element docElem = nodeFactory.startMakingElement("document", namespaceURI);
         addCoreMap(docElem, annotation);
-        appendAllNodes(root, nodeFactory.finishMakingElement(docElem));
+        XomUtil.appendChildren(root, nodeFactory.finishMakingElement(docElem));
 
         nodeFactory.finishMakingDocument(xmlDoc);
+
+        for (String filter : nodeFilters) {
+            filterDocument(xmlDoc, filter);
+        }
+
+
         return xmlDoc;
+    }
+
+    static void filterDocument(Document doc, String xpathFilter) {
+
+        final Nodes nodes = doc.query(xpathFilter);
+        if (nodes != null) {
+            XomUtil.detachChildren(nodes);
+        }
+
     }
 
     /**
@@ -230,7 +248,7 @@ public class AnnotationToXMLSerializer {
      * @param parent
      * @param value
      */
-    private void addElementByValueType(Element parent, Object value) {
+    private void addElementByValueType(Element parent, Object value) throws InstantiationException {
         Preconditions.checkNotNull(parent, "parent");
         Preconditions.checkNotNull(value, "value");
 
@@ -250,14 +268,9 @@ public class AnnotationToXMLSerializer {
         }
     }
 
-    private void appendAllNodes(@Nonnull Element parent, @Nonnull Nodes nodes) {
-        for (int i = 0; i < nodes.size(); i++)
-            parent.appendChild(nodes.get(i));
-    }
-
     private void addString(@Nonnull Element parent, @Nonnull CharSequence value) {
         Nodes nodes = nodeFactory.makeText(value.toString());
-        appendAllNodes(parent, nodes);
+        XomUtil.appendChildren(parent, nodes);
     }
 
     private void addNumber(@Nonnull Element parent, @Nonnull Number value) {
@@ -270,11 +283,14 @@ public class AnnotationToXMLSerializer {
 
     private static final Morphology morph = new Morphology();
 
-    private void addListElements(@Nonnull Element parentList, @Nonnull List<?> childValues) {
+    private void addListElements(@Nonnull Element parentList, @Nonnull List<?> childValues) throws InstantiationException {
 
         // The list element itself will be named using the normal shortening system. Member 
         // elements of the list will attempt to use a singular variant of the list name if possible.
-        String singularName = morph.stem(parentList.getLocalName());
+        String singularName;
+        synchronized (morph) {
+            singularName = morph.stem(parentList.getLocalName());
+        }
         if (singularName.equals(parentList.getLocalName())) {
             singularName += "i";
         }
@@ -285,59 +301,70 @@ public class AnnotationToXMLSerializer {
 
             Element itemElement = nodeFactory.startMakingElement(
                     singularName, parentList.getNamespaceURI());
-            itemElement.addAttribute(new Attribute("id", Integer.toString(count)));
+
+            Nodes n = nodeFactory.makeAttribute("id", namespaceURI,
+                                      Integer.toString(count), Attribute.Type.ID);
+            XomUtil.appendAttributes(itemElement, n);
 
             if (value != null)
                 addElementByValueType(itemElement, value);
 
-            appendAllNodes(parentList, nodeFactory.finishMakingElement(itemElement));
+            XomUtil.appendChildren(parentList, nodeFactory.finishMakingElement(itemElement));
         }
     }
 
     private void addCoreMap(@Nonnull Element parent,
-                            @Nonnull CoreMap map) {
+                            @Nonnull CoreMap map) throws InstantiationException {
         for (Class<?> key : map.keySet()) {
             if (!CoreAnnotation.class.isAssignableFrom(key)) {
                 throw new AssertionError("Key is not an instance of CoreAnnotation.");
             }
 
-            final Class<? extends CoreAnnotation> castKey =
-                    (Class<? extends CoreAnnotation>) key;
+            final Class<? extends CoreAnnotation<?>> castKey =
+                    (Class<? extends CoreAnnotation<?>>) key;
 
             if (!annotationFilter.accept(castKey))
                 continue;
 
 
-            final String name = (simpleNames.containsKey(castKey))
-                    ? simpleNames.get(castKey)
+            final String name = (simpleNamesMap.containsKey(castKey))
+                    ? simpleNamesMap.get(castKey)
                     : castKey.getCanonicalName();
 
-            final Element element = nodeFactory.startMakingElement(name, parent.getNamespaceURI());
+            final Element element = nodeFactory.startMakingElement(
+                    name, parent.getNamespaceURI());
 
 
             boolean found = false;
-            for (Class<? extends CoreAnnotation> x : customSerializers.keySet()) {
+            for (Iterator<Class<? extends CoreAnnotation<?>>> it =
+                    customSerializerPool.keySet().iterator();
+                    it.hasNext();) {
 
-                if (x.isAssignableFrom(key)) {
-                    XmlSerializer s = customSerializers.get(x);
-                    final Object value = map.get(castKey);
-                    s.add(nodeFactory, element, value);
+
+
+                Class<? extends CoreAnnotation<?>> k = it.next();
+                if (k.isAssignableFrom(key)) {
+
+                    CustomGenerator serializer = customSerializerPool.getInstance(k);
+
+                    final Object value = map.get((Class<? extends CoreAnnotation>) castKey);
+                    serializer.generate(nodeFactory, element, value);
                     found = true;
                     break;
                 }
             }
             if (!found) {
 
-                final Object value = map.get(castKey);
+                final Object value = map.get((Class<? extends CoreAnnotation>) castKey);
                 if (value != null)
                     addElementByValueType(element, value);
             }
 
-            appendAllNodes(parent, nodeFactory.finishMakingElement(element));
+            XomUtil.appendChildren(parent, nodeFactory.finishMakingElement(element));
         }
     }
 
-    private void addMap(Element parent, Map<String, ?> map) {
+    private void addMap(Element parent, Map<String, ?> map) throws InstantiationException {
         for (String key : map.keySet()) {
 
             final Element element = nodeFactory.startMakingElement(
@@ -347,55 +374,75 @@ public class AnnotationToXMLSerializer {
             if (value != null)
                 addElementByValueType(element, value);
 
-            appendAllNodes(parent, nodeFactory.finishMakingElement(element));
+            XomUtil.appendChildren(parent, nodeFactory.finishMakingElement(element));
         }
     }
 
-    public interface XmlSerializer<T> {
+    public interface CustomGenerator<T> {
 
-        void add(NodeFactory factory, @Nonnull Element element, @Nonnull T value);
+        void generate(NodeFactory factory, @Nonnull Element element, @Nonnull T value);
     }
 
-    public static class TimexXmlSerializer implements XmlSerializer<Timex> {
+    public static class TimexGenerator implements CustomGenerator<Timex> {
 
         private boolean useTimexXml = false;
 
-        public void add(NodeFactory factory, @Nonnull Element element, @Nonnull Timex value) {
+        public void generate(NodeFactory factory, Element parent, Timex value) {
+
             if (useTimexXml) {
                 Element timexXml = value.toXmlElement();
-                for (int i = 0; i < timexXml.getAttributeCount(); i++) {
-                    Attribute a = timexXml.getAttribute(i);
-                    timexXml.removeAttribute(a);
-                    element.addAttribute(a);
-                }
+                XomUtil.moveAttributes(timexXml, parent);
+                XomUtil.moveChildren(timexXml, parent);
             } else {
 
-//                factory.makeAttribute("tid", element.getNamespaceURI(),
-//                                      value.tid(), Attribute.Type.CDATA);
-//                
+                Nodes ntid = factory.makeAttribute("tid", parent.getNamespaceURI(),
+                                                   value.tid(), Attribute.Type.CDATA);
+                Nodes ntype = factory.makeAttribute("type", parent.getNamespaceURI(),
+                                                    value.timexType(), Attribute.Type.CDATA);
+                Nodes nvalue = factory.makeText(value.value());
 
-                element.addAttribute(new Attribute("tid", value.tid()));
-                element.addAttribute(new Attribute("type", value.timexType()));
-                element.appendChild(value.value());
+                XomUtil.appendAttributes(parent, ntid, ntype);
+                XomUtil.appendChildren(parent, nvalue);
+            }
+        }
+
+        public static class Factory
+                implements edu.stanford.nlp.util.Factory<TimexGenerator> {
+
+            private static final long serialVersionUID = 1L;
+
+            public TimexGenerator create() {
+                return new TimexGenerator();
             }
         }
     }
 
-    public static class TreeXmlSerializer implements XmlSerializer<Tree> {
+    public static class TreeGenerator implements CustomGenerator<Tree> {
 
         private static TreePrint constituentTreePrinter = new TreePrint("penn");
 
-        public void add(NodeFactory factory, @Nonnull Element parent, @Nonnull Tree tree) {
+        public void generate(NodeFactory factory, @Nonnull Element parent, @Nonnull Tree tree) {
             StringWriter treeStrWriter = new StringWriter();
             constituentTreePrinter.printTree(tree, new PrintWriter(treeStrWriter, true));
             String temp = treeStrWriter.toString();
             parent.appendChild(temp);
         }
+
+        public static class Factory
+                implements edu.stanford.nlp.util.Factory<TreeGenerator> {
+
+            private static final long serialVersionUID = 1L;
+
+            public TreeGenerator create() {
+                return new TreeGenerator();
+            }
+        }
     }
 
-    public static class SemanticXmlGraphSerializer implements XmlSerializer<SemanticGraph> {
+    public static class SemanticGraphGenerator implements CustomGenerator<SemanticGraph> {
 
-        public void add(NodeFactory factory, @Nonnull Element parent, @Nonnull SemanticGraph graph) {
+        public void generate(NodeFactory factory, @Nonnull Element parent,
+                             @Nonnull SemanticGraph graph) {
 
 
             for (SemanticGraphEdge edge : graph.edgeListSorted()) {
@@ -421,23 +468,37 @@ public class AnnotationToXMLSerializer {
                 dependElem.addAttribute(new Attribute("idx", Integer.toString(target)));
 //            dependElem.appendChild(tokens.get(target - 1).word());
                 dependElem.appendChild(targetString);
-                
-                
+
+
                 depElem.appendChild(dependElem);
 
                 parent.appendChild(depElem);
             }
 
         }
+
+        public static class Factory
+                implements edu.stanford.nlp.util.Factory<SemanticGraphGenerator> {
+
+            private static final long serialVersionUID = 1L;
+
+            public SemanticGraphGenerator create() {
+                return new SemanticGraphGenerator();
+            }
+        }
     }
 
-    public static class CorefXmlSerializer implements XmlSerializer<Map<Integer, CorefChain>> {
+    public static class CorefGenerator implements CustomGenerator<Map<Integer, CorefChain>> {
 
         /**
          * Generates the XML content for the coreference chain object
+         * <p/>
+         * @param factory
+         * @param corefInfo
+         * @param corefChains
          */
-        public void add(NodeFactory factory, @Nonnull Element corefInfo,
-                        @Nonnull Map<Integer, CorefChain> corefChains) {
+        public void generate(NodeFactory factory, @Nonnull Element corefInfo,
+                             @Nonnull Map<Integer, CorefChain> corefChains) {
             String curNS = corefInfo.getNamespaceURI();
             boolean foundCoref = false;
             for (CorefChain chain : corefChains.values()) {
@@ -485,6 +546,16 @@ public class AnnotationToXMLSerializer {
 
             chainElem.appendChild(mentionElem);
         }
+
+        public static class Factory
+                implements edu.stanford.nlp.util.Factory<CorefGenerator> {
+
+            private static final long serialVersionUID = 1L;
+
+            public CorefGenerator create() {
+                return new CorefGenerator();
+            }
+        }
     }
 
     /**
@@ -492,203 +563,88 @@ public class AnnotationToXMLSerializer {
      */
     public static class Builder {
 
-        private static final Class<?>[] DEFAULT_ANNOTATION_ROOTS = {
-            CoreAnnotations.class,
-            SemanticGraphCoreAnnotations.class,
-            MachineReadingAnnotations.class,
-            ChineseGrammaticalRelations.class,
-            CoNLL2011DocumentReader.class,
-            CorefCoreAnnotations.class,
-            EnglishGrammaticalRelations.class,
-            GrammaticalRelation.class,
-            //                    ParserAnnotations.class,
-            Tags.class,
-            TimeAnnotations.class,
-            TimeExpression.class,
-            TreeCoreAnnotations.class,
-            Mention.class
-        };
+        public static final String NO_STYLESHEET = "";
 
-        private static final String[] DEFAULT_STRIP_SUFFIXES = {
-            "Annotations",
-            "Annotation",
-            "GrammaticalRelations"
-        };
+        private static final Log LOG = LogFactory.getLog(Builder.class);
 
-        private final Set<Class<?>> annotationRoots = new HashSet<Class<?>>();
+        private final Set<Class<?>> annotationRoots = Sets.newHashSet();
 
-        private final Set<String> stripSuffixes = new HashSet<String>();
+        private final Set<String> stripSuffixes = Sets.newHashSet();
 
-        private final BiMap<Class<? extends CoreAnnotation>, String> simpleNames =
-                HashBiMap.<Class<? extends CoreAnnotation>, String>create();
+        private final InstancePool.Builder<Class<? extends CoreAnnotation<?>>, CustomGenerator<?>> customSerializerPool;
 
-        private final Map<Class<? extends CoreAnnotation<?>>, XmlSerializer<?>> customSerializers =
-                new HashMap<Class<? extends CoreAnnotation<?>>, XmlSerializer<?>>();
-
-        private boolean useDefaultStripSuffixes = true;
-
-        private boolean useDefaultAnnotationRoots = true;
-
-        private boolean useDefaultSerializers = true;
+        private final BiMap<Class<? extends CoreAnnotation<?>>, String> simpleNames;
 
         private String namespaceURI = null;
 
-        private String stylesheetName = "CoreNLP-to-HTML.xsl";
-        
-            Set<Class<? extends CoreAnnotation>> annotationBlacklist =
-                    new HashSet<Class<? extends CoreAnnotation>>();
+        private String stylesheetName = NO_STYLESHEET;
 
-            
+        private NodeFactory nodeFactory = null;
+
+        private final ImmutableSet.Builder<Class<? extends CoreAnnotation<?>>> annoBlacklist;
+
+        private final ImmutableSet.Builder<String> xpathNodeFilters;
+
         public Builder() {
+            xpathNodeFilters = ImmutableSet.builder();
+            annoBlacklist = ImmutableSet.builder();
+            simpleNames = HashBiMap.create();
+            customSerializerPool = InstancePool.builder();
+            nodeFactory = new NodeFactory();
         }
 
-        public AnnotationToXMLSerializer build() throws XPathExpressionException {
-
-            if (useDefaultSerializers) {
-                addCustomeSerializer(
-                        TimeAnnotations.TimexAnnotation.class,
-                        new TimexXmlSerializer());
-                addCustomeSerializer(
-                        TreeCoreAnnotations.TreeAnnotation.class,
-                        new TreeXmlSerializer());
-                SemanticXmlGraphSerializer sxgs = new SemanticXmlGraphSerializer();
-                addCustomeSerializer(
-                        SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class,
-                        sxgs);
-                addCustomeSerializer(
-                        SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class,
-                        sxgs);
-                addCustomeSerializer(
-                        SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class,
-                        sxgs);
-                addCustomeSerializer(
-                        CorefCoreAnnotations.CorefChainAnnotation.class,
-                        new CorefXmlSerializer());
-            }
-
-            if (useDefaultStripSuffixes) {
-                stripSuffixes.addAll(Arrays.asList(DEFAULT_STRIP_SUFFIXES));
-            }
-
-
-            if (useDefaultAnnotationRoots) {
-                annotationRoots.addAll(Arrays.asList(DEFAULT_ANNOTATION_ROOTS));
-            }
-
-            simpleNames.put(CoreAnnotations.TextAnnotation.class, "word");
-            simpleNames.put(CoreAnnotations.PartOfSpeechAnnotation.class, "POS");
-            simpleNames.put(CoreAnnotations.NamedEntityTagAnnotation.class, "NER");
-            simpleNames.put(CoreAnnotations.CharacterOffsetBeginAnnotation.class,
-                            "CharacterOffsetBegin");
-            simpleNames
-                    .put(CoreAnnotations.CharacterOffsetEndAnnotation.class, "CharacterOffsetEnd");
-            simpleNames.put(TreeCoreAnnotations.TreeAnnotation.class, "parse");
-            simpleNames.put(CorefCoreAnnotations.CorefChainAnnotation.class, "coreference");
-            simpleNames.put(
-                    SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class,
-                    "collapsed-ccprocessed-dependencies");
-            simpleNames.put(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class,
-                            "collapsed-dependencies");
-            simpleNames.put(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class,
-                            "basic-dependencies");
-
-
-
+        public AnnotationToXMLSerializer build() {
 
             if (!annotationRoots.isEmpty()) {
+
                 final Set<Class<? extends CoreAnnotation>> candidates =
-                        findMembersOfType(annotationRoots,
-                                          CoreAnnotation.class);
-                for (Class<? extends CoreAnnotation> x : candidates) {
-                    if (!simpleNames.containsKey(x)) {
-                        String name = simplifiedName(
-                                x, DEFAULT_STRIP_SUFFIXES, simpleNames.values());
-                        simpleNames.put(x, name);
+                        findMembersOfType(annotationRoots, CoreAnnotation.class);
+                for (Class<? extends CoreAnnotation> candidate : candidates) {
+                    if (!simpleNames.containsKey(candidate)) {
+                        String name = simplifiedName(candidate,
+                                                     stripSuffixes, simpleNames.values());
+                        simpleNames.put((Class<? extends CoreAnnotation<?>>) candidate, name);
                     }
                 }
 
             }
 
-            annotationBlacklist.add(CoreAnnotations.ValueAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.OriginalTextAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.BeforeAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.AfterAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.TokenBeginAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.TokenEndAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.IndexAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.UtteranceAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.BeginIndexAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.EndIndexAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.ParagraphAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.SpeakerAnnotation.class);
-            annotationBlacklist.add(CorefCoreAnnotations.CorefClusterIdAnnotation.class);
-            annotationBlacklist.add(CoreAnnotations.NumerizedTokensAnnotation.class);
+            final Filter<Class<? extends CoreAnnotation<?>>> annotationBlacklistFilter =
+                    Filters.collectionRejectFilter(annoBlacklist.build());
 
-            Filter<Class<? extends CoreAnnotation>> annotationBlacklistFilter =
-                    Filters.collectionRejectFilter(annotationBlacklist);
-
-
-
-//            final XPathFactory xpathFactory = XPathFactory.newInstance();
-//            final XPath xpath = xpathFactory.newXPath();
-//
-//            Filter<Node> nodeFilter = new Filter<Node>() {
-//                XPathExpression xpx = xpath.compile("/root/document/word");
-//
-//                public boolean accept(Node obj) {
-//                    try {
-//                        Object result = xpx.evaluate(obj, XPathConstants.BOOLEAN);
-//                        assert result instanceof Boolean;
-//                        return (Boolean) result;
-//                    } catch (XPathExpressionException ex) {
-//                        throw new AssertionError(ex);
-//                    }
-//                }
-//            };
-//            xpx.
-
-
-//        xp.
-//        
-
-            Filter<Node> nodeFilter = Filters.acceptFilter();
 
             return new AnnotationToXMLSerializer(
+                    nodeFactory,
                     namespaceURI,
                     stylesheetName,
                     simpleNames,
-                    customSerializers,
+                    customSerializerPool.build(),
                     annotationBlacklistFilter,
-                    nodeFilter);
+                    xpathNodeFilters.build());
         }
 
-        public void addAnnotationToIgnore(Class<? extends CoreAnnotation<?>> annotationClass) {
-            annotationBlacklist.add(annotationClass);
-        }
-        public Builder disableDefaultSerializers() {
-            useDefaultSerializers = false;
+        public Builder addAnnotationRoot(Class<?> annotationRoot) {
+            annotationRoots.add(annotationRoot);
             return this;
         }
 
-        public Builder disableDefaultAnnotationRoots() {
-            useDefaultAnnotationRoots = false;
+        public Builder addXPathNodeFilter(String xpathFilter) {
+            xpathNodeFilters.add(xpathFilter);
             return this;
         }
 
-        public Builder disableDefaultStripSuffixes() {
-            useDefaultStripSuffixes = false;
+        public Builder addAnnotationToIgnore(Class<? extends CoreAnnotation<?>> annotationClass) {
+            annoBlacklist.add(annotationClass);
             return this;
         }
 
-        public <T> Builder addCustomeSerializer(
-                Class<? extends CoreAnnotation<T>> annotationType,
-                XmlSerializer<T> serializer) {
-            customSerializers.put(annotationType, serializer);
+        public Builder addStripSuffix(String suffix) {
+            stripSuffixes.add(suffix);
             return this;
         }
 
         public Builder addSimplifiedName(
-                Class<? extends CoreAnnotation> annotationType,
+                Class<? extends CoreAnnotation<?>> annotationType,
                 String name) {
             simpleNames.put(annotationType, name);
             return this;
@@ -700,6 +656,10 @@ public class AnnotationToXMLSerializer {
 
         public void setStylesheetName(String stylesheetName) {
             this.stylesheetName = stylesheetName;
+        }
+
+        public void setNodeFactory(NodeFactory nodeFactory) {
+            this.nodeFactory = nodeFactory;
         }
 
         /**
@@ -750,7 +710,7 @@ public class AnnotationToXMLSerializer {
         }
 
         private static String simplifiedName(Class<?> clazz,
-                                             String[] stripSuffixes,
+                                             Set<String> stripSuffixes,
                                              Set<String> existingNames) {
             Preconditions.checkNotNull(clazz, "clazz");
             Preconditions.checkNotNull(stripSuffixes, "stripSuffixes");
@@ -810,6 +770,120 @@ public class AnnotationToXMLSerializer {
             }
 
             return name.toString();
+        }
+
+        public void configure(Configuration config)
+                throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+
+
+
+            if (config.containsKey("annotationRoots")) {
+                String[] roots = config.getStringArray("annotationRoots");
+                for (String className : roots) {
+                    try {
+
+                        Class<?> clazz = Class.forName(className);
+                        addAnnotationRoot(clazz);
+                    } catch (ClassNotFoundException ex) {
+                        LOG.warn("Failed to load class for name: " + className, ex);
+                    }
+                }
+            }
+
+            if (config.containsKey("simplify")) {
+                String[] items = config.getStringArray("simplify");
+
+                for (String item : items) {
+//                    System.out.println(item);
+                    final int i = item.indexOf(':');
+                    String className = item.substring(0, i).trim();
+                    String simpleName = item.substring(i + 1).trim();
+                    try {
+                        Class<? extends CoreAnnotation<?>> clazz =
+                                (Class<? extends CoreAnnotation<?>>) Class.forName(className);
+                        addSimplifiedName(clazz, simpleName);
+                    } catch (ClassCastException ex) {
+                        LOG.warn("Class does not extend CoreAnnotation: " + className, ex);
+                    } catch (ClassNotFoundException ex) {
+                        LOG.warn("Failed to load class for name: " + className, ex);
+                    }
+                }
+
+            }
+
+            if (config.containsKey("stripSuffixes")) {
+                String[] roots = config.getStringArray("stripSuffixes");
+                for (String suffix : roots) {
+                    addStripSuffix(suffix.trim());
+                }
+            }
+
+            if (config.containsKey("nodeFilters")) {
+                String[] items = config.getStringArray("nodeFilters");
+                for (String filter : items) {
+                    addXPathNodeFilter(filter);
+                }
+            }
+
+
+
+            if (config.containsKey("annoBlacklist")) {
+                String[] classNames = config.getStringArray("annoBlacklist");
+                for (String className : classNames) {
+                    try {
+                        Class<? extends CoreAnnotation<?>> clazz =
+                                (Class<? extends CoreAnnotation<?>>) Class.forName(className);
+                        addAnnotationToIgnore(clazz);
+                    } catch (ClassCastException ex) {
+                        LOG.warn("Class does not extend CoreAnnotation: " + className, ex);
+                    } catch (ClassNotFoundException ex) {
+                        LOG.warn("Failed to load class for name: " + className, ex);
+                    }
+                }
+            }
+
+
+            if (config.containsKey("namespaceURI")) {
+                setNamespaceURI(config.getString("namespaceURI"));
+            }
+
+
+            if (config.containsKey("stylesheetName")) {
+                setStylesheetName(config.getString("stylesheetName"));
+            }
+
+
+            if (config.containsKey("customSerializers")) {
+                String[] items = config.getStringArray("customSerializers");
+
+                for (String item : items) {
+//                    System.out.println(item);
+                    String[] parts = item.split(":");
+                    final int i = item.indexOf(':');
+                    String annotationClassName = parts[0].trim();
+                    String serializerClassName = parts[1].trim();
+                    String serializerFactoryClassName = parts[2].trim();
+                    try {
+
+                        Class annotationClass = Class.forName(annotationClassName);
+                        Class serializerClass = Class.forName(serializerClassName);
+                        Factory factory = (Factory) Class.forName(serializerFactoryClassName)
+                                .newInstance();
+
+                        customSerializerPool.addFactory(
+                                annotationClass,
+                                serializerClass,
+                                factory);
+
+                    } catch (ClassCastException ex) {
+                        LOG.warn("Class does not extend CoreAnnotation: " + annotationClassName, ex);
+                    } catch (ClassNotFoundException ex) {
+                        LOG.warn("Failed to load class for name: " + annotationClassName, ex);
+                    }
+                }
+
+            }
+
         }
     }
 }

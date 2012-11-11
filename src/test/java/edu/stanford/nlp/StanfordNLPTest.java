@@ -98,7 +98,7 @@ public class StanfordNLPTest extends AbstractTest {
 //
 //    @Test
 //    @Category(Categories.IntegrationTests.class)
-//    public void foo() throws IOException {
+//    public void getSerializerFor() throws IOException {
 //
 //        final boolean verbose = false;
 //

@@ -46,6 +46,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.xpath.XPathExpressionException;
 import nu.xom.DocType;
 import nu.xom.Document;
@@ -149,7 +151,7 @@ public class WebApp {
 
                     pipeline.annotate(document);
 
-                    Document xmlDoc = toXml.annotationToDoc(document);
+                    Document xmlDoc = toXml.toDocument(document);
                     Nodes nodes = transform.transform(xmlDoc);
 
                     NodeFactory nf = new NodeFactory();
@@ -159,8 +161,7 @@ public class WebApp {
                     outDoc.setRootElement((Element) nodes.get(0));
 
                     nf.finishMakingDocument(outDoc);
-
-
+                    
                     XMLToStringSerializer sr = new XMLToStringSerializer(
                             response.raw().getOutputStream(), CHARSET.name());
                     sr.setXmlDeclarationSkipped(true);
@@ -172,6 +173,9 @@ public class WebApp {
                     response.type("text/html");
 
                     return "";
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(WebApp.class.getName()).log(Level.SEVERE, null, ex);
+                    return null;
                 } catch (XSLException ex) {
                     LOG.error(ex);
                     halt();
