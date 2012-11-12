@@ -4,8 +4,10 @@
  */
 package eu.ac.susx.mlcl.xom;
 
+import com.google.common.base.Optional;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.ImmutableList;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -19,49 +21,41 @@ import nu.xom.NodeFactory;
 import nu.xom.Nodes;
 
 /**
- * XomB (Xml Object Model Builder, pronounced xombie) is construction tools for
- * XOM XML documents and elements.
+ * XomB (Xml Object Model Builder, pronounced xombie) is construction tools for XOM XML documents
+ * and elements.
  * <p/>
- * The motivation for this tools was a number of perceived problems with the
- * standard method of documents construction using the XOM library. These
- * include:
+ * The motivation for this tools was a number of perceived problems with the standard method of
+ * documents construction using the XOM library. These include:
  *
  * <ul>
  *
- * <li>The factory methods provided by {@link NodeFactory} include parameters
- * that rarely used, resulting in large amounts unnecessary boiler plate code.
- * For example consider {@link NodeFactory#makeAttribute(java.lang.String,
- * java.lang.String, java.lang.String, nu.xom.Attribute.Type) }, the
- * namespaceURI parameter is usually
+ * <li>The factory methods provided by {@link NodeFactory} include parameters that rarely used,
+ * resulting in large amounts unnecessary boiler plate code. For example consider {@link NodeFactory#makeAttribute(java.lang.String,
+ * java.lang.String, java.lang.String, nu.xom.Attribute.Type) }, the namespaceURI parameter is
+ * usually
  * <code>null</code>, and the type parameter is usually
  * <code>CDATA</code>. The
- * <code>XomB</code> mitigates this problem by implemented highly ubiquitous
- * alternatives to constructors.</li>
+ * <code>XomB</code> mitigates this problem by implemented highly ubiquitous alternatives to
+ * constructors.</li>
  *
- * <li>A number of factory methods return type {@link Nodes}. This is because
- * the factory is permitted to replace expected node types with any number of
- * other types. For example a
+ * <li>A number of factory methods return type {@link Nodes}. This is because the factory is
+ * permitted to replace expected node types with any number of other types. For example a
  * <code>makeAttribute</code> could return elements instead. The
- * <code>Nodes</code> object is a collection without any of normal niceties
- * (such as implementing
- * <code>Iterable</code>); consequently it introduces yet more pointless boiler
- * plate code.
+ * <code>Nodes</code> object is a collection without any of normal niceties (such as implementing
+ * <code>Iterable</code>); consequently it introduces yet more pointless boiler plate code.
  * <code>XomB</code> handles
- * <code>Nodes</code> internally so the application is simplified
- * considerably.</li>
+ * <code>Nodes</code> internally so the application is simplified considerably.</li>
  *
  * <li>XOM library makes frequent use of
- * <code>null</code>s to indicate the absence of a property, or that the
- * property should have some default value. This is generally bad design and
- * results in errors not being detected until much later, so this builder
- * interface is non-nullable. (For previously nullable strings use the empty
+ * <code>null</code>s to indicate the absence of a property, or that the property should have some
+ * default value. This is generally bad design and results in errors not being detected until much
+ * later, so this builder interface is non-nullable. (For previously nullable strings use the empty
  * string instead.)</li>
  *
- * <li>XOM is unnecessarily weakly typed, with frequent use of String names in
- * place of proper typed instances. For example URIs and charsets where encoded
- * as Strings rather than the classes Java provides. This practice increases the
- * likelihood of hard to diagnose run time errors. This problem has been reduces
- * by demanding the proper classes where appropriate.</li>
+ * <li>XOM is unnecessarily weakly typed, with frequent use of String names in place of proper typed
+ * instances. For example URIs and charsets where encoded as Strings rather than the classes Java
+ * provides. This practice increases the likelihood of hard to diagnose run time errors. This
+ * problem has been reduces by demanding the proper classes where appropriate.</li>
  *
  *
  * </ul>
@@ -74,7 +68,7 @@ import nu.xom.Nodes;
  *
  * <li>Addition build() methods, such as build to string, and build DTD.</li>
  *
- * <li>Processing instructions can go anywhere.</li>
+ * <li>Not sure the semantics of the API are quite right yet.</li>
  *
  * </ul>
  *
@@ -83,16 +77,18 @@ import nu.xom.Nodes;
 @Nonnull
 public class XomB {
 
+    /**
+     * Rather than use null to represent unset URI values, use this special constant.
+     */
     public static final URI NULL_URI = URI.create("");
-
     /**
      * factory used to instantiate all XOM nodes.
      */
     private final NodeFactory factory;
 
     /**
-     * Construct a new XomB instance that will use the given NodeFactory
-     * instance to create all XOM nodes.
+     * Construct a new XomB instance that will use the given NodeFactory instance to create all XOM
+     * nodes.
      * <p/>
      * @param factory used to create nodes
      * @throws NullPointerException if factory is null
@@ -119,73 +115,107 @@ public class XomB {
         return factory;
     }
 
-    public DocumentBuilder newDocument() {
+    public DocumentBuilder buildDocument() {
         return new DocumentBuilder();
     }
 
-    public ElementBuilder newRoot(String name, URI namespace) {
-        checkNotNull(name, "name");
-        checkNotNull(namespace, "namespace");
-        checkArgument(!name.isEmpty(), "argument name is empty");
-
-        return new ElementBuilder(name, namespace, true);
+    public ElementBuilder buildRoot(final String name, final URI namespace) {
+        return buildRoot(name).setNamespace(namespace);
     }
 
-    public ElementBuilder newRoot(String name) {
-        return newRoot(name, NULL_URI);
+    public ElementBuilder buildRoot(final String name) {
+        return new ElementBuilder(name, true);
     }
 
-    public ElementBuilder newElement(String name, URI namespace) {
-        checkNotNull(name, "name");
-        checkNotNull(namespace, "namespace");
-        checkArgument(!name.isEmpty(), "argument name is empty");
-
-        return new ElementBuilder(name, namespace, false);
+    public ElementBuilder buildElement(final String name, final URI namespace) {
+        return buildElement(name).setNamespace(namespace);
     }
 
-    public ElementBuilder newElement(String name) {
-        return newElement(name, NULL_URI);
+    public ElementBuilder buildElement(final String name) {
+        return new ElementBuilder(name, false);
     }
 
     /**
+     * Abstract super class to the node build classes. </p> Handles a collection of child nodes, but
+     * does not implement any public API because the constraints for subclasses are quite different.
      *
+     * @param <P> product type (the object constructed by this builder)
+     * @param <B> builder type (the subclass type of this builder)
      */
-    abstract class ParentNodeBuilder<P extends Node> {
+    abstract class ParentNodeBuilder<P, B extends ParentNodeBuilder<P, B>> {
 
-
-        /*
-         * ===============================================================
+        /**
+         * Defines a names-space from which all URIs inside are considered to be relative to.
+         * <p/>
+         * For example, consider the following XHTML snippets, which are equivalent:
+         * <pre>
+         *      &lt;a href="http://example.org/test#foo"/&gt;
+         *      &lt;a xml:base="http://example.org/test" href="#foo"/&gt;
+         * </pre>
          */
-        private URI baseURI = NULL_URI;
-
+        private Optional<URI> baseURI = Optional.absent();
+        /**
+         * Build an immutable list of children.
+         */
         private final ImmutableList.Builder<Node> children;
 
+        /**
+         * Constructor
+         */
         ParentNodeBuilder() {
             this.children = ImmutableList.builder();
         }
 
-        public ParentNodeBuilder<P> setBaseURI(URI baseURI) {
-            checkNotNull(baseURI, "baseURI");
-
-            this.baseURI = baseURI;
-            return this;
+        /**
+         *
+         * @param baseURI
+         * @return
+         */
+        public B setBaseURI(final URI baseURI) {
+            this.baseURI = Optional.of(baseURI);
+            return (B) this;
         }
 
-        public ParentNodeBuilder<P> clearBaseURI() {
-            baseURI = NULL_URI;
-            return this;
+        public B clearBaseURI() {
+            this.baseURI = Optional.absent();
+            return (B) this;
         }
 
-        URI getBaseURI() {
+        public B appendPI(final String target, final String data) {
+            checkNotNull(target, "target");
+            checkNotNull(data, "data");
+            checkArgument(!target.isEmpty(), "argument target is empty");
+
+            _addChildren(factory.makeProcessingInstruction(target, data));
+            return (B) this;
+        }
+
+        Optional<URI> getBaseURI() {
             return baseURI;
         }
 
-        void addChildren(Nodes nodes) {
-            for (int i = 0; i < nodes.size(); i++)
-                addChild(nodes.get(i));
+        /**
+         *
+         * @param nodes
+         * @throws NullPointerException if nodes is null, or if any element of nodes is null.
+         * @throws IllegalArgumentException if any node already has a parent
+         */
+        void _addChildren(final Nodes nodes) {
+            for (int i = 0; i < nodes.size(); i++) {
+                _addChild(nodes.get(i));
+            }
         }
 
-        void addChild(Node node) {
+        /**
+         *
+         * @param node
+         * @throws NullPointerException if node is null
+         * @throws IllegalArgumentException if node already has a parent
+         */
+        void _addChild(final Node node) {
+            checkNotNull(node, "node");
+            checkArgument(node.getParent() == null, "node argument already has a parent");
+
             children.add(node);
         }
 
@@ -196,30 +226,18 @@ public class XomB {
         public abstract P build();
     }
 
-    /**
-     *
-     */
-    public class DocumentBuilder extends ParentNodeBuilder<Document> {
+    public class DocumentBuilder extends ParentNodeBuilder<Document, DocumentBuilder> {
 
         private boolean docTypeSet;
-
         private boolean rootElementSet;
 
+        /**
+         * Constructor should not be called directly. Instead use {@link XomB#buildDocument() }
+         * factory method.
+         */
         DocumentBuilder() {
             docTypeSet = false;
             rootElementSet = false;
-        }
-
-        public DocumentBuilder appendPI(
-                final String target, final String data) {
-            checkNotNull(target, "target");
-            checkNotNull(data, "data");
-            checkArgument(!target.isEmpty(), "argument target is empty");
-            checkArgument(!data.isEmpty(), "argument data is empty");
-
-            Nodes nodes = factory.makeProcessingInstruction(target, data);
-            addChildren(nodes);
-            return this;
         }
 
         public DocumentBuilder setDocType(final String rootElementName,
@@ -234,7 +252,7 @@ public class XomB {
 
             Nodes nodes = factory.makeDocType(
                     rootElementName, publicID, systemID);
-            addChildren(nodes);
+            _addChildren(nodes);
             return this;
         }
 
@@ -243,14 +261,22 @@ public class XomB {
             checkState(!docTypeSet, "DocType has already been set.");
 
             Nodes nodes = factory.makeDocType(rootElementName, null, null);
-            addChildren(nodes);
+            _addChildren(nodes);
             return this;
         }
 
         public DocumentBuilder setRoot(ElementBuilder rootElement) {
             checkNotNull(rootElement, "rootElement");
 
-            setRoot(rootElement.build());
+            Nodes nodes = rootElement.build();
+            
+            // TODO:
+            //   Can contain any number of PIs and comments, but exactly 1 root node
+            if (nodes.size() != 1) {
+                throw new IllegalArgumentException(
+                        "Document must contain exactly 1 Element node, but found " + nodes.size());
+            }
+            setRoot(nodes.get(1));
             return this;
         }
 
@@ -258,30 +284,46 @@ public class XomB {
             checkNotNull(rootElement, "rootElement");
             checkState(!rootElementSet, "Root element has already been set.");
 
-            addChild(rootElement);
+            _addChild(rootElement);
             return this;
         }
 
         public Document build() {
             final Document document = factory.startMakingDocument();
 
-            document.setBaseURI(getBaseURI().toString());
+            if (getBaseURI().isPresent()) {
+                document.setBaseURI(getBaseURI().get().toString());
+            }
 
-            List<Node> c = getChildren();
+            /*
+             * Rather than just appending all the child elements, we need to explicitly call the
+             * setRootElement method on the document exactly once. Any nodes before or after must 
+             * be inserted before and after the root element.
+             */
+
+            final List<Node> children = getChildren();
 
             int i = 0;
-            while (i < c.size() && !(c.get(i) instanceof Element)) {
-                document.insertChild(c.get(i), i);
+            while (i < children.size() && !(children.get(i) instanceof Element)) {
+                if (children.get(i) instanceof DocType) {
+                    document.setDocType((DocType) children.get(i));
+                } else {
+                    document.insertChild(children.get(i), i);
+                }
                 ++i;
             }
 
-            if (i < c.size() && (c.get(i) instanceof Element)) {
-                document.setRootElement((Element) c.get(i));
+            if (i < children.size() && (children.get(i) instanceof Element)) {
+                document.setRootElement((Element) children.get(i));
                 ++i;
             }
 
-            while (i < c.size()) {
-                document.insertChild(c.get(i), document.getChildCount());
+            while (i < children.size()) {
+                if (children.get(i) instanceof DocType) {
+                    document.setDocType((DocType) children.get(i));
+                } else {
+                    document.insertChild(children.get(i), i);
+                }
                 ++i;
             }
 
@@ -293,53 +335,168 @@ public class XomB {
     /**
      *
      */
-    public class ElementBuilder extends ParentNodeBuilder<Element> {
+    public class ElementBuilder extends ParentNodeBuilder<Nodes, ElementBuilder> {
 
+        /**
+         * Whether or not the element being built is expected to be root element.
+         *
+         * Since the XOM NodeFactory provides separate methods for the construction of normal
+         * elements vs. root elements, we need to insure the correct method is called. Most of the
+         * time this will make no difference, but it still needs to happen.
+         */
         private final boolean rootElement;
-
-        private final String name;
-
-        private final URI namespace;
-
+        /**
+         * The elements unqualified name.
+         */
+        private String localName;
+        /**
+         * The namespace prefix for the given name.
+         */
+        private Optional<String> prefix = Optional.absent();
+        /**
+         * The elements name-space.
+         */
+        private Optional<URI> namespace;
+        /**
+         * Construct a list of the attributes of this element.
+         */
         private final ImmutableList.Builder<Attribute> attributes;
 
-        ElementBuilder(String name,
-                       URI namespaceURI,
-                       boolean rootElement) {
+        /**
+         * Constructor should not be called directly. Instead use {@link XomB } factory methods:
+         * null null null null null null null null null null null null null         {@link XomB#buildElement(java.lang.String) }
+         * {@link XomB#buildElement(java.lang.String, java.net.URI) },
+         * {@link XomB#buildRoot(java.lang.String) }, and
+         * {@link XomB#buildRoot(java.lang.String, java.net.URI) }.
+         *
+         * @param name the qualified element name
+         * @param rootElement whether or not this element is expected to be a root element.
+         * @throws NullPointerException if name is null
+         * @throws IllegalArgumentException if name is empty
+         */
+        ElementBuilder(final String name, final boolean rootElement) {
             checkNotNull(name, "name");
             checkArgument(!name.isEmpty(), "argument name is empty");
-            checkNotNull(namespaceURI, "namespaceURI");
 
-            this.name = name;
-            this.namespace = namespaceURI;
+            final int colon = name.indexOf(':');
+            if (colon > 0) {
+                setPrefix(name.substring(0, colon));
+                setLocalName(name.substring(colon + 1));
+            } else {
+                setLocalName(name);
+            }
+
             this.rootElement = rootElement;
             this.attributes = ImmutableList.builder();
+            this.namespace = Optional.absent();
         }
 
-        public String getName() {
-            return name;
+        /**
+         *
+         * I didn't want to make this (or indeed any accessors) public, but certain problems require
+         * knowing the name of the parent element from that parents builder.
+         *
+         * @return
+         */
+        public String getLocalName() {
+            return localName;
         }
 
+        /**
+         *
+         * @param namespace
+         * @return ElementBuilder instance of method chaining
+         * @throws NullPointerException if namespace is null
+         */
+        public ElementBuilder setNamespace(final URI namespace) {
+            this.namespace = Optional.of(namespace);
+            return this;
+        }
+
+        /**
+         *
+         * @return ElementBuilder instance of method chaining
+         */
+        public ElementBuilder clearNamespace() {
+            this.namespace = Optional.absent();
+            return this;
+        }
+
+        /**
+         *
+         * @param prefix
+         * @return ElementBuilder instance of method chaining
+         * @throws NullPointerException if prefix is null
+         * @throws IllegalArgumentException if prefix is empty
+         */
+        public final ElementBuilder setPrefix(String prefix) {
+            checkArgument(!prefix.isEmpty(), "prefix is empty");
+
+            this.prefix = Optional.of(prefix);
+            return this;
+        }
+
+        public final ElementBuilder clearPrefix() {
+            this.prefix = Optional.absent();
+            return this;
+        }
+
+        /**
+         *
+         * @param localName
+         * @return ElementBuilder instance of method chaining
+         * @throws NullPointerException if localName is null
+         * @throws IllegalArgumentException if localName is empty
+         */
+        public final ElementBuilder setLocalName(String localName) {
+            checkArgument(!localName.isEmpty(), "argument localName is empty");
+
+            this.localName = localName;
+            return this;
+        }
+
+        /**
+         *
+         * @param data
+         * @return ElementBuilder instance of method chaining
+         */
         public ElementBuilder append(final String data) {
             checkNotNull(data, "data");
             checkArgument(!data.isEmpty(), "argument data is empty");
 
-            return append(factory.makeText(data));
-        }
-
-        public ElementBuilder append(final ElementBuilder elBuilder) {
-            checkNotNull(elBuilder, "elBuilder");
-
-            return append(elBuilder.build());
-        }
-
-        public ElementBuilder append(final Element element) {
-            checkNotNull(element, "element");
-
-            addChild(element);
+            _addChildren(factory.makeText(data));
             return this;
         }
 
+        /**
+         *
+         * @param elBuilder
+         * @return ElementBuilder instance of method chaining
+         */
+        public ElementBuilder append(final ElementBuilder elBuilder) {
+            checkNotNull(elBuilder, "elBuilder");
+
+            _addChildren(elBuilder.build());
+            return this;
+        }
+
+        /**
+         *
+         * @param element
+         * @return ElementBuilder instance of method chaining
+         */
+        public ElementBuilder append(final Element element) {
+            checkNotNull(element, "element");
+
+            _addChild(element);
+            return this;
+        }
+
+        /**
+         *
+         * @param attribute
+         * @return ElementBuilder instance of method chaining
+         */
         public ElementBuilder appendAttribute(Attribute attribute) {
             checkNotNull(attribute, "attribute");
             checkArgument(attribute.getParent() == null,
@@ -349,11 +506,25 @@ public class XomB {
             return this;
         }
 
+        /**
+         *
+         * @param name
+         * @param value
+         * @return ElementBuilder instance of method chaining
+         */
         public ElementBuilder appendAttribute(final String name,
                                               final String value) {
             return appendAttribute(name, NULL_URI, value, Attribute.Type.CDATA);
         }
 
+        /**
+         *
+         * @param name
+         * @param namespace
+         * @param value
+         * @param type
+         * @return ElementBuilder instance of method chaining
+         */
         public ElementBuilder appendAttribute(
                 final String name, final URI namespace,
                 final String value, final Attribute.Type type) {
@@ -363,74 +534,74 @@ public class XomB {
             checkNotNull(value, "name");
             checkNotNull(type, "type");
 
-            final Nodes nodes = factory.makeAttribute(
-                    name, namespace.toString(), value, type);
-            return append(nodes);
-        }
-
-        public ElementBuilder append(Nodes nodes) {
-            checkNotNull(nodes, "nodes");
-
-            for (int i = 0; i < nodes.size(); i++)
+            Nodes nodes = factory.makeAttribute(name, namespace.toString(), value, type);
+            for (int i = 0; i < nodes.size(); i++) {
                 append(nodes.get(i));
+            }
             return this;
         }
 
-        public ElementBuilder append(Node node) {
+        /**
+         *
+         * @param node
+         * @return ElementBuilder instance of method chaining
+         * @throws NullPointerException if node is null
+         * @throws IllegalArgumentException if node is a Namespace, DocType or Document, or node
+         * already has a parent.
+         */
+        public ElementBuilder append(final Node node) {
             checkNotNull(node, "node");
+            if (node instanceof Namespace || node instanceof DocType || node instanceof Document) {
+                throw new IllegalArgumentException(
+                        "element node can not have child notes of type "
+                        + node.getClass().getSimpleName());
 
-            if (node instanceof Namespace) {
-                throw new IllegalArgumentException(
-                        "Namespace nodes can not be children of anything.");
-            } else if (node instanceof DocType) {
-                throw new IllegalArgumentException(
-                        "DocType nodes can only be appended to document nodes.");
-            } else if (node instanceof Document) {
-                throw new IllegalArgumentException(
-                        "Document can not have a parent.");
             } else if (node instanceof Attribute) {
                 attributes.add((Attribute) node);
-            } else {
-                // Element, Comment, Text, ProcessingInstructiona
-                addChild(node);
+            } else { // Element, Comment, Text, ProcessingInstructiona
+                _addChild(node);
+            }
+            return this;
+        }
+
+        /**
+         *
+         * @return newly constructed Element instance
+         */
+        @Override
+        public Nodes build() {
+
+            final String qualifiedName = prefix.isPresent()
+                    ? prefix.get().toString() + ":" + localName
+                    : localName;
+
+            final String namespaceStr = namespace.isPresent()
+                    ? namespace.get().toString()
+                    : NULL_URI.toString();
+
+            System.out.println(qualifiedName + " ... " + namespaceStr);
+
+            final Element element = rootElement
+                    ? factory.makeRootElement(qualifiedName, namespaceStr)
+                    : factory.startMakingElement(qualifiedName, namespaceStr);
+
+            if (getBaseURI().isPresent()) {
+                element.setBaseURI(getBaseURI().get().toString());
             }
 
-            return this;
-        }
-
-        public ElementBuilder appendProcessingInstruction(
-                final String target, final String data) {
-            checkNotNull(target, "target");
-            checkNotNull(data, "data");
-            checkArgument(!target.isEmpty(), "argument target is empty");
-            checkArgument(!data.isEmpty(), "argument data is empty");
-
-            Nodes nodes = factory.makeProcessingInstruction(target, data);
-            addChildren(nodes);
-            return this;
-        }
-
-        @Override
-        public Element build() {
-
-            final Element element;
-            element = rootElement
-                    ? factory.makeRootElement(name,
-                                              namespace.toString())
-                    : factory.startMakingElement(name,
-                                                 namespace.toString());
-
-            for (Attribute attribute : attributes.build()) {
+            for (final Attribute attribute : attributes.build()) {
                 element.addAttribute(attribute);
             }
 
-            for (Node node : getChildren()) {
+            for (final Node node : getChildren()) {
                 element.appendChild(node);
             }
 
-            if (!rootElement)
-                factory.finishMakingElement(element);
-            return element;
+            // XXX not sure if finishMarkingElement is supposed to be called
+//            if (!rootElement) {
+            return factory.finishMakingElement(element);
+//            }
+//            return element;
         }
     }
 }

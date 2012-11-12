@@ -210,19 +210,19 @@ public class AnnotationToXMLSerializer {
         Preconditions.checkNotNull(annotation, "annotation");
 
 
-        DocumentBuilder xmlDoc = x.newDocument();
+        DocumentBuilder xmlDoc = x.buildDocument();
 
         if (stylesheetName != null && !stylesheetName.isEmpty()) {
             xmlDoc.appendPI("xml-stylesheet",
                             "href=\"" + stylesheetName + "\" type=\"text/xsl\"");
         }
 
-        ElementBuilder root = x.newRoot("root");
+        ElementBuilder root = x.buildRoot("root");
 
 
 //        Element root = nodeFactory.makeRootElement("root", namespaceURI);
 
-        ElementBuilder docElem = x.newElement("document");
+        ElementBuilder docElem = x.buildElement("document");
 
         addCoreMap(docElem, annotation);
 
@@ -296,9 +296,9 @@ public class AnnotationToXMLSerializer {
         // elements of the list will attempt to use a singular variant of the list name if possible.
         String singularName;
         synchronized (morph) {
-            singularName = morph.stem(parent.getName());
+            singularName = morph.stem(parent.getLocalName());
         }
-        if (singularName.equals(parent.getName())) {
+        if (singularName.equals(parent.getLocalName())) {
             singularName += "i";
         }
 
@@ -306,7 +306,7 @@ public class AnnotationToXMLSerializer {
         for (Object value : childValues) {
             count++;
 
-            ElementBuilder itemElement = x.newElement(singularName);
+            ElementBuilder itemElement = x.buildElement(singularName);
 
             itemElement.appendAttribute("id", Integer.toString(count));
 
@@ -338,7 +338,7 @@ public class AnnotationToXMLSerializer {
                     : castKey.getCanonicalName();
 
 
-            final ElementBuilder element = x.newElement(name);
+            final ElementBuilder element = x.buildElement(name);
 
             boolean found = false;
             for (Iterator<Class<? extends CoreAnnotation<?>>> it =
@@ -373,7 +373,7 @@ public class AnnotationToXMLSerializer {
     private void addMap(ElementBuilder parent, Map<String, ?> map) throws InstantiationException {
         for (String key : map.keySet()) {
 
-            final ElementBuilder element = x.newElement(key);
+            final ElementBuilder element = x.buildElement(key);
 
             final Object value = map.get(key);
             if (value != null)
@@ -464,12 +464,12 @@ public class AnnotationToXMLSerializer {
                 String sourceString = edge.getSource().word();
                 String targetString = edge.getTarget().word();
 
-                parent.append(x.newElement("dep")
+                parent.append(x.buildElement("dep")
                     .appendAttribute("type", rel)
-                    .append(x.newElement("governor")
+                    .append(x.buildElement("governor")
                         .appendAttribute("idx", sourceIndex)
                         .append(sourceString))
-                    .append(x.newElement("dependent")
+                    .append(x.buildElement("dependent")
                         .appendAttribute("idx", targetIndex)
                         .append(targetString)));
             }
@@ -506,7 +506,7 @@ public class AnnotationToXMLSerializer {
                     continue;
                 foundCoref = true;
 		
-                ElementBuilder chainElem = x.newElement("coreference");
+                ElementBuilder chainElem = x.buildElement("coreference");
 		
                 CorefChain.CorefMention source = chain
                         .getRepresentativeMention();
@@ -528,14 +528,14 @@ public class AnnotationToXMLSerializer {
                                      @Nonnull CorefChain.CorefMention mention,
                                      boolean representative) {
 	    
-	    ElementBuilder mentionElem = x.newElement("mention")
-		.append(x.newElement("sentence")
+	    ElementBuilder mentionElem = x.buildElement("mention")
+		.append(x.buildElement("sentence")
 		    .append(Integer.toString(mention.sentNum)))
-		.append(x.newElement("start")
+		.append(x.buildElement("start")
 		    .append(Integer.toString(mention.startIndex)))
-		.append(x.newElement("end")
+		.append(x.buildElement("end")
 		    .append(Integer.toString(mention.endIndex)))
-		.append(x.newElement("head")
+		.append(x.buildElement("head")
 		    .append(Integer.toString(mention.headIndex)));
 
 	    if (representative)

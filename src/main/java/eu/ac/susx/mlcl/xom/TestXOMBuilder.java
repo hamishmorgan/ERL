@@ -42,25 +42,25 @@ public class TestXOMBuilder {
         
         XomB x = new XomB(new NodeFactory());
         
-        Document doc = x.newDocument()
+        Document doc = x.buildDocument()
             .setDocType("html")
             .setRoot(
-                x.newRoot("html")
+                x.buildRoot("html")
                     .append(
-                        x.newElement("head").append(
-                            x.newElement("title").append("404 Not Found")
+                        x.buildElement("head").append(
+                            x.buildElement("title").append("404 Not Found")
                         )
                     )
                     .append(
-                        x.newElement("body")
+                        x.buildElement("body")
                             .appendAttribute("id", "mc body")
 //                            .append(x.newElement("id", "mc body"))
-                            .append(x.newElement("h1")
+                            .append(x.buildElement("h1")
                                                 .append("Not Found"))
-                            .append(x.newElement("p")
+                            .append(x.buildElement("p")
                                                 .append("Abject failure."))
-                            .append(x.newElement("hr"))
-                            .append(x.newElement("address")
+                            .append(x.buildElement("hr"))
+                            .append(x.buildElement("address")
                                                 .append("Unicorn powered."))
                     )
         ).appendPI("php", "run_finalizer();")

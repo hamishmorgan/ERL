@@ -53,6 +53,10 @@ public class XomUtil {
         ser.setIndent(2);
         ser.setMaxLength(0);
 //        ser.setLineSeparator("\n");
+        
+        // XXX all elements inherit root elements base uri unless explicitly set (even if an 
+        // ancestor overrides that base.) Not sure this is correct.
+        ser.setPreserveBaseURI(true);
         ser.write(document);
         ser.flush();
     }
