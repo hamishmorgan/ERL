@@ -316,6 +316,10 @@ public class XomB {
             this.attributes = ImmutableList.builder();
         }
 
+        public String getName() {
+            return name;
+        }
+
         public ElementBuilder append(final String data) {
             checkNotNull(data, "data");
             checkArgument(!data.isEmpty(), "argument data is empty");
