@@ -39,9 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
-import javax.swing.text.html.HTML;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.html.dom.HTMLBuilder;
 
 /**
  * Constants enumerating the HTTP status codes.

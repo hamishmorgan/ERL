@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import uk.ac.susx.mlcl.erl.kb.CachedKnowledgeBase;
 import uk.ac.susx.mlcl.erl.kb.FreebaseKB;
 import uk.ac.susx.mlcl.erl.kb.KnowledgeBase;
 
@@ -30,10 +31,10 @@ import uk.ac.susx.mlcl.erl.kb.KnowledgeBase;
  */
 public class EntityLinkingAnnotator implements Annotator {
 
-    private KnowledgeBase knowledgeBase;
+    private final KnowledgeBase knowledgeBase;
 
     public EntityLinkingAnnotator(KnowledgeBase knowledgeBase) {
-        this.knowledgeBase = knowledgeBase;
+        this.knowledgeBase = CachedKnowledgeBase.wrap(knowledgeBase);
     }
 
     static EntityLinkingAnnotator newInstance() throws IOException {
