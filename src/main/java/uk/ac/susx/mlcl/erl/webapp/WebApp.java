@@ -63,9 +63,9 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 import spark.Spark;
-import uk.ac.susx.mlcl.erl.snlp.AnnotationToXMLSerializer;
+import eu.ac.susx.mlcl.xml.AnnotationToXML;
 import uk.ac.susx.mlcl.erl.snlp.EntityLinkingAnnotator;
-import uk.ac.susx.mlcl.erl.snlp.XMLToStringSerializer;
+import eu.ac.susx.mlcl.xml.XMLToStringSerializer;
 
 /**
  *
@@ -116,10 +116,10 @@ public class WebApp {
 //       
 
 
-        AnnotationToXMLSerializer.Builder builder = AnnotationToXMLSerializer.builder();
+        AnnotationToXML.Builder builder = AnnotationToXML.builder();
         builder.addAnnotationToIgnore(CoreAnnotations.XmlContextAnnotation.class);
         builder.addSimplifiedName(EntityLinkingAnnotator.EntityKbIdAnnotation.class, "link");
-        final AnnotationToXMLSerializer toXml = builder.build();
+        final AnnotationToXML toXml = builder.build();
 
 
 

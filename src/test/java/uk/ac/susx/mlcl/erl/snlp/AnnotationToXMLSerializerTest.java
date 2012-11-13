@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.snlp;
 
+import eu.ac.susx.mlcl.xml.AnnotationToXML;
 import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetBeginAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetEndAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -70,7 +71,7 @@ public class AnnotationToXMLSerializerTest extends AbstractTest {
         pipeline.annotate(annotation);
 
 
-        AnnotationToXMLSerializer.Builder builder = AnnotationToXMLSerializer.builder();
+        AnnotationToXML.Builder builder = AnnotationToXML.builder();
         builder.addSimplifiedName(CharacterOffsetBeginAnnotation.class, "from");
         builder.addSimplifiedName(CharacterOffsetEndAnnotation.class, "to");
 
@@ -85,7 +86,7 @@ public class AnnotationToXMLSerializerTest extends AbstractTest {
 
         builder.configure(config);
 
-        AnnotationToXMLSerializer toXml = builder.build();
+        AnnotationToXML toXml = builder.build();
 
 
         Document doc = toXml.toDocument(annotation);
@@ -104,54 +105,54 @@ public class AnnotationToXMLSerializerTest extends AbstractTest {
 
     }
 //    /**
-//     * Test of builder method, of class AnnotationToXMLSerializer.
+//     * Test of builder method, of class AnnotationToXML.
 //     */
 //    @Test
 //    public void testBuilder() {
 //        System.out.println("builder");
 //        Builder expResult = null;
-//        Builder result = AnnotationToXMLSerializer.builder();
+//        Builder result = AnnotationToXML.builder();
 //        assertEquals(expResult, result);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
 //    }
 //
 //    /**
-//     * Test of xmlPrint method, of class AnnotationToXMLSerializer.
+//     * Test of xmlPrint method, of class AnnotationToXML.
 //     */
 //    @Test
 //    public void testXmlPrint_Annotation_Writer() throws Exception {
 //        System.out.println("xmlPrint");
 //        Annotation annotation = null;
 //        Writer writer = null;
-//        AnnotationToXMLSerializer instance = null;
+//        AnnotationToXML instance = null;
 //        instance.xmlPrint(annotation, writer);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
 //    }
 //
 //    /**
-//     * Test of xmlPrint method, of class AnnotationToXMLSerializer.
+//     * Test of xmlPrint method, of class AnnotationToXML.
 //     */
 //    @Test
 //    public void testXmlPrint_Annotation_OutputStream() throws Exception {
 //        System.out.println("xmlPrint");
 //        Annotation annotation = null;
 //        OutputStream outputStream = null;
-//        AnnotationToXMLSerializer instance = null;
+//        AnnotationToXML instance = null;
 //        instance.xmlPrint(annotation, outputStream);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
 //    }
 //
 //    /**
-//     * Test of toDocument method, of class AnnotationToXMLSerializer.
+//     * Test of toDocument method, of class AnnotationToXML.
 //     */
 //    @Test
 //    public void testToDocument() {
 //        System.out.println("toDocument");
 //        Annotation annotation = null;
-//        AnnotationToXMLSerializer instance = null;
+//        AnnotationToXML instance = null;
 //        Document expResult = null;
 //        Document result = instance.toDocument(annotation);
 //        assertEquals(expResult, result);

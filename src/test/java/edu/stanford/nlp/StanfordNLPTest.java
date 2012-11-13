@@ -55,7 +55,7 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import uk.ac.susx.mlcl.erl.snlp.AnnotationToXMLSerializer;
+import eu.ac.susx.mlcl.xml.AnnotationToXML;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
@@ -847,7 +847,7 @@ public class StanfordNLPTest extends AbstractTest {
 //        ax.xmlPrint(document, System.out);
 
 
-        AnnotationToXMLSerializer ax2 = AnnotationToXMLSerializer.builder().build();
+        AnnotationToXML ax2 = AnnotationToXML.builder().build();
         ax2.xmlPrint(document, System.out);
     }
 }

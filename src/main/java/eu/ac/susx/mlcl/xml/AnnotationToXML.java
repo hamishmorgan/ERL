@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.snlp;
+package eu.ac.susx.mlcl.xml;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
@@ -23,10 +23,10 @@ import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Factory;
 import edu.stanford.nlp.util.Filter;
 import edu.stanford.nlp.util.Filters;
-import eu.ac.susx.mlcl.xom.XomB;
-import eu.ac.susx.mlcl.xom.XomB.DocumentBuilder;
-import eu.ac.susx.mlcl.xom.XomB.ElementBuilder;
-import eu.ac.susx.mlcl.xom.XomUtil;
+import eu.ac.susx.mlcl.xml.XomB;
+import eu.ac.susx.mlcl.xml.XomB.DocumentBuilder;
+import eu.ac.susx.mlcl.xml.XomB.ElementBuilder;
+import eu.ac.susx.mlcl.xml.XomUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -54,6 +54,7 @@ import nu.xom.Serializer;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.susx.mlcl.erl.snlp.InstancePool;
 
 /**
  * Save annotations to XML
@@ -69,7 +70,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @Nonnull
 @Immutable
-public class AnnotationToXMLSerializer {
+public class AnnotationToXML {
 
     /**
      * Namespace URI (which may be null or the empty string)
@@ -101,12 +102,11 @@ public class AnnotationToXMLSerializer {
 
     private final Set<String> nodeFilters;
 
-//    private final NodeFactory nodeFactory;
     private final XomB x;
 
     /**
      * Dependence inject constructor. Use the associated builder {
-     * @link AnnotationToXMLSerializer#builder()} < p/>
+     * @link AnnotationToXML#builder()} < p/>
      * <p/>
      * @param nodeFactory
      * @param namespaceURI      Namespace URI
@@ -122,7 +122,7 @@ public class AnnotationToXMLSerializer {
      * @throws NullPointerException if stylesheetName, simpleNames, or
      *                              customSerializers is null
      */
-    protected AnnotationToXMLSerializer(
+    protected AnnotationToXML(
             NodeFactory nodeFactory,
             @Nullable String namespaceURI,
             String stylesheetName,
@@ -210,23 +210,23 @@ public class AnnotationToXMLSerializer {
         Preconditions.checkNotNull(annotation, "annotation");
 
 
-        DocumentBuilder xmlDoc = x.buildDocument();
+        DocumentBuilder xmlDoc = x.document();
 
         if (stylesheetName != null && !stylesheetName.isEmpty()) {
-            xmlDoc.appendPI("xml-stylesheet",
+            xmlDoc.addPI("xml-stylesheet",
                             "href=\"" + stylesheetName + "\" type=\"text/xsl\"");
         }
 
-        ElementBuilder root = x.buildRoot("root");
+        ElementBuilder root = x.root("root");
 
 
 //        Element root = nodeFactory.makeRootElement("root", namespaceURI);
 
-        ElementBuilder docElem = x.buildElement("document");
+        ElementBuilder docElem = x.element("document");
 
         addCoreMap(docElem, annotation);
 
-        root.append(docElem);
+        root.add(docElem);
 
         xmlDoc.setRoot(root);
 
@@ -275,7 +275,7 @@ public class AnnotationToXMLSerializer {
 
     private void addString(@Nonnull ElementBuilder parent,
                            @Nonnull CharSequence value) {
-        parent.append(value.toString());
+        parent.add(value.toString());
     }
 
     private void addNumber(@Nonnull ElementBuilder parent, @Nonnull Number value) {
@@ -306,15 +306,15 @@ public class AnnotationToXMLSerializer {
         for (Object value : childValues) {
             count++;
 
-            ElementBuilder itemElement = x.buildElement(singularName);
+            ElementBuilder itemElement = x.element(singularName);
 
-            itemElement.appendAttribute("id", Integer.toString(count));
+            itemElement.addAttribute("id", Integer.toString(count));
 
             if (value != null)
                 addElementByValueType(itemElement, value);
 
 
-            parent.append(itemElement);
+            parent.add(itemElement);
         }
     }
 
@@ -338,7 +338,7 @@ public class AnnotationToXMLSerializer {
                     : castKey.getCanonicalName();
 
 
-            final ElementBuilder element = x.buildElement(name);
+            final ElementBuilder element = x.element(name);
 
             boolean found = false;
             for (Iterator<Class<? extends CoreAnnotation<?>>> it =
@@ -366,20 +366,20 @@ public class AnnotationToXMLSerializer {
                     addElementByValueType(element, value);
             }
 
-            parent.append(element);
+            parent.add(element);
         }
     }
 
     private void addMap(ElementBuilder parent, Map<String, ?> map) throws InstantiationException {
         for (String key : map.keySet()) {
 
-            final ElementBuilder element = x.buildElement(key);
+            final ElementBuilder element = x.element(key);
 
             final Object value = map.get(key);
             if (value != null)
                 addElementByValueType(element, value);
 
-            parent.append(element);
+            parent.add(element);
         }
     }
 
@@ -403,16 +403,16 @@ public class AnnotationToXMLSerializer {
                 for (int i = timexXml.getAttributeCount() - 1; i >= 0; i--) {
                     final Attribute a = timexXml.getAttribute(i);
                     a.detach();
-                    parent.appendAttribute(a);
+                    parent.addAttribute(a);
                 }
                 for (int i = timexXml.getChildCount() - 1; i >= 0; i--)
-                    parent.append(timexXml.removeChild(i));
+                    parent.add(timexXml.removeChild(i));
 
             } else {
 
-                parent.appendAttribute("tid", value.tid())
-                        .appendAttribute("type", value.timexType())
-                        .append(value.value());
+                parent.addAttribute("tid", value.tid())
+                        .addAttribute("type", value.timexType())
+                        .add(value.value());
             }
         }
 
@@ -436,7 +436,7 @@ public class AnnotationToXMLSerializer {
             StringWriter treeStrWriter = new StringWriter();
             constituentTreePrinter.printTree(
                     tree, new PrintWriter(treeStrWriter, true));
-            parent.append(treeStrWriter.toString());
+            parent.add(treeStrWriter.toString());
         }
 
         public static class Factory
@@ -464,14 +464,14 @@ public class AnnotationToXMLSerializer {
                 String sourceString = edge.getSource().word();
                 String targetString = edge.getTarget().word();
 
-                parent.append(x.buildElement("dep")
-                    .appendAttribute("type", rel)
-                    .append(x.buildElement("governor")
-                        .appendAttribute("idx", sourceIndex)
-                        .append(sourceString))
-                    .append(x.buildElement("dependent")
-                        .appendAttribute("idx", targetIndex)
-                        .append(targetString)));
+                parent.add(x.element("dep")
+                    .addAttribute("type", rel)
+                    .add(x.element("governor")
+                        .addAttribute("idx", sourceIndex)
+                        .add(sourceString))
+                    .add(x.element("dependent")
+                        .addAttribute("idx", targetIndex)
+                        .add(targetString)));
             }
 
         }
@@ -506,7 +506,7 @@ public class AnnotationToXMLSerializer {
                     continue;
                 foundCoref = true;
 		
-                ElementBuilder chainElem = x.buildElement("coreference");
+                ElementBuilder chainElem = x.element("coreference");
 		
                 CorefChain.CorefMention source = chain
                         .getRepresentativeMention();
@@ -519,7 +519,7 @@ public class AnnotationToXMLSerializer {
                     addCorefMention(x, chainElem, mention, false);
                 }
 		
-                parent.append(chainElem);
+                parent.add(chainElem);
             }
 //            return foundCoref;
         }
@@ -528,20 +528,20 @@ public class AnnotationToXMLSerializer {
                                      @Nonnull CorefChain.CorefMention mention,
                                      boolean representative) {
 	    
-	    ElementBuilder mentionElem = x.buildElement("mention")
-		.append(x.buildElement("sentence")
-		    .append(Integer.toString(mention.sentNum)))
-		.append(x.buildElement("start")
-		    .append(Integer.toString(mention.startIndex)))
-		.append(x.buildElement("end")
-		    .append(Integer.toString(mention.endIndex)))
-		.append(x.buildElement("head")
-		    .append(Integer.toString(mention.headIndex)));
+	    ElementBuilder mentionElem = x.element("mention")
+		.add(x.element("sentence")
+		    .add(Integer.toString(mention.sentNum)))
+		.add(x.element("start")
+		    .add(Integer.toString(mention.startIndex)))
+		.add(x.element("end")
+		    .add(Integer.toString(mention.endIndex)))
+		.add(x.element("head")
+		    .add(Integer.toString(mention.headIndex)));
 
 	    if (representative)
-		mentionElem.appendAttribute("representative", "true");
+		mentionElem.addAttribute("representative", "true");
 
-            chainElem.append(mentionElem);
+            chainElem.add(mentionElem);
         }
 
         public static class Factory
@@ -590,7 +590,7 @@ public class AnnotationToXMLSerializer {
             nodeFactory = new NodeFactory();
         }
 
-        public AnnotationToXMLSerializer build() {
+        public AnnotationToXML build() {
 
             if (!annotationRoots.isEmpty()) {
 
@@ -613,7 +613,7 @@ public class AnnotationToXMLSerializer {
                     Filters.collectionRejectFilter(annoBlacklist.build());
 
 
-            return new AnnotationToXMLSerializer(
+            return new AnnotationToXML(
                     nodeFactory,
                     namespaceURI,
                     stylesheetName,

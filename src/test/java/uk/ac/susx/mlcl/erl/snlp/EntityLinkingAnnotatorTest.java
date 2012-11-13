@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.snlp;
 
+import eu.ac.susx.mlcl.xml.AnnotationToXML;
 import com.google.common.io.Closeables;
 import edu.stanford.nlp.StanfordNLPTest;
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -136,7 +137,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
                 new File(TEST_DATA_PATH,
                          "freebase_brighton.txt-tok-sent-pos-lemma-er-el.s.gz"));
 
-        AnnotationToXMLSerializer ax = AnnotationToXMLSerializer.builder().build();
+        AnnotationToXML ax = AnnotationToXML.builder().build();
 
         ax.xmlPrint(document, System.out);
     }
@@ -149,7 +150,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
                 new File(TEST_DATA_PATH,
                          "freebase_brighton.txt-tok-sent-parse.s.gz"));
 
-        AnnotationToXMLSerializer ax = AnnotationToXMLSerializer.builder().build();
+        AnnotationToXML ax = AnnotationToXML.builder().build();
 
         ax.xmlPrint(document, System.out);
     }
@@ -163,7 +164,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
                          "freebase_brighton.txt-tok-sent-parse-lemma-ner-dcoref.s.gz"));
 
 
-        AnnotationToXMLSerializer ax = AnnotationToXMLSerializer.builder().build();
+        AnnotationToXML ax = AnnotationToXML.builder().build();
 
         ax.xmlPrint(document, System.out);
     }

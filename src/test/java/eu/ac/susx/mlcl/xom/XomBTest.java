@@ -4,8 +4,9 @@
  */
 package eu.ac.susx.mlcl.xom;
 
-import eu.ac.susx.mlcl.xom.XomB.DocumentBuilder;
-import eu.ac.susx.mlcl.xom.XomB.ElementBuilder;
+import eu.ac.susx.mlcl.xml.XomUtil;
+import eu.ac.susx.mlcl.xml.XomB;
+import eu.ac.susx.mlcl.xml.XomB.ElementBuilder;
 import java.net.URI;
 import java.nio.charset.Charset;
 import nu.xom.Document;
@@ -15,7 +16,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -47,24 +47,26 @@ public class XomBTest {
 
         final XomB x = new XomB(new NodeFactory());
 
-        Document doc = x.buildDocument()
+        Document doc = x.document()
                 .setDocType("html")
                 .setBaseURI(URI.create("http://localhost/"))
-                .setRoot(x.buildRoot("html")
-                .append(x.buildElement("head")
-                /**/.append(x.buildElement("title")
-                /**/.append("404 Not Found")))
-                .append(x.buildElement("body")
+                .setRoot(x.root("html")
+		.addComment("Root comment!")
+                .add(x.element("head")
+                /**/.add(x.element("title")
+                /**/.add("404 Not Found")))
+                .add(x.element("body")
+		/**/.addComment("Body comment!")
                 /**/.setBaseURI(URI.create("http://example.com/"))
-                /**/.appendAttribute("id", "mc body")
-                /**/.append(x.buildElement("h1")
-                /*    */.append("Not Found"))
-                /**/.append(x.buildElement("p")
-                /*    */.append("Abject failure."))
-                /**/.append(x.buildElement("hr"))
-                /**/.append(x.buildElement("address")
-                /*    */.append("Unicorn powered."))))
-                .appendPI("php", "run_finalizer();")
+                /**/.addAttribute("id", "mc body")
+                /**/.add(x.element("h1")
+                /*    */.add("Not Found"))
+                /**/.add(x.element("p")
+                /*    */.add("Abject failure."))
+                /**/.add(x.element("hr"))
+                /**/.add(x.element("address")
+                /*    */.add("Unicorn powered."))))
+                .addPI("php", "run_finalizer();")
                 .build();
 
 
@@ -73,35 +75,54 @@ public class XomBTest {
     }
 
     @Test
+    public void testRepeatedBuild() {
+	
+	XomB x = new XomB();
+	ElementBuilder p = x.element("p");
+	
+	Document doc = x.document().setRoot(
+		    x.element("root")
+			.add(p.add("A"))
+			.add(p.addComment("win"))
+			.add(p.add("B"))
+			.add(p.add("C"))
+			.add(p.add("D"))
+		).build();
+	
+        System.out.println(XomUtil.toString(doc, Charset.forName("ASCII")));
+    }
+   
+    
+    @Test
     public void testNamespaces() {
 
         final XomB x = new XomB(new NodeFactory());
 
         URI h = URI.create("http://www.w3.org/TR/html4/");
         URI f = URI.create("http://www.w3schools.com/furniture");
-        Document doc = x.buildDocument().setRoot(
-                x.buildElement("root")
-                    .append(x.buildElement("table")
+        Document doc = x.document().setRoot(
+                x.element("root")
+                    .add(x.element("table")
                         .setNamespace(h).setPrefix("h")
-                        .append(x.buildElement("tr")
+                        .add(x.element("tr")
                             .setNamespace(h).setPrefix("h")
-                            .append(x.buildElement("td")
+                            .add(x.element("td")
                                 .setNamespace(h).setPrefix("h")
-                                .append("Apples"))
-                            .append(x.buildElement("td")
+                                .add("Apples"))
+                            .add(x.element("td")
                                 .setNamespace(h).setPrefix("h")
-                                .append("Bananas"))))
-                    .append(x.buildElement("table")
+                                .add("Bananas"))))
+                    .add(x.element("table")
                         .setNamespace(f).setPrefix("f")
-                        .append(x.buildElement("name")
+                        .add(x.element("name")
                             .setNamespace(f).setPrefix("f")
-                            .append("African Coffee Table"))
-                        .append(x.buildElement("width")
+                            .add("African Coffee Table"))
+                        .add(x.element("width")
                             .setNamespace(f).setPrefix("f")
-                            .append("80"))
-                        .append(x.buildElement("length")
+                            .add("80"))
+                        .add(x.element("length")
                             .setNamespace(f).setPrefix("f")
-                            .append("120")))
+                            .add("120")))
                 ).build();
 
          System.out.println(XomUtil.toString(doc, Charset.forName("ASCII")));
@@ -127,21 +148,45 @@ public class XomBTest {
 //        
 
     }
+    
+//     @Test
+//    public void testCommentEscaping() {
+//
+//        final XomB x = new XomB(new NodeFactory());
+//
+//        Document doc = x.document()
+//                .setDocType("html")
+//                .setRoot(x.root("html")
+//		.addComment("Root  comment!")
+//                .add(x.element("head")
+//                /**/.add(x.element("title")
+//                /**/.add("404 Not Found")))
+//                .add(x.element("body")
+//		/**/.addComment("Body comment!")
+//                /**/.add(x.element("h1")
+//                /*    */.add("Unicorn powered."))))
+//                .build();
+//
+//
+//        System.out.println(XomUtil.toString(doc, Charset.forName("ASCII")));
+//
+//    }
+     
 //        XomUtil.DocumentBuilder builder = XomUtil.documentBuilder().setDocType("html");
 //
 //        ElementBuilder root = builder.createRootElement("html");
 //
 //        root.createChildElement("head")
-//                .createChildElement("title").append("404 Not Found");
+//                .createChildElement("title").add("404 Not Found");
 //
 //
 //        ElementBuilder body = root.createChildElement("body");
-//        body.appendAttribute("id", "mc body");
+//        body.addAttribute("id", "mc body");
 //        
-//        body.createChildElement("h1").append("Not Found");
-//        body.createChildElement("p").append("Abject failure and stuff.");
+//        body.createChildElement("h1").add("Not Found");
+//        body.createChildElement("p").add("Abject failure and stuff.");
 //        body.createChildElement("hr");
-//        body.createChildElement("address").append("Unicorn powered magic webserver.");
+//        body.createChildElement("address").add("Unicorn powered magic webserver.");
 //
 //
 //        Document doc = builder.build();
