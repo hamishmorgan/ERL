@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.webapp;
 
+
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -92,7 +93,6 @@ public class WebApp {
 //
 //        final StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 //       
-
 
 	AnnotationToXML.Builder builder = AnnotationToXML.builder();
 	builder
@@ -185,5 +185,6 @@ public class WebApp {
 		}
 	    }
 	});
+
     }
 }
