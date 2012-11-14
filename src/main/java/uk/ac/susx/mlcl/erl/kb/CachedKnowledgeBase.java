@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.kb;
 
+import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -18,6 +19,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Instances of
+ * <code>CachedKnowledgeBase</code> adapt another KnowledgeBase implementation, and implement a
+ * transparent memory cache over the methods.
+ *
+ * Repeated attempts to retrieve the same data will be returned from memory, rather than querying
+ * the KB service. This particularly useful for web-based services such as Freebase, where
+ * unnecessary calls can have a significant effect on performance.
+ *
+ * Memory usage is constrained to approximately 1 MiB per cache. There are currently two caches (one
+ * for text and the other for search queries) so memory usage should not exceed 2MiB per instance.
+ *
  * Not thread safe
  *
  * @author hamish
@@ -26,90 +38,100 @@ import org.slf4j.LoggerFactory;
 @NotThreadSafe
 public class CachedKnowledgeBase implements KnowledgeBase {
 
-    private static final Logger LOG =
-	    LoggerFactory.getLogger(CachedKnowledgeBase.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(CachedKnowledgeBase.class);
     private final LoadingCache<String, String> textCache;
-
     private final LoadingCache<String, List<String>> searchCache;
 
-    CachedKnowledgeBase(LoadingCache<String, String> textCache,
-			LoadingCache<String, List<String>> searchCache) {
-	this.textCache = textCache;
-	this.searchCache = searchCache;
+    /**
+     * Protected dependency injection constructor. Use 
+     * {@link CachedKnowledgeBase#wrap(uk.ac.susx.mlcl.erl.kb.KnowledgeBase) } instead.
+     *
+     * @param textCache
+     * @param searchCache
+     */
+    protected CachedKnowledgeBase(final LoadingCache<String, String> textCache,
+                                  final LoadingCache<String, List<String>> searchCache) {
+        this.textCache = checkNotNull(textCache);
+        this.searchCache = checkNotNull(searchCache);
     }
 
     public List<String> search(final String query) throws IOException {
-	try {
-	    return searchCache.get(query);
-	} catch (ExecutionException ex) {
-	    Throwables.propagateIfInstanceOf(ex.getCause(), IOException.class);
-	    Throwables.propagateIfPossible(ex.getCause());
-	    throw new RuntimeException("unexpected: ", ex);
-	}
+        return get(searchCache, query);
     }
 
     public String text(final String id) throws IOException {
-	try {
-	    return textCache.get(id);
-	} catch (ExecutionException ex) {
-	    Throwables.propagateIfInstanceOf(ex.getCause(), IOException.class);
-	    Throwables.propagateIfPossible(ex.getCause());
-	    throw new RuntimeException("unexpected: ", ex);
-	}
+        return get(textCache, id);
+    }
+
+    protected static <K, V> V get(final LoadingCache<K, V> cache, final K key)
+            throws IOException {
+        try {
+            return cache.get(checkNotNull(key));
+        } catch (final ExecutionException ex) {
+            Throwables.propagateIfInstanceOf(ex.getCause(), IOException.class);
+            Throwables.propagateIfPossible(ex.getCause());
+            throw new RuntimeException("unexpected: ", ex);
+        }
     }
 
     public static KnowledgeBase wrap(final KnowledgeBase inner) {
-	if (inner instanceof CachedKnowledgeBase)
-	    return inner;
+        if (checkNotNull(inner) instanceof CachedKnowledgeBase) {
+            LOG.warn("Ignoring attempt to cache wrap a KnowledgeBase that was already cached.");
+            return inner;
+        }
 
-	final Weigher<String, String> textWeighter =
-		new Weigher<String, String>() {
-		    public int weigh(String key, String value) {
-			return (key.length() + value.length()) * 2;
+        final LoadingCache<String, String> textCache;
+        {
+            final Weigher<String, String> textWeighter =
+                    new Weigher<String, String>() {
+                        public int weigh(String key, String value) {
+                            return (4 * 2) + (key.length() + value.length()) * 2;
 
-		    }
-		};
-	final CacheLoader<String, String> textLoader =
-		new CacheLoader<String, String>() {
-		    @Override
-		    public String load(String key) throws Exception {
-			return inner.text(key);
-		    }
-		};
+                        }
+                    };
+            final CacheLoader<String, String> textLoader =
+                    new CacheLoader<String, String>() {
+                        @Override
+                        public String load(String key) throws Exception {
+                            return inner.text(key);
+                        }
+                    };
 
-	final LoadingCache<String, String> textCache = CacheBuilder.newBuilder()
-		.weigher(textWeighter)
-		.maximumWeight(1 << 20)
-		.build(textLoader);
+            textCache = CacheBuilder.newBuilder()
+                    .weigher(textWeighter)
+                    .maximumWeight(1 << 20)
+                    .build(textLoader);
+        }
 
+        final LoadingCache<String, List<String>> searchCache;
+        {
+            final Weigher<String, List<String>> searchWeighter =
+                    new Weigher<String, List<String>>() {
+                        public int weigh(String key, List<String> values) {
+                            int sum = (4 * 2) + (2 * key.length());
+                            for (String value : values) {
+                                sum += 4 + 2 * value.length();
+                            }
+                            return sum;
 
+                        }
+                    };
+            final CacheLoader<String, List<String>> searchLoader =
+                    new CacheLoader<String, List<String>>() {
+                        @Override
+                        public List<String> load(String key) throws Exception {
+                            return inner.search(key);
+                        }
+                    };
 
-	final Weigher<String, List<String>> searchWeighter =
-		new Weigher<String, List<String>>() {
-		    public int weigh(String key, List<String> values) {
-			int sum = key.length();
-			for (String value : values)
-			    sum += value.length();
-			return sum * 2;
+            searchCache = CacheBuilder
+                    .newBuilder()
+                    .weigher(searchWeighter)
+                    .maximumWeight(1 << 20)
+                    .build(searchLoader);
+        }
 
-		    }
-		};
-	final CacheLoader<String, List<String>> searchLoader =
-		new CacheLoader<String, List<String>>() {
-		    @Override
-		    public List<String> load(String key) throws Exception {
-			return inner.search(key);
-		    }
-		};
-
-	final LoadingCache<String, List<String>> searchCache = CacheBuilder
-		.newBuilder()
-		.weigher(searchWeighter)
-		.maximumWeight(1 << 20)
-		.build(searchLoader);
-
-	return new CachedKnowledgeBase(textCache, searchCache);
+        return new CachedKnowledgeBase(textCache, searchCache);
 
     }
 }
