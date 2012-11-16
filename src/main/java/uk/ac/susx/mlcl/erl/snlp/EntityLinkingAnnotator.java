@@ -5,6 +5,7 @@
 package uk.ac.susx.mlcl.erl.snlp;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -82,37 +84,96 @@ public class EntityLinkingAnnotator implements Annotator {
         List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
 
         for (CoreMap sentence : sentences) {
-            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-                String link = linkFor(document, token);
 
-                token.set(EntityKbIdAnnotation.class, link);
+            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
 
+            if (tokens.isEmpty()) {
+                continue;
             }
+
+            int start = 0;
+            int end = 0;
+
+            while (start < tokens.size()) {
+                end = start;
+                final String entityLabel =
+                        tokens.get(end).get(NamedEntityTagAnnotation.class);
+                end++;
+
+                while (end < tokens.size() && tokens.get(end).get(NamedEntityTagAnnotation.class).equals(entityLabel)) {
+                    end++;
+                }
+
+                if (!entityLabel.equals("O")) {
+
+
+                    StringBuilder phrase = new StringBuilder();
+                    boolean first = true;
+                    for (int i = start; i < end; i++) {
+                        CoreLabel token = tokens.get(i);
+                        if (!first) {
+                            phrase.append(" ");
+                        }
+                        first = false;
+                        phrase.append(token.word());
+                    }
+
+
+                    String link = linkFor(document, phrase.toString());
+
+                    for (int i = start; i < end; i++) {
+                        CoreLabel token = tokens.get(i);
+                        token.set(EntityKbIdAnnotation.class, link);
+                    }
+
+                }
+
+                start = end;
+            }
+
+
+//            CoreLabel nextToken = tokens.(();
+
+
+//            
+//            while (tokenIt.hasNext()) {
+//
+//                List<CoreLabel> sameClassTokens = Lists.newArrayList();
+//                sameClassTokens.add(tokenIt.next());
+//
+//                final String entityLabel = sameClassTokens.get(0).get(
+//                        NamedEntityTagAnnotation.class);
+//
+//                
+//                
+//                
+//
+//            }
+//
+//
+//            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+//                String link = linkFor(document, token);
+//
+//                token.set(EntityKbIdAnnotation.class, link);
+//
+//            }
+
         }
     }
 
-    String linkFor(Annotation annotation, CoreLabel token) {
-
-        Preconditions.checkArgument(
-                token.containsKey(NamedEntityTagAnnotation.class),
-                "NamedEntityTagAnnotation is not present on token.");
-
-
-        String entityClass = token.get(NamedEntityTagAnnotation.class);
-
-        if (entityClass.equals("O"))
-            return null;
+    String linkFor(Annotation annotation, String token) {
+//
 
 
         List<String> candidates;
         try {
-            candidates = knowledgeBase.search(token.word());
-            
-            
+            candidates = knowledgeBase.search(token);
+
+
             // Simply return the first match
             return candidates.isEmpty() ? "NIL" : candidates.get(0);
-            
-            
+
+
         } catch (IOException ex) {
             Logger.getLogger(EntityLinkingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
             return "NIL";
@@ -127,17 +188,17 @@ public class EntityLinkingAnnotator implements Annotator {
             return String.class;
         }
     }
-    
+
     public static class Factory implements edu.stanford.nlp.util.Factory<Annotator>, Serializable {
 
         private static final long serialVersionUID = 1L;
+
         public Annotator create() {
             try {
                 return EntityLinkingAnnotator.newInstance();
             } catch (IOException ex) {
-                 throw new RuntimeException(ex);
+                throw new RuntimeException(ex);
             }
         }
-        
     }
 }
