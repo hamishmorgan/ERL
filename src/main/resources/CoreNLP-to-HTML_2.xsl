@@ -36,6 +36,42 @@ xmlns:d="http://nlp.stanford.edu/CoreNLP/v1">
   <xsl:param name="position" select="'0'"/>
   <i><b>Sentence #<xsl:value-of select="$position"/></b></i>
 
+  <xsl:for-each select="tokens/token">
+      
+      <xsl:choose>
+          <xsl:when test='link'>
+              <a>
+                  <xsl:attribute name="href">
+                      http://www.freebase.com<xsl:value-of select="link" />
+                  </xsl:attribute>
+                  <xsl:value-of select="word"/>
+          <xsl:text> </xsl:text>
+              </a>      
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:value-of select="word"/>
+          <xsl:text> </xsl:text>
+          </xsl:otherwise>
+      </xsl:choose>
+      
+      
+<!--      
+    <tr>
+      <td><xsl:value-of select="@id"/></td>
+      <td><xsl:value-of select="word"/></td>
+      <td><xsl:value-of select="lemma"/></td>
+      <td><xsl:value-of select="CharacterOffsetBegin"/></td>
+      <td><xsl:value-of select="CharacterOffsetEnd"/></td>
+      <td><xsl:value-of select="POS"/></td>
+      <td><xsl:value-of select="NER"/></td>
+      <td><xsl:value-of select="NormalizedNER"/></td>
+      <td><xsl:value-of select="link"/></td>
+    </tr>-->
+  </xsl:for-each>
+  
+  
+  
+<!--  
   <p>
   <i>Tokens</i><br/>
   <xsl:apply-templates select="tokens"/>
@@ -64,96 +100,118 @@ xmlns:d="http://nlp.stanford.edu/CoreNLP/v1">
   </ul>
   </p>
 
-  <p>
-  <i>Collapsed dependencies with CC processed</i>
-  <ul>
-  <xsl:for-each select="collapsed-ccprocessed-dependencies">
-    <xsl:apply-templates select="dep"/>
-  </xsl:for-each>
-  </ul>
-  </p>
-</xsl:template>
+        <p>
+        <i>Collapsed dependencies with CC processed</i>
+        <ul>
+        <xsl:for-each select="collapsed-ccprocessed-dependencies">
+          <xsl:apply-templates select="dep"/>
+        </xsl:for-each>
+        </ul>
+        </p>-->
+    </xsl:template>
 
-<xsl:template match="tokens">
+    <xsl:template match="tokens">
 
-  <table border="1">
-  <tr>
-    <th>Id</th>
-    <th>Word</th>
-    <th>Lemma</th>
-    <th>Char begin</th>
-    <th>Char end</th>
-    <th>POS</th>
-    <th>NER</th>
-    <th>Normalized NER</th>
-    <th>Entity Link</th>
-  </tr>
-  <xsl:for-each select="token">
-    <tr>
-      <td><xsl:value-of select="@id"/></td>
-      <td><xsl:value-of select="word"/></td>
-      <td><xsl:value-of select="lemma"/></td>
-      <td><xsl:value-of select="CharacterOffsetBegin"/></td>
-      <td><xsl:value-of select="CharacterOffsetEnd"/></td>
-      <td><xsl:value-of select="POS"/></td>
-      <td><xsl:value-of select="NER"/></td>
-      <td><xsl:value-of select="NormalizedNER"/></td>
-      <td><xsl:value-of select="link"/></td>
-    </tr>
-  </xsl:for-each>
-  </table>
-</xsl:template>
+        <table border="1">
+            <tr>
+                <th>Id</th>
+                <th>Word</th>
+                <th>Lemma</th>
+                <th>Char begin</th>
+                <th>Char end</th>
+                <th>POS</th>
+                <th>NER</th>
+                <th>Normalized NER</th>
+                <th>Entity Link</th>
+            </tr>
+            <xsl:for-each select="token">
+                <tr>
+                    <td>
+                        <xsl:value-of select="@id"/>
+                    </td>
+                    <td>
+                        <xsl:value-of select="word"/>
+                    </td>
+                    <td>
+                        <xsl:value-of select="lemma"/>
+                    </td>
+                    <td>
+                        <xsl:value-of select="CharacterOffsetBegin"/>
+                    </td>
+                    <td>
+                        <xsl:value-of select="CharacterOffsetEnd"/>
+                    </td>
+                    <td>
+                        <xsl:value-of select="POS"/>
+                    </td>
+                    <td>
+                        <xsl:value-of select="NER"/>
+                    </td>
+                    <td>
+                        <xsl:value-of select="NormalizedNER"/>
+                    </td>
+                    <td>
+                        <xsl:value-of select="link"/>
+                    </td>
+                </tr>
+            </xsl:for-each>
+        </table>
+    </xsl:template>
 
-<xsl:template match="basic-dependencies">
-  <ul>
-  <xsl:for-each select="dep">
-    <xsl:apply-templates select="."/>
-  </xsl:for-each>
-  </ul>
-</xsl:template>
+    <xsl:template match="basic-dependencies">
+        <ul>
+            <xsl:for-each select="dep">
+                <xsl:apply-templates select="."/>
+            </xsl:for-each>
+        </ul>
+    </xsl:template>
 
-<xsl:template match="collapsed-dependencies">
-  <ul>
-  <xsl:for-each select="dep">
-    <xsl:apply-templates select="."/>
-  </xsl:for-each>
-  </ul>
-</xsl:template>
+    <xsl:template match="collapsed-dependencies">
+        <ul>
+            <xsl:for-each select="dep">
+                <xsl:apply-templates select="."/>
+            </xsl:for-each>
+        </ul>
+    </xsl:template>
 
-<xsl:template match="collapsed-ccprocessed-dependencies">
-  <ul>
-  <xsl:for-each select="dep">
-    <xsl:apply-templates select="."/>
-  </xsl:for-each>
-  </ul>
-</xsl:template>
+    <xsl:template match="collapsed-ccprocessed-dependencies">
+        <ul>
+            <xsl:for-each select="dep">
+                <xsl:apply-templates select="."/>
+            </xsl:for-each>
+        </ul>
+    </xsl:template>
 
-<xsl:template match="dep">
-    <li>
-      <xsl:value-of select="@type"/>
-      (
-      <xsl:value-of select="governor"/>-<xsl:value-of select="governor/@idx"/>
-      ,
-      <xsl:value-of select="dependent"/>-<xsl:value-of select="dependent/@idx"/>
-      )
-    </li>
-</xsl:template>
+    <xsl:template match="dep">
+        <li>
+            <xsl:value-of select="@type"/>
+            (
+            <xsl:value-of select="governor"/>-
+            <xsl:value-of select="governor/@idx"/>
+            ,
+            <xsl:value-of select="dependent"/>-
+            <xsl:value-of select="dependent/@idx"/>
+            )
+        </li>
+    </xsl:template>
 
-<xsl:template match="coreference">
-  <ol>
-  <xsl:for-each select="coreference">
-    <li>
-    <ul>
-    <xsl:for-each select="mention">
-      <li> sentence <xsl:value-of select="sentence"/>,
-           headword <xsl:value-of select="head"/> 
-           <xsl:if test="@representative"> (gov) </xsl:if>
-      </li>
-    </xsl:for-each>
-    </ul>
-    </li>
-  </xsl:for-each>
-  </ol>
-</xsl:template>
+    <xsl:template match="coreference">
+        <ol>
+            <xsl:for-each select="coreference">
+                <li>
+                    <ul>
+                        <xsl:for-each select="mention">
+                            <li> sentence 
+                                <xsl:value-of select="sentence"/>,
+                                headword 
+                                <xsl:value-of select="head"/> 
+                                <xsl:if test="@representative"> (gov) </xsl:if>
+                            </li>
+                        </xsl:for-each>
+                    </ul>
+                </li>
+            </xsl:for-each>
+        </ol>
+    </xsl:template>
 
 </xsl:stylesheet>

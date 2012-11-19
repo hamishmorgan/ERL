@@ -70,11 +70,11 @@ public class WebApp {
     static AnnotationToXML newAnnotationToXML()  {
         try {
             AnnotationToXML.Builder builder = AnnotationToXML.builder();
-            builder.configure(new PropertiesConfiguration("stanfordXml.properties"));
-            builder.addAnnotationToIgnore(
-                    CoreAnnotations.XmlContextAnnotation.class);
-            builder.addSimplifiedName(
-                    EntityLinkingAnnotator.EntityKbIdAnnotation.class, "link");
+//            builder.configure(new PropertiesConfiguration("stanfordXml.properties"));
+//            builder.addAnnotationToIgnore(
+//                    CoreAnnotations.XmlContextAnnotation.class);
+//            builder.addSimplifiedName(
+//                    EntityLinkingAnnotator.EntityKbIdAnnotation.class, "link");
             return builder.build();
         } catch (Throwable ex) {
            Throwables.propagateIfPossible(ex);
@@ -206,7 +206,7 @@ public class WebApp {
 
         AnnotationPipeline pipeline = new AnnotationPipeline();
         pipeline.addAnnotator(pool.get("tokenize"));
-        pipeline.addAnnotator(pool.get("cleanXml"));
+//        pipeline.addAnnotator(pool.get("cleanXml"));
         pipeline.addAnnotator(pool.get("ssplit"));
         pipeline.addAnnotator(pool.get("ner"));
         pipeline.addAnnotator(pool.get("el"));
