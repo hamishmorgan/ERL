@@ -697,10 +697,10 @@ public enum HttpStatus {
      */
     private final String message;
 
-    /**
-     * class of this status
-     */
-    private final Type statusClass;
+//    /**
+//     * class of this status
+//     */
+//    private Type statusClass;
 
     /**
      * Private constructor.
@@ -716,7 +716,6 @@ public enum HttpStatus {
         Preconditions.checkNotNull(message, "message");
         this.code = code;
         this.message = message;
-        this.statusClass = getTypeOfCode(code);
     }
 
     /**
@@ -755,68 +754,68 @@ public enum HttpStatus {
         return Lazy.HTTP_1_1.contains(this);
     }
 
-    /**
-     * Get the class of this status code.
-     * <p/>
-     * @return status class
-     */
-    public Type type() {
-        return statusClass;
-    }
-
-    /**
-     * Get whether or not this status is within the information class range 100-199 (inclusive).
-     * <p/>
-     * @return true if this status is an informational, false otherwise.
-     */
-    public boolean isInformational() {
-        return statusClass == Type.Informational;
-    }
-
-    /**
-     * Get whether or not this status is within the success class range 200-299 (inclusive).
-     * <p/>
-     * @return true if this status is a success, false otherwise.
-     */
-    public boolean isSuccess() {
-        return statusClass == Type.Success;
-    }
-
-    /**
-     * Get whether or not this status is within the redirection class range 300-399 (inclusive).
-     * <p/>
-     * @return true if this status is a redirection, false otherwise.
-     */
-    public boolean isRedirection() {
-        return statusClass == Type.Redirection;
-    }
-
-    /**
-     * Get whether or not this status is within the client error class range 400-499 (inclusive).
-     * <p/>
-     * @return true if this status is a client error, false otherwise.
-     */
-    public boolean isClientError() {
-        return statusClass == Type.Client_Error;
-    }
-
-    /**
-     * Get whether or not this status is within the server error class range 500-599 (inclusive).
-     * <p/>
-     * @return true if this status is a server error, false otherwise.
-     */
-    public boolean isServerError() {
-        return statusClass == Type.Server_Error;
-    }
-
-    /**
-     * Get whether or this status indicates some sort of error has occurred.
-     * <p/>
-     * @return true if an error has occurred, false otherwise.
-     */
-    public boolean isError() {
-        return isClientError() || isServerError();
-    }
+//    /**
+//     * Get the class of this status code.
+//     * <p/>
+//     * @return status class
+//     */
+//    public Type type() {
+//        return statusClass;
+//    }
+//
+//    /**
+//     * Get whether or not this status is within the information class range 100-199 (inclusive).
+//     * <p/>
+//     * @return true if this status is an informational, false otherwise.
+//     */
+//    public boolean isInformational() {
+//        return statusClass == Type.Informational;
+//    }
+//
+//    /**
+//     * Get whether or not this status is within the success class range 200-299 (inclusive).
+//     * <p/>
+//     * @return true if this status is a success, false otherwise.
+//     */
+//    public boolean isSuccess() {
+//        return statusClass == Type.Success;
+//    }
+//
+//    /**
+//     * Get whether or not this status is within the redirection class range 300-399 (inclusive).
+//     * <p/>
+//     * @return true if this status is a redirection, false otherwise.
+//     */
+//    public boolean isRedirection() {
+//        return statusClass == Type.Redirection;
+//    }
+//
+//    /**
+//     * Get whether or not this status is within the client error class range 400-499 (inclusive).
+//     * <p/>
+//     * @return true if this status is a client error, false otherwise.
+//     */
+//    public boolean isClientError() {
+//        return statusClass == Type.Client_Error;
+//    }
+//
+//    /**
+//     * Get whether or not this status is within the server error class range 500-599 (inclusive).
+//     * <p/>
+//     * @return true if this status is a server error, false otherwise.
+//     */
+//    public boolean isServerError() {
+//        return statusClass == Type.Server_Error;
+//    }
+//
+//    /**
+//     * Get whether or this status indicates some sort of error has occurred.
+//     * <p/>
+//     * @return true if an error has occurred, false otherwise.
+//     */
+//    public boolean isError() {
+//        return isClientError() || isServerError();
+//    }
 
     @Override
     public String toString() {
@@ -824,7 +823,7 @@ public enum HttpStatus {
     }
 
     private static final MessageFormat HTML_ERROR_TEMPLATE = new MessageFormat(
-            "<!DOCTYPE html>\n"
+            "<!doctype html>\n"
             + "<html>"
             + "  <head>\n"
             + "    <title>{0,number,integer} {1}</title>\n"
@@ -867,78 +866,78 @@ public enum HttpStatus {
         return Lazy.codeMap.containsKey(code) ? Lazy.codeMap.get(code) : NullStatus;
     }
 
-    /*
-     * Static utility methods
-     */
-    /**
-     * Get whether or node the given integer status code is within the informational class range
-     * 100-199 (inclusive).
-     * <p/>
-     * @param code integer status code
-     * @return true if the code is within the informational class, false otherwise
-     * @throws IllegalArgumentException if code is negative
-     */
-    public static boolean isInformational(int code) {
-        Preconditions.checkArgument(
-                code >= 0, "Expecting positive argument code, but found %s.", code);
-        return Type.Informational.contains(code);
-    }
-
-    /**
-     * Get whether or node the given integer status code is within the success class range 200-299
-     * (inclusive).
-     * <p/>
-     * @param code integer status code
-     * @return true if the code is within the success class, false otherwise
-     * @throws IllegalArgumentException if code is negative
-     */
-    public static boolean isSuccess(int code) {
-        Preconditions.checkArgument(
-                code >= 0, "Expecting positive argument code, but found %s.", code);
-        return Type.Success.contains(code);
-    }
-
-    /**
-     * Get whether or node the given integer status code is within the redirection class range
-     * 300-399 (inclusive).
-     * <p/>
-     * @param code integer status code
-     * @return true if the code is within the redirection class, false otherwise
-     * @throws IllegalArgumentException if code is negative
-     */
-    public static boolean isRedirection(int code) {
-        Preconditions.checkArgument(
-                code >= 0, "Expecting positive argument code, but found %s.", code);
-        return Type.Redirection.contains(code);
-    }
-
-    /**
-     * Get whether or node the given integer status code is within the client error class range
-     * 400-499 (inclusive).
-     * <p/>
-     * @param code integer status code
-     * @return true if the code is within the client error class, false otherwise
-     * @throws IllegalArgumentException if code is negative
-     */
-    public static boolean isClientError(int code) {
-        Preconditions.checkArgument(
-                code >= 0, "Expecting positive argument code, but found %s.", code);
-        return Type.Client_Error.contains(code);
-    }
-
-    /**
-     * Get whether or node the given integer status code is within the server error class range
-     * 500-599 (inclusive).
-     * <p/>
-     * @param code integer status code
-     * @return true if the code is within the server error class, false otherwise
-     * @throws IllegalArgumentException if code is negative
-     */
-    public static boolean isServerError(int code) {
-        Preconditions.checkArgument(
-                code >= 0, "Expecting positive argument code, but found %s.", code);
-        return Type.Server_Error.contains(code);
-    }
+//    /*
+//     * Static utility methods
+//     */
+//    /**
+//     * Get whether or node the given integer status code is within the informational class range
+//     * 100-199 (inclusive).
+//     * <p/>
+//     * @param code integer status code
+//     * @return true if the code is within the informational class, false otherwise
+//     * @throws IllegalArgumentException if code is negative
+//     */
+//    public static boolean isInformational(int code) {
+//        Preconditions.checkArgument(
+//                code >= 0, "Expecting positive argument code, but found %s.", code);
+//        return Type.Informational.contains(code);
+//    }
+//
+//    /**
+//     * Get whether or node the given integer status code is within the success class range 200-299
+//     * (inclusive).
+//     * <p/>
+//     * @param code integer status code
+//     * @return true if the code is within the success class, false otherwise
+//     * @throws IllegalArgumentException if code is negative
+//     */
+//    public static boolean isSuccess(int code) {
+//        Preconditions.checkArgument(
+//                code >= 0, "Expecting positive argument code, but found %s.", code);
+//        return Type.Success.contains(code);
+//    }
+//
+//    /**
+//     * Get whether or node the given integer status code is within the redirection class range
+//     * 300-399 (inclusive).
+//     * <p/>
+//     * @param code integer status code
+//     * @return true if the code is within the redirection class, false otherwise
+//     * @throws IllegalArgumentException if code is negative
+//     */
+//    public static boolean isRedirection(int code) {
+//        Preconditions.checkArgument(
+//                code >= 0, "Expecting positive argument code, but found %s.", code);
+//        return Type.Redirection.contains(code);
+//    }
+//
+//    /**
+//     * Get whether or node the given integer status code is within the client error class range
+//     * 400-499 (inclusive).
+//     * <p/>
+//     * @param code integer status code
+//     * @return true if the code is within the client error class, false otherwise
+//     * @throws IllegalArgumentException if code is negative
+//     */
+//    public static boolean isClientError(int code) {
+//        Preconditions.checkArgument(
+//                code >= 0, "Expecting positive argument code, but found %s.", code);
+//        return Type.Client_Error.contains(code);
+//    }
+//
+//    /**
+//     * Get whether or node the given integer status code is within the server error class range
+//     * 500-599 (inclusive).
+//     * <p/>
+//     * @param code integer status code
+//     * @return true if the code is within the server error class, false otherwise
+//     * @throws IllegalArgumentException if code is negative
+//     */
+//    public static boolean isServerError(int code) {
+//        Preconditions.checkArgument(
+//                code >= 0, "Expecting positive argument code, but found %s.", code);
+//        return Type.Server_Error.contains(code);
+//    }
 
     /*
      * ***************************************************************************************
@@ -995,178 +994,178 @@ public enum HttpStatus {
     /**
      * Constants enumerating the HTTP status code classes.
      */
-    public enum Type {
-
-        /**
-         * 1xx Informational.
-         * <p/>
-         * Request received, continuing process.[2]
-         * <p/>
-         * This class of status code indicates a provisional response, consisting only of the
-         * Status-Line and optional headers, and is terminated by an empty line. Since HTTP/1.0 did
-         * not define any 1xx status statuses, servers must not send a 1xx response to an HTTP/1.0
-         * client except under experimental conditions.
-         */
-        Informational(100, 199, "Informational"),
-        /**
-         * 2xx Success.
-         * <p/>
-         * This class of status statuses indicates the action requested by the client was received,
-         * understood, accepted and processed successfully.
-         */
-        Success(200, 299, "Redirection"),
-        /**
-         * 3xx Redirection.
-         * <p/>
-         * The client must take additional action to complete the request.[2] This class of status
-         * code indicates that further action needs to be taken by the user agent in order to fulfil
-         * the request. The action required may be carried out by the user agent without interaction
-         * with the user if and only if the method used in the second request is GET or HEAD. A user
-         * agent should not automatically redirect a request more than five times, since such
-         * redirections usually indicate an infinite loop.
-         */
-        Redirection(300, 399, "Client Error"),
-        /**
-         * 4xx Client Error.
-         * <p/>
-         * The 4xx class of status code is intended for cases in which the client seems to have
-         * erred. Except when responding to a HEAD request, the server should include an entity
-         * containing an explanation of the error situation, and whether it is a temporary or
-         * permanent condition. These status statuses are applicable to any request method. User
-         * agents should display any included entity to the user.
-         */
-        Client_Error(400, 499, "Server Error"),
-        /**
-         * 5xx Server Error.
-         * <p/>
-         * The server failed to fulfill an apparently valid request.[2] Response status statuses
-         * beginning with the digit "5" indicate cases in which the server is aware that it has
-         * encountered an error or is otherwise incapable of performing the request. Except when
-         * responding to a HEAD request, the server should include an entity containing an
-         * explanation of the error situation, and indicate whether it is a temporary or permanent
-         * condition. Likewise, user agents should display any included entity to the user. These
-         * response statuses are applicable to any request method.
-         */
-        Server_Error(500, 599, ""),;
-
-        /**
-         * Starting integer code range value.
-         */
-        private final int start;
-
-        /**
-         * Ending integer code range value.
-         */
-        private final int end;
-
-        /**
-         * Human readable message.
-         */
-        private final String message;
-
-        /**
-         * Collection of all status objects of this type.
-         */
-        private final Set<HttpStatus> codes;
-
-        /**
-         * Private constructor.
-         * <p/>
-         * @param start   first integer code in range
-         * @param end     last integer code in range
-         * @param message human readable text message
-         * @throws IllegalArgumentException if start or end is negative, or start is greater than
-         *                                  end
-         * @throws NullPointerException     if message is null
-         */
-        private Type(int start, int end, String message) {
-            Preconditions.checkArgument(
-                    start >= 0, "Expecting positive argument start, but found %s.", start);
-            Preconditions.checkArgument(
-                    end >= 0, "Expecting positive argument end, but found %s.", end);
-            Preconditions.checkArgument(
-                    start <= end, "Expecting arguments start < end, but found %s > %s.", start, end);
-            Preconditions.checkNotNull(message, "message");
-            this.start = start;
-            this.end = end;
-            this.message = message;
-            codes = getStatusesInRange(start, end);
-        }
-
-        /**
-         * Get the start of the integer code range defined by this status class.
-         * <p/>
-         * @return start of code range
-         */
-        public int start() {
-            return start;
-        }
-
-        /**
-         * Get the end of the integer code range defined by this status class.
-         * <p/>
-         * @return end of code range
-         */
-        public int end() {
-            return end;
-        }
-
-        /**
-         * Get a collection of all statuses that are within this class.
-         * <p/>
-         * @return collection of statuses within this class.
-         */
-        public Set<HttpStatus> statuses() {
-            return codes;
-        }
-
-        /**
-         * Get a human readable description of this status class.
-         * <p/>
-         * @return a human readable description
-         */
-        public String message() {
-            return message;
-        }
-
-        /**
-         * Get whether or not the given integer status code is within the code range defined by this
-         * status class.
-         * <p/>
-         * @param code integer status code to check
-         * @return true if code is within the class range, false otherwise.
-         * @throws IllegalArgumentException if code is negative
-         */
-        public boolean contains(int code) {
-            Preconditions.checkArgument(
-                    code >= 0, "Expecting positive argument code, but found %s.", code);
-            return (start <= code) && (code <= end);
-        }
-
-        @Override
-        public String toString() {
-            return String.format("[%03d-%03d %s]", start(), end(), message());
-        }
-    }
-
-    /*
-     * ***************************************************************************************
-     * Private utilities used to initialize the instances
-     * ***************************************************************************************
-     */
-    /**
-     * Get the status class that contains the given code.
-     * <p/>
-     * @param code code to find the class of
-     * @return class containing the status code
-     * @throw AssertionError if there is no class for the given code
-     */
-    private static Type getTypeOfCode(int code) {
-        for (Type codeClass : Type.values())
-            if (codeClass.contains(code))
-                return codeClass;
-        throw new AssertionError();
-    }
+//    public enum Type {
+//
+//        /**
+//         * 1xx Informational.
+//         * <p/>
+//         * Request received, continuing process.[2]
+//         * <p/>
+//         * This class of status code indicates a provisional response, consisting only of the
+//         * Status-Line and optional headers, and is terminated by an empty line. Since HTTP/1.0 did
+//         * not define any 1xx status statuses, servers must not send a 1xx response to an HTTP/1.0
+//         * client except under experimental conditions.
+//         */
+//        Informational(100, 199, "Informational"),
+//        /**
+//         * 2xx Success.
+//         * <p/>
+//         * This class of status statuses indicates the action requested by the client was received,
+//         * understood, accepted and processed successfully.
+//         */
+//        Success(200, 299, "Redirection"),
+//        /**
+//         * 3xx Redirection.
+//         * <p/>
+//         * The client must take additional action to complete the request.[2] This class of status
+//         * code indicates that further action needs to be taken by the user agent in order to fulfil
+//         * the request. The action required may be carried out by the user agent without interaction
+//         * with the user if and only if the method used in the second request is GET or HEAD. A user
+//         * agent should not automatically redirect a request more than five times, since such
+//         * redirections usually indicate an infinite loop.
+//         */
+//        Redirection(300, 399, "Client Error"),
+//        /**
+//         * 4xx Client Error.
+//         * <p/>
+//         * The 4xx class of status code is intended for cases in which the client seems to have
+//         * erred. Except when responding to a HEAD request, the server should include an entity
+//         * containing an explanation of the error situation, and whether it is a temporary or
+//         * permanent condition. These status statuses are applicable to any request method. User
+//         * agents should display any included entity to the user.
+//         */
+//        Client_Error(400, 499, "Server Error"),
+//        /**
+//         * 5xx Server Error.
+//         * <p/>
+//         * The server failed to fulfill an apparently valid request.[2] Response status statuses
+//         * beginning with the digit "5" indicate cases in which the server is aware that it has
+//         * encountered an error or is otherwise incapable of performing the request. Except when
+//         * responding to a HEAD request, the server should include an entity containing an
+//         * explanation of the error situation, and indicate whether it is a temporary or permanent
+//         * condition. Likewise, user agents should display any included entity to the user. These
+//         * response statuses are applicable to any request method.
+//         */
+//        Server_Error(500, 599, ""),;
+//
+//        /**
+//         * Starting integer code range value.
+//         */
+//        private final int start;
+//
+//        /**
+//         * Ending integer code range value.
+//         */
+//        private final int end;
+//
+//        /**
+//         * Human readable message.
+//         */
+//        private final String message;
+//
+//        /**
+//         * Collection of all status objects of this type.
+//         */
+//        private final Set<HttpStatus> codes;
+//
+//        /**
+//         * Private constructor.
+//         * <p/>
+//         * @param start   first integer code in range
+//         * @param end     last integer code in range
+//         * @param message human readable text message
+//         * @throws IllegalArgumentException if start or end is negative, or start is greater than
+//         *                                  end
+//         * @throws NullPointerException     if message is null
+//         */
+//        private Type(int start, int end, String message) {
+//            Preconditions.checkArgument(
+//                    start >= 0, "Expecting positive argument start, but found %s.", start);
+//            Preconditions.checkArgument(
+//                    end >= 0, "Expecting positive argument end, but found %s.", end);
+//            Preconditions.checkArgument(
+//                    start <= end, "Expecting arguments start < end, but found %s > %s.", start, end);
+//            Preconditions.checkNotNull(message, "message");
+//            this.start = start;
+//            this.end = end;
+//            this.message = message;
+//            codes = getStatusesInRange(start, end);
+//        }
+//
+//        /**
+//         * Get the start of the integer code range defined by this status class.
+//         * <p/>
+//         * @return start of code range
+//         */
+//        public int start() {
+//            return start;
+//        }
+//
+//        /**
+//         * Get the end of the integer code range defined by this status class.
+//         * <p/>
+//         * @return end of code range
+//         */
+//        public int end() {
+//            return end;
+//        }
+//
+//        /**
+//         * Get a collection of all statuses that are within this class.
+//         * <p/>
+//         * @return collection of statuses within this class.
+//         */
+//        public Set<HttpStatus> statuses() {
+//            return codes;
+//        }
+//
+//        /**
+//         * Get a human readable description of this status class.
+//         * <p/>
+//         * @return a human readable description
+//         */
+//        public String message() {
+//            return message;
+//        }
+//
+//        /**
+//         * Get whether or not the given integer status code is within the code range defined by this
+//         * status class.
+//         * <p/>
+//         * @param code integer status code to check
+//         * @return true if code is within the class range, false otherwise.
+//         * @throws IllegalArgumentException if code is negative
+//         */
+//        public boolean contains(int code) {
+//            Preconditions.checkArgument(
+//                    code >= 0, "Expecting positive argument code, but found %s.", code);
+//            return (start <= code) && (code <= end);
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return String.format("[%03d-%03d %s]", start(), end(), message());
+//        }
+//    }
+//
+//    /*
+//     * ***************************************************************************************
+//     * Private utilities used to initialize the instances
+//     * ***************************************************************************************
+//     */
+//    /**
+//     * Get the status class that contains the given code.
+//     * <p/>
+//     * @param code code to find the class of
+//     * @return class containing the status code
+//     * @throw AssertionError if there is no class for the given code
+//     */
+//    private static Type getTypeOfCode(int code) {
+//        for (Type codeClass : Type.values())
+//            if (codeClass.contains(code))
+//                return codeClass;
+//        throw new AssertionError();
+//    }
 
     /**
      * Get a collection of all status objects with a code within the given range inclusively.

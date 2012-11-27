@@ -700,7 +700,7 @@ public class XomB {
 	 */
 	public ElementBuilder add(final String data) {
 	    checkNotNull(data, "data");
-	    checkArgument(!data.isEmpty(), "argument data is empty");
+//	    checkArgument(!data.isEmpty(), "argument data is empty");
 
 	    _addChildren(factory.makeText(data));
 	    return this;

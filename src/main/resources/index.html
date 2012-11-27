@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" >
+  <head>
+    <title>Sussex Entity Linking Service</title>
+    <meta charset="utf-8" >
+    <link rel="stylesheet" href="default.css" />
+    <script src="jquery-1.8.3.min.js"></script>
+  </head>
+  <body>
+
+    <div class="header">
+      <h1>Sussex Entity Linking Service</h1>
+    </div> 
+
+    <div id="container5">
+      <div id="container4">
+        <div id="container3">
+          <div id="container2">
+            <div id="container1">
+
+              <div id="col1">&nbsp;</div>
+
+              <div id="col2">
+                <h2>Input</h2>
+
+                <form id="input">
+
+                  <fieldset style="border: 0; margin: 0; padding: 0;" >
+                    <div>
+                      <label for="inputtext">Enter some English plain text:</label>
+                    </div><div>
+                      <textarea cols="40" rows="25" name="text" 
+                                id="inputtextarea"
+                                required="required" autofocus></textarea>
+                    </div>
+                  </fieldset>
+
+                  <fieldset disabled>
+
+                    <legend>Options:</legend>
+
+                    <div>
+                      <label>Knowledge Base: </label>
+
+                      <input type="radio" name="kb" value="freebase" 
+                             id="kbFreebase" checked required>
+                      <label for="kbFreebase" >Freebase</label>
+
+                      <input type="radio" name="kb" value="tac" id="kbTac" required>
+                      <label for="kbTac">TAC</label>
+
+                      <input type="radio" name="kb" value="dbp" id="kbDbp" required>
+                      <label for="kbDbp">DBPedia</label>
+                    </div>
+
+                    <div>
+                      <label>Output format:</label>
+                      <select id="outputFormat">
+                        <option value = "1">full text</option>
+                        <option value = "2">mentions only</option>
+                      </select>
+                    </div>
+
+                  </fieldset>
+
+                  <fieldset style="text-align: right; border: 0;">
+
+                    <input type="reset" value="Clear" name="submit" 
+                           onclick="submit.disabled=true; return true;"/>
+
+                    <input id="submitbutton" type="submit" value="Submit" name="submit" />
+                  </fieldset>
+
+                </form>
+
+
+              </div>
+
+              <div id="col3">&nbsp;</div>
+
+              <div id="col4">&nbsp;</div>
+
+              <div id="col5">
+                <h2>Output</h2>
+
+
+                <div id="output">
+                </div>
+
+
+                <div id="loading">
+                </div>
+
+
+                <div>&nbsp;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+      $(document).ready(function(){
+        loading = $("#loading");
+        output = $("#output");
+                
+        loading.attr("hidden", true);    
+        output.attr("hidden", true);  
+                
+        $("#submitbutton").click(function(event){
+          event.preventDefault();
+
+          $("fieldset").attr("disabled", true);    
+          output.fadeOut(); 
+          loading.fadeIn();
+                      
+          $.post("/annotate/link/", 
+          {text: $("#inputtextarea").val()}, 
+          
+          function(data){
+            
+            output.html("&nbsp;");
+            for(i = 0; i < data.length; i++){ 
+              text = data[i].text;
+              text = text.replace(/\n+/g, "<p/>\n");
+              
+              
+              
+              if(data[i].url) {
+
+                classes = "mention " + data[i].type.toLocaleLowerCase();
+              
+                text = "<a class=\"" + classes + "\" href=\""  + data[i].url 
+                  + "\">" + text + "</a>"  ;
+                
+                
+//                text += "<sup>[" + data[i].type.toLocaleLowerCase() + "]</sup>";
+              
+              }
+              output.append(text);
+            }
+            $("fieldset").attr("disabled", false);    
+            
+            loading.fadeOut();
+            output.fadeIn(); 
+          });
+
+        });
+        
+      });
+    </script>
+
+
+
+    <div class="footer">
+      Copyright &copy; 2012 Hamish Morgan, Text Analytics Group,
+      <a href="http://www.sussex.ac.uk">University of Sussex</a>.
+      All rights reserved.
+    </div>
+
+  </body>
+</html>
