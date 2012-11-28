@@ -18,10 +18,10 @@ import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.freebase.SearchFormat.EntityResult;
 import com.google.api.services.freebase.model.ContentserviceGet;
-import com.google.common.io.ByteStreams;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
-import edu.stanford.nlp.io.IOUtils;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -47,7 +48,6 @@ import uk.ac.susx.mlcl.erl.test.Categories;
 public class Freebase2Test extends AbstractTest {
 
     private static JsonFactory jsonFactory;
-
     private static Freebase2 freebase;
 
     public Freebase2Test() {
@@ -63,8 +63,9 @@ public class Freebase2Test extends AbstractTest {
         JsonHttpRequestInitializer requestInitializer =
                 new JsonHttpRequestInitializer() {
                     public void initialize(JsonHttpRequest request) {
-                        if (!(request instanceof FreebaseRequest))
+                        if (!(request instanceof FreebaseRequest)) {
                             throw new IllegalArgumentException();
+                        }
                         FreebaseRequest freebaseRequest = (FreebaseRequest) request;
                         freebaseRequest.setPrettyPrint(true);
                         if (request instanceof Freebase.Mqlread) {
@@ -680,7 +681,17 @@ public class Freebase2Test extends AbstractTest {
     public void testBatchSearch() throws IOException {
 
         BatchCallback<SearchFormat.EntityResult, Void> callback =
-                new SearchBatchCallbackImpl();
+                new BatchCallback<EntityResult, Void>() {
+                    @Override
+                    public void onSuccess(SearchFormat.EntityResult t, GoogleHeaders responseHeaders) {
+                        System.out.println(t.toPrettyString());
+                    }
+
+                    @Override
+                    public void onFailure(Void e, GoogleHeaders responseHeaders) throws IOException {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+                };
 
         String[] words = new String[]{"trees", "flowers", "72368764",
             "Anchovies", "brighton", "cheese burger", "lol", "shplah",
@@ -694,19 +705,108 @@ public class Freebase2Test extends AbstractTest {
                         Void.TYPE, callback);
         }
         batch.execute();
+    }
 
+    static <K, S, F> BatchCallback<S, F> mapPutCallback(
+            final K key,
+            final Map<K, S> successDestination,
+            final Map<K, F> failureDestination) {
+        return new BatchCallback<S, F>() {
+            @Override
+            public void onSuccess(S t, GoogleHeaders responseHeaders) {
+                successDestination.put(key, t);
+            }
+
+            @Override
+            public void onFailure(F e, GoogleHeaders responseHeaders) throws IOException {
+                failureDestination.put(key, e);
+            }
+        };
+    }
+
+    @Test
+    public void testBatchSearch2() throws IOException {
+
+        final Map<String, SearchFormat.EntityResult> successes = Maps.newHashMap();
+        final Map<String, Void> failures = Maps.newHashMap();
+
+
+        String[] words = new String[]{"trees", "flowers", "72368764",
+            "Anchovies", "brighton", "cheese burger", "lol", "shplah",
+            "java", "fire"};
+
+        BatchRequest batch = freebase.batch();
+
+        for (String word : words) {
+            batch.queue(freebase.search(word).buildHttpRequest(),
+                        SearchFormat.EntityResult.class,
+                        Void.TYPE,
+                        mapPutCallback(word, successes, failures));
+        }
+        batch.execute();
+
+        System.out.println(successes);
+        System.out.println(failures);
+    }
+
+    @Test
+    public void testBatchSearchgetIds() throws IOException {
+        String[] words = new String[]{"trees", "flowers", "72368764",
+            "Anchovies", "brighton", "cheese burger", "lol", "shplah",
+            "java", "fire"};
+        Map<String, List<String>> result = freebase.batchSearchGetIds(Sets.newHashSet(words));
+        for (Map.Entry<String, List<String>> entry : result.entrySet()) {
+            System.out.println(entry.getKey() + " => " + entry.getValue());
+        }
 
     }
 
-    private static class SearchBatchCallbackImpl implements BatchCallback<EntityResult, Void> {
+    @Test
+    public void comparePerformanceBatchSearchgetIds() throws IOException {
 
-        public void onSuccess(SearchFormat.EntityResult t, GoogleHeaders responseHeaders) {
-            System.out.println(t.toPrettyString());
+        int repeats = 10;
+
+        String[] words = new String[]{"trees", "flowers", "72368764",
+            "Anchovies", "brighton", "cheese burger", "lol", "shplah",
+            "java", "fire", "apple", "pear", "banna", "sells", "consumer",
+            "electronics", "computer", "software", "and", "personal"};
+
+        double[] batchTimes = new double[repeats];
+        double[] serialTimes = new double[repeats];
+        for (int r = 0; r < repeats; r++) {
+
+            {
+                long startTime = System.currentTimeMillis();
+                Map<String, List<String>> result = freebase.batchSearchGetIds(Sets.newHashSet(words));
+                long endTime = System.currentTimeMillis();
+                batchTimes[r] = (endTime - startTime) / 1000d;
+            }
+
+            {
+                long startTime = System.currentTimeMillis();
+                for (String word : words) {
+                    freebase.searchGetIds(word);
+                }
+                long endTime = System.currentTimeMillis();
+                serialTimes[r] = (endTime - startTime) / 1000d;
+
+            }
+
+
         }
 
-        public void onFailure(Void e, GoogleHeaders responseHeaders) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet.");
+
+        double bSum = 0;
+        double sSum = 0;
+        for (int r = 0; r < repeats; r++) {
+            bSum += batchTimes[r];
+            sSum += serialTimes[r];
+            System.out.printf("%f %f%n", batchTimes[r], serialTimes[r]);
         }
+        System.out.println("--------------------------");
+        System.out.printf("%f %f%n", bSum / repeats, sSum / repeats);
+
+
     }
 
     @Test

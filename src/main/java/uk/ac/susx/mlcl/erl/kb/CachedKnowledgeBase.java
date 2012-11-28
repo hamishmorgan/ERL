@@ -10,8 +10,11 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -55,12 +58,20 @@ public class CachedKnowledgeBase implements KnowledgeBase {
         this.searchCache = checkNotNull(searchCache);
     }
 
+    @Override
     public List<String> search(final String query) throws IOException {
         return get(searchCache, query);
     }
 
+    @Override
     public String text(final String id) throws IOException {
         return get(textCache, id);
+    }
+
+    @Override
+    public Map<String, List<String>> batchSearch(Set<String> queries)
+            throws IOException, ExecutionException {
+        return searchCache.getAll(queries);
     }
 
     protected static <K, V> V get(final LoadingCache<K, V> cache, final K key)
@@ -121,6 +132,12 @@ public class CachedKnowledgeBase implements KnowledgeBase {
                         @Override
                         public List<String> load(String key) throws Exception {
                             return inner.search(key);
+                        }
+
+                        @Override
+                        public Map<String, List<String>> loadAll(Iterable<? extends String> keys)
+                                throws Exception {
+                            return inner.batchSearch(Sets.newHashSet(keys));
                         }
                     };
 

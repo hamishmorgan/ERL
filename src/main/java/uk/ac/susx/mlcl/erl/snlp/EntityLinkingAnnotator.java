@@ -4,11 +4,14 @@
  */
 package uk.ac.susx.mlcl.erl.snlp;
 
+import com.google.api.services.freebase.Freebase2;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -18,11 +21,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.ExecutionException;
+import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.kb.CachedKnowledgeBase;
 import uk.ac.susx.mlcl.erl.kb.FreebaseKB;
 import uk.ac.susx.mlcl.erl.kb.KnowledgeBase;
@@ -33,6 +36,7 @@ import uk.ac.susx.mlcl.erl.kb.KnowledgeBase;
  */
 public class EntityLinkingAnnotator implements Annotator {
 
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Freebase2.class);
     private final KnowledgeBase knowledgeBase;
 
     public EntityLinkingAnnotator(KnowledgeBase knowledgeBase) {
@@ -72,118 +76,87 @@ public class EntityLinkingAnnotator implements Annotator {
      *
      * @param annotation
      */
-    public void annotate(Annotation document) {
+    @Override
+    public void annotate(final Annotation document) {
         Preconditions.checkNotNull(document, "annotation");
 
-        // Check requirements
-//        Preconditions.checkArgument(document.containsKey(TokensAnnotation.class),
-//                                    "TokensAnnotation is not present.");
-//        Preconditions.checkArgument(annotation.containsKey(NamedEntityTagAnnotation.class),
-//                                    "NamedEntityTagAnnotation is not present.");
+        // Find all the entity mentions in the document
+        final List<List<CoreLabel>> mentions = Lists.newArrayList();
+        for (final CoreMap sentence : document.get(SentencesAnnotation.class)) {
+            final List<CoreLabel> tokens = sentence.get(TokensAnnotation.class);
 
-        List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
+            // Search through the sentence finding contiguous sequences of tokens with the same
+            // entity type label. If the label not [O]ther then add the sequence to the mentions
+            int first = 0;
+            while (first < tokens.size()) {
+                final String currentLabel = tokens.get(first).get(NamedEntityTagAnnotation.class);
+                int last = first + 1;
 
-        for (CoreMap sentence : sentences) {
+                while (last < tokens.size() && tokens.get(last).get(NamedEntityTagAnnotation.class).equals(currentLabel)) {
+                    last++;
+                }
 
-            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+                if (!currentLabel.equals("O")) {
+                    mentions.add(tokens.subList(first, last));
+                }
 
-            if (tokens.isEmpty()) {
+                first = last;
+            }
+        }
+
+        // For each mention, create a query strings as the undering character sequence
+        // covered by the tokens
+        final Map<String, List<CoreLabel>> query2labels = Maps.newHashMap();
+
+        final String documentText = document.get(CoreAnnotations.TextAnnotation.class);
+        for (final List<CoreLabel> phrase : mentions) {
+            final String text = documentText.substring(
+                    phrase.get(0).beginPosition(),
+                    phrase.get(phrase.size() - 1).endPosition() + 1);
+
+            // if map already contains the text then append the CoreLabels, otherwise create a 
+            // new list there (don't use existing one since it's just a view
+            if (query2labels.containsKey(text)) {
+                query2labels.get(text).addAll(phrase);
+            } else {
+                query2labels.put(text, Lists.newArrayList(phrase));
+            }
+        }
+
+        // Search the knowledge base with all of the unique query strings
+        final Map<String, List<String>> results;
+        try {
+            results = knowledgeBase.batchSearch(query2labels.keySet());
+        } catch (IOException ex) {
+            LOG.error(ex.toString());
+            throw new RuntimeException(ex);
+        } catch (ExecutionException ex) {
+            LOG.error(ex.toString());
+            throw new RuntimeException(ex);
+        }
+
+        // Now add the kb id as an annotation to each mention token
+        for (final String query : query2labels.keySet()) {
+            if (!results.containsKey(query)) {
+                LOG.warn("Failed to find search result for: " + query);
                 continue;
             }
 
-            int start = 0;
-            int end = 0;
+            final List<String> candidateIds = results.get(query);
+            // TODO: Implement a more sensible method of choosing the best KB-ID
+            final String id = candidateIds.isEmpty() ? "/NIL" : candidateIds.get(0);
 
-            while (start < tokens.size()) {
-                end = start;
-                final String entityLabel =
-                        tokens.get(end).get(NamedEntityTagAnnotation.class);
-                end++;
-
-                while (end < tokens.size() && tokens.get(end).get(NamedEntityTagAnnotation.class).equals(entityLabel)) {
-                    end++;
-                }
-
-                if (!entityLabel.equals("O")) {
-
-
-                    StringBuilder phrase = new StringBuilder();
-                    boolean first = true;
-                    for (int i = start; i < end; i++) {
-                        CoreLabel token = tokens.get(i);
-                        if (!first) {
-                            phrase.append(" ");
-                        }
-                        first = false;
-                        phrase.append(token.word());
-                    }
-
-
-                    String link = linkFor(document, phrase.toString());
-
-                    for (int i = start; i < end; i++) {
-                        CoreLabel token = tokens.get(i);
-                        token.set(EntityKbIdAnnotation.class, link);
-                    }
-
-                }
-
-                start = end;
+            for (final CoreLabel token : query2labels.get(query)) {
+                token.set(EntityKbIdAnnotation.class, id);
             }
 
-
-//            CoreLabel nextToken = tokens.(();
-
-
-//            
-//            while (tokenIt.hasNext()) {
-//
-//                List<CoreLabel> sameClassTokens = Lists.newArrayList();
-//                sameClassTokens.add(tokenIt.next());
-//
-//                final String entityLabel = sameClassTokens.get(0).get(
-//                        NamedEntityTagAnnotation.class);
-//
-//                
-//                
-//                
-//
-//            }
-//
-//
-//            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-//                String link = linkFor(document, token);
-//
-//                token.set(EntityKbIdAnnotation.class, link);
-//
-//            }
-
         }
     }
 
-    String linkFor(Annotation annotation, String token) {
-//
-
-
-        List<String> candidates;
-        try {
-            candidates = knowledgeBase.search(token);
-
-
-            // Simply return the first match
-            return candidates.isEmpty() ? "NIL" : candidates.get(0);
-
-
-        } catch (IOException ex) {
-            Logger.getLogger(EntityLinkingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
-            return "NIL";
-        }
-
-
-    }
 
     public static final class EntityKbIdAnnotation implements CoreAnnotation<String> {
 
+        @Override
         public Class<String> getType() {
             return String.class;
         }
@@ -193,6 +166,7 @@ public class EntityLinkingAnnotator implements Annotator {
 
         private static final long serialVersionUID = 1L;
 
+        @Override
         public Annotator create() {
             try {
                 return EntityLinkingAnnotator.newInstance();
