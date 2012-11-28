@@ -4,22 +4,27 @@
  */
 package uk.ac.susx.mlcl.erl.webapp;
 
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
-import edu.stanford.nlp.pipeline.Annotation;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Properties;
+import java.util.Set;
 import javax.activation.MimetypesFileTypeMap;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.Filter;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -32,141 +37,141 @@ import uk.ac.susx.mlcl.erl.AnnotationService;
  */
 public class WebApp {
 
-  private static final boolean DEBUG = true;
+    private static final boolean DEBUG = true;
+    private static final Logger LOG = LoggerFactory.getLogger(WebApp.class);
+    private final AnnotationService anno;
 
-  private static final Logger LOG = LoggerFactory.getLogger(WebApp.class);
+    public WebApp(AnnotationService anno) {
+        this.anno = anno;
+    }
 
-  private final AnnotationService anno;
+    void init(Properties props) throws ParsingException, IOException, XSLException {
 
-  public WebApp(AnnotationService anno) {
-    this.anno = anno;
-  }
+        Spark.before(new RequestLogger("/*"));
 
-  void init(Properties props) throws ParsingException, IOException, XSLException {
+        Spark.post(new AbstractRoute("/annotate/link/") {
+            @Override
+            public Object handle(final Request request, final Response response) {
 
-    Spark.post(new AbstractRoute("/annotate/link/") {
-      @Override
-      public Object handle(final Request request, final Response response) {
-
-	for (String queryKey : request.queryParams()) {
-	  LOG.debug(queryKey + " => " + request.queryParams(queryKey));
-	}
-	try {
-	  response.type("application/json");
+                for (String queryKey : request.queryParams()) {
+                    LOG.debug(queryKey + " => " + request.queryParams(queryKey));
+                }
+                try {
+                    response.type("application/json");
 //	  response.type("text/plain");
-	  
-	  final String text = request.queryParams("text");
-	  anno.linkAsJson(text, response.raw().getOutputStream());
 
-	  return "";
+                    final String text = request.queryParams("text");
 
-	} catch (Exception ex) {
-	  Throwables.propagateIfInstanceOf(ex, RuntimeException.class);
-	  LOG.error(ex.toString() + "\n" + Throwables.getStackTraceAsString(ex));
-	  handleException(ex, response);
-	  halt();
-	  return "";
-	}
-      }
-    });
 
-    Spark.get(new StaticRoute("/*", "src/main/resources/"));
+                    anno.linkAsJson(text, response.raw().getOutputStream());
 
-  }
+                    return "";
 
-  
-  public static class StaticRoute extends AbstractRoute {
+                } catch (Exception ex) {
+                    LOG.error(ex.toString() + "\n" + Throwables.getStackTraceAsString(ex));
+                    Throwables.propagateIfInstanceOf(ex, RuntimeException.class);
+                    handleException(ex, response);
+                    halt();
+                    return "";
+                }
+            }
+        });
 
-    private final File localPath;
-
-    static final MimetypesFileTypeMap mimeMap;
-
-    static {
-      try {
-	mimeMap = new MimetypesFileTypeMap(
-		"src/main/resources/mime.types");
-      } catch (IOException ex) {
-	throw new RuntimeException(ex);
-      }
-    }
-
-    public StaticRoute(String remotePath, String localPath) {
-      super(remotePath);
-      this.localPath = new File(localPath).getAbsoluteFile();
+        Spark.get(new StaticRoute("/*", "src/main/resources/"));
 
     }
 
-    @Override
-    public String handle(Request request, Response response) {
-      try {
+    public static class StaticRoute extends AbstractRoute {
 
-	final File file = new File(localPath, request.pathInfo());
+        private final File localPath;
+        static final MimetypesFileTypeMap mimeMap;
 
-	if (!file.exists()) {
-	  final String msg = "Could not find static resource: "
-		  + request.pathInfo();
-	  halt(HttpStatus.Not_Found.code(),
-	       HttpStatus.Not_Found.toHtmlString(msg));
-	  return "";
-	} else if (!file.canRead() || file.isHidden()) {
-	  halt(HttpStatus.Forbidden.code(),
-	       HttpStatus.Forbidden.toHtmlString(""));
-	  return "";
-	} else if (!file.isFile()) {
-	  halt(HttpStatus.Bad_Request.code(),
-	       HttpStatus.Bad_Request.toHtmlString(
-		  "The resquested static resource is not a file."));
-	  return "";
-	}
+        static {
+            try {
+                mimeMap = new MimetypesFileTypeMap(
+                        "src/main/resources/mime.types");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
 
-	final String mime = mimeMap.getContentType(file.getName());
+        public StaticRoute(String remotePath, String localPath) {
+            super(remotePath);
+            this.localPath = new File(localPath).getAbsoluteFile();
 
-	LOG.info("Serving " + mime + ": " + file);
-	response.raw().setContentType(mime + ";charset=utf-8");
-	response.status(HttpStatus.OK.code());
+        }
 
-	InputStream in = null;
-	try {
-	  in = new FileInputStream(file);
-	  OutputStream out = response.raw().getOutputStream();
-	  ByteStreams.copy(in, out);
-	} finally {
-	  Closeables.closeQuietly(in);
-	}
+        @Override
+        public String handle(Request request, Response response) {
+            try {
 
-	return "";
+                final File file = new File(localPath, request.pathInfo());
 
-      } catch (Exception ex) {
-	LOG.error(ex.toString() + "\n" + Throwables.getStackTraceAsString(ex));
-	Throwables.propagateIfInstanceOf(ex, RuntimeException.class);
-	handleException(ex, response);
-	return "";
-      }
+                if (!file.exists()) {
+                    final String msg = "Could not find static resource: "
+                            + request.pathInfo();
+                    halt(HttpStatus.Not_Found.code(),
+                         HttpStatus.Not_Found.toHtmlString(msg));
+                    return "";
+                } else if (!file.canRead() || file.isHidden()) {
+                    halt(HttpStatus.Forbidden.code(),
+                         HttpStatus.Forbidden.toHtmlString(""));
+                    return "";
+                } else if (!file.isFile()) {
+                    halt(HttpStatus.Bad_Request.code(),
+                         HttpStatus.Bad_Request.toHtmlString(
+                            "The resquested static resource is not a file."));
+                    return "";
+                }
+
+                final String mime = mimeMap.getContentType(file.getName());
+
+                LOG.info("Serving " + mime + ": " + file);
+                response.raw().setContentType(mime + ";charset=utf-8");
+                response.status(HttpStatus.OK.code());
+
+                InputStream in = null;
+                try {
+                    in = new FileInputStream(file);
+                    OutputStream out = response.raw().getOutputStream();
+                    ByteStreams.copy(in, out);
+                } finally {
+                    Closeables.closeQuietly(in);
+                }
+
+                return "";
+
+            } catch (Exception ex) {
+                LOG.error(ex.toString() + "\n" + Throwables.getStackTraceAsString(ex));
+                Throwables.propagateIfInstanceOf(ex, RuntimeException.class);
+                handleException(ex, response);
+                return "";
+            }
+        }
     }
-  }
 
-  public static abstract class AbstractRoute extends Route {
+    public static abstract class AbstractRoute extends Route {
 
-    public AbstractRoute(String path) {
-      super(path);
+        public AbstractRoute(String path) {
+            super(path);
+        }
+
+        protected void handleException(Throwable ex, Response response) {
+            LOG.error(ex.toString() + "\n" + Throwables.getStackTraceAsString(ex));
+
+            MessageFormat frmt = new MessageFormat(
+                    "<strong>{0}</strong><br/><pre>{1}</pre>");
+
+            final String message = DEBUG ? frmt.format(new Object[]{
+                        ex.toString(),
+                        Throwables.getStackTraceAsString(ex)})
+                    : "";
+
+            response.status(HttpStatus.Internal_Server_Error.code());
+            response.body(HttpStatus.Internal_Server_Error.toHtmlString(message));
+            halt();
+        }
     }
-
-    protected void handleException(Throwable ex, Response response) {
-      LOG.error(ex.toString() + "\n" + Throwables.getStackTraceAsString(ex));
-
-      MessageFormat frmt = new MessageFormat(
-	      "<strong>{0}</strong><br/><pre>{1}</pre>");
-
-      final String message = DEBUG ? frmt.format(new Object[]{
-		ex.toString(),
-		Throwables.getStackTraceAsString(ex)})
-	      : "";
-
-      response.status(HttpStatus.Internal_Server_Error.code());
-      response.body(HttpStatus.Internal_Server_Error.toHtmlString(message));
-      halt();
-    }
-  }
 //
 //private static Route newStaticRoute(final String remotePathString,
 //				      final String localPathStirng)
@@ -298,32 +303,123 @@ public class WebApp {
 //    sr.write(document);
 //    sr.flush();
 //  }
-  public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-    Properties props = new Properties();
-    props.put("annotators", "tokenize");
-    props.put("tokenize.whitespace", "false");
-
-
-    // tokenize.options:
-    // Accepts the options of PTBTokenizer for example, things like 
-    //  "americanize=false" 
-    //  "strictTreebank3=true,
-    //   untokenizable=allKeep".
-    props.put("tokenize.options", "untokenizable=allKeep");
+        Properties props = new Properties();
+        props.put("annotators", "tokenize");
+        props.put("tokenize.whitespace", "false");
 
 
-    props.put("clean.allowflawedxml", "true");
+        // tokenize.options:
+        // Accepts the options of PTBTokenizer for example, things like 
+        //  "americanize=false" 
+        //  "strictTreebank3=true,
+        //   untokenizable=allKeep".
+        props.put("tokenize.options", "untokenizable=allKeep");
 
 
-    AnnotationService anno = AnnotationService.newInstance(props);
-
-    WebApp webapp = new WebApp(anno);
-    webapp.init(props);
+        props.put("clean.allowflawedxml", "true");
 
 
+        AnnotationService anno = AnnotationService.newInstance(props);
+
+        WebApp webapp = new WebApp(anno);
+        webapp.init(props);
 
 
 
-  }
+
+
+    }
+
+    private static class RequestLogger extends Filter {
+
+        private static final Logger LOG = LoggerFactory.getLogger(RequestLogger.class);
+        private final JsonFactory factory = new JacksonFactory();
+        private boolean logRequest = true;
+
+        public RequestLogger() {
+        }
+
+        public RequestLogger(String path) {
+            super(path);
+        }
+
+        void writeArray(Iterable<String> items, JsonGenerator generator) throws IOException {
+            generator.writeStartArray();
+            for (String item : items) {
+                generator.writeString(item);
+            }
+            generator.writeEndArray();
+        }
+
+        void writeKeyValue(String key, String value, JsonGenerator generator) throws IOException {
+            generator.writeFieldName(key);
+            generator.writeString(value);
+        }
+
+        @Override
+        public void handle(Request request, Response response) {
+
+            StringWriter writer = new StringWriter();
+            try {
+                JsonGenerator generator = factory.createJsonGenerator(writer);
+                generator.enablePrettyPrint();
+
+
+                generator.writeStartObject();
+
+                if (logRequest) {
+                    generator.writeFieldName("request");
+                    generator.writeStartObject();
+
+                    writeKeyValue("url", request.url(), generator);
+
+                    generator.writeFieldName("attributes");
+                    generator.writeStartObject();
+                    for (String attribute : request.attributes()) {
+                        generator.writeFieldName(attribute);
+                        generator.writeString(request.attribute(attribute).toString());
+                    }
+                    generator.writeEndObject();;
+
+                    generator.writeFieldName("headers");
+                    generator.writeStartObject();
+                    for (String header : request.headers()) {
+                        generator.writeFieldName(header);
+                        generator.writeString(request.headers(header));
+                    }
+                    generator.writeEndObject();;
+
+                    writeKeyValue("body", request.body(), generator);
+                    writeKeyValue("contentType", request.contentType(), generator);
+                    writeKeyValue("requestMethod", request.requestMethod(), generator);
+
+
+                    generator.writeFieldName("queryParams");
+                    generator.writeStartObject();
+                    for (String queryParam : request.queryParams()) {
+                        generator.writeFieldName(queryParam);
+                        generator.writeString(request.queryParams(queryParam));
+                    }
+                    generator.writeEndObject();;
+
+                    writeKeyValue("queryString", request.queryString(), generator);
+                    writeKeyValue("userAgent", request.userAgent(), generator);
+
+                    generator.writeEndObject();;
+                }
+
+                generator.writeEndObject();
+                generator.flush();
+
+                LOG.debug(writer.toString());
+
+            } catch (IOException ex) {
+                throw new AssertionError(ex);
+            }
+
+
+        }
+    }
 }

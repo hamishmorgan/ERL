@@ -342,8 +342,8 @@ public class XomB {
 	public B addPI(final String target, final String data) {
 	    checkArgument(!target.isEmpty(), "argument target is empty");
 	    return _addChildren(factory.makeProcessingInstruction(
-		    checkNotNull(target),
-		    checkNotNull(data)));
+		    checkNotNull(target, "target"),
+		    checkNotNull(data, "data")));
 	}
 
 	/**
@@ -367,7 +367,7 @@ public class XomB {
 	 * unsupported characters.
 	 */
 	public B addComment(final String data) {
-	    return _addChildren(factory.makeComment(checkNotNull(data)));
+	    return _addChildren(factory.makeComment(checkNotNull(data, "data")));
 	}
 
 	/**

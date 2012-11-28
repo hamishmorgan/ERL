@@ -6,6 +6,7 @@ package uk.ac.susx.mlcl.erl.snlp;
 
 import com.google.api.services.freebase.Freebase2;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import edu.stanford.nlp.ling.CoreAnnotation;
@@ -128,10 +129,10 @@ public class EntityLinkingAnnotator implements Annotator {
         try {
             results = knowledgeBase.batchSearch(query2labels.keySet());
         } catch (IOException ex) {
-            LOG.error(ex.toString());
+            LOG.error(ex.toString() + "\n" + Throwables.getStackTraceAsString(ex));
             throw new RuntimeException(ex);
         } catch (ExecutionException ex) {
-            LOG.error(ex.toString());
+            LOG.error(ex.toString() + "\n" + Throwables.getStackTraceAsString(ex));
             throw new RuntimeException(ex);
         }
 

@@ -112,8 +112,8 @@ public class Freebase2 extends Freebase {
             Set<String> queries, SearchFormat format)
             throws IOException {
         LOG.debug("Performing brach search for queries {}", queries);
-        Preconditions.checkNotNull(queries);
-        Preconditions.checkNotNull(format);
+        Preconditions.checkNotNull(queries, "queries");
+        Preconditions.checkNotNull(format, "queries");
         assert AbstractResult.class.isAssignableFrom(format.getDataClass());
 
         final Map<String, AbstractResult> successes = Maps.newHashMap();
@@ -168,8 +168,8 @@ public class Freebase2 extends Freebase {
      * @throws IOException if something bad occurs with the lookup
      */
     Map<String, List<String>> batchSearchGetIds0(Set<String> queries, SearchFormat format) throws IOException {
-        Preconditions.checkNotNull(queries);
-        Preconditions.checkNotNull(format);
+        Preconditions.checkNotNull(queries, "queries");
+        Preconditions.checkNotNull(format, "format");
         Preconditions.checkArgument(format.getDataClass().equals(IdsResult.class),
                                     "format must produce an IdsResult type output.");
         final Map<String, AbstractResult> results = batchSearch(queries, format);

@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.webapp;
 
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import java.io.BufferedInputStream;
@@ -49,13 +50,13 @@ public class Spark2 {
                     ByteStreams.copy(in, out);
                     out.flush();
                 } catch (SecurityException ex) {
-                    LOG.error(ex);
+                    LOG.error(ex + "\n" + Throwables.getStackTraceAsString(ex));
                     response.status(HttpStatus.Forbidden.code());
                 } catch (FileNotFoundException ex) {
-                    LOG.error(ex);
+                    LOG.error(ex + "\n" + Throwables.getStackTraceAsString(ex));
                     response.status(HttpStatus.Not_Found.code());
                 } catch (IOException ex) {
-                    LOG.error(ex);
+                    LOG.error(ex + "\n" + Throwables.getStackTraceAsString(ex));
                     response.status(HttpStatus.Internal_Server_Error.code());
                 } finally {
                     Closeables.closeQuietly(in);

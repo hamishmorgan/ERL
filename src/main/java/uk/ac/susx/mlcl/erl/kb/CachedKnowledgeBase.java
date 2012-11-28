@@ -54,8 +54,8 @@ public class CachedKnowledgeBase implements KnowledgeBase {
      */
     protected CachedKnowledgeBase(final LoadingCache<String, String> textCache,
                                   final LoadingCache<String, List<String>> searchCache) {
-        this.textCache = checkNotNull(textCache);
-        this.searchCache = checkNotNull(searchCache);
+        this.textCache = checkNotNull(textCache, "textCache");
+        this.searchCache = checkNotNull(searchCache, "searchCache");
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CachedKnowledgeBase implements KnowledgeBase {
     protected static <K, V> V get(final LoadingCache<K, V> cache, final K key)
             throws IOException {
         try {
-            return cache.get(checkNotNull(key));
+            return cache.get(checkNotNull(key, "key"));
         } catch (final ExecutionException ex) {
             Throwables.propagateIfInstanceOf(ex.getCause(), IOException.class);
             Throwables.propagateIfPossible(ex.getCause());
@@ -86,7 +86,7 @@ public class CachedKnowledgeBase implements KnowledgeBase {
     }
 
     public static KnowledgeBase wrap(final KnowledgeBase inner) {
-        if (checkNotNull(inner) instanceof CachedKnowledgeBase) {
+        if (checkNotNull(inner, "inner") instanceof CachedKnowledgeBase) {
             LOG.warn("Ignoring attempt to cache wrap a KnowledgeBase that was already cached.");
             return inner;
         }

@@ -59,12 +59,10 @@ import uk.ac.susx.mlcl.erl.snlp.InstancePool;
 /**
  * Save annotations to XML
  * <p/>
- * Mostly Ripped form {@link StanfordCoreNLP}, but modified to support our own
- * annotations.
+ * Mostly Ripped form {@link StanfordCoreNLP}, but modified to support our own annotations.
  * <p/>
  * <
- * p/> TODO: Class ParserAnnotations can't be found for some reason, so it's not
- * in the searchspace.
+ * p/> TODO: Class ParserAnnotations can't be found for some reason, so it's not in the searchspace.
  * <p/>
  * @author hamish
  */
@@ -77,31 +75,25 @@ public class AnnotationToXML {
      */
     @Nullable
     private final String namespaceURI;
-
     /**
      * Name of the style sheet used from XML to XHTML transformation
      */
     private final String stylesheetName;
-
     /**
-     * Map from CoreAnnotation types to simplified elements names used in the
-     * XML. Without simplified names the full canonical class name will used.
+     * Map from CoreAnnotation types to simplified elements names used in the XML. Without
+     * simplified names the full canonical class name will used.
      */
     private final Map<Class<? extends CoreAnnotation<?>>, String> simpleNamesMap;
-
     /**
-     * Map from CoreAnnotation types to special custom serializes that will be
-     * called for all annotations of that type. This allows special behavior for
-     * particular annotators such as the CorefChainAnnotation.
+     * Map from CoreAnnotation types to special custom serializes that will be called for all
+     * annotations of that type. This allows special behavior for particular annotators such as the
+     * CorefChainAnnotation.
      */
 //    private final Map<Class<? extends CoreAnnotation<?>>, Class<? extends CustomGenerator<?>>> customSerializers;
     private final InstancePool<Class<? extends CoreAnnotation<?>>, ? extends CustomGenerator<?>> customSerializerPool;
-
 //        private final TypeToInstanceMap<?> customSerializerPool;
     private final Filter<Class<? extends CoreAnnotation<?>>> annotationFilter;
-
     private final Set<String> nodeFilters;
-
     private final XomB x;
 
     /**
@@ -109,18 +101,14 @@ public class AnnotationToXML {
      * @link AnnotationToXML#builder()} < p/>
      * <p/>
      * @param nodeFactory
-     * @param namespaceURI      Namespace URI
-     * @param stylesheetName    Name of the style sheet used from XML to XHTML
-     *                          transformation
-     * @param simpleNames       Map from CoreAnnotation types to simplified
-     *                          elements names used in the XML
-     * @param customSerializers Map from CoreAnnotation types to special custom
-     *                          serializes that will be called for all
-     *                          annotations of that type.
+     * @param namespaceURI Namespace URI
+     * @param stylesheetName Name of the style sheet used from XML to XHTML transformation
+     * @param simpleNames Map from CoreAnnotation types to simplified elements names used in the XML
+     * @param customSerializers Map from CoreAnnotation types to special custom serializes that will
+     * be called for all annotations of that type.
      * @param nodeFilters
      * @param annotationFilter
-     * @throws NullPointerException if stylesheetName, simpleNames, or
-     *                              customSerializers is null
+     * @throws NullPointerException if stylesheetName, simpleNames, or customSerializers is null
      */
     protected AnnotationToXML(
             NodeFactory nodeFactory,
@@ -128,8 +116,8 @@ public class AnnotationToXML {
             String stylesheetName,
             Map<Class<? extends CoreAnnotation<?>>, String> simpleNames,
             InstancePool<Class<? extends CoreAnnotation<?>>, ? extends CustomGenerator<?>> customSerializers,
-//                    
-//            Map<Class<? extends CoreAnnotation<?>>, Class<? extends CustomGenerator<?>>> customSerializers,
+            //                    
+            //            Map<Class<? extends CoreAnnotation<?>>, Class<? extends CustomGenerator<?>>> customSerializers,
             Filter<Class<? extends CoreAnnotation<?>>> annotationFilter,
             Set<String> nodeFilters) {
         Preconditions.checkNotNull(stylesheetName, "stylesheetName");
@@ -155,11 +143,10 @@ public class AnnotationToXML {
     }
 
     /**
-     * Wrapper around xmlPrint(Annotation, OutputStream). Added for backward
-     * compatibility.
+     * Wrapper around xmlPrint(Annotation, OutputStream). Added for backward compatibility.
      * <p/>
      * @param annotation
-     * @param writer     The Writer to send the output to
+     * @param writer The Writer to send the output to
      * @throws IOException
      */
     public void xmlPrint(Annotation annotation, Writer writer) throws IOException, InstantiationException {
@@ -175,7 +162,7 @@ public class AnnotationToXML {
     /**
      * Displays the output of all annotators in XML format.
      * <p/>
-     * @param annotation   Contains the output of all annotators
+     * @param annotation Contains the output of all annotators
      * @param outputStream The output stream
      * @throws IOException
      */
@@ -214,7 +201,7 @@ public class AnnotationToXML {
 
         if (stylesheetName != null && !stylesheetName.isEmpty()) {
             xmlDoc.addPI("xml-stylesheet",
-                            "href=\"" + stylesheetName + "\" type=\"text/xsl\"");
+                         "href=\"" + stylesheetName + "\" type=\"text/xsl\"");
         }
 
         ElementBuilder root = x.root("root");
@@ -286,7 +273,6 @@ public class AnnotationToXML {
                             @Nonnull Boolean value) {
         addString(parent, Boolean.toString(value));
     }
-
     private static final Morphology morph = new Morphology();
 
     private void addListElements(@Nonnull ElementBuilder parent,
@@ -310,8 +296,9 @@ public class AnnotationToXML {
 
             itemElement.addAttribute("id", Integer.toString(count));
 
-            if (value != null)
+            if (value != null) {
                 addElementByValueType(itemElement, value);
+            }
 
 
             parent.add(itemElement);
@@ -329,8 +316,9 @@ public class AnnotationToXML {
             final Class<? extends CoreAnnotation<?>> castKey =
                     (Class<? extends CoreAnnotation<?>>) key;
 
-            if (!annotationFilter.accept(castKey))
+            if (!annotationFilter.accept(castKey)) {
                 continue;
+            }
 
 
             final String name = (simpleNamesMap.containsKey(castKey))
@@ -362,8 +350,9 @@ public class AnnotationToXML {
 
                 final Object value = map.get(
                         (Class<? extends CoreAnnotation>) castKey);
-                if (value != null)
+                if (value != null) {
                     addElementByValueType(element, value);
+                }
             }
 
             parent.add(element);
@@ -376,8 +365,9 @@ public class AnnotationToXML {
             final ElementBuilder element = x.element(key);
 
             final Object value = map.get(key);
-            if (value != null)
+            if (value != null) {
                 addElementByValueType(element, value);
+            }
 
             parent.add(element);
         }
@@ -405,8 +395,9 @@ public class AnnotationToXML {
                     a.detach();
                     parent.addAttribute(a);
                 }
-                for (int i = timexXml.getChildCount() - 1; i >= 0; i--)
+                for (int i = timexXml.getChildCount() - 1; i >= 0; i--) {
                     parent.add(timexXml.removeChild(i));
+                }
 
             } else {
 
@@ -458,18 +449,18 @@ public class AnnotationToXML {
 
             for (SemanticGraphEdge edge : graph.edgeListSorted()) {
                 String rel = edge.getRelation()
-			.toString().replaceAll("\\s+", "");
+                        .toString().replaceAll("\\s+", "");
                 String sourceIndex = Integer.toString(edge.getSource().index());
                 String targetIndex = Integer.toString(edge.getTarget().index());
                 String sourceString = edge.getSource().word();
                 String targetString = edge.getTarget().word();
 
                 parent.add(x.element("dep")
-                    .addAttribute("type", rel)
-                    .add(x.element("governor")
+                        .addAttribute("type", rel)
+                        .add(x.element("governor")
                         .addAttribute("idx", sourceIndex)
                         .add(sourceString))
-                    .add(x.element("dependent")
+                        .add(x.element("dependent")
                         .addAttribute("idx", targetIndex)
                         .add(targetString)));
             }
@@ -502,23 +493,25 @@ public class AnnotationToXML {
             boolean foundCoref = false;
             for (CorefChain chain : corefChains.values()) {
 
-                if (chain.getCorefMentions().size() <= 1)
+                if (chain.getCorefMentions().size() <= 1) {
                     continue;
+                }
                 foundCoref = true;
-		
+
                 ElementBuilder chainElem = x.element("coreference");
-		
+
                 CorefChain.CorefMention source = chain
                         .getRepresentativeMention();
-		
+
                 addCorefMention(x, chainElem, source, true);
-		
+
                 for (CorefChain.CorefMention mention : chain.getCorefMentions()) {
-                    if (mention == source)
+                    if (mention == source) {
                         continue;
+                    }
                     addCorefMention(x, chainElem, mention, false);
                 }
-		
+
                 parent.add(chainElem);
             }
 //            return foundCoref;
@@ -527,19 +520,20 @@ public class AnnotationToXML {
         private void addCorefMention(XomB x, @Nonnull ElementBuilder chainElem,
                                      @Nonnull CorefChain.CorefMention mention,
                                      boolean representative) {
-	    
-	    ElementBuilder mentionElem = x.element("mention")
-		.add(x.element("sentence")
-		    .add(Integer.toString(mention.sentNum)))
-		.add(x.element("start")
-		    .add(Integer.toString(mention.startIndex)))
-		.add(x.element("end")
-		    .add(Integer.toString(mention.endIndex)))
-		.add(x.element("head")
-		    .add(Integer.toString(mention.headIndex)));
 
-	    if (representative)
-		mentionElem.addAttribute("representative", "true");
+            ElementBuilder mentionElem = x.element("mention")
+                    .add(x.element("sentence")
+                    .add(Integer.toString(mention.sentNum)))
+                    .add(x.element("start")
+                    .add(Integer.toString(mention.startIndex)))
+                    .add(x.element("end")
+                    .add(Integer.toString(mention.endIndex)))
+                    .add(x.element("head")
+                    .add(Integer.toString(mention.headIndex)));
+
+            if (representative) {
+                mentionElem.addAttribute("representative", "true");
+            }
 
             chainElem.add(mentionElem);
         }
@@ -561,25 +555,15 @@ public class AnnotationToXML {
     public static class Builder {
 
         public static final String NO_STYLESHEET = "";
-
         private static final Log LOG = LogFactory.getLog(Builder.class);
-
         private final Set<Class<?>> annotationRoots = Sets.newHashSet();
-
         private final Set<String> stripSuffixes = Sets.newHashSet();
-
         private final InstancePool.Builder<Class<? extends CoreAnnotation<?>>, CustomGenerator<?>> customSerializerPool;
-
         private final BiMap<Class<? extends CoreAnnotation<?>>, String> simpleNames;
-
         private String namespaceURI = null;
-
         private String stylesheetName = NO_STYLESHEET;
-
         private NodeFactory nodeFactory = null;
-
         private final ImmutableSet.Builder<Class<? extends CoreAnnotation<?>>> annoBlacklist;
-
         private final ImmutableSet.Builder<String> xpathNodeFilters;
 
         public Builder() {
@@ -664,17 +648,15 @@ public class AnnotationToXML {
         }
 
         /**
-         * Search (breadth first) the membership tree(s) of any classes that are
-         * subclasses of the given {@code targetType}. The search is started at
-         * all of the given root nodes.
+         * Search (breadth first) the membership tree(s) of any classes that are subclasses of the
+         * given {@code targetType}. The search is started at all of the given root nodes.
          * <p/>
          * @param <T>
          * @param searchRoots
          * @param targetType
          * @return
-         * @throws SecurityException    caused by {@link Class#getClasses() }
-         * @throws NullPointerException if any parameter is null, or contains
-         *                              null
+         * @throws SecurityException caused by {@link Class#getClasses() }
+         * @throws NullPointerException if any parameter is null, or contains null
          */
         @SuppressWarnings("unchecked")
         private static <T> Set<Class<? extends T>> findMembersOfType(
@@ -700,8 +682,9 @@ public class AnnotationToXML {
 
                 final Class<?> clazz = todo.poll();
 
-                if (targetType.isAssignableFrom(clazz))
+                if (targetType.isAssignableFrom(clazz)) {
                     found.add((Class<? extends T>) clazz);
+                }
 
                 done.add(clazz);
 
@@ -720,8 +703,7 @@ public class AnnotationToXML {
             Preconditions.checkNotNull(clazz, "clazz");
             Preconditions.checkNotNull(stripSuffixes, "stripSuffixes");
             Preconditions.checkNotNull(existingNames, "existingNames");
-            Preconditions.checkArgument(!clazz.isPrimitive(),
-                                        "Class is primitive.");
+            Preconditions.checkArgument(!clazz.isPrimitive(), "Class is primitive.");
             Preconditions.checkArgument(!clazz.isArray(), "Class is primitive.");
 
             // XXX Move to static constant
@@ -757,8 +739,9 @@ public class AnnotationToXML {
                             + (part.length() > 1 ? part.substring(1) : "");
                 }
 
-                if (name.length() > 0)
+                if (name.length() > 0) {
                     name.insert(0, '.');
+                }
                 name.insert(0, part);
 
                 i--;

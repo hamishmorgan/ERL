@@ -64,7 +64,7 @@ public class FreebaseKB implements KnowledgeBase {
      */
     @Override
     public String text(String id) throws IOException {
-        Preconditions.checkNotNull(id);
+        Preconditions.checkNotNull(id, "id");
         return freebase.text().get(Arrays.asList(id)).execute().getResult();
     }
 
@@ -76,14 +76,14 @@ public class FreebaseKB implements KnowledgeBase {
      */
     @Override
     public List<String> search(String query) throws IOException {
-        Preconditions.checkNotNull(query);
+        Preconditions.checkNotNull(query, "query");
         return freebase.searchGetIds(query);
     }
 
     @Override
     public Map<String, List<String>> batchSearch(Set<String> queries)
             throws IOException, ExecutionException {
-        Preconditions.checkNotNull(queries);
+        Preconditions.checkNotNull(queries, "queries");
         return freebase.batchSearchGetIds(queries);
     }
 }
