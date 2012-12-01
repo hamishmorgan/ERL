@@ -7,6 +7,7 @@ package uk.ac.susx.mlcl.erl.webapp;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
@@ -18,11 +19,9 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.activation.MimetypesFileTypeMap;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
-import org.eclipse.jetty.http.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -50,11 +49,49 @@ public class WebApp {
   void init(Properties props)
 	  throws ParsingException, IOException, XSLException {
 
+    // Debug logger write prints a detailed json structor of the entire 
+    // request object. 
+    Spark.before(new RequestLogger(LogLevel.DEBUG));
+
+    
+    // The primary link annotation route
     Spark.post(new LinkService("/annotate/link/"));
 
+    // Static resources such as HTML
     Spark.get(new StaticResource("/static/", "src/main/resources/", "*"));
 
-    Spark.after(new RequestLogger());
+
+    // The annotation models take a while to load (about 20 seconds currently),
+    // which cause an irritating pause the first time the service is used. To
+    // avoid this, and to save time, pre-load the annotators in the background
+    // by requesting a dummy link request.
+    final Thread thread = new Thread(new Runnable() {
+      @Override
+      public void run() {
+	LOG.debug("Starting pre-load of link annotors in background.");
+	Stopwatch stopwatch = new Stopwatch().start();
+
+	anno.link("");
+
+	LOG.debug("Loaded link annotors. (Elapsed time : {})",
+		  stopwatch.stop());
+      }
+    }, "annotator-preloader");
+    try {
+      thread.setPriority(Thread.MIN_PRIORITY);
+      thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+	@Override
+	public void uncaughtException(Thread t, Throwable e) {
+	  LOG.warn("Annotator preloader encountered a problem.", e);
+	}
+      });
+    } catch (SecurityException ex) {
+      LOG.warn(ex.getLocalizedMessage(), ex);
+    }
+    thread.start();
+
+
+
 
   }
 
