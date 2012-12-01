@@ -1,202 +1,259 @@
 <!doctype html>
 <html lang="en" >
-    <head>
-        <title>Sussex Entity Linking Service</title>
-        <meta charset="utf-8" >
-        <link rel="stylesheet" href="default.css" />
-        <script src="jquery-1.8.3.min.js"></script>
-    </head>
-    <body>
+  <head>
+    <title>Sussex Entity Linking Service</title>
+    <meta charset="utf-8" >
 
-        <div class="header">
-            <h1>Sussex Entity Linking Service</h1>
-        </div> 
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="jquery-theme/jquery-ui.css" />
+    <link rel="stylesheet" href="default.css" />
 
-        <div id="container5">
-            <div id="container4">
-                <div id="container3">
-                    <div id="container2">
-                        <div id="container1">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" ></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+  </head>
+  <body>
 
-                            <div id="col1">&nbsp;</div>
+    <div class="header">
+      <h1>Sussex Entity Linking Service</h1>
+    </div> 
 
-                            <div id="col2">
-                                <h2>Input</h2>
+    <div id="container5">
+      <div id="container4">
+        <div id="container3">
+          <div id="container2">
+            <div id="container1">
 
-                                <form id="input">
+              <div id="col1">&nbsp;</div>
 
-                                    <fieldset style="border: 0; margin: 0; padding: 0;" >
-                                        <div>
-                                            <label for="inputtext">Enter some English plain text:</label>
-                                        </div><div>
-                                            <textarea cols="40" rows="25" name="text" 
-                                                      id="inputtextarea"
-                                                      required="required" autofocus></textarea>
-                                        </div>
-                                    </fieldset>
+              <div id="col2">
+                <h2>Input</h2>
 
-                                    <fieldset disabled>
+                <form id="input">
 
-                                        <legend>Options:</legend>
-
-                                        <div>
-                                            <label>Knowledge Base: </label>
-
-                                            <input type="radio" name="kb" value="freebase" 
-                                                   id="kbFreebase" checked required>
-                                            <label for="kbFreebase" >Freebase</label>
-
-                                            <input type="radio" name="kb" value="tac" id="kbTac" required>
-                                            <label for="kbTac">TAC</label>
-
-                                            <input type="radio" name="kb" value="dbp" id="kbDbp" required>
-                                            <label for="kbDbp">DBPedia</label>
-                                        </div>
-
-                                        <div>
-                                            <label>Output format:</label>
-                                            <select id="outputFormat">
-                                                <option value = "1">full text</option>
-                                                <option value = "2">mentions only</option>
-                                            </select>
-                                        </div>
-
-                                    </fieldset>
-
-                                    <fieldset style="text-align: right; border: 0;">
-
-                                        <input type="reset" value="Clear" name="submit" 
-                                               onclick="submit.disabled=true; return true;"/>
-
-                                        <input id="submitbutton" type="submit" value="Submit" name="submit" />
-                                    </fieldset>
-
-                                </form>
-
-
-                            </div>
-
-                            <div id="col3">&nbsp;</div>
-
-                            <div id="col4">&nbsp;</div>
-
-                            <div id="col5">
-                                <h2>Output</h2>
-
-
-                                <div id="output">
-                                </div>
-
-                                <div id="error" style="border: solid red 2px;">
-                                </div>
-                                <div id="loading">
-                                </div>
-
-
-
-                                <div>&nbsp;</div>
-                            </div>
-                        </div>
+                  <fieldset style="border: 0; margin: 0; padding: 0;" >
+                    <div>
+                      <label for="inputtext">Enter some English plain text:</label>
+                    </div><div>
+                      <textarea cols="40" rows="25" name="text" 
+                                id="inputtextarea"
+                                required="required" autofocus
+                                class="ui-widget ui-state-default ui-corner-all"></textarea>
                     </div>
+                  </fieldset>
+
+                  <!--                  <fieldset disabled>
+                  
+                                      <legend>Options:</legend>
+                  
+                                      <div>
+                                        <div class="buttonset">
+                                        <label>Knowledge Base: </label>
+                  
+                                        <input type="radio" name="kb" value="freebase" 
+                                               id="kbFreebase" checked required>
+                                        <label for="kbFreebase" >Freebase</label>
+                  
+                                        <input type="radio" name="kb" value="tac" id="kbTac" required>
+                                        <label for="kbTac">TAC</label>
+                  
+                                        <input type="radio" name="kb" value="dbp" id="kbDbp" required>
+                                        <label for="kbDbp">DBPedia</label>
+                                        </div>
+                                      </div>
+                  
+                                      <div>
+                                        <label>Output format:</label>
+                                        <select id="outputFormat">
+                                          <option value = "1">full text</option>
+                                          <option value = "2">mentions only</option>
+                                        </select>
+                                      </div>
+                  
+                                    </fieldset>-->
+
+                  <fieldset style="text-align: right; border: 0;">
+
+                    <!--                    <input type="reset" value="Clear" name="submit" 
+                                               onclick="submit.disabled=true; return true;"/>-->
+
+                    <button id="submitbutton">Submit</button>
+                  </fieldset>
+
+                </form>
+
+
+              </div>
+
+              <div id="col3">&nbsp;</div>
+
+              <div id="col4">&nbsp;</div>
+
+              <div id="col5">
+                <h2>Output</h2>
+
+
+                <div id="output">
                 </div>
+
+                <div id="error">
+                  <div>
+                    <div>
+                      <span class="code"></span> 
+                      <span class="name"></span> 
+                    </div>
+                    <div class="message">
+                    </div>
+                  </div>
+                </div>
+
+                <div id="loading">
+                </div>
+
+
+
+                <div>&nbsp;</div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+    </div>
 
 
-        <script>
+    <script>
         
-            function setLoading() {                
-                $("fieldset").attr("enabled", true);    
-                $("#output").fadeOut(); 
-                $("#loading").fadeIn();                  
-                $("#error").fadeOut();
-            }
-            function setLoaded() {
-                $("fieldset").attr("enabled", false);    
-                $("#loading").fadeOut();
-                $("#output").fadeIn(); 
-                $("#error").fadeOut();
-            }    
-            function setError() {                
-                $("fieldset").attr("enabled", true);    
-                $("#output").fadeOut(); 
-                $("#loading").fadeOut();                  
-                $("#error").fadeIn();                  
-            }    
-            function mentionElement(mention) {
-                text = mention.text;
-                text = text.replace(/\n+/g, "<p/>\n");
+      function setLoading() {                
+        $("fieldset").attr("disabled", true);    
+        $("#output").fadeOut(); 
+        $("#loading").fadeIn();                  
+        $("#error").fadeOut();
+      }
+      function setLoaded() {
+        $("fieldset").attr("disabled", false);    
+        $("#loading").fadeOut();
+        $("#output").fadeIn(); 
+        $("#error").fadeOut();
+      }    
+      function setError() {                
+        $("fieldset").attr("disabled", false);    
+        $("#output").fadeOut(); 
+        $("#loading").fadeOut();                  
+        $("#error").fadeIn();                  
+      }    
+      function mentionElement(mention) {
+        var text = mention.text;
+        text = text.replace(/\n+/g, "<p/>\n");
               
-                if(data[i].url) {
+        if(mention.url) {
 
-                    classes = "mention " + mention.type.toLocaleLowerCase();
+          var classes = "mention " + mention.type.toLocaleLowerCase();
               
-                    text = "<a class=\"" + classes + "\" href=\""  + mention.url 
-                        + "\">" + text + "</a>"  ;
+          text = "<a class=\"" + classes + "\" href=\""  + mention.url 
+            + "\">" + text + "</a>"  ;
                 
                 
-                    //                text += "<sup>[" + data[i].type.toLocaleLowerCase() + "]</sup>";
+          //                text += "<sup>[" + data[i].type.toLocaleLowerCase() + "]</sup>";
               
-                }
-                return text;
-            }
-            $(document).ready(function(){
+        }
+        return text;
+      }
+      $(document).ready(function(){
             
-                $("#output").hide();
-                $("#loading").hide();
-                $("#error").hide();
+        $("#output").hide();
+        $("#loading").hide();
+        $("#error").hide();
                 
-                $("#submitbutton").click(function(event){
-                    event.preventDefault();
-                    setLoading();
-                  
-                  
-                    $.post("/annotate/link/", 
-                    {text: $("#inputtextarea").val()}, 
-                    function(data){
-            
-                        $("#output").html("&nbsp;");
-                        for(i = 0; i < data.length; i++){ 
-                            $("#output").append(mentionElement(data[i]));
-                        }
-                        setLoaded();
-                    });
-                        
-                    //                        
-                    //                    $.ajax({
-                    //                        type: 'POST',
-                    //                        url: "/annotate/link/",
-                    //                        dataType: "json",
-                    //                        data: $("#inputtextarea").val(),
-                    //                        success: function(data){
-                    //            
-                    //                            output.html("&nbsp;");
-                    //                            for(i = 0; i < data.length; i++){ 
-                    //                                output.append(mentionElement(data[i]));
-                    //                            }
-                    //                            setLoaded();
-                    //                        },
-                    //                        error:  function(data) {
-                    //                            x = data;
-                    //                            //                            data.
-                    //                            $("#error").html(data.responseText);
-                    //                            setError()();
-                    //                        }
-                    //                    });
+        $(function() {
+          $("button#submitbutton").button(
+          {
+            icons: {
+              //              primary: "ui-icon-gear",
+              secondary: "ui-icon-triangle-1-e" 
+            }
+          });
+          
+          //          $(".buttonset").buttonset();
+          
+          //          .click(function( event ) {
+          //            event.preventDefault();
+          //          })
+          ;
+        });
+    
+        $("#submitbutton").click(function(event){
+          event.preventDefault();
+          $("fieldset").attr("disabled", true);    
+          $("#output").fadeOut(); 
+          $("#loading").fadeIn();                  
+          $("#error").fadeOut();
+          //                  
+          //                  
+          //        $.post("/annotate/link/", 
+          //        {text: $("#inputtextarea").val()}, 
+          //        function(data){
+          //            
+          //          $("#output").html("&nbsp;");
+          //          for(i = 0; i < data.length; i++){ 
+          //            $("#output").append(mentionElement(data[i]));
+          //          }
+          //          setLoaded();
+          //        });
+          //                        
+          //                        
+          $.ajax({
+            type: 'POST',
+            url: "/annotate/link/",
+            dataType: "json",
+            data: {
+              text: $("#inputtextarea").val()
+            },
+            success: function(data, textStatus, jqXHR){
+              __success_jqXHR = jqXHR;
+              $("#output").html("&nbsp;");
+              for(i = 0; i < data.length; i++){ 
+                $("#output").append(mentionElement(data[i]));
+              }
+              $("#output").fadeIn(); 
+            },
+            error:  function(jqXHR, textStatus, errorThrown) {
+              __error_jqXHR = jqXHR;
+              if(jqXHR.getResponseHeader("Content-Type") == "application/json") {
+                var data = $.parseJSON(jqXHR.responseText);
+                $("#error .code").html(data.code);
+                $("#error .name").html(data.name);
+                var text = data.message.replace(/\n+/g, "<p/>\n");
+                $("#error .message").html(text);            
+              } else {
+                $("#error .code").html(jqXHR.status);
+                $("#error .name").html(errorThrown);
+                $("#error .message").html(jqXHR.responseText);            
+              }
 
 
-                });
+
+              $("#error").fadeIn();   
+            },
+            complete: function(jqXHR, textStatus) {
+              __complete_jqXHR = jqXHR;
+              $("fieldset").attr("disabled", false);    
+              $("#loading").fadeOut();                              
+            }
+          
+          });
+
+
+        });
         
-            });
-        </script>
+      });
+    </script>
 
 
 
-        <div class="footer">
-            Copyright &copy; 2012 Hamish Morgan, Text Analytics Group,
-            <a href="http://www.sussex.ac.uk">University of Sussex</a>.
-            All rights reserved.
-        </div>
+    <div class="footer">
+      Copyright &copy; 2012 Hamish Morgan, Text Analytics Group,
+      <a href="http://www.sussex.ac.uk">University of Sussex</a>.
+      All rights reserved.
+    </div>
 
-    </body>
+  </body>
 </html>
