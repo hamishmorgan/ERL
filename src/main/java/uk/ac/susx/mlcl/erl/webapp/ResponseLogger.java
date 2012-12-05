@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,9 @@ import spark.utils.SparkUtils;
  */
 @Immutable
 @Nonnull
-public class RequestLogger extends Filter {
+public class ResponseLogger extends Filter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RequestLogger.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResponseLogger.class);
 
     /**
      * Hold a single instance of the default JsonFactory, which will only be instantiated the first
@@ -52,25 +53,25 @@ public class RequestLogger extends Filter {
     private final JsonFactory jsonFactory;
     private final LogLevel level;
 
-    public RequestLogger(String path, LogLevel level, JsonFactory jsonFactory) {
+    public ResponseLogger(String path, LogLevel level, JsonFactory jsonFactory) {
         super(checkNotNull(path));
         this.jsonFactory = checkNotNull(jsonFactory);
         this.level = checkNotNull(level);
     }
 
-    public RequestLogger(String path, LogLevel level) {
+    public ResponseLogger(String path, LogLevel level) {
         this(path, level, Lazy.DEFAULT_JSON_FACTORY);
     }
 
-    public RequestLogger(LogLevel level) {
+    public ResponseLogger(LogLevel level) {
         this(DEFAULT_PATH, level);
     }
 
-    public RequestLogger(String path) {
+    public ResponseLogger(String path) {
         this(path, DEFAULT_LEVEL);
     }
 
-    public RequestLogger() {
+    public ResponseLogger() {
         this(DEFAULT_PATH);
     }
 
@@ -84,7 +85,6 @@ public class RequestLogger extends Filter {
 
     @Override
     public void handle(Request request, Response response) {
-        checkNotNull(request, "request");
         checkNotNull(response, "response");
 
         if (!level.isEnabled(LOG)) {
@@ -98,7 +98,7 @@ public class RequestLogger extends Filter {
 
             generator.writeStartObject();
             generator.writeFieldName("request");
-            writeRequest(request, generator);
+            writeResponse(response, generator);
             generator.writeEndObject();
 
             generator.flush();
@@ -111,88 +111,32 @@ public class RequestLogger extends Filter {
         }
     }
 
-    private static void writeRequest(Request request, JsonGenerator g)
+    private static void writeResponse(Response response, JsonGenerator g)
             throws IOException {
 
-        // XXX: Work-around to Spark bug: During POST method requests, if the body
-        // is read before queryParams, the params will never be populated.
-        if (isFormData(request)) {
-            request.queryParams();
-        }
-
         g.writeStartObject();
 
-        writeKeyValue("url", request.url(), g);
-
-        g.writeFieldName("headers");
-        g.writeStartObject();
-        for (String header : request.headers()) {
-            g.writeFieldName(header);
-            g.writeString(request.headers(header));
-        }
-        g.writeEndObject();
-
-        writeKeyValue("body", request.body(), g);
-        writeKeyValue("contentType", request.contentType(), g);
-        writeKeyValue("requestMethod", request.requestMethod(), g);
-
-        g.writeFieldName("queryParams");
-        g.writeStartObject();
-        for (String queryParam : request.queryParams()) {
-            g.writeFieldName(queryParam);
-            g.writeString(request.queryParams(queryParam));
-        }
-        g.writeEndObject();
-
-        writeKeyValue("queryString", request.queryString(), g);
-        writeKeyValue("userAgent", request.userAgent(), g);
-
-        g.writeFieldName("attributes");
-        g.writeStartObject();
-        for (String attribute : request.attributes()) {
-            g.writeFieldName(attribute);
-            g.writeString(request.attribute(attribute).toString());
-        }
-        g.writeEndObject();
+        writeKeyValue("body", response.body(), g);
 
         g.writeFieldName("raw");
-        writeHttpServletRequest(request.raw(), g);
+        writeHttpServletResponse(response.raw(), g);
 
         g.writeEndObject();
     }
 
-    private static void writeHttpServletRequest(HttpServletRequest raw,
+    private static void writeHttpServletResponse(HttpServletResponse raw,
                                                 JsonGenerator g)
             throws IOException {
 
         g.writeStartObject();
-        writeKeyValue("authType", raw.getAuthType(), g);
-
-        g.writeFieldName("cookies");
-        writeArray(raw.getCookies() == null ? Lists.newArrayList()
-                : Lists.newArrayList(raw.getCookies()), g);
-
-        writeKeyValue("method", raw.getMethod(), g);
-
-        // Attempt to use URI object to combine the various remote components, but
-        // fall back to just string formatting if something goes wrong.
-        try {
-            final URI uri = new URI(
-                    null, raw.getRemoteUser(), raw.getRemoteHost(),
-                    raw.getRemotePort(), null, null, null);
-            writeKeyValue("remote", uri.toString(), g);
-        } catch (URISyntaxException ex) {
-            final String uriString = String.format(
-                    "//%s@[%s]:%d", raw.getRemoteUser(),
-                    raw.getRemoteHost(), raw.getRemotePort());
-            writeKeyValue("remote", uriString, g);
-        }
-
-        writeKeyValue("requestedSessionId", raw.getRequestedSessionId(), g);
-        writeKeyValue("secure", raw.isSecure(), g);
+        
+        
+        writeKeyValue("characterEncoding", raw.getCharacterEncoding(), g );
+        writeKeyValue("contentType", raw.getContentType(), g );
+        writeKeyValue("locale", raw.getLocale().toString(), g);
 
         writeKeyValue("toString", raw.toString(), g);
-
+        
         g.writeEndObject();
 
     }

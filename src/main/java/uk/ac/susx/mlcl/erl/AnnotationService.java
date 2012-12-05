@@ -8,6 +8,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
@@ -73,6 +74,12 @@ public class AnnotationService {
         this.jsonFactory = jsonFactory;
     }
 
+    public static Charset getCharset() {
+        return CHARSET;
+    }
+    
+    
+
     public static AnnotationService newInstance(Properties props) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
 
         AnnotatorPool pool = new AnnotatorPool();
@@ -101,6 +108,48 @@ public class AnnotationService {
         JsonFactory jsonFactory = new JacksonFactory();
 
         return new AnnotationService(pool, xmler, xomb, jsonFactory);
+    }
+
+    /**
+     * Pre-load models and annotators required for entity linking.
+     *
+     * The annotation models take a while to load (about 20 seconds currently), which cause an
+     * irritating pause the first time the service is used. To avoid this, and to save time,
+     * pre-load the annotators in the background by requesting a dummy link request.
+     *
+     * @param block whether the call should wait until loading is completed before returning
+     * @throws InterruptedException when block is true, and the worker thread is interrupted.
+     */
+    public void preloadLinker(boolean block) throws InterruptedException {
+
+        final Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LOG.debug("Starting pre-load of link annotors in background.");
+                Stopwatch stopwatch = new Stopwatch().start();
+
+                link("");
+
+                LOG.debug("Loaded link annotors. (Elapsed time : {})",
+                          stopwatch.stop());
+            }
+        }, "annotator-preloader");
+        try {
+            thread.setPriority(Thread.MIN_PRIORITY);
+            thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread t, Throwable e) {
+                    LOG.warn("Annotator preloader encountered a problem.", e);
+                }
+            });
+        } catch (SecurityException ex) {
+            LOG.warn(ex.getLocalizedMessage(), ex);
+        }
+        thread.start();
+
+        if (block) {
+            thread.join();
+        }
     }
 
     public Annotation link(String text) {

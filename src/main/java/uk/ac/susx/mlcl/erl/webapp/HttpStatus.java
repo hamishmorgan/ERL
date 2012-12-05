@@ -222,8 +222,8 @@ public enum HttpStatus {
      * distinguish between the two behaviours.[7] However, some Web applications and frameworks use
      * the 302 status code as if it were the 303.[8][citation needed]
      */
-    Found(302, ""),
-    Moved_Temporarily(302, "Found"),
+    Found(302, "Found"),
+    Moved_Temporarily(302, "Moved Temporarily"),
     /**
      * 303 See Other (since HTTP/1.1).
      * <p/>
