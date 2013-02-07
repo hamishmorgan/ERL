@@ -9,7 +9,7 @@ import com.google.common.io.Closeables;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import eu.ac.susx.mlcl.xml.AnnotationToXML;
+import eu.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

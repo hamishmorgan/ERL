@@ -6,7 +6,7 @@ package eu.ac.susx.mlcl.erl.t9kb;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
-import eu.ac.susx.mlcl.lib.C14nCache;
+import eu.ac.susx.mlcl.erl.lib.C14nCache;
 import eu.ac.susx.mlcl.erl.t9kb.T9Entity.Builder;
 import eu.ac.susx.mlcl.erl.t9kb.T9Fact;
 import java.util.Arrays;

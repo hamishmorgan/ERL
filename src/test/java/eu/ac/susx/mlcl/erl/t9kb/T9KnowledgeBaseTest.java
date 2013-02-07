@@ -14,12 +14,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 /**
  *
  * @author hiam20
  */
-public class T9KnowledgeBaseTest {
+public class T9KnowledgeBaseTest extends AbstractTest {
 
     private static final File TEST_DATA_DIR = new File("src/test/data");
     private static final File TEST_OUTPUT_DIR = new File("target/testout");

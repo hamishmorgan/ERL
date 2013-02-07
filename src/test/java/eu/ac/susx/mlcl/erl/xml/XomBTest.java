@@ -2,11 +2,11 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package eu.ac.susx.mlcl.xom;
+package eu.ac.susx.mlcl.erl.xml;
 
-import eu.ac.susx.mlcl.xml.XomUtil;
-import eu.ac.susx.mlcl.xml.XomB;
-import eu.ac.susx.mlcl.xml.XomB.ElementBuilder;
+import eu.ac.susx.mlcl.erl.xml.XomUtil;
+import eu.ac.susx.mlcl.erl.xml.XomB;
+import eu.ac.susx.mlcl.erl.xml.XomB.ElementBuilder;
 import java.net.URI;
 import java.nio.charset.Charset;
 import nu.xom.Document;

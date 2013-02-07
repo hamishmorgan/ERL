@@ -4,7 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.snlp;
 
-import eu.ac.susx.mlcl.xml.AnnotationToXML;
+import eu.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetBeginAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetEndAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;

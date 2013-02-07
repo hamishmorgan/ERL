@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package eu.ac.susx.mlcl.xml;
+package eu.ac.susx.mlcl.erl.xml;
 
 import com.google.common.base.Optional;
 import static com.google.common.base.Preconditions.*;
