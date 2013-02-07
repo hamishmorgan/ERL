@@ -111,6 +111,14 @@ public class EntityLinkingAnnotator implements Annotator {
 
         final String documentText = document.get(CoreAnnotations.TextAnnotation.class);
         for (final List<CoreLabel> phrase : mentions) {
+//            
+//            System.out.println(document);
+//            System.out.println(document.keySet());
+//            System.out.println("|" + documentText + "|");
+//            System.out.println(phrase);
+//            System.out.println(phrase.get(0).beginPosition());
+//            System.out.println(phrase.get(phrase.size() - 1).endPosition() + 1);
+            
             final String text = documentText.substring(
                     phrase.get(0).beginPosition(),
                     phrase.get(phrase.size() - 1).endPosition() + 1);
@@ -128,10 +136,7 @@ public class EntityLinkingAnnotator implements Annotator {
         final Map<String, List<String>> results;
         try {
             results = knowledgeBase.batchSearch(query2labels.keySet());
-        } catch (IOException ex) {
-            LOG.error(ex.getLocalizedMessage(), ex);
-            throw new RuntimeException(ex);
-        } catch (ExecutionException ex) {
+        } catch (IOException | ExecutionException ex) {
             LOG.error(ex.getLocalizedMessage(), ex);
             throw new RuntimeException(ex);
         }

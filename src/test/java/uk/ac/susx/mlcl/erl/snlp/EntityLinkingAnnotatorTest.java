@@ -72,7 +72,9 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
                          "freebase_brighton.txt-tok-sent-pos-lemma-ner.s.gz"));
 
         System.out.println("document: " + document);
-//
+
+        // XXX: This fails because the TextAnnotation is somehow empty at the document level after
+        // deserialization. (The annotation exists, but it's an empty string... >:-( )
         instance.annotate(document);
 
         System.out.println(document);
