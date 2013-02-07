@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.kb;
+package eu.ac.susx.mlcl.erl.linker;
 
 import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Throwables;
@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Instances of
- * <code>CachedKnowledgeBase</code> adapt another KnowledgeBase implementation, and implement a
- * transparent memory cache over the methods.
+ * <code>CachedCandidateGenerator</code> adapts another CachedCandidate implementation, and
+ * implement a transparent memory cache over the methods.
  *
  * Repeated attempts to retrieve the same data will be returned from memory, rather than querying
  * the KB service. This particularly useful for web-based services such as Freebase, where
@@ -39,10 +39,9 @@ import org.slf4j.LoggerFactory;
  */
 @Nonnull
 @NotThreadSafe
-public class CachedKnowledgeBase implements KnowledgeBase {
+public class CachedCandidateGenerator implements CandidateGenerator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CachedKnowledgeBase.class);
-    private final LoadingCache<String, String> textCache;
+    private static final Logger LOG = LoggerFactory.getLogger(CachedCandidateGenerator.class);
     private final LoadingCache<String, List<String>> searchCache;
 
     /**
@@ -52,24 +51,17 @@ public class CachedKnowledgeBase implements KnowledgeBase {
      * @param textCache
      * @param searchCache
      */
-    protected CachedKnowledgeBase(final LoadingCache<String, String> textCache,
-                                  final LoadingCache<String, List<String>> searchCache) {
-        this.textCache = checkNotNull(textCache, "textCache");
+    protected CachedCandidateGenerator(final LoadingCache<String, List<String>> searchCache) {
         this.searchCache = checkNotNull(searchCache, "searchCache");
     }
 
     @Override
-    public List<String> search(final String query) throws IOException {
+    public List<String> findCandidates(final String query) throws IOException {
         return get(searchCache, query);
     }
 
     @Override
-    public String text(final String id) throws IOException {
-        return get(textCache, id);
-    }
-
-    @Override
-    public Map<String, List<String>> batchSearch(Set<String> queries)
+    public Map<String, List<String>> batchFindCandidates(Set<String> queries)
             throws IOException, ExecutionException {
         return searchCache.getAll(queries);
     }
@@ -85,33 +77,10 @@ public class CachedKnowledgeBase implements KnowledgeBase {
         }
     }
 
-    public static KnowledgeBase wrap(final KnowledgeBase inner) {
-        if (checkNotNull(inner, "inner") instanceof CachedKnowledgeBase) {
+    public static CandidateGenerator wrap(final CandidateGenerator inner) {
+        if (checkNotNull(inner, "inner") instanceof CachedCandidateGenerator) {
             LOG.warn("Ignoring attempt to cache wrap a KnowledgeBase that was already cached.");
             return inner;
-        }
-
-        final LoadingCache<String, String> textCache;
-        {
-            final Weigher<String, String> textWeighter =
-                    new Weigher<String, String>() {
-                        public int weigh(String key, String value) {
-                            return (4 * 2) + (key.length() + value.length()) * 2;
-
-                        }
-                    };
-            final CacheLoader<String, String> textLoader =
-                    new CacheLoader<String, String>() {
-                        @Override
-                        public String load(String key) throws Exception {
-                            return inner.text(key);
-                        }
-                    };
-
-            textCache = CacheBuilder.newBuilder()
-                    .weigher(textWeighter)
-                    .maximumWeight(1 << 20)
-                    .build(textLoader);
         }
 
         final LoadingCache<String, List<String>> searchCache;
@@ -131,13 +100,13 @@ public class CachedKnowledgeBase implements KnowledgeBase {
                     new CacheLoader<String, List<String>>() {
                         @Override
                         public List<String> load(String key) throws Exception {
-                            return inner.search(key);
+                            return inner.findCandidates(key);
                         }
 
                         @Override
                         public Map<String, List<String>> loadAll(Iterable<? extends String> keys)
                                 throws Exception {
-                            return inner.batchSearch(Sets.newHashSet(keys));
+                            return inner.batchFindCandidates(Sets.newHashSet(keys));
                         }
                     };
 
@@ -148,7 +117,7 @@ public class CachedKnowledgeBase implements KnowledgeBase {
                     .build(searchLoader);
         }
 
-        return new CachedKnowledgeBase(textCache, searchCache);
+        return new CachedCandidateGenerator(searchCache);
 
     }
 }

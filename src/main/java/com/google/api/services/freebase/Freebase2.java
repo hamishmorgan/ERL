@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,6 +94,19 @@ public class Freebase2 extends Freebase {
         initialize(search);
         return search.executeParseObject(
                 SearchFormat.IdsResult.class).getResults();
+    }
+
+    /**
+     * Convenience method that creates a new query to retrieve the text description for the given
+     * entity id, execute the query, then return the result.
+     *
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    public String textGetResult(String id) throws IOException {
+        Preconditions.checkNotNull(id, "id");
+        return text().get(Arrays.asList(id)).execute().getResult();
     }
 
     /**

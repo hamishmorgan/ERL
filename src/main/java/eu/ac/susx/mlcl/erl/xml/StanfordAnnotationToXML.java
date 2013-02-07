@@ -54,7 +54,7 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.ProcessingInstruction;
 import nu.xom.Serializer;
-import uk.ac.susx.mlcl.erl.snlp.EntityLinkingAnnotator;
+import eu.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
 
 /**
  * Save annotations to XML.

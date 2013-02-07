@@ -2,14 +2,16 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.snlp;
+package uk.ac.susx.mlcl.erl.linker;
 
+import eu.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
 import eu.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import com.google.common.io.Closeables;
 import edu.stanford.nlp.StanfordNLPTest;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import java.io.BufferedOutputStream;
@@ -63,7 +65,8 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
 //        props.put("ner.applyNumericClassifiers", "false");
 //        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-        EntityLinkingAnnotator instance = EntityLinkingAnnotator.newInstance();
+        
+        Annotator instance = new EntityLinkingAnnotator.Factory().create();
 
 //        pipeline.addAnnotator(instance);
 

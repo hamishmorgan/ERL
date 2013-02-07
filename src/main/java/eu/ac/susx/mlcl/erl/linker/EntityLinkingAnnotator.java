@@ -2,11 +2,10 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.snlp;
+package eu.ac.susx.mlcl.erl.linker;
 
 import com.google.api.services.freebase.Freebase2;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
+import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import edu.stanford.nlp.ling.CoreAnnotation;
@@ -27,9 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import org.slf4j.LoggerFactory;
-import uk.ac.susx.mlcl.erl.kb.CachedKnowledgeBase;
-import uk.ac.susx.mlcl.erl.kb.FreebaseKB;
-import uk.ac.susx.mlcl.erl.kb.KnowledgeBase;
+import uk.ac.susx.mlcl.erl.MiscUtil;
 
 /**
  *
@@ -38,17 +35,12 @@ import uk.ac.susx.mlcl.erl.kb.KnowledgeBase;
 public class EntityLinkingAnnotator implements Annotator {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Freebase2.class);
-    private final KnowledgeBase knowledgeBase;
+    private final CandidateGenerator generator;
+    private final CandidateRanker ranker;
 
-    public EntityLinkingAnnotator(KnowledgeBase knowledgeBase) {
-        this.knowledgeBase = CachedKnowledgeBase.wrap(knowledgeBase);
-    }
-
-    static EntityLinkingAnnotator newInstance() throws IOException {
-
-        KnowledgeBase kb = FreebaseKB.newInstance();
-        return new EntityLinkingAnnotator(kb);
-
+    public EntityLinkingAnnotator(CandidateGenerator candidateGenerator, CandidateRanker ranker) {
+        this.generator = checkNotNull(candidateGenerator, "candidateGenerator");
+        this.ranker = checkNotNull(ranker, "ranker");
     }
 
     /**
@@ -79,7 +71,7 @@ public class EntityLinkingAnnotator implements Annotator {
      */
     @Override
     public void annotate(final Annotation document) {
-        Preconditions.checkNotNull(document, "annotation");
+        checkNotNull(document, "annotation");
 
         // Find all the entity mentions in the document
         final List<List<CoreLabel>> mentions = Lists.newArrayList();
@@ -118,7 +110,7 @@ public class EntityLinkingAnnotator implements Annotator {
 //            System.out.println(phrase);
 //            System.out.println(phrase.get(0).beginPosition());
 //            System.out.println(phrase.get(phrase.size() - 1).endPosition() + 1);
-            
+
             final String text = documentText.substring(
                     phrase.get(0).beginPosition(),
                     phrase.get(phrase.size() - 1).endPosition() + 1);
@@ -135,30 +127,37 @@ public class EntityLinkingAnnotator implements Annotator {
         // Search the knowledge base with all of the unique query strings
         final Map<String, List<String>> results;
         try {
-            results = knowledgeBase.batchSearch(query2labels.keySet());
+            results = generator.batchFindCandidates(query2labels.keySet());
+
+
+            // Now add the kb id as an annotation to each mention token
+            for (final String query : query2labels.keySet()) {
+                if (!results.containsKey(query)) {
+                    LOG.warn("Failed to find search result for: " + query);
+                    continue;
+                }
+
+                List<String> candidateIds = results.get(query);
+
+
+                candidateIds = ranker.ranked(candidateIds);
+
+
+                // TODO: Implement a more sensible method of handling NILs
+                final String id = candidateIds.isEmpty() ? "/NIL" : candidateIds.get(0);
+
+                for (final CoreLabel token : query2labels.get(query)) {
+                    token.set(EntityKbIdAnnotation.class, id);
+                }
+
+            }
+
         } catch (IOException | ExecutionException ex) {
             LOG.error(ex.getLocalizedMessage(), ex);
             throw new RuntimeException(ex);
         }
 
-        // Now add the kb id as an annotation to each mention token
-        for (final String query : query2labels.keySet()) {
-            if (!results.containsKey(query)) {
-                LOG.warn("Failed to find search result for: " + query);
-                continue;
-            }
-
-            final List<String> candidateIds = results.get(query);
-            // TODO: Implement a more sensible method of choosing the best KB-ID
-            final String id = candidateIds.isEmpty() ? "/NIL" : candidateIds.get(0);
-
-            for (final CoreLabel token : query2labels.get(query)) {
-                token.set(EntityKbIdAnnotation.class, id);
-            }
-
-        }
     }
-
 
     public static final class EntityKbIdAnnotation implements CoreAnnotation<String> {
 
@@ -168,14 +167,24 @@ public class EntityLinkingAnnotator implements Annotator {
         }
     }
 
-    public static class Factory implements edu.stanford.nlp.util.Factory<Annotator>, Serializable {
+    public static class Factory
+            implements edu.stanford.nlp.util.Factory<Annotator>, Serializable {
 
         private static final long serialVersionUID = 1L;
 
         @Override
         public Annotator create() {
             try {
-                return EntityLinkingAnnotator.newInstance();
+                Freebase2 fb = MiscUtil.newFreebaseInstance();
+
+                CandidateGenerator generator = new FreebaseSearchCandidateGenerator(fb);
+                
+                generator = CachedCandidateGenerator.wrap(generator);
+
+                CandidateRanker ranker = new NullRanker();
+
+                return new EntityLinkingAnnotator(generator, ranker);
+
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
