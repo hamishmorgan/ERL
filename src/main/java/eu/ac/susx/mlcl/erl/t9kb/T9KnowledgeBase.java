@@ -4,10 +4,10 @@
  */
 package eu.ac.susx.mlcl.erl.t9kb;
 
-import com.sun.istack.internal.logging.Logger;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -24,7 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class T9KnowledgeBase {
 
-    private static final Logger LOG = Logger.getLogger(T9KnowledgeBase.class);
+    private static final Logger LOG = Logger.getLogger(T9KnowledgeBase.class.getName());
     private final DB db;
     private final HTreeMap<String, T9Entity> idIndex;
     private final HTreeMap<String, String> nameIndex;
