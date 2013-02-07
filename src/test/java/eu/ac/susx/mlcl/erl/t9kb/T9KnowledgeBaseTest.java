@@ -125,10 +125,30 @@ public class T9KnowledgeBaseTest extends AbstractTest {
     @Test
     public void testGetEntityByName() throws IOException {
         System.out.println("getEntityByName");
-        String name = "Hardtner, Kansas";
+        String name = "Panama";
+
         File dbFile = new File(TEST_DATA_DIR, "tac09-kb-sample.mapdb");
+
         T9KnowledgeBase instance = T9KnowledgeBase.open(dbFile);
         T9Entity result = instance.getEntityByName(name);
+
+        assertEquals(name, result.getName());
+    }
+
+    /**
+     * Test of getEntityByName method, of class T9KnowledgeBase. This time using a name containing
+     * accented characters.
+     */
+    @Test
+    public void testGetEntityByName2() throws IOException {
+        System.out.println("getEntityByName");
+        String name = "Panamá";
+
+        File dbFile = new File(TEST_DATA_DIR, "tac09-kb-sample.mapdb");
+
+        T9KnowledgeBase instance = T9KnowledgeBase.open(dbFile);
+        T9Entity result = instance.getEntityByName(name);
+
         assertEquals(name, result.getName());
     }
 
@@ -187,5 +207,38 @@ public class T9KnowledgeBaseTest extends AbstractTest {
         } catch (IOException e) {
             System.out.println("XXX: " + e);
         }
+    }
+
+    @Test
+    public void testSize() throws IOException {
+        System.out.println("size");
+        File dbFile = new File(TEST_DATA_DIR, "tac09-kb-sample.mapdb");
+        T9KnowledgeBase instance = T9KnowledgeBase.open(dbFile);
+        int actualSize = instance.size();
+
+        assertEquals(133, actualSize);
+    }
+
+    @Test
+    public void testIsEmpty() throws IOException {
+        System.out.println("size");
+        File dbFile = new File(TEST_DATA_DIR, "tac09-kb-sample.mapdb");
+        T9KnowledgeBase instance = T9KnowledgeBase.open(dbFile);
+        boolean actualIsEmpty = instance.isEmpty();
+
+        assertEquals(false, actualIsEmpty);
+    }
+
+    @Test
+    public void testIterator() throws IOException {
+        System.out.println("size");
+        File dbFile = new File(TEST_DATA_DIR, "tac09-kb-sample.mapdb");
+        T9KnowledgeBase instance = T9KnowledgeBase.open(dbFile);
+        
+        System.out.print("Entities: ");
+        for(T9Entity entity : instance) {
+            System.out.print(entity.getId() + ", ");
+        }
+        System.out.println();
     }
 }

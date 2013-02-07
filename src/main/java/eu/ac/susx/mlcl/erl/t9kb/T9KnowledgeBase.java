@@ -7,6 +7,9 @@ package eu.ac.susx.mlcl.erl.t9kb;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -22,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author hiam20
  */
-public class T9KnowledgeBase {
+public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
 
     private static final Logger LOG = Logger.getLogger(T9KnowledgeBase.class.getName());
     private final DB db;
@@ -34,10 +37,11 @@ public class T9KnowledgeBase {
         this.idIndex = idIndex;
         this.nameIndex = nameIndex;
     }
-    
+
     private void checkState() throws IOException {
-        if(db.isClosed())
+        if (db.isClosed()) {
             throw new IOException("The database is closed.");
+        }
     }
 
     public T9Entity getEntityById(String id) throws IOException {
@@ -62,6 +66,75 @@ public class T9KnowledgeBase {
     public void close() {
         db.commit();
         db.close();
+    }
+
+    @Override
+    public int size() {
+        return idIndex.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return idIndex.isEmpty();
+    }
+
+    @Override
+    public Iterator<T9Entity> iterator() {
+        return idIndex.values().iterator();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        throw new UnsupportedOperationException("Operation \"contains()\" is unfeasably"
+                + " slow, and has been disabled for your own good!");
+    }
+
+    @Override
+    public Object[] toArray() {
+        throw new UnsupportedOperationException("Operation \"toArray()\" is unfeasably"
+                + " slow, and has been disabled for your own good!");
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        throw new UnsupportedOperationException("Operation \"toArray(T[] a)\" is unfeasably"
+                + " slow, and has been disabled for your own good!");
+    }
+
+    @Override
+    public boolean add(T9Entity e) {
+        throw new UnsupportedOperationException("Collection is immutable!");
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        throw new UnsupportedOperationException("Collection is immutable!");
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        throw new UnsupportedOperationException("Operation \"containsAll(Collection<?> c)\""
+                + "  is unfeasably slow, and has been disabled for your own good!");
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends T9Entity> c) {
+        throw new UnsupportedOperationException("Collection is immutable!");
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        throw new UnsupportedOperationException("Collection is immutable!");
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        throw new UnsupportedOperationException("Collection is immutable!");
+    }
+
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException("Collection is immutable!");
     }
 
     private static DB openDB(File dbFile) {
@@ -114,7 +187,7 @@ public class T9KnowledgeBase {
                 }
                 if (count % 10000 == 0) {
                     LOG.info(String.format("Processed %d entities. (%f e/s)%n", count,
-                                      count / ((tic.getTime() / 1000.0))));
+                                           count / ((tic.getTime() / 1000.0))));
                 }
                 count++;
             }
@@ -145,9 +218,9 @@ public class T9KnowledgeBase {
             LOG.info("Processing file: " + part);
             saxParser.parse(part, handler);
         }
-        
+
         db.commit();
-        
+
         return new T9KnowledgeBase(db, idIndex, nameIndex);
     }
 }
