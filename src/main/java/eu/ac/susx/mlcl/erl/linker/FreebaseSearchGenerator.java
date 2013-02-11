@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2012-2013, Hamish Morgan.
+ * All Rights Reserved.
  */
 package eu.ac.susx.mlcl.erl.linker;
 
@@ -15,16 +15,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 /**
- *
- * @author hiam20
+ * A candidate link generator that backs off to the Freebase search API.
+ * 
+ * @author Hamish Morgan
  */
 @Immutable
 @Nonnull
-public class FreebaseSearchCandidateGenerator implements CandidateGenerator {
+public class FreebaseSearchGenerator implements CandidateGenerator {
 
     private final Freebase2 freebase;
 
-    public FreebaseSearchCandidateGenerator(Freebase2 freebase) {
+    public FreebaseSearchGenerator(Freebase2 freebase) {
         checkNotNull(freebase, "freebase");
         this.freebase = freebase;
     }

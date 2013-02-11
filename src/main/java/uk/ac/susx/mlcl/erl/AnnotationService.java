@@ -60,6 +60,7 @@ public class AnnotationService {
     private static final boolean DEBUG = true;
     private static final Logger LOG = LoggerFactory.getLogger(
             AnnotationService.class);
+    //
     private static final Charset CHARSET = Charset.forName("UTF-8");
     private final XomB xomb;
     private final AnnotationToXML xmler;
@@ -77,8 +78,6 @@ public class AnnotationService {
     public static Charset getCharset() {
         return CHARSET;
     }
-    
-    
 
     public static AnnotationService newInstance(Properties props) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
 
@@ -91,7 +90,7 @@ public class AnnotationService {
         pool.register("parse", new ParserAnnotatorFactory(props));
         pool.register("ner", new NERAnnotatorFactory(props));
         pool.register("coref", new CorefAnnotatorFactory(props));
-        pool.register("el", new EntityLinkingAnnotator.Factory());
+        pool.register("el", new EntityLinkingAnnotator.Factory(props));
 
 
         AnnotationToXML.Builder builder = AnnotationToXML.builder();

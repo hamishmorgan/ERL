@@ -62,6 +62,7 @@ public class Freebase2Test extends AbstractTest {
 
         JsonHttpRequestInitializer requestInitializer =
                 new JsonHttpRequestInitializer() {
+                    @Override
                     public void initialize(JsonHttpRequest request) {
                         if (!(request instanceof FreebaseRequest)) {
                             throw new IllegalArgumentException();
@@ -283,15 +284,19 @@ public class Freebase2Test extends AbstractTest {
 
         final String fileExtension;
         String contentType = im.getLastResponseHeaders().getContentType();
-        if (contentType.equals("image/png")) {
-            fileExtension = "png";
-        } else if (contentType.equals("image/jpeg")) {
-            fileExtension = "jpeg";
-        } else if (contentType.equals("image/gif")) {
-            fileExtension = "gif";
-        } else {
-            throw new AssertionError(
-                    "Unknown image content type: " + contentType);
+        switch (contentType) {
+            case "image/png":
+                fileExtension = "png";
+                break;
+            case "image/jpeg":
+                fileExtension = "jpeg";
+                break;
+            case "image/gif":
+                fileExtension = "gif";
+                break;
+            default:
+                throw new AssertionError(
+                        "Unknown image content type: " + contentType);
         }
 
         FileOutputStream out = null;
@@ -649,13 +654,18 @@ public class Freebase2Test extends AbstractTest {
         runQuery(q);
     }
 
+    /**
+     * This test sometimes throw as exception: Read timed out
+     * 
+     * @throws IOException 
+     */
     @Test()
     public void testDateRange() throws IOException {
         String q = "[{\n"
                 + "   \"type\":\"/music/album\",\n"
                 + "   \"name\":null,\n"
                 + "   \"artist\":null,\n"
-                + "   \"release_date>=\":\"1999-01-01\",\n"
+                + "   \"release_date>=\":\"1999-01-30\",\n"
                 + "   \"release_date<=\":\"1999-01-31\", \n"
                 + "   \"return\" : \"count\""
                 + "}]";
@@ -833,10 +843,12 @@ public class Freebase2Test extends AbstractTest {
     private static class GetTextBatchCallbackImpl
             implements BatchCallback<ContentserviceGet, Void> {
 
+        @Override
         public void onSuccess(ContentserviceGet t, GoogleHeaders responseHeaders) {
             System.out.println(t.getResult() + "\n\n");
         }
 
+        @Override
         public void onFailure(Void e, GoogleHeaders responseHeaders) throws IOException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
