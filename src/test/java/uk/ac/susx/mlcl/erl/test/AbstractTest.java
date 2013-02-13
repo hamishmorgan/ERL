@@ -26,17 +26,14 @@ import org.junit.rules.TestName;
  */
 public class AbstractTest {
 
-    @Rule
+    @Rule()
     public final TestName testName = new TestName();
 
-    // An irritating problem is that is that there is no way to insure that
-    // subclasses don't override setup and tear-down methods, especially the
-    // static ones.
-    @Before
-    public void setUp() throws Exception {
-        System.out
-                .println(MessageFormat.format("Running test: {0}#{1}",
-                                              this.getClass().getName(), testName.getMethodName()));
+    @Before()
+    public final void _printTestMethod() throws SecurityException, NoSuchMethodException {
+        System.out.println(MessageFormat.format(
+                "Running test: {0}#{1}",
+                this.getClass().getName(), testName.getMethodName()));
     }
 
     /**
@@ -66,14 +63,14 @@ public class AbstractTest {
 
                 return (T) ois.readObject();
             } finally {
-                if (objectsOut != null)
+                if (objectsOut != null) {
                     objectsOut.close();
-                if (ois != null)
+                }
+                if (ois != null) {
                     ois.close();
+                }
             }
-        } catch (ClassNotFoundException ex) {
-            throw new AssertionError(ex);
-        } catch (IOException ex) {
+        } catch (ClassNotFoundException | IOException ex) {
             throw new AssertionError(ex);
         }
     }
@@ -96,11 +93,7 @@ public class AbstractTest {
 
             return (T) result;
 
-        } catch (NoSuchMethodException e) {
-            throw new AssertionError(e);
-        } catch (IllegalAccessException e) {
-            throw new AssertionError(e);
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new AssertionError(e);
         }
 
@@ -123,9 +116,7 @@ public class AbstractTest {
         rand = new Random(seed);
         return rand;
     }
-
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-
     public static final File TEST_DATA_PATH = new File("src/test/data");
 
     public static String readTestData(String path) {

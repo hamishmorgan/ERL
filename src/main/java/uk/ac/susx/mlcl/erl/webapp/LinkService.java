@@ -9,6 +9,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.Throwables;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -25,6 +26,7 @@ public class LinkService extends Route {
     private static final Logger LOG = LoggerFactory.getLogger(StaticResource.class);
     private static final boolean DEBUG = true;
     private AnnotationService anno;
+    private Charset charset = Charset.forName("UTF-8");
 
     public LinkService(AnnotationService anno, String path) {
         super(path);
@@ -45,7 +47,7 @@ public class LinkService extends Route {
         } else {
 
             try {
-                anno.linkAsJson(text, response.raw().getOutputStream());
+                anno.linkAsJson(text, response.raw().getOutputStream(), charset);
                 return "";
             } catch (Throwable ex) {
                 LOG.error(ex.getLocalizedMessage(), ex);

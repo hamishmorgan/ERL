@@ -16,6 +16,8 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.AnnotatorPool;
+import eu.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
+import eu.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator.EntityKbIdAnnotation;
 import eu.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import eu.ac.susx.mlcl.erl.xml.XMLToStringSerializer;
 import eu.ac.susx.mlcl.erl.xml.XomB;
@@ -42,8 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.snlp.CleanXmlAnnotator2;
 import uk.ac.susx.mlcl.erl.snlp.CorefAnnotatorFactory;
-import eu.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
-import eu.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator.EntityKbIdAnnotation;
 import uk.ac.susx.mlcl.erl.snlp.MorphaAnnotatorFactory;
 import uk.ac.susx.mlcl.erl.snlp.NERAnnotatorFactory;
 import uk.ac.susx.mlcl.erl.snlp.POSTaggerAnnotatorFactory;
@@ -61,7 +61,7 @@ public class AnnotationService {
     private static final Logger LOG = LoggerFactory.getLogger(
             AnnotationService.class);
     //
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+//    private static final Charset CHARSET = Charset.forName("UTF-8");
     private final XomB xomb;
     private final AnnotationToXML xmler;
     private AnnotatorPool pool;
@@ -73,10 +73,6 @@ public class AnnotationService {
         this.xmler = xmler;
         this.xomb = xomb;
         this.jsonFactory = jsonFactory;
-    }
-
-    public static Charset getCharset() {
-        return CHARSET;
     }
 
     public static AnnotationService newInstance(Properties props) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
@@ -104,7 +100,10 @@ public class AnnotationService {
 
         XomB xomb = new XomB();
 
+
         JsonFactory jsonFactory = new JacksonFactory();
+
+
 
         return new AnnotationService(pool, xmler, xomb, jsonFactory);
     }
@@ -179,11 +178,11 @@ public class AnnotationService {
         }
     }
 
-    public void linkAsJson(String text, OutputStream output) throws IOException {
+    public void linkAsJson(String text, OutputStream output, Charset charset) throws IOException {
         Preconditions.checkNotNull(text);
         Preconditions.checkNotNull(output);
         Writer writer = new BufferedWriter(
-                new OutputStreamWriter(output, CHARSET));
+                new OutputStreamWriter(output, charset));
         linkAsJson(text, writer);
         writer.flush();
     }
@@ -191,9 +190,14 @@ public class AnnotationService {
     public void linkAsJson(String text, Writer writer) throws IOException {
         Preconditions.checkNotNull(text);
         Preconditions.checkNotNull(writer);
-        final Annotation document = link(text);
 
+        final Annotation document = link(text);
+        annotationToJson(document, writer);
+    }
+
+    private void annotationToJson(Annotation document, Writer writer) throws IOException {
         JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
+        generator.enablePrettyPrint();
 
         generator.writeStartArray();
 
@@ -301,10 +305,10 @@ public class AnnotationService {
         return xmler.toDocument(document);
     }
 
-    public void linkAsXml(String text, OutputStream out)
+    public void linkAsXml(String text, OutputStream out, Charset charset)
             throws InstantiationException, IOException {
         final Document xml = linkAsXml(text);
-        writeXml(xml, out, false);
+        writeXml(xml, out, charset, false);
     }
 
     public Document linkAHtml(String text) throws InstantiationException,
@@ -321,17 +325,18 @@ public class AnnotationService {
         return htmlDoc;
     }
 
-    public void linkAsHtml(String text, OutputStream out)
+    public void linkAsHtml(String text, OutputStream out, Charset charset)
             throws InstantiationException, IOException, XSLException, ParsingException {
         final Document xml = linkAHtml(text);
-        writeXml(xml, out, true);
+        writeXml(xml, out, charset, true);
     }
 
-    private static void writeXml(Document document, OutputStream out,
+    private static void writeXml(Document document,
+                                 OutputStream out, Charset charset,
                                  boolean decSkip)
             throws IOException {
         XMLToStringSerializer sr = new XMLToStringSerializer(
-                out, CHARSET.name());
+                out, charset.name());
         sr.setXmlDeclarationSkipped(decSkip);
         sr.setIndent(2);
         sr.write(document);
