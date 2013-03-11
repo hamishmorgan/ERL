@@ -4,8 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.linker;
 
-import eu.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
-import eu.ac.susx.mlcl.erl.xml.AnnotationToXML;
+import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import com.google.common.io.Closeables;
 import edu.stanford.nlp.StanfordNLPTest;
 import edu.stanford.nlp.ling.CoreAnnotations;

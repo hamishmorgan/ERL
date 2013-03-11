@@ -4,7 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.snlp;
 
-import eu.ac.susx.mlcl.erl.xml.AnnotationToXML;
+import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetBeginAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetEndAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -13,8 +13,6 @@ import edu.stanford.nlp.time.TimeAnnotator;
 import java.io.IOException;
 import java.util.Properties;
 import nu.xom.Document;
-import nu.xom.NodeFactory;
-import nu.xom.Nodes;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.After;

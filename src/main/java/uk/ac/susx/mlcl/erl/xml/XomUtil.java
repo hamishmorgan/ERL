@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package eu.ac.susx.mlcl.erl.xml;
+package uk.ac.susx.mlcl.erl.xml;
 
 import com.google.common.base.Preconditions;
 import java.io.ByteArrayOutputStream;

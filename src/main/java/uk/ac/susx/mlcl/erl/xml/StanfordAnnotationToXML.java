@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package eu.ac.susx.mlcl.erl.xml;
+package uk.ac.susx.mlcl.erl.xml;
 
 import edu.stanford.nlp.dcoref.CorefChain;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
@@ -54,7 +54,7 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.ProcessingInstruction;
 import nu.xom.Serializer;
-import eu.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
+import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
 
 /**
  * Save annotations to XML.

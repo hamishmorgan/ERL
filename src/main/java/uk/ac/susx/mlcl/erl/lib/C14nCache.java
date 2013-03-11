@@ -28,12 +28,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.ac.susx.mlcl.erl.lib;
+package uk.ac.susx.mlcl.erl.lib;
 
 import com.google.common.base.Preconditions;
 import java.lang.ref.WeakReference;
 import java.util.AbstractSet;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;

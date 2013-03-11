@@ -2,13 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.ac.susx.mlcl.erl.t9kb;
+package uk.ac.susx.mlcl.erl.t9kb;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
-import eu.ac.susx.mlcl.erl.lib.C14nCache;
-import eu.ac.susx.mlcl.erl.t9kb.T9Entity.Builder;
-import eu.ac.susx.mlcl.erl.t9kb.T9Fact;
+import uk.ac.susx.mlcl.erl.lib.C14nCache;
+import uk.ac.susx.mlcl.erl.t9kb.T9Entity.Builder;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.ac.susx.mlcl.erl.t9kb;
+package uk.ac.susx.mlcl.erl.t9kb;
 
 import java.io.File;
 import java.io.IOException;

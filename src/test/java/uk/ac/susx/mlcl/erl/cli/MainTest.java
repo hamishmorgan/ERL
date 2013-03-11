@@ -36,7 +36,8 @@ public class MainTest extends AbstractTest {
     @Test
     public void testMain_Simple() throws Exception {
 
-        final String[] args = {"-o", "-", "example_data/panama.txt"};
+//        final String[] args = {"-o", "-", "example_data/panama.txt"};
+        final String[] args = {"-o", "-", "example_data/point_samson.txt"};
 
         try {
             ExitTrapper.enable();

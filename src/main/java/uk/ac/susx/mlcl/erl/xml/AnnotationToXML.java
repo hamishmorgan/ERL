@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package eu.ac.susx.mlcl.erl.xml;
+package uk.ac.susx.mlcl.erl.xml;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
@@ -23,10 +23,9 @@ import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Factory;
 import edu.stanford.nlp.util.Filter;
 import edu.stanford.nlp.util.Filters;
-import eu.ac.susx.mlcl.erl.xml.XomB;
-import eu.ac.susx.mlcl.erl.xml.XomB.DocumentBuilder;
-import eu.ac.susx.mlcl.erl.xml.XomB.ElementBuilder;
-import eu.ac.susx.mlcl.erl.xml.XomUtil;
+import uk.ac.susx.mlcl.erl.xml.XomB.DocumentBuilder;
+import uk.ac.susx.mlcl.erl.xml.XomB.ElementBuilder;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;

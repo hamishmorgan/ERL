@@ -2,7 +2,7 @@
  * Copyright (c) 2012-2013, Hamish Morgan.
  * All Rights Reserved.
  */
-package eu.ac.susx.mlcl.erl.linker;
+package uk.ac.susx.mlcl.erl.linker;
 
 import com.google.api.services.freebase.Freebase2;
 import static com.google.common.base.Preconditions.*;
