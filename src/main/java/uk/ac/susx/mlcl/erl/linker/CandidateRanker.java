@@ -5,6 +5,7 @@
 package uk.ac.susx.mlcl.erl.linker;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,5 +14,5 @@ import java.util.List;
  */
 public interface CandidateRanker {
 
-    List<String> ranked(List<String> candidates) throws IOException;
+    List<String> ranked(Collection<String> candidates) throws IOException;
 }

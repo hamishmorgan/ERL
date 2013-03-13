@@ -74,7 +74,7 @@ public class EntityLinkingAnnotator implements Annotator {
 
     /**
      *
-     * @param annotation
+     * @param document
      */
     @Override
     public void annotate(final Annotation document) {
@@ -101,7 +101,7 @@ public class EntityLinkingAnnotator implements Annotator {
         }
 
         // Search the knowledge base with all of the unique query strings
-        final Map<String, List<String>> results;
+        final Map<String, Set<String>> results;
         try {
             results = generator.batchFindCandidates(query2labels.keySet());
 
@@ -113,10 +113,10 @@ public class EntityLinkingAnnotator implements Annotator {
                     continue;
                 }
 
-                List<String> candidateIds = results.get(query);
+                Set<String> unrankedCandidateIds = results.get(query);
 
 
-                candidateIds = ranker.ranked(candidateIds);
+                List<String> candidateIds = ranker.ranked(unrankedCandidateIds);
 
 
                 // TODO: Implement a more sensible method of handling NILs

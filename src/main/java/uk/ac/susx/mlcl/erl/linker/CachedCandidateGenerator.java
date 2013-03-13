@@ -42,26 +42,25 @@ import org.slf4j.LoggerFactory;
 public class CachedCandidateGenerator implements CandidateGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(CachedCandidateGenerator.class);
-    private final LoadingCache<String, List<String>> searchCache;
+    private final LoadingCache<String, Set<String>> searchCache;
 
     /**
      * Protected dependency injection constructor. Use 
-     * {@link CachedKnowledgeBase#wrap(uk.ac.susx.mlcl.erl.kb.KnowledgeBase) } instead.
+     * {@link CachedCandidateGenerator#wrap(CandidateGenerator)} } instead.
      *
-     * @param textCache
      * @param searchCache
      */
-    protected CachedCandidateGenerator(final LoadingCache<String, List<String>> searchCache) {
+    protected CachedCandidateGenerator(final LoadingCache<String, Set<String>> searchCache) {
         this.searchCache = checkNotNull(searchCache, "searchCache");
     }
 
     @Override
-    public List<String> findCandidates(final String query) throws IOException {
+    public Set<String> findCandidates(final String query) throws IOException {
         return get(searchCache, query);
     }
 
     @Override
-    public Map<String, List<String>> batchFindCandidates(Set<String> queries)
+    public Map<String, Set<String>> batchFindCandidates(Set<String> queries)
             throws IOException, ExecutionException {
         return searchCache.getAll(queries);
     }
@@ -83,7 +82,7 @@ public class CachedCandidateGenerator implements CandidateGenerator {
             return inner;
         }
 
-        final LoadingCache<String, List<String>> searchCache;
+        final LoadingCache<String, Set<String>> searchCache;
         {
             final Weigher<String, List<String>> searchWeighter =
                     new Weigher<String, List<String>>() {
@@ -96,15 +95,15 @@ public class CachedCandidateGenerator implements CandidateGenerator {
 
                         }
                     };
-            final CacheLoader<String, List<String>> searchLoader =
-                    new CacheLoader<String, List<String>>() {
+            final CacheLoader<String, Set<String>> searchLoader =
+                    new CacheLoader<String, Set<String>>() {
                         @Override
-                        public List<String> load(String key) throws Exception {
+                        public Set<String> load(String key) throws Exception {
                             return inner.findCandidates(key);
                         }
 
                         @Override
-                        public Map<String, List<String>> loadAll(Iterable<? extends String> keys)
+                        public Map<String, Set<String>> loadAll(Iterable<? extends String> keys)
                                 throws Exception {
                             return inner.batchFindCandidates(Sets.newHashSet(keys));
                         }

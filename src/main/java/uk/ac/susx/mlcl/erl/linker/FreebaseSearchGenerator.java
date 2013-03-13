@@ -5,6 +5,10 @@
 package uk.ac.susx.mlcl.erl.linker;
 
 import com.google.api.services.freebase.Freebase2;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 import static com.google.common.base.Preconditions.*;
 import java.io.IOException;
 import java.util.List;
@@ -31,16 +35,21 @@ public class FreebaseSearchGenerator implements CandidateGenerator {
     }
 
     @Override
-    public List<String> findCandidates(String mention)
+    public Set<String> findCandidates(String mention)
             throws IOException {
         checkNotNull(mention, "mention");
-        return freebase.searchGetIds(mention);
+        return ImmutableSet.copyOf(freebase.searchGetIds(mention));
     }
 
     @Override
-    public Map<String, List<String>> batchFindCandidates(Set<String> mentions)
+    public Map<String, Set<String>> batchFindCandidates(Set<String> mentions)
             throws IOException, ExecutionException {
         checkNotNull(mentions, "mentions");
-        return freebase.batchSearchGetIds(mentions);
+        final Map<String, List<String>> ids = freebase.batchSearchGetIds(mentions);
+        final ImmutableMap.Builder<String, Set<String>> builder = ImmutableMap.builder();
+        for(Map.Entry<String, List<String>> entry : ids.entrySet()) {
+            builder.put(entry.getKey(), ImmutableSet.copyOf(entry.getValue()));
+        }
+        return builder.build();
     }
 }

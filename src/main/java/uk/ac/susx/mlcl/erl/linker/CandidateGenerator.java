@@ -24,7 +24,7 @@ public interface CandidateGenerator {
      * @return List of candidate entity id's matching the given mention
      * @throws IOException
      */
-    List<String> findCandidates(String mention) throws IOException;
+    Set<String> findCandidates(String mention) throws IOException;
 
     /**
      * Query the knowledge base with the given list of plain text string, as a single batch
@@ -35,6 +35,6 @@ public interface CandidateGenerator {
      * @throws IOException
      * @throws ExecutionException
      */
-    Map<String, List<String>> batchFindCandidates(Set<String> queries)
+    Map<String, Set<String>> batchFindCandidates(Set<String> queries)
             throws IOException, ExecutionException;
 }

@@ -1687,9 +1687,9 @@ scrolling arrows on the game's monitor.
 
 TechnoMotion has three distinct gameplay modes:
 
-It is possible to change the panel mode between and during songs in the game. A
-player has the option to play in Single mode (one player, one pad) or Versus
-mode (two players, two pads). There are four difficulty levels: Easy, Normal,
+It is possible to change the panel aggregationMethod between and during songs in the game. A
+player has the option to play in Single aggregationMethod (one player, one pad) or Versus
+aggregationMethod (two players, two pads). There are four difficulty levels: Easy, Normal,
 Hard, and Double(one player, both pads). Each difficulty has a separate
 songlist, and each pattern is rated with 1 to 12 small diamond icons.
 
@@ -1700,7 +1700,7 @@ TechnoMotion's songlist is mostly comprised of new licenses, but there are a few
 veteran songs which were found in Pump It Up and Dance Dance Revolution's 3rd
 Mix Korean before appearing in TechnoMotion.
 
-TechnoMotion has four different songlists: one for each mode of play.
+TechnoMotion has four different songlists: one for each aggregationMethod of play.
 
 Easy Mode with 18 songs
 
@@ -6581,7 +6581,7 @@ forming as a company, constantly adding new employees. Many were talented
 amateurs, hired on the basis of level designs they had created.
 
 Ion Storm showed Daikatana at E3 in June 1997. The engine was still running in a
-software mode, and looked outdated and unimpressive. At the same time, id
+software aggregationMethod, and looked outdated and unimpressive. At the same time, id
 Software was debuting their Quake II game engine, featuring hardware
 acceleration and innovative visuals. Romero realized that they were falling
 behind technologically. The Christmas 1997 deadline was quietly dropped, and the
@@ -6638,7 +6638,7 @@ For one, the quality of the graphics was significantly lowered. In order to keep
 the framerate up, large amounts of fog were added to certain levels,
 particularly in Greece. The graphics were also blurred tremendously, possibly to
 hide low resolution textures. The level of blurriness increases yet further in
-the multiplayer mode as well, making it nearly unplayable.
+the multiplayer aggregationMethod as well, making it nearly unplayable.
 
 The characters Superfly Johnson and Mikiko Ebihara were completely removed from
 gameplay, yet they were retained in all of the cut scenes.
@@ -7463,7 +7463,7 @@ the game involves the protagonist sneaking around avoiding being seen by the
 enemies.
 
 Most fundamental are the wider range of skills offered to the player. The new
-first-person aiming mode allows players to target specific points in the game,
+first-person aiming aggregationMethod allows players to target specific points in the game,
 greatly expanding tactical options; guards can be blinded by steam, distracted
 by a flying piece of fruit or hit in weak spots. Players can now walk slowly,
 allowing them to sneak over noisy flooring without making a sound, or hang off
@@ -7755,7 +7755,7 @@ game contains the main Sons of Liberty game with some subtle alterations, as
 well as the inclusion of Boss Survival and Casting Theater modes from the
 Japanese and PAL versions of the original game.
 
-The main addition of Substance is the inclusion of an extra missions mode with
+The main addition of Substance is the inclusion of an extra missions aggregationMethod with
 300 virtual reality training missions set in a computer-constructed environment
 and 200 "Alternative Missions" set in areas taken from the main game. The player
 can choose to play these missions as Solid Snake or Raiden, with alternate
@@ -7765,7 +7765,7 @@ enemies, bomb disposal and a set of miscellaneous missions that include
 protecting a wounded ally from enemies or fighting a series of enemies. There
 are also a set of missions simulating a first-person shooter game.
 
-In addition to the missions mode, there is also a set of "Snake Tales", which
+In addition to the missions aggregationMethod, there is also a set of "Snake Tales", which
 are five story-based missions featuring Solid Snake as the main character. This
 includes missions set in the Big Shell area from the Plant chapter, featuring
 characters such as Fatman, Emma, Vamp and Solidus Snake, as well as an alternate

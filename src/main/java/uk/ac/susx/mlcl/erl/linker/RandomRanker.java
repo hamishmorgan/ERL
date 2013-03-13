@@ -7,6 +7,7 @@ package uk.ac.susx.mlcl.erl.linker;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.Lists;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.Nonnull;
@@ -16,11 +17,11 @@ import javax.annotation.concurrent.Immutable;
  * An implementation of CandidateRanker that orders the candidate list entirely at random -
  * potentially useful baseline.
  *
- * @author Hamish Morgan
+ * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
  */
 @Nonnull
 @Immutable
-public class RandomRanker implements CandidateRanker {
+public final class RandomRanker implements CandidateRanker {
 
     /**
      * the pseudo-random number generator used for re-ranking
@@ -54,7 +55,7 @@ public class RandomRanker implements CandidateRanker {
     }
 
     @Override
-    public List<String> ranked(final List<String> candidates) throws IOException {
+    public List<String> ranked(final Collection<String> candidates) throws IOException {
         // Shallow the input List
         final List<String> result = Lists.newArrayList(checkNotNull(candidates, "candidates"));
 
@@ -64,7 +65,7 @@ public class RandomRanker implements CandidateRanker {
             final int j = i + random.nextInt(result.size() - i);
             swap(result, i, j);
         }
-        return candidates;
+        return result;
     }
 
     /**

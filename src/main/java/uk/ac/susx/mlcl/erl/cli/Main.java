@@ -115,6 +115,9 @@ public class Main {
         for (File inputFile : inputFiles) {
 
             LOG.info("Reading input file: {}", inputFile);
+            if(!inputFormat.equals(InputFormat.TEXT_PLAIN))
+                throw new AssertionError("only plain text is supported");
+
             final String text = Files.toString(inputFile, charset);
 
             OutputStream out = null;
