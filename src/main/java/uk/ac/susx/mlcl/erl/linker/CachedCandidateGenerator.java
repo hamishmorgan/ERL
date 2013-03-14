@@ -84,9 +84,9 @@ public class CachedCandidateGenerator implements CandidateGenerator {
 
         final LoadingCache<String, Set<String>> searchCache;
         {
-            final Weigher<String, List<String>> searchWeighter =
-                    new Weigher<String, List<String>>() {
-                        public int weigh(String key, List<String> values) {
+            final Weigher<String, Set<String>> searchWeighter =
+                    new Weigher<String, Set<String>>() {
+                        public int weigh(String key, Set<String> values) {
                             int sum = (4 * 2) + (2 * key.length());
                             for (String value : values) {
                                 sum += 4 + 2 * value.length();
