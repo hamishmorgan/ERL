@@ -9,6 +9,7 @@ import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
+import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
@@ -16,22 +17,19 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.AnnotatorPool;
+import edu.stanford.nlp.util.CoreMap;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator.EntityKbIdAnnotation;
 import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import uk.ac.susx.mlcl.erl.xml.XMLToStringSerializer;
 import uk.ac.susx.mlcl.erl.xml.XomB;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
@@ -52,7 +50,6 @@ import uk.ac.susx.mlcl.erl.snlp.SentenceSplitAnnotatorFactory;
 import uk.ac.susx.mlcl.erl.snlp.TokenizerAnnotatorFactory;
 
 /**
- *
  * @author hamish
  */
 public class AnnotationService {
@@ -104,13 +101,12 @@ public class AnnotationService {
         JsonFactory jsonFactory = new JacksonFactory();
 
 
-
         return new AnnotationService(pool, xmler, xomb, jsonFactory);
     }
 
     /**
      * Pre-load models and annotators required for entity linking.
-     *
+     * <p/>
      * The annotation models take a while to load (about 20 seconds currently), which cause an
      * irritating pause the first time the service is used. To avoid this, and to save time,
      * pre-load the annotators in the background by requesting a dummy link request.
@@ -129,7 +125,7 @@ public class AnnotationService {
                 link("");
 
                 LOG.debug("Loaded link annotors. (Elapsed time : {})",
-                          stopwatch.stop());
+                        stopwatch.stop());
             }
         }, "annotator-preloader");
         try {
@@ -150,21 +146,109 @@ public class AnnotationService {
         }
     }
 
-    public Annotation link(String text) {
-        Preconditions.checkNotNull(text, "text");
-        final Annotation document = new Annotation(text);
+    /**
+     * @param document
+     * @return
+     */
+    public Annotation link(Annotation document) {
+        Preconditions.checkNotNull(document, "document");
 
-        AnnotationPipeline pipeline = new AnnotationPipeline();
-        pipeline.addAnnotator(pool.get("tokenize"));
-        pipeline.addAnnotator(pool.get("ssplit"));
-        pipeline.addAnnotator(pool.get("pos"));
-        pipeline.addAnnotator(pool.get("ner"));
-        pipeline.addAnnotator(pool.get("el"));
+        final AnnotationPipeline pipeline = new AnnotationPipeline();
+
+        final boolean tokenizeRequired;
+        final boolean splitRequired;
+        final boolean posRequired;
+        final boolean nerRequired;
+        final boolean nelRequired;
+
+        // First check for NEL tags, but to do that we need to find and iterate sentences
+        if (document.containsKey(CoreAnnotations.SentencesAnnotation.class)) {
+            // The document has sentences... so that's a start
+
+            final List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
+
+
+            boolean empty = true;
+            boolean containsNEL = false;
+            boolean containsNER = false;
+            boolean containsPOS = false;
+
+            for (CoreMap s : sentences) {
+                List<CoreLabel> tokens = s.get(TokensAnnotation.class);
+                for (CoreLabel t : tokens) {
+                    containsNEL = containsNEL || t.containsKey(EntityKbIdAnnotation.class);
+                    containsNER = containsNER || t.containsKey(CoreAnnotations.NamedEntityTagAnnotation.class);
+                    containsPOS = containsPOS || t.containsKey(CoreAnnotations.PartOfSpeechAnnotation.class);
+                    empty = false;
+                }
+            }
+
+            if (empty) {
+                // Don't need to do anything because there aren't any sentences
+                posRequired = false;
+                nerRequired = false;
+                nelRequired = false;
+            } else {
+
+                // If we don't find NEL tags then that's required
+                nelRequired = !containsNEL;
+                // IF NEL is required and that aren't NER tags...
+                nerRequired = nelRequired && !containsNER;
+                // If NER is required and that aren't POS tags
+                posRequired = nerRequired && !containsPOS;
+            }
+
+            splitRequired = false;
+        } else {
+            // There weren't any sentence so we need to do everything
+            splitRequired = true;
+            posRequired = true;
+            nerRequired = true;
+            nelRequired = true;
+        }
+
+        // If sentence splitting is required then check for document level tokens (not we don't need this otherwise,
+        // and it may not be present on some de-serialized docs which only include the sentence level tokens.)
+        if (splitRequired && !document.containsKey(CoreAnnotations.TokensAnnotation.class)) {
+            // Check there is text to tokenize
+            if (!document.containsKey(CoreAnnotations.TextAnnotation.class))
+                throw new IllegalArgumentException("Unable to tokenize document because it does not contain the " +
+                        "required annotation: TextAnnotation");
+            tokenizeRequired = true;
+        } else {
+            tokenizeRequired = false;
+        }
+
+
+        LOG.debug("Addition processing steps required: "
+                + (tokenizeRequired ? "tokenize " : "")
+                + (splitRequired ? "ssplit " : "")
+                + (posRequired ? "pos " : "")
+                + (nerRequired ? "ner " : "")
+                + (nelRequired ? "el " : ""));
+        // Add the annotators in the correct order
+        if (tokenizeRequired)
+            pipeline.addAnnotator(pool.get("tokenize"));
+        if (splitRequired)
+            pipeline.addAnnotator(pool.get("ssplit"));
+        if (posRequired)
+            pipeline.addAnnotator(pool.get("pos"));
+        if (nerRequired)
+            pipeline.addAnnotator(pool.get("ner"));
+        if (nelRequired)
+            pipeline.addAnnotator(pool.get("el"));
 
         pipeline.annotate(document);
 
         return document;
+    }
 
+
+    public Annotation link(String text) {
+        Preconditions.checkNotNull(text, "text");
+        final Annotation document = new Annotation(text);
+        link(document);
+        return document;
     }
 
     public String linkAsJson(String text) {
@@ -195,7 +279,20 @@ public class AnnotationService {
         annotationToJson(document, writer);
     }
 
-    private void annotationToJson(Annotation document, Writer writer) throws IOException {
+    String annotationToJson(Annotation document) throws IOException {
+        final StringWriter writer = new StringWriter();
+        annotationToJson(document, writer);
+        return writer.toString();
+    }
+
+
+    void printAnnotationAsJson(Annotation document) throws IOException {
+        final PrintWriter writer = new PrintWriter(System.out);
+        annotationToJson(document, writer);
+        writer.flush();
+    }
+
+    void annotationToJson(Annotation document, Writer writer) throws IOException {
         JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
         generator.enablePrettyPrint();
 
@@ -217,21 +314,21 @@ public class AnnotationService {
 
             final String nextEntityId =
                     token.containsKey(EntityKbIdAnnotation.class)
-                    ? token.get(EntityKbIdAnnotation.class)
-                    : null;
+                            ? token.get(EntityKbIdAnnotation.class)
+                            : null;
 
             final String nextEntityType =
                     token.containsKey(NamedEntityTagAnnotation.class)
-                    ? token.get(NamedEntityTagAnnotation.class)
-                    : null;
+                            ? token.get(NamedEntityTagAnnotation.class)
+                            : null;
 
             final boolean newSequence =
                     (currentEntityId == null
-                     ? currentEntityId != nextEntityId
-                     : !currentEntityId.equals(nextEntityId))
-                    || (currentEntityType == null
-                        ? currentEntityType != nextEntityType
-                        : !currentEntityType.equals(nextEntityType));
+                            ? currentEntityId != nextEntityId
+                            : !currentEntityId.equals(nextEntityId))
+                            || (currentEntityType == null
+                            ? currentEntityType != nextEntityType
+                            : !currentEntityType.equals(nextEntityType));
 
             final boolean flushBuilder =
                     (newSequence || !it.hasNext()) && sequenceStart < sequenceEnd;
@@ -316,7 +413,7 @@ public class AnnotationService {
         final Document xml = linkAsXml(text);
         XSLTransform transform = new XSLTransform(new nu.xom.Builder()
                 .build(new File(
-                "src/main/resources/CoreNLP-to-HTML_2.xsl")));
+                        "src/main/resources/CoreNLP-to-HTML_2.xsl")));
 
         Nodes nodes = transform.transform(xml);
         Document htmlDoc = xomb.document().setDocType("html")

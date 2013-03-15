@@ -53,11 +53,16 @@
         </plugins>
     </build>
     <repositories>
+        <!-- Required for Freebase API -->
         <repository>
-            <!-- Required for Freebase API -->
             <id>google-api-services</id>
-            <url>http://mavenrepo.google-api-java-client.googlecode.com/hg</url>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
         </repository>
+        <repository>
+            <id>google-api-services-beta</id>
+            <url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
+        </repository>
+
         <repository>
             <!-- Required for Spark webclient -->
             <id>Spark repository</id>
@@ -82,7 +87,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>13.0.1</version>
+            <version>14.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.apis</groupId>
@@ -127,7 +132,12 @@
             <type>jar</type>
             <version>1.2.5</version>
         </dependency>
-        
+        <dependency>
+            <groupId>uk.ac.susx.tag</groupId>
+            <artifactId>agiga</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
                
         <dependency>
             <groupId>org.slf4j</groupId>
