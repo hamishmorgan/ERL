@@ -5,6 +5,11 @@
 package uk.ac.susx.mlcl.erl.test;
 
 import com.google.common.io.Files;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,14 +19,10 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
+
 import static org.junit.Assert.*;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestName;
 
 /**
- *
  * @author hamish
  */
 public class AbstractTest {
@@ -39,6 +40,7 @@ public class AbstractTest {
     /**
      * TODO: Probably useful enough to move to a general purpose library
      * <p/>
+     *
      * @param obj
      * @return
      * @throws IOException
@@ -70,7 +72,9 @@ public class AbstractTest {
                     ois.close();
                 }
             }
-        } catch (ClassNotFoundException | IOException ex) {
+        } catch (ClassNotFoundException ex) {
+            throw new AssertionError(ex);
+        } catch (IOException ex) {
             throw new AssertionError(ex);
         }
     }
@@ -93,7 +97,11 @@ public class AbstractTest {
 
             return (T) result;
 
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError(e);
+        } catch (IllegalAccessException e) {
+            throw new AssertionError(e);
+        } catch (InvocationTargetException e) {
             throw new AssertionError(e);
         }
 
@@ -116,6 +124,7 @@ public class AbstractTest {
         rand = new Random(seed);
         return rand;
     }
+
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
     public static final File TEST_DATA_PATH = new File("src/test/data");
 

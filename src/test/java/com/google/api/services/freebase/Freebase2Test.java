@@ -22,15 +22,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -39,9 +30,16 @@ import org.junit.experimental.categories.Category;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
+import java.io.*;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 /**
  * A collection of tests, designed more to insure the APIs work as expected than to find bugs.
  * <p/>
+ *
  * @author hiam20
  */
 @Category(Categories.OnlineTests.class)
@@ -77,7 +75,6 @@ public class Freebase2Test extends AbstractTest {
                 };
 
         jsonFactory = new JacksonFactory();
-
 
 
         freebase = new Freebase2.Builder(
@@ -284,20 +281,15 @@ public class Freebase2Test extends AbstractTest {
 
         final String fileExtension;
         String contentType = im.getLastResponseHeaders().getContentType();
-        switch (contentType) {
-            case "image/png":
-                fileExtension = "png";
-                break;
-            case "image/jpeg":
-                fileExtension = "jpeg";
-                break;
-            case "image/gif":
-                fileExtension = "gif";
-                break;
-            default:
-                throw new AssertionError(
-                        "Unknown image content type: " + contentType);
-        }
+        if (contentType.equalsIgnoreCase("image/png"))
+            fileExtension = "png";
+        else if (contentType.equalsIgnoreCase("image/jpeg"))
+            fileExtension = "jpeg";
+        else if (contentType.equalsIgnoreCase("image/gif"))
+            fileExtension = "gif";
+        else
+            throw new AssertionError(
+                    "Unknown image content type: " + contentType);
 
         FileOutputStream out = null;
         try {
@@ -656,8 +648,8 @@ public class Freebase2Test extends AbstractTest {
 
     /**
      * This test sometimes throw as exception: Read timed out
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     @Test()
     public void testDateRange() throws IOException {
@@ -704,15 +696,15 @@ public class Freebase2Test extends AbstractTest {
                 };
 
         String[] words = new String[]{"trees", "flowers", "72368764",
-            "Anchovies", "brighton", "cheese burger", "lol", "shplah",
-            "java", "fire"};
+                "Anchovies", "brighton", "cheese burger", "lol", "shplah",
+                "java", "fire"};
 
         BatchRequest batch = freebase.batch();
 
         for (String word : words) {
             batch.queue(freebase.search(word).buildHttpRequest(),
-                        SearchFormat.EntityResult.class,
-                        Void.TYPE, callback);
+                    SearchFormat.EntityResult.class,
+                    Void.TYPE, callback);
         }
         batch.execute();
     }
@@ -742,16 +734,16 @@ public class Freebase2Test extends AbstractTest {
 
 
         String[] words = new String[]{"trees", "flowers", "72368764",
-            "Anchovies", "brighton", "cheese burger", "lol", "shplah",
-            "java", "fire"};
+                "Anchovies", "brighton", "cheese burger", "lol", "shplah",
+                "java", "fire"};
 
         BatchRequest batch = freebase.batch();
 
         for (String word : words) {
             batch.queue(freebase.search(word).buildHttpRequest(),
-                        SearchFormat.EntityResult.class,
-                        Void.TYPE,
-                        mapPutCallback(word, successes, failures));
+                    SearchFormat.EntityResult.class,
+                    Void.TYPE,
+                    mapPutCallback(word, successes, failures));
         }
         batch.execute();
 
@@ -762,8 +754,8 @@ public class Freebase2Test extends AbstractTest {
     @Test
     public void testBatchSearchgetIds() throws IOException {
         String[] words = new String[]{"trees", "flowers", "72368764",
-            "Anchovies", "brighton", "cheese burger", "lol", "shplah",
-            "java", "fire"};
+                "Anchovies", "brighton", "cheese burger", "lol", "shplah",
+                "java", "fire"};
         Map<String, List<String>> result = freebase.batchSearchGetIds(Sets.newHashSet(words));
         for (Map.Entry<String, List<String>> entry : result.entrySet()) {
             System.out.println(entry.getKey() + " => " + entry.getValue());
@@ -777,9 +769,9 @@ public class Freebase2Test extends AbstractTest {
         int repeats = 10;
 
         String[] words = new String[]{"trees", "flowers", "72368764",
-            "Anchovies", "brighton", "cheese burger", "lol", "shplah",
-            "java", "fire", "apple", "pear", "banna", "sells", "consumer",
-            "electronics", "computer", "software", "and", "personal"};
+                "Anchovies", "brighton", "cheese burger", "lol", "shplah",
+                "java", "fire", "apple", "pear", "banna", "sells", "consumer",
+                "electronics", "computer", "software", "and", "personal"};
 
         double[] batchTimes = new double[repeats];
         double[] serialTimes = new double[repeats];
@@ -825,17 +817,17 @@ public class Freebase2Test extends AbstractTest {
         BatchCallback<ContentserviceGet, Void> callback = new GetTextBatchCallbackImpl();
 
         String[] ids = new String[]{"/en/tree", "/en/flower", "/en/anchovy",
-            "/en/brighton", "/en/lol",
-            "/wikipedia/pt/Java_$0028linguagem_de_programa$00E7$00E3o$0029",
-            "/en/firefighter"};
+                "/en/brighton", "/en/lol",
+                "/wikipedia/pt/Java_$0028linguagem_de_programa$00E7$00E3o$0029",
+                "/en/firefighter"};
 
         BatchRequest batch = freebase.batch();
 
         for (String word : ids) {
             batch.queue(freebase.text().get(Arrays.asList(word))
                     .buildHttpRequest(),
-                        ContentserviceGet.class,
-                        Void.TYPE, callback);
+                    ContentserviceGet.class,
+                    Void.TYPE, callback);
         }
         batch.execute();
     }

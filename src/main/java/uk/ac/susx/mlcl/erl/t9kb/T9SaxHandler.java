@@ -5,6 +5,11 @@
 package uk.ac.susx.mlcl.erl.t9kb;
 
 import com.google.common.collect.Sets;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 import uk.ac.susx.mlcl.erl.lib.C14nCache;
 import uk.ac.susx.mlcl.erl.t9kb.T9Entity.Builder;
 
@@ -14,11 +19,6 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Instances Tac2009SaxHandler receive SAX events to produce... nothing as yet (A KnowledgeBase
@@ -45,7 +45,7 @@ class T9SaxHandler extends DefaultHandler {
 
     T9SaxHandler(TacEntryHandler inner) {
         this.inner = inner;
-        states = new Stack<>();
+        states = new Stack<ContentHandler>();
         states.push(rootState);
     }
 
@@ -98,7 +98,9 @@ class T9SaxHandler extends DefaultHandler {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             throw new IllegalStateException();
         }
-    };
+    }
+
+    ;
 
     private class KnowledgeBaseHandler extends DefaultHandler {
 
@@ -138,19 +140,17 @@ class T9SaxHandler extends DefaultHandler {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             checkQname(qName, "facts", "wiki_text");
-            switch (qName.toLowerCase()) {
-                case "facts":
-                    final String factsClass = attributes.getValue("class");
-                    if (factsClass != null) {
-                        entityBuilder.setFactsClass(INTERNER.cached(factsClass));
-                    }
-                    states.push(new FactsHandler(entityBuilder));
-                    break;
-                case "wiki_text":
-                    states.push(new WikiTextHandler(entityBuilder));
-                    break;
-                default:
-                    throw new AssertionError();
+            if (qName.equalsIgnoreCase("facts")) {
+                final String factsClass = attributes.getValue("class");
+                if (factsClass != null) {
+                    entityBuilder.setFactsClass(INTERNER.cached(factsClass));
+                }
+                states.push(new FactsHandler(entityBuilder));
+
+            } else if (qName.equalsIgnoreCase("wiki_text")) {
+                states.push(new WikiTextHandler(entityBuilder));
+            } else {
+                throw new AssertionError();
             }
         }
 
@@ -185,7 +185,9 @@ class T9SaxHandler extends DefaultHandler {
             checkQname(qName, "facts");
             states.pop();
         }
-    };
+    }
+
+    ;
 
     private class FactHandler extends DefaultHandler {
 
@@ -218,7 +220,9 @@ class T9SaxHandler extends DefaultHandler {
         public void characters(char[] ch, int start, int length) throws SAXException {
             factBuilder.appendData(ch, start, length);
         }
-    };
+    }
+
+    ;
 
     private class LinkHandler extends DefaultHandler {
 
@@ -250,7 +254,9 @@ class T9SaxHandler extends DefaultHandler {
         public void characters(char[] ch, int start, int length) throws SAXException {
             linkBuilder.appendData(ch, start, length);
         }
-    };
+    }
+
+    ;
 
     private class WikiTextHandler extends DefaultHandler {
 
@@ -280,7 +286,9 @@ class T9SaxHandler extends DefaultHandler {
         public void characters(char[] ch, int start, int length) throws SAXException {
             text.append(ch, start, length);
         }
-    };
+    }
+
+    ;
 
     private static void checkAttributes(Attributes attributes, Set<String> required,
                                         Set<String> optional) throws SAXException {

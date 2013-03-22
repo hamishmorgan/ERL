@@ -5,9 +5,9 @@
 package uk.ac.susx.mlcl.erl.linker;
 
 import com.google.api.services.freebase.Freebase2;
-import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
@@ -17,22 +17,18 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.util.CoreMap;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.MiscUtil;
 import uk.ac.susx.mlcl.erl.snlp.AbstractAnnotatorFactory;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- *
  * @author Hamish Morgan
  */
 public class EntityLinkingAnnotator implements Annotator {
@@ -42,9 +38,8 @@ public class EntityLinkingAnnotator implements Annotator {
     private final CandidateRanker ranker;
 
     /**
-     * 
      * @param generator
-     * @param ranker 
+     * @param ranker
      */
     public EntityLinkingAnnotator(CandidateGenerator generator, CandidateRanker ranker) {
         this.generator = checkNotNull(generator, "generator");
@@ -52,11 +47,10 @@ public class EntityLinkingAnnotator implements Annotator {
     }
 
     /**
-     *
      * @return
      */
     public Set<Class<? extends CoreAnnotation<?>>> getRequiredAnnotations() {
-        final Set<Class<? extends CoreAnnotation<?>>> requirements = new HashSet<>();
+        final Set<Class<? extends CoreAnnotation<?>>> requirements = Sets.newHashSet();
         requirements.add(TokensAnnotation.class);
         requirements.add(NamedEntityTagAnnotation.class);
         return requirements;
@@ -65,6 +59,7 @@ public class EntityLinkingAnnotator implements Annotator {
     /**
      * Get a collection of all the annotation types that are produced by this annotator.
      * <p/>
+     *
      * @return annotations produced by the annotator
      */
     public Set<Class<? extends CoreAnnotation<?>>> getSuppliedAnnotations() {
@@ -73,7 +68,6 @@ public class EntityLinkingAnnotator implements Annotator {
     }
 
     /**
-     *
      * @param document
      */
     @Override
@@ -128,7 +122,10 @@ public class EntityLinkingAnnotator implements Annotator {
 
             }
 
-        } catch (IOException | ExecutionException ex) {
+        } catch (IOException ex) {
+            LOG.error(ex.getLocalizedMessage(), ex);
+            throw new RuntimeException(ex);
+        } catch (ExecutionException ex) {
             LOG.error(ex.getLocalizedMessage(), ex);
             throw new RuntimeException(ex);
         }
@@ -143,7 +140,7 @@ public class EntityLinkingAnnotator implements Annotator {
      * @return mentions
      */
     private List<List<CoreLabel>> findMentions(final Annotation document) {
-        
+
         final List<List<CoreLabel>> mentions = Lists.newArrayList();
         for (final CoreMap sentence : document.get(SentencesAnnotation.class)) {
             final List<CoreLabel> tokens = sentence.get(TokensAnnotation.class);
@@ -183,11 +180,11 @@ public class EntityLinkingAnnotator implements Annotator {
         final String documentText = document.get(CoreAnnotations.TextAnnotation.class);
 
         try {
-            
+
             return documentText.substring(
                     mention.get(0).beginPosition(),
                     mention.get(mention.size() - 1).endPosition() + 1);
-            
+
         } catch (IndexOutOfBoundsException ex) {
             // It's possible for the document text to be truncted, even though the annotation
             // is present. (I have no idea why.) In this case the above code through an exception,
@@ -213,7 +210,7 @@ public class EntityLinkingAnnotator implements Annotator {
             return String.class;
         }
     }
-    
+
     public static class Factory
             extends AbstractAnnotatorFactory
             implements edu.stanford.nlp.util.Factory<Annotator>, Serializable {
@@ -243,19 +240,19 @@ public class EntityLinkingAnnotator implements Annotator {
         public Annotator create() {
 
             CandidateGenerator generator;
-            switch (props.getProperty(GENERATOR_KEY, GENERATOR_DEFAULT).toLowerCase().trim()) {
-                case GENERATOR_VALUE_FREEBASE_SEARCH:
-                    Freebase2 fb;
-                    try {
-                        fb = MiscUtil.newFreebaseInstance();
-                        generator = new FreebaseSearchGenerator(fb);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    break;
-                default:
-                    throw new RuntimeException("Unknown generator type: "
-                            + props.getProperty(GENERATOR_KEY, GENERATOR_DEFAULT));
+
+            final String gen = props.getProperty(GENERATOR_KEY, GENERATOR_DEFAULT).toLowerCase().trim();
+            if (gen.equals(GENERATOR_VALUE_FREEBASE_SEARCH)) {
+                Freebase2 fb;
+                try {
+                    fb = MiscUtil.newFreebaseInstance();
+                    generator = new FreebaseSearchGenerator(fb);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                throw new RuntimeException("Unknown generator type: "
+                        + props.getProperty(GENERATOR_KEY, GENERATOR_DEFAULT));
             }
 
             if (Boolean.valueOf(props.getProperty(GENERATOR_CACHED_KEY, GENERATOR_CACHED_DEFAULT))) {
@@ -263,22 +260,20 @@ public class EntityLinkingAnnotator implements Annotator {
             }
 
             final CandidateRanker ranker;
-            switch (props.getProperty(RANKER_KEY, RANKER_DEFAULT).toLowerCase().trim()) {
-                case RANKER_VALUE_NULL:
-                    ranker = new NullRanker();
-                    break;
-                case RANKER_VALUE_RANDOM:
-                    if (props.containsKey(RANKER_SEED_KEY)) {
-                        final long seed = Long.parseLong(props.getProperty(RANKER_SEED_KEY));
-                        ranker = new RandomRanker(new Random(seed));
-                    } else {
-                        ranker = new RandomRanker();
-                    }
+            final String rnkr = props.getProperty(RANKER_KEY, RANKER_DEFAULT).toLowerCase().trim();
+            if (rnkr.equals(RANKER_VALUE_NULL)) {
+                ranker = new NullRanker();
+            } else if (rnkr.equals(RANKER_VALUE_RANDOM)) {
+                if (props.containsKey(RANKER_SEED_KEY)) {
+                    final long seed = Long.parseLong(props.getProperty(RANKER_SEED_KEY));
+                    ranker = new RandomRanker(new Random(seed));
+                } else {
+                    ranker = new RandomRanker();
+                }
 
-                    break;
-                default:
-                    throw new RuntimeException("Unknown ranker type: "
-                            + props.getProperty(RANKER_KEY, RANKER_DEFAULT));
+            } else {
+                throw new RuntimeException("Unknown ranker type: "
+                        + props.getProperty(RANKER_KEY, RANKER_DEFAULT));
             }
 
             return new EntityLinkingAnnotator(generator, ranker);
