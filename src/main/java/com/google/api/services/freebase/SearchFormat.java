@@ -7,10 +7,11 @@ package com.google.api.services.freebase;
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.NullValue;
 import com.google.common.base.Preconditions;
-import java.util.List;
+
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  *

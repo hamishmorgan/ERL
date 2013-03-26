@@ -4,18 +4,16 @@
  */
 package uk.ac.susx.mlcl.erl.webapp;
 
-import java.io.IOException;
-import java.util.Properties;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Request;
-import spark.Response;
-import spark.Route;
 import spark.Spark;
 import uk.ac.susx.mlcl.erl.AnnotationService;
+
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  *

@@ -4,12 +4,13 @@
  */
 package uk.ac.susx.mlcl.erl.webapp;
 
-import static com.google.common.base.Preconditions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A route which redirects all requests to a given destination location.

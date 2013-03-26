@@ -10,10 +10,11 @@ import com.google.api.client.http.json.JsonHttpRequestInitializer;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.freebase.Freebase2;
-import java.io.IOException;
-import java.nio.file.Paths;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Stuff that should be elsewhere!
@@ -29,7 +30,7 @@ public class MiscUtil {
 
     public static Freebase2 newFreebaseInstance() throws IOException {
         final String googleApiKey =
-                Freebase2.loadGoogleApiKey(Paths.get(API_KEY_FILE));
+                Freebase2.loadGoogleApiKey(new File(API_KEY_FILE));
 
         JsonHttpRequestInitializer credential =
                 new GoogleKeyInitializer(googleApiKey);

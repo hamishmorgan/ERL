@@ -7,6 +7,7 @@ package uk.ac.susx.mlcl.erl.snlp;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator;
 import edu.stanford.nlp.process.PTBTokenizer;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;

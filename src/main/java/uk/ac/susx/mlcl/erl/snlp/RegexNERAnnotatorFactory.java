@@ -8,6 +8,7 @@ import edu.stanford.nlp.ie.regexp.RegexNERSequenceClassifier;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.DefaultPaths;
 import edu.stanford.nlp.pipeline.RegexNERAnnotator;
+
 import java.io.Serializable;
 import java.util.Properties;
 

@@ -18,18 +18,6 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.AnnotatorPool;
 import edu.stanford.nlp.util.CoreMap;
-import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
-import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator.EntityKbIdAnnotation;
-import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
-import uk.ac.susx.mlcl.erl.xml.XMLToStringSerializer;
-import uk.ac.susx.mlcl.erl.xml.XomB;
-
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
@@ -40,14 +28,18 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.susx.mlcl.erl.snlp.CleanXmlAnnotator2;
-import uk.ac.susx.mlcl.erl.snlp.CorefAnnotatorFactory;
-import uk.ac.susx.mlcl.erl.snlp.MorphaAnnotatorFactory;
-import uk.ac.susx.mlcl.erl.snlp.NERAnnotatorFactory;
-import uk.ac.susx.mlcl.erl.snlp.POSTaggerAnnotatorFactory;
-import uk.ac.susx.mlcl.erl.snlp.ParserAnnotatorFactory;
-import uk.ac.susx.mlcl.erl.snlp.SentenceSplitAnnotatorFactory;
-import uk.ac.susx.mlcl.erl.snlp.TokenizerAnnotatorFactory;
+import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
+import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator.EntityKbIdAnnotation;
+import uk.ac.susx.mlcl.erl.snlp.*;
+import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
+import uk.ac.susx.mlcl.erl.xml.XMLToStringSerializer;
+import uk.ac.susx.mlcl.erl.xml.XomB;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author hamish

@@ -31,7 +31,6 @@ import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +54,7 @@ public class Freebase2Test extends AbstractTest {
     public static void setUpClass() throws IOException {
         jsonFactory = new JacksonFactory();
 
-        final String googleApiKey = Freebase2.loadGoogleApiKey(Paths.get(
-                ".googleApiKey.txt"));
+        final String googleApiKey = Freebase2.loadGoogleApiKey(new File(".googleApiKey.txt"));
 
         JsonHttpRequestInitializer requestInitializer =
                 new JsonHttpRequestInitializer() {

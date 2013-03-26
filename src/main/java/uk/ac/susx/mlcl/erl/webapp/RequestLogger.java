@@ -7,16 +7,7 @@ package uk.ac.susx.mlcl.erl.webapp;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.jackson.JacksonFactory;
-import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.Lists;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import javax.servlet.http.HttpServletRequest;
 import org.eclipse.jetty.http.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +15,17 @@ import spark.Filter;
 import spark.Request;
 import spark.Response;
 import spark.utils.SparkUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A spark filter that that simply dumps all the request information to a logger as a JSON object

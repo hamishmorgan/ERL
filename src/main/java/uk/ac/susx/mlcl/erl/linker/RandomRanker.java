@@ -4,14 +4,16 @@
  */
 package uk.ac.susx.mlcl.erl.linker;
 
-import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.Lists;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An implementation of CandidateRanker that orders the candidate list entirely at random -

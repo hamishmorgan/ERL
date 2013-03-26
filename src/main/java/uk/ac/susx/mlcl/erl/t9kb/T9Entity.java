@@ -4,12 +4,14 @@
  */
 package uk.ac.susx.mlcl.erl.t9kb;
 
-import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  *

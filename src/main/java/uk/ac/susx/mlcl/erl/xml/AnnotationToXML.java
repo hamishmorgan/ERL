@@ -23,37 +23,20 @@ import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Factory;
 import edu.stanford.nlp.util.Filter;
 import edu.stanford.nlp.util.Filters;
-import uk.ac.susx.mlcl.erl.xml.XomB.DocumentBuilder;
-import uk.ac.susx.mlcl.erl.xml.XomB.ElementBuilder;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import nu.xom.Attribute;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.NodeFactory;
-import nu.xom.Nodes;
-import nu.xom.Serializer;
+import nu.xom.*;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.susx.mlcl.erl.snlp.InstancePool;
+import uk.ac.susx.mlcl.erl.xml.XomB.DocumentBuilder;
+import uk.ac.susx.mlcl.erl.xml.XomB.ElementBuilder;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Save annotations to XML

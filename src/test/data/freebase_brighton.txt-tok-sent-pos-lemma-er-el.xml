@@ -30,8 +30,8 @@
             <NER>O</NER>
           </token>
           <token id="4">
-            <word>?bra?t?n</word>
-            <lemma>?bra?t?n</lemma>
+            <word>ˈbraɪtən</word>
+            <lemma>ˈbraɪtən</lemma>
             <CharacterOffsetBegin>11</CharacterOffsetBegin>
             <CharacterOffsetEnd>19</CharacterOffsetEnd>
             <POS>NN</POS>

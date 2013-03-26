@@ -5,18 +5,13 @@
 package uk.ac.susx.mlcl.erl.xml;
 
 import com.google.common.base.Preconditions;
+import nu.xom.*;
+
+import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import javax.annotation.Nonnull;
-import nu.xom.Attribute;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Node;
-import nu.xom.Nodes;
-import nu.xom.ParentNode;
-import nu.xom.Serializer;
 
 /**
  *

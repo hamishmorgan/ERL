@@ -7,15 +7,16 @@ package uk.ac.susx.mlcl.erl.webapp;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.Throwables;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 import uk.ac.susx.mlcl.erl.AnnotationService;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 
 /**
  *

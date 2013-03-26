@@ -7,16 +7,16 @@ package uk.ac.susx.mlcl.erl.linker;
 import com.google.api.services.freebase.Freebase2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
-import static com.google.common.base.Preconditions.*;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A candidate link generator that backs off to the Freebase search API.

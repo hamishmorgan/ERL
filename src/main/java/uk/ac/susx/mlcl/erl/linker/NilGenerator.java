@@ -1,15 +1,12 @@
 package uk.ac.susx.mlcl.erl.linker;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * <tt>NilGenerator</tt> is an implementation of {@link uk.ac.susx.mlcl.erl.linker.CandidateGenerator} which never

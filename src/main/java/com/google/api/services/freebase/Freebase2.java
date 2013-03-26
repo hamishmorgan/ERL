@@ -9,6 +9,7 @@ import com.google.api.client.googleapis.batch.BatchCallback;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.services.GoogleClient;
 import com.google.api.client.http.HttpMethod;
+import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.json.JsonHttpRequestInitializer;
@@ -19,19 +20,19 @@ import com.google.api.services.freebase.SearchFormat.IdsResult;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Extention to the com.google.api.services.freebase.Freebase API which adds support for search.
@@ -154,10 +155,12 @@ public class Freebase2 extends Freebase {
                 search.setFormat(format);
                 initialize(search);
 
-                request.queue(search.buildHttpRequest(),
-                              (Class) format.getDataClass(),
-                              Void.TYPE,
-                              newMapPutCallback(query, successes, failures));
+                // Need to pre-define and type the arguments or jdk6 gets confused.
+                final HttpRequest httpRequest = search.buildHttpRequest();
+                final Class<AbstractResult> dataClass = (Class<AbstractResult>)format.getDataClass();
+                final Class<Void> errorClass = Void.TYPE;
+                final BatchCallback<AbstractResult, Void> callback =  newMapPutCallback(query, successes, failures);
+                request.queue(httpRequest, dataClass, errorClass, callback);
             }
             failures.clear();
             request.execute();
@@ -265,17 +268,16 @@ public class Freebase2 extends Freebase {
         };
     }
 
-    public static String loadGoogleApiKey(Path path) throws IOException {
+    public static String loadGoogleApiKey(File path) throws IOException {
         final String googleApiKey;
-        Path googleApiKeyPath = Paths.get(".google_api_key.txt");
-        if (Files.exists(googleApiKeyPath)) {
-            byte[] bytes = Files.readAllBytes(googleApiKeyPath);
+        if (path.exists()) {
+            byte[] bytes = Files.toByteArray(path);
             googleApiKey = new String(bytes, Charset.forName("ASCII"));
             LOG.debug("Google API key {} loaded from {}.",
-                      googleApiKey, googleApiKeyPath);
+                      googleApiKey, path);
         } else {
             googleApiKey = null;
-            LOG.warn("{} doesn't exist.", googleApiKeyPath);
+            LOG.warn("{} doesn't exist.", path);
         }
         return googleApiKey;
     }
@@ -371,7 +373,6 @@ public class Freebase2 extends Freebase {
         /**
          *
          * <p/>
-         * @param client
          * @param query
          */
         Search(String query) {
@@ -469,7 +470,7 @@ public class Freebase2 extends Freebase {
          * <p/>
          * @param filter complex rules and constraints to apply to the query.
          * @return self (allows method chaining)
-         * @see http://wiki.freebase.com/wiki/Search_Cookbook
+         * @see "http://wiki.freebase.com/wiki/Search_Cookbook"
          */
         public Search setFilter(List<String> filter) {
             this.filter = filter;

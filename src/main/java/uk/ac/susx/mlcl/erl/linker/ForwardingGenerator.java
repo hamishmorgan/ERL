@@ -1,14 +1,11 @@
 package uk.ac.susx.mlcl.erl.linker;
 
-import static com.google.common.base.Preconditions.*;
-
-import com.google.common.collect.ImmutableMap;
-
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * <tt>ForwardingGenerator</tt> is an implementation of {@link CandidateGenerator} that forwards all method

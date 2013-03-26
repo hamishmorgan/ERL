@@ -6,11 +6,11 @@ package uk.ac.susx.mlcl.erl.linker;
 
 import com.beust.jcommander.internal.Lists;
 
-import static com.google.common.base.Preconditions.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author hiam20

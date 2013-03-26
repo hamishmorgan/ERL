@@ -11,13 +11,13 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotator;
-import edu.stanford.nlp.pipeline.AnnotatorPool;
+
+import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import javax.annotation.Nonnull;
 
 /**
  * An annotator that adds a character shape pattern layer to the pipeline. Character shape is a

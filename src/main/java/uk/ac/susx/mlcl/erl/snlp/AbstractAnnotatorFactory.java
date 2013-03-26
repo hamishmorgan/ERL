@@ -6,6 +6,7 @@ package uk.ac.susx.mlcl.erl.snlp;
 
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.util.Factory;
+
 import java.util.Properties;
 
 /**

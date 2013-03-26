@@ -33,13 +33,14 @@ package uk.ac.susx.mlcl.erl.webapp;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang.StringEscapeUtils;
+
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Constants enumerating the HTTP status codes.

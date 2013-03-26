@@ -4,12 +4,14 @@
  */
 package uk.ac.susx.mlcl.erl.t9kb;
 
-import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.Lists;
+
+import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.concurrent.Immutable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  *

@@ -5,26 +5,17 @@
 package uk.ac.susx.mlcl.erl.xml;
 
 import com.google.common.base.Optional;
-import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
-import nu.xom.Attribute;
-import nu.xom.Comment;
-import nu.xom.DocType;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.IllegalCharacterDataException;
-import nu.xom.IllegalDataException;
-import nu.xom.Namespace;
-import nu.xom.Node;
-import nu.xom.NodeFactory;
-import nu.xom.Nodes;
-import nu.xom.ProcessingInstruction;
+import nu.xom.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+import java.net.URI;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * <code>XomB</code> (XML Object Model Builder, pronounced xombie :-) is
