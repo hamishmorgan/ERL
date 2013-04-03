@@ -159,6 +159,7 @@ a.mention {
   /*  border-radius: 0.2em;*/
   border: solid rgba(0,0,0,0) 2px;        
   border-style: none;
+  color: black;
 }
 a.mention:hover {
   border-style: none;
@@ -203,7 +204,11 @@ a.nil {
   color: hsla(315, 100%, 25%, 1);
   background: hsla(315, 100%, 75%, .5);
 }
-
+a.set {
+    background-color: rgba(0,0,0,0.1);
+    border-color: solid rgba(0,0,0,0) 2px;
+    color: black;
+}
 
 #output{ 
   position: relative; 
@@ -247,6 +252,17 @@ a.nil {
   padding: 1em;
 }
 
+#nerkey{
+    font-size: smaller;
+    text-align: right;
+}
+#nerkey>span {
+    padding: 0.2em  0.5em;
+    margin: 0.2em 0em;
+    background: rgba(0,0,0,0.1);
+    border: solid rgba(0,0,0,0.2) 1px;
+    border-radius: 0.5em;
+}
 
 /*#loadin
                   <img src="spinner.gif"  style="padding: 5em 0" />
