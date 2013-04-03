@@ -4,9 +4,11 @@
  */
 package uk.ac.susx.mlcl.erl.webapp;
 
-import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.*;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.Throwables;
+import com.google.common.io.CharStreams;
+import com.google.common.net.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -15,6 +17,7 @@ import spark.Route;
 import uk.ac.susx.mlcl.erl.AnnotationService;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 
@@ -28,19 +31,61 @@ public class LinkService extends Route {
     private static final boolean DEBUG = true;
     private AnnotationService anno;
     private Charset charset = Charset.forName("UTF-8");
+    private final JsonFactory jsonFactory = new JacksonFactory();
 
     public LinkService(AnnotationService anno, String path) {
         super(path);
         this.anno = anno;
     }
 
+    public static class RequestData {
+
+        public String text = null;
+
+        public RequestData() {
+        }
+
+        public RequestData(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+    }
+
     @Override
     public Object handle(final Request request, final Response response) {
 
-        final String text = request.queryParams("text");
+        // Store the request query, which currently is just a blob of plain text
+        final RequestData data;
+
+        // Where we get the query from depends on the content-type of the request
+        final MediaType mediaType = MediaType.parse(request.contentType()).withoutParameters();
+        if(mediaType.is(MediaType.FORM_DATA.withoutParameters())) {
+            // Query data is URL encoded in the body. This is handled by spark
+            data = new RequestData(request.queryParams("text"));
+        } else if(mediaType.is(MediaType.JSON_UTF_8.withoutParameters())) {
+            // Query data is a json object
+            JsonParser jsonParser = null;
+            try {
+                JsonObjectParser oParser = jsonFactory.createJsonObjectParser();
+                Reader r = CharStreams.asCharSource(request.body()).openStream();
+                data = oParser.parseAndClose(r, RequestData.class);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new IllegalArgumentException("Unknown request content type:" + request.contentType());
+        }
+
         response.type("application/json");
 
-        if (text == null) {
+        if (data.getText() == null) {
             halt(HttpStatus.Bad_Request.code(),
                  buildJsonError(HttpStatus.Bad_Request,
                                 "The \"text\" query parameter was not provided."));
@@ -48,7 +93,7 @@ public class LinkService extends Route {
         } else {
 
             try {
-                anno.linkAsJson(text, response.raw().getOutputStream(), charset);
+                anno.linkAsJson(data.getText(), response.raw().getOutputStream(), charset);
                 return "";
             } catch (Throwable ex) {
                 LOG.error(ex.getLocalizedMessage(), ex);
