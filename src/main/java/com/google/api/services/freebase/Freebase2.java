@@ -7,6 +7,7 @@ package com.google.api.services.freebase;
 import com.google.api.client.googleapis.GoogleHeaders;
 import com.google.api.client.googleapis.batch.BatchCallback;
 import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.services.GoogleClient;
 import com.google.api.client.http.HttpMethod;
 import com.google.api.client.http.HttpRequest;
@@ -132,7 +133,7 @@ public class Freebase2 extends Freebase {
         assert AbstractResult.class.isAssignableFrom(format.getDataClass());
 
         final Map<String, AbstractResult> successes = Maps.newHashMap();
-        final Map<String, Void> failures = Maps.newHashMap();
+        final Map<String, GoogleJsonError> failures = Maps.newHashMap();
 
         final BatchRequest request = this.batch();
 
@@ -158,8 +159,9 @@ public class Freebase2 extends Freebase {
                 // Need to pre-define and type the arguments or jdk6 gets confused.
                 final HttpRequest httpRequest = search.buildHttpRequest();
                 final Class<AbstractResult> dataClass = (Class<AbstractResult>)format.getDataClass();
-                final Class<Void> errorClass = Void.TYPE;
-                final BatchCallback<AbstractResult, Void> callback =  newMapPutCallback(query, successes, failures);
+
+                final Class<GoogleJsonError> errorClass = GoogleJsonError.class;
+                final BatchCallback<AbstractResult, GoogleJsonError> callback =  newMapPutCallback(query, successes, failures);
                 request.queue(httpRequest, dataClass, errorClass, callback);
             }
             failures.clear();
