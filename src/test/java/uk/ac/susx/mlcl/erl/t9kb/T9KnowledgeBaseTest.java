@@ -7,11 +7,9 @@ package uk.ac.susx.mlcl.erl.t9kb;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.*;
+
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
@@ -74,6 +72,10 @@ public class T9KnowledgeBaseTest extends AbstractTest {
         deleteMapDBIfExists(dbFile);
 
         T9KnowledgeBase kb = T9KnowledgeBase.create(dbFile, xmlFile);
+
+
+        assertFalse(kb.isEmpty());
+
         kb.close();
 
 
@@ -140,6 +142,7 @@ public class T9KnowledgeBaseTest extends AbstractTest {
      * accented characters.
      */
     @Test
+    @Ignore(value = "Accent c18n is not currently supported.")
     public void testGetEntityByName2() throws IOException {
         System.out.println("getEntityByName");
         String name = "Panamá";
@@ -149,6 +152,7 @@ public class T9KnowledgeBaseTest extends AbstractTest {
         T9KnowledgeBase instance = T9KnowledgeBase.open(dbFile);
         T9Entity result = instance.getEntityByName(name);
 
+        assertNotNull(result);
         assertEquals(name, result.getName());
     }
 
@@ -222,11 +226,10 @@ public class T9KnowledgeBaseTest extends AbstractTest {
     @Test
     public void testIsEmpty() throws IOException {
         System.out.println("size");
-        File dbFile = new File(TEST_DATA_DIR, "tac09-kb-sample.mapdb");
+        final File dbFile = new File(TEST_DATA_DIR, "tac09-kb-sample.mapdb");
         T9KnowledgeBase instance = T9KnowledgeBase.open(dbFile);
-        boolean actualIsEmpty = instance.isEmpty();
 
-        assertEquals(false, actualIsEmpty);
+        assertFalse("Expected db to be non-empty but found that it was empty.", instance.isEmpty());
     }
 
     @Test

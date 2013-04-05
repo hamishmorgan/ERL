@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.t9kb;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang.time.StopWatch;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -76,7 +77,10 @@ public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
 
     @Override
     public boolean isEmpty() {
-        return idIndex.isEmpty();
+        assert idIndex.size() == nameIndex.size();
+//        assert idIndex.isEmpty() == nameIndex.isEmpty();
+        // XXX: Work around to MapDB bug.
+        return idIndex.size() == 0;
     }
 
     @Override
@@ -141,7 +145,7 @@ public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
     private static DB openDB(File dbFile) {
         return DBMaker.newFileDB(dbFile)
                 .asyncWriteDisable()
-                .journalDisable()
+                .writeAheadLogDisable()
                 .closeOnJvmShutdown()
                 .make();
     }
@@ -167,8 +171,8 @@ public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
      */
     public static T9KnowledgeBase create(File dbFile, File dataPath) throws ParserConfigurationException, SAXException, IOException {
         final DB db = openDB(dbFile);
-        final HTreeMap<String, T9Entity> idIndex = db.createHashMap("entity-id-index", null, null);
-        final HTreeMap<String, String> nameIndex = db.createHashMap("entity-name-index", null, null);
+        final HTreeMap<String, T9Entity> idIndex = db.createHashMap("entity-id-index", true, null, null);
+        final HTreeMap<String, String> nameIndex = db.createHashMap("entity-name-index", true, null, null);
         final SAXParserFactory saxFactory = SAXParserFactory.newInstance();
         final SAXParser saxParser = saxFactory.newSAXParser();
         final DefaultHandler handler = new T9SaxHandler(new TacEntryHandler() {
@@ -181,8 +185,28 @@ public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
 
             @Override
             public void entry(T9Entity entry) {
-                idIndex.put(entry.getId(), entry);
-                nameIndex.put(entry.getName(), entry.getId());
+                Preconditions.checkNotNull(entry, "entry");
+
+                final String id = entry.getId();
+                final String name  = entry.getName();
+                Preconditions.checkNotNull(id, "id");
+                Preconditions.checkNotNull(name, "name");
+
+//                assert idIndex.size() == nameIndex.size();
+//                assert idIndex.isEmpty() == nameIndex.isEmpty();
+//
+//                assert !idIndex.containsKey(id);
+//                assert !nameIndex.containsKey(name);
+
+                final T9Entity idiPutResult = idIndex.put(id, entry);
+                final String niPutResult = nameIndex.put(name, id);
+
+//                assert idiPutResult == null;
+//                assert niPutResult == null;
+//
+//                assert idIndex.size() == nameIndex.size();
+//                assert idIndex.isEmpty() == nameIndex.isEmpty();
+
                 if (count % 1000 == 0) {
                     db.commit();
                 }

@@ -73,6 +73,10 @@
             <id>mapdb-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+            <id>mapdb-releases</id>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
 
         <repository>
             <id>mlcl-repository</id>
