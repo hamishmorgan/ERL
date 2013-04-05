@@ -8,6 +8,7 @@ import com.google.api.client.googleapis.GoogleHeaders;
 import com.google.api.client.googleapis.batch.BatchCallback;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.http.json.JsonHttpRequest;
@@ -68,6 +69,7 @@ public class Freebase2Test extends AbstractTest {
                         if (request instanceof Freebase.Mqlread) {
                             ((Freebase.Mqlread) request).setIndent(2L);
                         }
+
                         freebaseRequest.setKey(googleApiKey);
                     }
                 };
@@ -650,6 +652,7 @@ public class Freebase2Test extends AbstractTest {
      * @throws IOException
      */
     @Test()
+    @Ignore("These days this method invariably times out on the back-end, so there's not much point running it.")
     public void testDateRange() throws IOException {
         String q = "[{\n"
                 + "   \"type\":\"/music/album\",\n"
@@ -855,7 +858,15 @@ public class Freebase2Test extends AbstractTest {
 
             Freebase.Mqlread mlr = freebase.mqlread(query);
 
-            InputStream is = mlr.executeAsInputStream();
+            /*
+             * Equivalent of mlr.executeAsInputStream() but with a doubled read timeout. Normally the default timeout
+             * is set to be the same as the back-end, but this causes a local (and less definitive) exception to be
+             * thrown on timeout. With a doubled timeout the error message will be provided by the back end.
+             */
+            final HttpRequest request = mlr.buildHttpRequest();
+            request.setReadTimeout(request.getReadTimeout() * 2);
+            final HttpResponse response = request.execute();
+            final InputStream is = response.getContent();
 
             String result = CharStreams.toString(
                     new InputStreamReader(is, DEFAULT_CHARSET));
