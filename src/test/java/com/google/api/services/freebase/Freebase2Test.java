@@ -54,7 +54,7 @@ public class Freebase2Test extends AbstractTest {
     public static void setUpClass() throws IOException {
         jsonFactory = new JacksonFactory();
 
-        final String googleApiKey = Freebase2.loadGoogleApiKey(new File(".googleApiKey.txt"));
+        final String googleApiKey = Freebase2.loadGoogleApiKey(new File(".google_api_key.txt"));
 
         JsonHttpRequestInitializer requestInitializer =
                 new JsonHttpRequestInitializer() {
