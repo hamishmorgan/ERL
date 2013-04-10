@@ -35,35 +35,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Main {
 
-    public enum InputFormat {
-
-        TEXT_PLAIN
-    }
-
-    public enum OutputFormat {
-
-        SERIALIZE("ser", "application/java-serialized-object"),
-        TEXT_PLAIN("txt", MimeTypes.Type.TEXT_PLAIN.asString()),
-        JSON("json", MimeTypes.Type.TEXT_JSON.asString()),
-        XML("xml", MimeTypes.Type.TEXT_XML.asString()),
-        HTML("html", MimeTypes.Type.TEXT_HTML.asString());
-        private final String extension;
-        private final String mimeType;
-
-        private OutputFormat(String extension, String mimeType) {
-            this.extension = checkNotNull(extension, "extension");
-            this.mimeType = checkNotNull(mimeType, "mimeType");
-        }
-
-        public String getExtension() {
-            return extension;
-        }
-
-        public String getMimeType() {
-            return mimeType;
-        }
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private final Configuration config;
     private final List<File> inputFiles;
@@ -82,6 +53,15 @@ public class Main {
         this.outputFormat = checkNotNull(outputFormat, "outputFormat");
         this.charset = checkNotNull(charset, "charset");
         this.clobber = clobber;
+    }
+
+    public static void main(@Nonnull String[] args) throws Exception {
+        checkNotNull("args", args);
+
+        Builder builder = new Builder();
+        builder.setRawArgs(args);
+        Main instance = builder.build();
+        instance.run();
     }
 
     private boolean run() throws InterruptedException, ClassNotFoundException,
@@ -111,7 +91,7 @@ public class Main {
                     out = System.out;
                     isOutCloseable = false;
                 } else {
-                    // Sanity check and initialize the output directory 
+                    // Sanity check and initialize the output directory
                     if (!outputDirectory.exists()) {
                         LOG.info("Creating output directory: {}", outputDirectory);
                         if (!outputDirectory.mkdirs()) {
@@ -180,18 +160,37 @@ public class Main {
         return false;
     }
 
-    public static void main(@Nonnull String[] args) throws Exception {
-        checkNotNull("args", args);
+    public enum InputFormat {
 
-        Builder builder = new Builder();
-        builder.setRawArgs(args);
-        Main instance = builder.build();
-        instance.run();
+        TEXT_PLAIN
+    }
+
+    public enum OutputFormat {
+
+        SERIALIZE("ser", "application/java-serialized-object"),
+        TEXT_PLAIN("txt", MimeTypes.Type.TEXT_PLAIN.asString()),
+        JSON("json", MimeTypes.Type.TEXT_JSON.asString()),
+        XML("xml", MimeTypes.Type.TEXT_XML.asString()),
+        HTML("html", MimeTypes.Type.TEXT_HTML.asString());
+        private final String extension;
+        private final String mimeType;
+
+        private OutputFormat(String extension, String mimeType) {
+            this.extension = checkNotNull(extension, "extension");
+            this.mimeType = checkNotNull(mimeType, "mimeType");
+        }
+
+        public String getExtension() {
+            return extension;
+        }
+
+        public String getMimeType() {
+            return mimeType;
+        }
     }
 
     public static class Builder {
 
-        private String[] rawArgs = null;
         private static final String PREFIX = "";
         private static final String CLOBBER_KEY = PREFIX + "clobber";
         private static final boolean CLOBBER_DEFAULT_VALUE = false;
@@ -201,6 +200,44 @@ public class Main {
         private static final String INPUT_FORMAT_DEFAULT_VALUE = InputFormat.TEXT_PLAIN.name();
         private static final String OUTPUT_FORMAT_KEY = PREFIX + "outputFormat";
         private static final String OUTPUT_FORMAT_DEFAULT_VALUE = OutputFormat.JSON.name();
+        private String[] rawArgs = null;
+
+        /**
+         * Get the file extension from the given URL. The extension is either considered to be the
+         * part after the last '.' (dot character). If not dot character exists in the file name
+         * then this method returns the empty string.
+         *
+         * @param url
+         * @return file name extension, or the empty-string if no extension exists.
+         */
+        private static String getFileExtension(URL url) {
+            checkNotNull(url, "url");
+            final int dotIndex = url.getFile().lastIndexOf('.');
+            return (dotIndex >= 0)
+                    ? url.getFile().substring(dotIndex + 1)
+                    : "";
+        }
+
+        public static AbstractConfiguration loadConfiguration(String resource)
+                throws ConfigurationException {
+            final URL url = ConfigurationUtils.locate(resource);
+            final String extension = getFileExtension(url).toLowerCase();
+
+            if (extension.equalsIgnoreCase("properties"))
+                return new PropertiesConfiguration(url);
+            else if (extension.equalsIgnoreCase("plist"))
+                return new PropertyListConfiguration(url);
+            else if (extension.equalsIgnoreCase("xml"))
+                return new XMLConfiguration(url);
+            else if (extension.equalsIgnoreCase("ini"))
+                return new HierarchicalINIConfiguration(url);
+            else if (extension.equalsIgnoreCase(""))
+                throw new IllegalArgumentException("File extension not set in URL " + url);
+            else
+                throw new IllegalArgumentException(
+                        String.format("Unknown file extension: \"%s\" in url: %s",
+                                extension, url));
+        }
 
         public void setRawArgs(String[] rawArgs) {
             this.rawArgs = rawArgs;
@@ -223,8 +260,8 @@ public class Main {
             defaults.setProperty("tokenize.whitespace", "false");
 
             // tokenize.options:
-            // Accepts the options of PTBTokenizer for example, things like 
-            //  "americanize=false" 
+            // Accepts the options of PTBTokenizer for example, things like
+            //  "americanize=false"
             //  "strictTreebank3=true,
             //   untokenizable=allKeep".
             defaults.setProperty("tokenize.options", "untokenizable=allKeep");
@@ -311,43 +348,6 @@ public class Main {
             return new Main(comConf,
                     inputFiles, outputFile, inputFormat, outputFormat, charset,
                     clobber);
-        }
-
-        /**
-         * Get the file extension from the given URL. The extension is either considered to be the
-         * part after the last '.' (dot character). If not dot character exists in the file name
-         * then this method returns the empty string.
-         *
-         * @param url
-         * @return file name extension, or the empty-string if no extension exists.
-         */
-        private static String getFileExtension(URL url) {
-            checkNotNull(url, "url");
-            final int dotIndex = url.getFile().lastIndexOf('.');
-            return (dotIndex >= 0)
-                    ? url.getFile().substring(dotIndex + 1)
-                    : "";
-        }
-
-        public static AbstractConfiguration loadConfiguration(String resource)
-                throws ConfigurationException {
-            final URL url = ConfigurationUtils.locate(resource);
-            final String extension = getFileExtension(url).toLowerCase();
-
-            if (extension.equalsIgnoreCase("properties"))
-                return new PropertiesConfiguration(url);
-            else if (extension.equalsIgnoreCase("plist"))
-                return new PropertyListConfiguration(url);
-            else if (extension.equalsIgnoreCase("xml"))
-                return new XMLConfiguration(url);
-            else if (extension.equalsIgnoreCase("ini"))
-                return new HierarchicalINIConfiguration(url);
-            else if (extension.equalsIgnoreCase(""))
-                throw new IllegalArgumentException("File extension not set in URL " + url);
-            else
-                throw new IllegalArgumentException(
-                        String.format("Unknown file extension: \"%s\" in url: %s",
-                                extension, url));
         }
     }
 

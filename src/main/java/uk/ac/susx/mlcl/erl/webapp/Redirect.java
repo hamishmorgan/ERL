@@ -34,7 +34,7 @@ public class Redirect extends Route {
 
     @Override
     public Object handle(Request request, Response response) {
-        LOG.debug("Ridirecting from \"{}\" to \"{}\".", request.pathInfo(), destination);
+        LOG.debug("Redirecting from \"{}\" to \"{}\".", request.pathInfo(), destination);
         response.redirect(destination);
         return null;
     }

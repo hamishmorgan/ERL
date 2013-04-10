@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- *
  * @author hamish
  */
 public class Spark2 {
@@ -58,7 +57,7 @@ public class Spark2 {
                 return "";
             }
         });
-        
+
     }
 
     public static void setPort(int port) {
@@ -106,14 +105,6 @@ public class Spark2 {
         spark.Spark.after(filter);
     }
 
-    enum ConnectionStatus {
-
-        UNKNOWN,
-        AVAILABLE,
-        UNAVAILABLE;
-
-    }
-
     static void waitForConnectionStatus(
             URL url, long timeoutDuration, TimeUnit timeoutUnits, ConnectionStatus desiredStatus)
             throws IOException, TimeoutException {
@@ -138,7 +129,7 @@ public class Spark2 {
                 }
             }
 
-            // Increase sleep duration by a small factor 
+            // Increase sleep duration by a small factor
             //      bounded at min: +1, and max: +time remaining
             retryInterval = (long) (retryInterval * Math.sqrt(2)) + 1L;
             if (retryInterval > (endTimeMillis - System.currentTimeMillis())) {
@@ -197,5 +188,13 @@ public class Spark2 {
 
             return false;
         }
+    }
+
+    enum ConnectionStatus {
+
+        UNKNOWN,
+        AVAILABLE,
+        UNAVAILABLE;
+
     }
 }

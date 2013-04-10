@@ -47,6 +47,7 @@ import java.util.Set;
  * <p/>
  * Yes another one! All the other libraries forgot the indispensable {@link #Im_a_teapot}.
  * <p/>
+ *
  * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
  */
 @Nonnull
@@ -688,24 +689,37 @@ public enum HttpStatus {
     /*
      * ***************************************************************************************
      */
+    private static final MessageFormat HTML_ERROR_TEMPLATE = new MessageFormat(
+            "<!doctype html>\n"
+                    + "<html>"
+                    + "  <head>\n"
+                    + "    <title>{0,number,integer} {1}</title>\n"
+                    + "  </head>"
+                    + "  <body>\n"
+                    + "    <h1>{1}</h1>\n"
+                    + "    <p>{2}</p>\n"
+                    + "    <hr>\n"
+                    + "    <address>Unicorn powered magic webserver.</address>\n"
+                    + "  </body>"
+                    + "</html>");
     /**
      * integer status code
      */
     private final int code;
 
+//    /**
+//     * class of this status
+//     */
+//    private Type statusClass;
     /**
      * human readable string description
      */
     private final String message;
 
-//    /**
-//     * class of this status
-//     */
-//    private Type statusClass;
-
     /**
      * Private constructor.
      * <p/>
+     *
      * @param code    integer code for this status
      * @param message human readable text message
      * @throws IllegalArgumentException of code is negative
@@ -720,8 +734,32 @@ public enum HttpStatus {
     }
 
     /**
+     * Get a collection of all status objects with a code within the given range inclusively.
+     * <p/>
+     *
+     * @param min starting status code (inclusive)
+     * @param max starting status code (inclusive)
+     * @return set of all status objects with a code in the given range
+     * @throws IllegalArgumentException if either argument is negative or if min is greater than max
+     */
+    private static Set<HttpStatus> getStatusesInRange(int min, int max) {
+        Preconditions.checkArgument(
+                min >= 0, "Expecting positive argument min, but found %s.", min);
+        Preconditions.checkArgument(
+                max >= 0, "Expecting positive argument max, but found %s.", max);
+        Preconditions.checkArgument(
+                min <= max, "Expecting arguments min < max, but found %s > %s.", min, max);
+        EnumSet<HttpStatus> result = EnumSet.<HttpStatus>noneOf(HttpStatus.class);
+        for (HttpStatus status : HttpStatus.values())
+            if (min <= status.code() && max >= status.code())
+                result.add(status);
+        return Sets.immutableEnumSet(result);
+    }
+
+    /**
      * Get the integer code for this status.
      * <p/>
+     *
      * @return integer status code
      */
     public int code() {
@@ -731,28 +769,11 @@ public enum HttpStatus {
     /**
      * Get the associated human readable message for this status
      * <p/>
+     *
      * @return human readable text message
      */
     public String message() {
         return message;
-    }
-
-    /**
-     * Get whether or not this status is defined in the HTTP/1.0 specification.
-     * <p/>
-     * @return true if this status is defined in the HTTP/1.0 specification, false otherwise.
-     */
-    public boolean isHttpVersion10() {
-        return Lazy.HTTP_1_0.contains(this);
-    }
-
-    /**
-     * Get whether or not this status is defined in the HTTP/1.1 specification.
-     * <p/>
-     * @return true if this status is defined in the HTTP/1.1 specification, false otherwise.
-     */
-    public boolean isHttpVersion11() {
-        return Lazy.HTTP_1_1.contains(this);
     }
 
 //    /**
@@ -818,53 +839,44 @@ public enum HttpStatus {
 //        return isClientError() || isServerError();
 //    }
 
+    /**
+     * Get whether or not this status is defined in the HTTP/1.0 specification.
+     * <p/>
+     *
+     * @return true if this status is defined in the HTTP/1.0 specification, false otherwise.
+     */
+    public boolean isHttpVersion10() {
+        return Lazy.HTTP_1_0.contains(this);
+    }
+
+    /**
+     * Get whether or not this status is defined in the HTTP/1.1 specification.
+     * <p/>
+     *
+     * @return true if this status is defined in the HTTP/1.1 specification, false otherwise.
+     */
+    public boolean isHttpVersion11() {
+        return Lazy.HTTP_1_1.contains(this);
+    }
+
     @Override
     public String toString() {
         return String.format("[%03d %s]", code(), message());
     }
 
-    private static final MessageFormat HTML_ERROR_TEMPLATE = new MessageFormat(
-            "<!doctype html>\n"
-            + "<html>"
-            + "  <head>\n"
-            + "    <title>{0,number,integer} {1}</title>\n"
-            + "  </head>"
-            + "  <body>\n"
-            + "    <h1>{1}</h1>\n"
-            + "    <p>{2}</p>\n"
-            + "    <hr>\n"
-            + "    <address>Unicorn powered magic webserver.</address>\n"
-            + "  </body>"
-            + "</html>");
-
     /**
      * Get a human readable HTML page describing this status.
      * <p/>
+     *
      * @param description elaboration of the status
      * @return string containing HTML page
      */
     public String toHtmlString(String description) {
         return HTML_ERROR_TEMPLATE.format(new Object[]{
-                    code(),
-                    StringEscapeUtils.escapeXml(message),
-                    StringEscapeUtils.escapeXml(description),
-                });
-    }
-
-    /**
-     * Get the status object associated with this integer code.
-     * <p/>
-     * Note that there may be more than one status object per code. In this case the last to be
-     * defined is returned by this method.
-     * <p/>
-     * @param code integer status code
-     * @return status object for given code, or NullStatus if no status is defined for that code
-     * @throws IllegalArgumentException if code is negative
-     */
-    public HttpStatus valueOf(int code) {
-        Preconditions.checkArgument(
-                code >= 0, "Expecting positive argument code, but found %s.", code);
-        return Lazy.codeMap.containsKey(code) ? Lazy.codeMap.get(code) : NullStatus;
+                code(),
+                StringEscapeUtils.escapeXml(message),
+                StringEscapeUtils.escapeXml(description),
+        });
     }
 
 //    /*
@@ -940,53 +952,21 @@ public enum HttpStatus {
 //        return Type.Server_Error.contains(code);
 //    }
 
-    /*
-     * ***************************************************************************************
+    /**
+     * Get the status object associated with this integer code.
+     * <p/>
+     * Note that there may be more than one status object per code. In this case the last to be
+     * defined is returned by this method.
+     * <p/>
      *
-     * Static constants that will be initialised when first used (as opposed to when the HttpStatus
-     * enum is first used.
-     *
-     * ***************************************************************************************
+     * @param code integer status code
+     * @return status object for given code, or NullStatus if no status is defined for that code
+     * @throws IllegalArgumentException if code is negative
      */
-    private static class Lazy {
-
-        private Lazy() {
-            throw new AssertionError();
-        }
-
-        /**
-         * Status codes defined by HTTP/1.0
-         */
-        private static final Set<HttpStatus> HTTP_1_0 = Sets.immutableEnumSet(
-                OK, Created, Accepted, No_Content, Multiple_Choices, Moved_Permanently,
-                Moved_Temporarily, Not_Modified, Bad_Request, Unauthorized, Forbidden, Not_Found,
-                Internal_Server_Error, Not_Implemented, Bad_Gateway, Service_Unavailable);
-
-        /**
-         * Status codes defined by HTTP/1.1
-         */
-        private static final Set<HttpStatus> HTTP_1_1 = Sets.immutableEnumSet(
-                Continue, Switching_Protocols, OK, Created, Accepted, NonAuthoritative_Information,
-                No_Content, Reset_Content, Partial_Content, Multiple_Choices, Moved_Permanently,
-                Found, See_Other, Not_Modified, Use_Proxy, Temporary_Redirect, Bad_Request,
-                Unauthorized, Payment_Required, Forbidden, Not_Found, Method_Not_Allowed,
-                Not_Acceptable, Proxy_Authentication_Required, Request_Timeout, Conflict, Gone,
-                Length_Required, Precondition_Failed, Request_Entity_Too_Large, RequestURI_Too_Long,
-                Unsupported_Media_Type, Requested_Range_Not_Satisfiable, Expectation_Failed,
-                Internal_Server_Error, Not_Implemented, Bad_Gateway, Service_Unavailable,
-                Gateway_Timeout, HTTP_Version_Not_Supported);
-
-        /**
-         * Mapping from integer codes to status objects.
-         */
-        private static final Map<Integer, HttpStatus> codeMap;
-
-        static {
-            ImmutableMap.Builder<Integer, HttpStatus> builder = ImmutableMap.builder();
-            for (HttpStatus statusCode : HttpStatus.values())
-                builder.put(statusCode.code(), statusCode);
-            codeMap = builder.build();
-        }
+    public HttpStatus valueOf(int code) {
+        Preconditions.checkArgument(
+                code >= 0, "Expecting positive argument code, but found %s.", code);
+        return Lazy.codeMap.containsKey(code) ? Lazy.codeMap.get(code) : NullStatus;
     }
     /*
      * ***************************************************************************************
@@ -1168,25 +1148,50 @@ public enum HttpStatus {
 //        throw new AssertionError();
 //    }
 
-    /**
-     * Get a collection of all status objects with a code within the given range inclusively.
-     * <p/>
-     * @param min starting status code (inclusive)
-     * @param max starting status code (inclusive)
-     * @return set of all status objects with a code in the given range
-     * @throws IllegalArgumentException if either argument is negative or if min is greater than max
+    /*
+     * ***************************************************************************************
+     *
+     * Static constants that will be initialised when first used (as opposed to when the HttpStatus
+     * enum is first used.
+     *
+     * ***************************************************************************************
      */
-    private static Set<HttpStatus> getStatusesInRange(int min, int max) {
-        Preconditions.checkArgument(
-                min >= 0, "Expecting positive argument min, but found %s.", min);
-        Preconditions.checkArgument(
-                max >= 0, "Expecting positive argument max, but found %s.", max);
-        Preconditions.checkArgument(
-                min <= max, "Expecting arguments min < max, but found %s > %s.", min, max);
-        EnumSet<HttpStatus> result = EnumSet.<HttpStatus>noneOf(HttpStatus.class);
-        for (HttpStatus status : HttpStatus.values())
-            if (min <= status.code() && max >= status.code())
-                result.add(status);
-        return Sets.immutableEnumSet(result);
+    private static class Lazy {
+
+        /**
+         * Status codes defined by HTTP/1.0
+         */
+        private static final Set<HttpStatus> HTTP_1_0 = Sets.immutableEnumSet(
+                OK, Created, Accepted, No_Content, Multiple_Choices, Moved_Permanently,
+                Moved_Temporarily, Not_Modified, Bad_Request, Unauthorized, Forbidden, Not_Found,
+                Internal_Server_Error, Not_Implemented, Bad_Gateway, Service_Unavailable);
+        /**
+         * Status codes defined by HTTP/1.1
+         */
+        private static final Set<HttpStatus> HTTP_1_1 = Sets.immutableEnumSet(
+                Continue, Switching_Protocols, OK, Created, Accepted, NonAuthoritative_Information,
+                No_Content, Reset_Content, Partial_Content, Multiple_Choices, Moved_Permanently,
+                Found, See_Other, Not_Modified, Use_Proxy, Temporary_Redirect, Bad_Request,
+                Unauthorized, Payment_Required, Forbidden, Not_Found, Method_Not_Allowed,
+                Not_Acceptable, Proxy_Authentication_Required, Request_Timeout, Conflict, Gone,
+                Length_Required, Precondition_Failed, Request_Entity_Too_Large, RequestURI_Too_Long,
+                Unsupported_Media_Type, Requested_Range_Not_Satisfiable, Expectation_Failed,
+                Internal_Server_Error, Not_Implemented, Bad_Gateway, Service_Unavailable,
+                Gateway_Timeout, HTTP_Version_Not_Supported);
+        /**
+         * Mapping from integer codes to status objects.
+         */
+        private static final Map<Integer, HttpStatus> codeMap;
+
+        static {
+            ImmutableMap.Builder<Integer, HttpStatus> builder = ImmutableMap.builder();
+            for (HttpStatus statusCode : HttpStatus.values())
+                builder.put(statusCode.code(), statusCode);
+            codeMap = builder.build();
+        }
+
+        private Lazy() {
+            throw new AssertionError();
+        }
     }
 }

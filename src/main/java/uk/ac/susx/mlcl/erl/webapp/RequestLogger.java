@@ -37,20 +37,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Nonnull
 public class RequestLogger extends Filter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RequestLogger.class);
-
-    /**
-     * Hold a single instance of the default JsonFactory, which will only be instantiated the first
-     * time it is accessed.
-     */
-    public static class Lazy {
-
-        private Lazy() {
-        }
-        public static final JsonFactory DEFAULT_JSON_FACTORY = new JacksonFactory();
-    }
     public static final LogLevel DEFAULT_LEVEL = LogLevel.DEBUG;
     public static final String DEFAULT_PATH = SparkUtils.ALL_PATHS;
+    private static final Logger LOG = LoggerFactory.getLogger(RequestLogger.class);
     private final JsonFactory jsonFactory;
     private final LogLevel level;
 
@@ -74,42 +63,6 @@ public class RequestLogger extends Filter {
 
     public RequestLogger() {
         this(DEFAULT_PATH);
-    }
-
-    public LogLevel getLevel() {
-        return level;
-    }
-
-    public JsonFactory getJsonFactory() {
-        return jsonFactory;
-    }
-
-    @Override
-    public void handle(Request request, Response IGNORED) {
-        checkNotNull(request, "request");
-
-        if (!level.isEnabled(LOG)) {
-            return;
-        }
-
-        try {
-            final StringWriter writer = new StringWriter();
-            final JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
-            generator.enablePrettyPrint();
-
-            generator.writeStartObject();
-            generator.writeFieldName("request");
-            writeRequest(request, generator);
-            generator.writeEndObject();
-
-            generator.flush();
-            generator.close();
-            level.log(LOG, writer.toString());
-
-        } catch (IOException ex) {
-            // Generator writes to memory buffer so IOExceptions are impossible.
-            throw new AssertionError(ex);
-        }
     }
 
     private static void writeRequest(Request request, JsonGenerator g)
@@ -237,14 +190,62 @@ public class RequestLogger extends Filter {
             return false;
         }
         // http://www.w3.org/Protocols/rfc1341/4_Content-Type.html
-        // Content-Type := type "/" subtype *[";" parameter] 
+        // Content-Type := type "/" subtype *[";" parameter]
 
         final int colonIdx = request.contentType().indexOf(';');
         final String ctype = ((colonIdx == -1)
-                              ? request.contentType()
-                              : request.contentType().substring(0, colonIdx));
+                ? request.contentType()
+                : request.contentType().substring(0, colonIdx));
 
 
         return MimeTypes.Type.FORM_ENCODED.is(ctype);
+    }
+
+    public LogLevel getLevel() {
+        return level;
+    }
+
+    public JsonFactory getJsonFactory() {
+        return jsonFactory;
+    }
+
+    @Override
+    public void handle(Request request, Response IGNORED) {
+        checkNotNull(request, "request");
+
+        if (!level.isEnabled(LOG)) {
+            return;
+        }
+
+        try {
+            final StringWriter writer = new StringWriter();
+            final JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
+            generator.enablePrettyPrint();
+
+            generator.writeStartObject();
+            generator.writeFieldName("request");
+            writeRequest(request, generator);
+            generator.writeEndObject();
+
+            generator.flush();
+            generator.close();
+            level.log(LOG, writer.toString());
+
+        } catch (IOException ex) {
+            // Generator writes to memory buffer so IOExceptions are impossible.
+            throw new AssertionError(ex);
+        }
+    }
+
+    /**
+     * Hold a single instance of the default JsonFactory, which will only be instantiated the first
+     * time it is accessed.
+     */
+    public static class Lazy {
+
+        public static final JsonFactory DEFAULT_JSON_FACTORY = new JacksonFactory();
+
+        private Lazy() {
+        }
     }
 }

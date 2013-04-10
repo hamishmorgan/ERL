@@ -21,12 +21,11 @@ import java.text.MessageFormat;
 /**
  * A route which serves static resource from the file directory structure. The request path is
  * mapped onto a local path, and if that path matches a file it is sent to the client.
- *
+ * <p/>
  * A number of checks are made to insure system security. In particlar a file will only be served if
  * it is not hidden, if it is a normal file, and if the file is direct descendent of the mapped
  * local path. Paths are converted to canonical form, so symbolic links are deliberately not
  * support.
- *
  */
 public class StaticResource extends Route {
 
@@ -43,7 +42,7 @@ public class StaticResource extends Route {
         this.mimeMap = mimeMap;
     }
 
-    
+
     public StaticResource(String remoteRoot, String localPath, String path) throws IOException {
         super(remoteRoot + "/" + path);
         this.localRoot = new File(localPath).getCanonicalFile();
