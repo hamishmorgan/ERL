@@ -224,7 +224,7 @@
             url: "/annotate/link/",
             dataType: "json",
             contentType: "application/json",
-            data: '{"text": ' +  escape(JSON.stringify($("#inputtextarea").val())) + '}',
+            data: '{"text": ' +  JSON.stringify($("#inputtextarea").val()) + '}',
             success: function(data, textStatus, jqXHR){
               __success_jqXHR = jqXHR;
               $("#output").html("&nbsp;");
@@ -239,8 +239,8 @@
                 var data = $.parseJSON(jqXHR.responseText);
                 $("#error .code").html(data.code);
                 $("#error .name").html(data.name);
-                var text = data.message.replace(/\n+/g, "<p/>\n");
-                $("#error .message").html(text);            
+//                var text = data.message.replace(/\n+/g, "<p/>\n");
+                $("#error .message").html(data.message);
               } else {
                 $("#error .code").html(jqXHR.status);
                 $("#error .name").html(errorThrown);
