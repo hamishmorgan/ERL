@@ -223,8 +223,16 @@
             type: 'POST',
             url: "/annotate/link/",
             dataType: "json",
+
+
+//            contentType: "application/json",
+//            data: '{"text": ' +  JSON.stringify($("#inputtextarea").val()) + '}',
+
             contentType: "application/json",
-            data: '{"text": ' +  JSON.stringify($("#inputtextarea").val()) + '}',
+            data: '{"documents": [' +
+                    '{"text": ' +  JSON.stringify($("#inputtextarea").val()) + '}' +
+                  ']}',
+
             success: function(data, textStatus, jqXHR){
               __success_jqXHR = jqXHR;
               $("#output").html("&nbsp;");
@@ -233,6 +241,7 @@
               }
               $("#output").fadeIn(); 
             },
+
             error:  function(jqXHR, textStatus, errorThrown) {
               __error_jqXHR = jqXHR;
               if(jqXHR.getResponseHeader("Content-Type") == "application/json") {

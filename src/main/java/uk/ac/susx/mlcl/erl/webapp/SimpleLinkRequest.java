@@ -1,6 +1,9 @@
 package uk.ac.susx.mlcl.erl.webapp;
 
 import com.google.api.client.json.GenericJson;
+import com.google.common.io.CharStreams;
+
+import java.io.Reader;
 
 /**
 * Created with IntelliJ IDEA.
@@ -9,15 +12,15 @@ import com.google.api.client.json.GenericJson;
 * Time: 10:56
 * To change this template use File | Settings | File Templates.
 */
-public class BasicLinkRequest extends GenericJson {
+public class SimpleLinkRequest extends GenericJson {
 
     @com.google.api.client.util.Key
     public String text = null;
 
-    public BasicLinkRequest() {
+    public SimpleLinkRequest() {
     }
 
-    public BasicLinkRequest(String text) {
+    public SimpleLinkRequest(String text) {
         this.text = text;
     }
 
@@ -28,4 +31,5 @@ public class BasicLinkRequest extends GenericJson {
     public final void setText(String text) {
         this.text = text;
     }
+
 }

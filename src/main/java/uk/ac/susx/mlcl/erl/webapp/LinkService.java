@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.webapp;
 
+import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson.JacksonFactory;
@@ -38,45 +39,49 @@ public class LinkService extends Route {
         this.anno = anno;
     }
 
-   private String doError(Response response, HttpStatus status, String message) {
-        response.type(MediaType.JSON_UTF_8.withoutParameters().toString());
-        LinkError error = new LinkError(status.code(), status.message(), message);
-        error.setFactory(jsonFactory);
-        halt(status.code(),  error.toPrettyString());
-        return "";
-    }
-
     @Override
     public Object handle(final Request request, final Response response) {
 
-        // Store the request query, which currently is just a blob of plain text
-        final BasicLinkRequest data;
-
-        // Where we get the query from depends on the content-type of the request
         final MediaType mediaType = MediaType.parse(request.contentType());
 
         final Charset requestCharset = mediaType.charset().isPresent()
                 ? mediaType.charset().get()
-                : Charset.defaultCharset();
+                : charset;
 
         if (mediaType.withoutParameters().is(MediaType.FORM_DATA.withoutParameters())) {
 
             // Query data is URL encoded in the body. This is handled by spark
-            data = new BasicLinkRequest(request.queryParams("text"));
+            final SimpleLinkRequest data = new SimpleLinkRequest(request.queryParams("text"));
+            return doLink(data, response);
 
         } else if (mediaType.withoutParameters().is(MediaType.JSON_UTF_8.withoutParameters())) {
 
             // Query data is a json object
             LOG.debug("Decoding JSON body: {}", request.body());
-            final JsonObjectParser oParser = jsonFactory.createJsonObjectParser();
+
             try {
-                Reader r = CharStreams.asCharSource(request.body()).openStream();
-                data = oParser.parseAndClose(r, BasicLinkRequest.class);
-            } catch (JsonParseException e) {
+                // First try parsing body as a simple text request
+                try {
+                    final SimpleLinkRequest data = parseJson(request.body(), SimpleLinkRequest.class);
+                    return doLink(data, response);
+                } catch (JsonObjectParseException e1) {
+                    // If parsing failed then we shall attempt the other LinkRequest type (bellow)
+                }
+
+                // Try with the more complex LinkRequest
+                try {
+                    final LinkRequest data = parseJson(request.body(), LinkRequest.class);
+                    return doLink(data, response);
+                } catch (JsonObjectParseException e2) {
+                    // If parsing failed again then there's nothing else we can do
+                    return doError(response, HttpStatus.Bad_Request,
+                            "Failed to parse JSON payload: " + e2.getLocalizedMessage());
+                }
+
+            } catch (JsonParseException e2) {
+                // If parsing failed again then there's nothing else we can do
                 return doError(response, HttpStatus.Bad_Request,
-                        "Failed to parse JSON payload: " + e.getLocalizedMessage());
-            } catch (IOException impossible) {
-                throw new AssertionError(impossible);
+                        "Failed to parse JSON payload: " + e2.getLocalizedMessage());
             }
 
         } else {
@@ -84,23 +89,107 @@ public class LinkService extends Route {
                     "Unknown request content type:" + request.contentType());
         }
 
+    }
+
+    private String doError(Response response, HttpStatus status, String message) {
+        response.type(MediaType.JSON_UTF_8.withoutParameters().toString());
+        LinkError error = new LinkError(status.code(), status.message(), message);
+        error.setFactory(jsonFactory);
+        halt(status.code(), error.toPrettyString());
+        return "";
+    }
+
+    private <T extends GenericJson> T parseJson(String str, Class<T> dataClass)
+            throws JsonParseException, JsonObjectParseException {
+        try {
+            final JsonObjectParser oParser = jsonFactory.createJsonObjectParser();
+            final Reader r = CharStreams.asCharSource(str).openStream();
+            T result = oParser.parseAndClose(r, dataClass);
+
+            if (!result.getUnknownKeys().isEmpty()) {
+                throw new JsonObjectParseException("Unknown keys: " + result.keySet());
+            }
+
+            return result;
+        } catch (JsonParseException e2) {
+            throw e2;
+        } catch (IOException impossible) {
+            // Reader wraps a string so low level IO problems should never occur
+            throw new AssertionError(impossible);
+        }
+    }
+
+    private String doLink(SimpleLinkRequest data, Response response) {
         if (data.getText() == null) {
             return doError(response, HttpStatus.Bad_Request,
                     "The \"text\" query parameter was not provided.");
-        } else {
+        }
 
-            try {
-                response.type("application/json");
-                anno.linkAsJson(data.getText(), response.raw().getOutputStream(), charset);
-                return "";
-            } catch (Throwable ex) {
-                LOG.error(ex.getLocalizedMessage(), ex);
-                final String message = ex.getLocalizedMessage()
-                        + System.getProperty("line.separator")
-                        + Throwables.getStackTraceAsString(ex);
-                return doError(response, HttpStatus.Internal_Server_Error, message);
-            }
+        try {
+            response.type("application/json");
+            anno.linkAsJson(data.getText(), response.raw().getOutputStream(), charset);
+            return "";
+        } catch (Throwable ex) {
+            LOG.error(ex.getLocalizedMessage(), ex);
+            final String message = ex.getLocalizedMessage()
+                    + System.getProperty("line.separator")
+                    + Throwables.getStackTraceAsString(ex);
+            return doError(response, HttpStatus.Internal_Server_Error, message);
+        }
+
+    }
+
+    private String doLink(LinkRequest data, Response response) {
+        if (data.getDocuments() == null) {
+            return doError(response, HttpStatus.Bad_Request,
+                    "The \"documents\" key was not provided.");
+        }
+        if (data.getDocuments().isEmpty()) {
+            return doError(response, HttpStatus.Bad_Request,
+                    "The \"documents\" object is empty.");
+        }
+        if (!data.getDocuments().get(0).getUnknownKeys().isEmpty()) {
+            return doError(response, HttpStatus.Bad_Request,
+                    "The first document contains unknown keys: " +
+                            data.getDocuments().get(0).getUnknownKeys().keySet());
+        }
+        if (data.getDocuments().get(0).getText() == null) {
+            return doError(response, HttpStatus.Bad_Request,
+                    "The \"text\" key was not provided in the first document.");
+        }
+
+        try {
+            final String text = data.getDocuments().get(0).getText();
+            response.type("application/json");
+            anno.linkAsJson(text, response.raw().getOutputStream(), charset);
+            return "";
+        } catch (Throwable ex) {
+            LOG.error(ex.getLocalizedMessage(), ex);
+            final String message = ex.getLocalizedMessage()
+                    + System.getProperty("line.separator")
+                    + Throwables.getStackTraceAsString(ex);
+            return doError(response, HttpStatus.Internal_Server_Error, message);
+        }
+
+    }
+
+    static class JsonObjectParseException extends Exception {
+
+        JsonObjectParseException() {
+        }
+
+        JsonObjectParseException(String message) {
+            super(message);
+        }
+
+        JsonObjectParseException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        JsonObjectParseException(Throwable cause) {
+            super(cause);
         }
     }
+
 
 }
