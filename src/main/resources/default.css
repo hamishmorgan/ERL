@@ -1,126 +1,146 @@
-
-
 @import url("http://fonts.googleapis.com/css?family=Ubuntu:400,700");
 
 body {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  width: 100%;
-  min-width: 600px;
-  font-family: Ubuntu, sans-serif;
-  background-color: #50524B;
-  color: #C0C2BB;
-}	
+    padding: 0;
+    margin: 0;
+    border: 0;
+    width: 100%;
+    min-width: 600px;
+    font-family: Ubuntu, sans-serif;
+    background-color: #50524B;
+    color: #C0C2BB;
+}
 
 body>* {
-  background-color: #F0F2EB;
-  color: #20221B;        
+    background-color: #F0F2EB;
+    color: #20221B;
 }
 
 #container5, #container4, #container3, #container2, #container1 {
-  clear:left;
-  float:left;        
-  width:100%;
-  position:relative;
+    clear: left;
+    float: left;
+    width: 100%;
+    position: relative;
 }
+
 #container5 {
-  overflow:hidden;
-  background:#F0F2EB;
+    overflow: hidden;
+    background: #F0F2EB;
 }
+
 #container4 {
-  right:45%;
-  background:#E1EDB9;
+    right: 45%;
+    background: #E1EDB9;
 }
+
 #container3 {
-  right:5%;
-  background:#D4EE5E;
+    right: 5%;
+    background: #D4EE5E;
 }
+
 #container2 {
-  right:5%;
-  background:#F4FAD2;
+    right: 5%;
+    background: #F4FAD2;
 }
+
 #container1 {
-  right:40%;
-  background:#FF4242;
+    right: 40%;
+    background: #FF4242;
 }
+
 #col1, #col2, #col3, #col4, #col5 {
-  float:left;
-  position:relative;
-  overflow:hidden;     
+    float: left;
+    position: relative;
+    overflow: hidden;
 }
+
 #col1 {
-  width:1%;
-  left:97%;
+    width: 1%;
+    left: 97%;
 }
+
 #col2 {
-  width:38%;
-  left:100%;
+    width: 38%;
+    left: 100%;
 }
+
 #col3 {
-  width:1%;
-  left:103%;
+    width: 1%;
+    left: 103%;
 }
+
 #col4 {
-  width:1%;
-  left:107%;
+    width: 1%;
+    left: 107%;
 }
+
 #col5 {
-  width:38%;
-  left:110%;
+    width: 38%;
+    left: 110%;
 }
 
 .header, .footer {
-  padding: 0px;
-  margin: 0px;
-  clear: both;
+    padding: 0px;
+    margin: 0px;
+    clear: both;
 }
+
 .header>*, .footer>* {
-  margin: 0 auto;
+    margin: 0 auto;
 }
-.header,.footer {
-  background-color: #50524B;
-  color: #C0C2BB;
-  border: solid 0px #30322B;
-  padding: 10px;
+
+.header, .footer {
+    background-color: #50524B;
+    color: #C0C2BB;
+    border: solid 0px #30322B;
+    padding: 10px;
 }
+
 .header {
-  border-bottom-width: 4px;
+    border-bottom-width: 4px;
 }
+
 .header h1 {
-  text-shadow: 0 0 0.5em black;
+    text-shadow: 0 0 0.5em black;
 }
+
 .footer {
-  font-size: 0.7em;  
-  border-top-width: 4px;
-  text-align: right;
+    font-size: 0.7em;
+    border-top-width: 4px;
+    text-align: right;
 }
+
 .header a, .footer a {
-  color: #B0B2CB; 
-  background-color: #50524B;
-} 
+    color: #B0B2CB;
+    background-color: #50524B;
+}
+
 .header a:visited, .footer a:visited {
-  color: #C0B2CB; 
-  background-color: #50524B;
+    color: #C0B2CB;
+    background-color: #50524B;
 }
+
 .header a:hover, .footer a:hover {
-  background-color: #B0B2CB; 
-  color: #50524B;
+    background-color: #B0B2CB;
+    color: #50524B;
 }
+
 .header a:visited:hover, .footer a:visited:hover {
-  background-color: #C0B2CB; 
-  color: #50524B;
+    background-color: #C0B2CB;
+    color: #50524B;
 }
 
 #input textarea {
-  width: 97%;
-  padding: 1%;
-  background: #F8FAE2;
-  font-size: 0.8em;
+    width: 97%;
+    padding: 1%;
+    background: #F8FAE2;
+    font-size: 0.8em;
 }
+
 button {
-  font-size: 0.8em;
+    font-size: 0.8em;
 }
+
 /*
 fieldset {
   border: solid #999 1px;
@@ -142,125 +162,142 @@ fieldset label {
 }*/
 
 #col2 h2, #col5 h2 {
-  font-size: 3em;
-  font-weight: 900;
-  color: rgba(32,32,0,0.2); 
-  margin: 0;
-  padding: 0;
-  margin: 0.2em 0;
+    font-size: 3em;
+    font-weight: 900;
+    color: rgba(32, 32, 0, 0.2);
+    margin: 0;
+    padding: 0;
+    margin: 0.2em 0;
 }
 
 a.mention {
-  background: rgba(0,0,0,0.1);
-  /*  color: rgba(0,0,255, 0.1);*/
-  padding: 0em;
-  /*margin: 0.2em;*/
-  text-decoration: none;
-  /*  border-radius: 0.2em;*/
-  border: solid rgba(0,0,0,0) 2px;        
-  border-style: none;
-  color: black;
-}
-a.mention:hover {
-  border-style: none;
-}
-a.location {
-  border-color: hsla(0, 100%, 25%, 1);
-  color: hsla(0, 100%, 25%, 1);
-  background: hsla(0, 100%, 75%, .5);
-}
-a.organization {
-  border-color: hsla(45, 100%, 25%, 1);
-  color: hsla(45, 100%, 25%, 1);
-  background: hsla(45, 100%, 75%, .5);
-}
-a.person {
-  border-color: hsla(90, 100%, 25%, 1);
-  color: hsla(90, 100%, 25%, 1);
-  background: hsla(90, 100%, 75%, .5);
-}
-a.date {
-  border-color: hsla(135, 100%, 25%, 1);
-  color: hsla(135, 100%, 25%, 1);
-  background: hsla(135, 100%, 75%, .5);
-}
-a.money {
-  border-color: hsla(180, 100%, 25%, 1);
-  color: hsla(180, 100%, 25%, 1);
-  background: hsla(180, 100%, 75%, .5);
-}
-a.misc {
-  border-color: hsla(225, 100%, 25%, 1);
-  color: hsla(225, 100%, 25%, 1);
-  background: hsla(225, 100%, 75%, .5);
-}
-a.thing {
-  border-color: hsla(270, 100%, 25%, 1);
-  color: hsla(270, 100%, 25%, 1);
-  background: hsla(270, 100%, 75%, .5);
-}
-a.nil {
-  border-color: hsla(315, 100%, 25%, 1);
-  color: hsla(315, 100%, 25%, 1);
-  background: hsla(315, 100%, 75%, .5);
-}
-a.set {
-    background-color: rgba(0,0,0,0.1);
-    border-color: solid rgba(0,0,0,0) 2px;
+    background: rgba(0, 0, 0, 0.1);
+    /*  color: rgba(0,0,255, 0.1);*/
+    padding: 0em;
+    /*margin: 0.2em;*/
+    text-decoration: none;
+    /*  border-radius: 0.2em;*/
+    border: solid rgba(0, 0, 0, 0) 2px;
+    border-style: none;
     color: black;
 }
 
-#output{ 
-  position: relative; 
-  top: 0px; 
-  z-index: 2; 
-  float:left;
-  font-size: 0.9em;
-}
-#loading { 
-  position: relative; 
-  top: 0px; 
-  width: 100%;
-  height: 400px;
-  z-index: 1;
-  background: url('spinner.gif') center no-repeat ;
-}
-#error{ 
-  position: relative; 
-  top: 0px; 
-  z-index: 3; 
-  float:left;
-  font-size: 0.9em;
-  width: 100%;
-}
-#error>div {
-  border: solid rgb(255,66,66) 0.2em;
-  color:  #50524B;
-  background: rgba(255,66,66,0.1);
-  border-radius: 0.5em;
-  padding: 10px;  
-}
-#error .code{
-  font-size: 2em;
-  margin: 10px;
-}
-#error .name{
-  font-size: 2em;
-  padding: 1em;
-}
-#error .message{
-  padding: 1em;
+a.mention:hover {
+    border-style: none;
 }
 
-#nerkey{
+a.location {
+    border-color: hsla(0, 100%, 25%, 1);
+    color: hsla(0, 100%, 25%, 1);
+    background: hsla(0, 100%, 75%, .5);
+}
+
+a.organization {
+    border-color: hsla(45, 100%, 25%, 1);
+    color: hsla(45, 100%, 25%, 1);
+    background: hsla(45, 100%, 75%, .5);
+}
+
+a.person {
+    border-color: hsla(90, 100%, 25%, 1);
+    color: hsla(90, 100%, 25%, 1);
+    background: hsla(90, 100%, 75%, .5);
+}
+
+a.date {
+    border-color: hsla(135, 100%, 25%, 1);
+    color: hsla(135, 100%, 25%, 1);
+    background: hsla(135, 100%, 75%, .5);
+}
+
+a.money {
+    border-color: hsla(180, 100%, 25%, 1);
+    color: hsla(180, 100%, 25%, 1);
+    background: hsla(180, 100%, 75%, .5);
+}
+
+a.misc {
+    border-color: hsla(225, 100%, 25%, 1);
+    color: hsla(225, 100%, 25%, 1);
+    background: hsla(225, 100%, 75%, .5);
+}
+
+a.thing {
+    border-color: hsla(270, 100%, 25%, 1);
+    color: hsla(270, 100%, 25%, 1);
+    background: hsla(270, 100%, 75%, .5);
+}
+
+a.nil {
+    border-color: hsla(315, 100%, 25%, 1);
+    color: hsla(315, 100%, 25%, 1);
+    background: hsla(315, 100%, 75%, .5);
+}
+
+a.set {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-color: solid rgba(0, 0, 0, 0) 2px;
+    color: black;
+}
+
+#output {
+    position: relative;
+    top: 0px;
+    z-index: 2;
+    float: left;
+    font-size: 0.9em;
+}
+
+#loading {
+    position: relative;
+    top: 0px;
+    width: 100%;
+    height: 400px;
+    z-index: 1;
+    background: url('spinner.gif') center no-repeat;
+}
+
+#error {
+    position: relative;
+    top: 0px;
+    z-index: 3;
+    float: left;
+    font-size: 0.9em;
+    width: 100%;
+}
+
+#error>div {
+    border: solid rgb(255, 66, 66) 0.2em;
+    color: #50524B;
+    background: rgba(255, 66, 66, 0.1);
+    border-radius: 0.5em;
+    padding: 10px;
+}
+
+#error .code {
+    font-size: 2em;
+    margin: 10px;
+}
+
+#error .name {
+    font-size: 2em;
+    padding: 1em;
+}
+
+#error .message {
+    padding: 1em;
+}
+
+#nerkey {
     font-size: smaller;
     text-align: right;
 }
+
 #nerkey>span {
-    padding: 0.2em  0.5em;
+    padding: 0.2em 0.5em;
     margin: 0.2em 0em;
-    background: rgba(0,0,0,0.1);
-    border: solid rgba(0,0,0,0.2) 1px;
+    background: rgba(0, 0, 0, 0.1);
+    border: solid rgba(0, 0, 0, 0.2) 1px;
     border-radius: 0.5em;
 }
 

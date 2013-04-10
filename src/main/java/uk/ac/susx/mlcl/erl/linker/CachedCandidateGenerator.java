@@ -26,14 +26,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Instances of
  * <code>CachedCandidateGenerator</code> adapts another CachedCandidate implementation, and
  * implement a transparent memory cache over the methods.
- *
+ * <p/>
  * Repeated attempts to retrieve the same data will be returned from memory, rather than querying
  * the KB service. This particularly useful for web-based services such as Freebase, where
  * unnecessary calls can have a significant effect on performance.
- *
+ * <p/>
  * Memory usage is constrained to approximately 1 MiB per cache. There are currently two caches (one
  * for text and the other for search queries) so memory usage should not exceed 2MiB per instance.
- *
+ * <p/>
  * Not thread safe
  *
  * @author hamish
@@ -46,7 +46,7 @@ public class CachedCandidateGenerator implements CandidateGenerator {
     private final LoadingCache<String, Set<String>> searchCache;
 
     /**
-     * Protected dependency injection constructor. Use 
+     * Protected dependency injection constructor. Use
      * {@link CachedCandidateGenerator#wrap(CandidateGenerator)} } instead.
      *
      * @param searchCache

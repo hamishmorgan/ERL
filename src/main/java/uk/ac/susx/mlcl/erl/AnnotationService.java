@@ -304,7 +304,7 @@ public class AnnotationService {
                     || ((prevType != nextType) || ((null != nextType) && !prevType.equals(nextType)));
 
             if (entityChanged) {
-                if(!chunk.isEmpty())
+                if (!chunk.isEmpty())
                     chunks.add(chunk);
                 chunk = Lists.newArrayList();
             }
@@ -315,12 +315,12 @@ public class AnnotationService {
             prevType = nextType;
         }
 
-        if(!chunk.isEmpty())
+        if (!chunk.isEmpty())
             chunks.add(chunk);
         return chunks;
     }
 
-    private void writeEntityChunks(JsonGenerator generator, Annotation document,  List<List<CoreLabel>> chunks ) throws IOException {
+    private void writeEntityChunks(JsonGenerator generator, Annotation document, List<List<CoreLabel>> chunks) throws IOException {
         final String documentText = document.get(TextAnnotation.class);
 
         int prevEnd = 0;  // The index of the last character in the sequence
@@ -348,7 +348,7 @@ public class AnnotationService {
     }
 
     void annotationToJson(Annotation document, Writer writer) throws IOException {
-        final  JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
+        final JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
         generator.enablePrettyPrint();
         generator.writeStartArray();
 

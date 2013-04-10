@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A candidate link generator that backs off to the Freebase search API.
- * 
+ *
  * @author Hamish Morgan
  */
 @Immutable
@@ -47,7 +47,7 @@ public class FreebaseSearchGenerator implements CandidateGenerator {
         checkNotNull(mentions, "mentions");
         final Map<String, List<String>> ids = freebase.batchSearchGetIds(mentions);
         final ImmutableMap.Builder<String, Set<String>> builder = ImmutableMap.builder();
-        for(Map.Entry<String, List<String>> entry : ids.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : ids.entrySet()) {
             builder.put(entry.getKey(), ImmutableSet.copyOf(entry.getValue()));
         }
         return builder.build();

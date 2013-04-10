@@ -10,7 +10,6 @@ import edu.stanford.nlp.util.Factory;
 import java.util.Properties;
 
 /**
- *
  * @author hamish
  */
 public abstract class AbstractAnnotatorFactory implements Factory<Annotator> {
@@ -18,7 +17,7 @@ public abstract class AbstractAnnotatorFactory implements Factory<Annotator> {
     protected Properties props;
 
     public AbstractAnnotatorFactory(Properties props) {
-	this.props = props;
+        this.props = props;
     }
-    
+
 }

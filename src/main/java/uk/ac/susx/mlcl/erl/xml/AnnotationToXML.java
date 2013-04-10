@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
  * <
  * p/> TODO: Class ParserAnnotations can't be found for some reason, so it's not in the searchspace.
  * <p/>
+ *
  * @author hamish
  */
 @Nonnull
@@ -73,24 +74,25 @@ public class AnnotationToXML {
      */
 //    private final Map<Class<? extends CoreAnnotation<?>>, Class<? extends CustomGenerator<?>>> customSerializers;
     private final InstancePool<Class<? extends CoreAnnotation<?>>, ? extends CustomGenerator<?>> customSerializerPool;
-//        private final TypeToInstanceMap<?> customSerializerPool;
+    //        private final TypeToInstanceMap<?> customSerializerPool;
     private final Filter<Class<? extends CoreAnnotation<?>>> annotationFilter;
     private final Set<String> nodeFilters;
     private final XomB x;
 
     /**
      * Dependence inject constructor. Use the associated builder {
-     * @link AnnotationToXML#builder()} < p/>
-     * <p/>
+     *
      * @param nodeFactory
-     * @param namespaceURI Namespace URI
-     * @param stylesheetName Name of the style sheet used from XML to XHTML transformation
-     * @param simpleNames Map from CoreAnnotation types to simplified elements names used in the XML
+     * @param namespaceURI      Namespace URI
+     * @param stylesheetName    Name of the style sheet used from XML to XHTML transformation
+     * @param simpleNames       Map from CoreAnnotation types to simplified elements names used in the XML
      * @param customSerializers Map from CoreAnnotation types to special custom serializes that will
-     * be called for all annotations of that type.
+     *                          be called for all annotations of that type.
      * @param nodeFilters
      * @param annotationFilter
      * @throws NullPointerException if stylesheetName, simpleNames, or customSerializers is null
+     * @link AnnotationToXML#builder()} < p/>
+     * <p/>
      */
     protected AnnotationToXML(
             NodeFactory nodeFactory,
@@ -117,7 +119,6 @@ public class AnnotationToXML {
     }
 
     /**
-     *
      * @return
      */
     public static Builder builder() {
@@ -127,8 +128,9 @@ public class AnnotationToXML {
     /**
      * Wrapper around xmlPrint(Annotation, OutputStream). Added for backward compatibility.
      * <p/>
+     *
      * @param annotation
-     * @param writer The Writer to send the output to
+     * @param writer     The Writer to send the output to
      * @throws IOException
      */
     public void xmlPrint(Annotation annotation, Writer writer) throws IOException, InstantiationException {
@@ -144,7 +146,8 @@ public class AnnotationToXML {
     /**
      * Displays the output of all annotators in XML format.
      * <p/>
-     * @param annotation Contains the output of all annotators
+     *
+     * @param annotation   Contains the output of all annotators
      * @param outputStream The output stream
      * @throws IOException
      */
@@ -170,6 +173,7 @@ public class AnnotationToXML {
     /**
      * Converts the given annotation to an XML document
      * <p/>
+     *
      * @param annotation
      * @return
      * @throws InstantiationException
@@ -183,7 +187,7 @@ public class AnnotationToXML {
 
         if (stylesheetName != null && !stylesheetName.isEmpty()) {
             xmlDoc.addPI("xml-stylesheet",
-                         "href=\"" + stylesheetName + "\" type=\"text/xsl\"");
+                    "href=\"" + stylesheetName + "\" type=\"text/xsl\"");
         }
 
         ElementBuilder root = x.root("root");
@@ -217,7 +221,6 @@ public class AnnotationToXML {
     }
 
     /**
-     *
      * @param parent
      * @param value
      */
@@ -255,6 +258,7 @@ public class AnnotationToXML {
                             @Nonnull Boolean value) {
         addString(parent, Boolean.toString(value));
     }
+
     private static final Morphology morph = new Morphology();
 
     private void addListElements(@Nonnull ElementBuilder parent,
@@ -312,8 +316,8 @@ public class AnnotationToXML {
 
             boolean found = false;
             for (Iterator<Class<? extends CoreAnnotation<?>>> it =
-                    customSerializerPool.keySet().iterator();
-                    it.hasNext();) {
+                         customSerializerPool.keySet().iterator();
+                 it.hasNext(); ) {
 
                 Class<? extends CoreAnnotation<?>> k = it.next();
                 if (k.isAssignableFrom(key)) {
@@ -440,11 +444,11 @@ public class AnnotationToXML {
                 parent.add(x.element("dep")
                         .addAttribute("type", rel)
                         .add(x.element("governor")
-                        .addAttribute("idx", sourceIndex)
-                        .add(sourceString))
+                                .addAttribute("idx", sourceIndex)
+                                .add(sourceString))
                         .add(x.element("dependent")
-                        .addAttribute("idx", targetIndex)
-                        .add(targetString)));
+                                .addAttribute("idx", targetIndex)
+                                .add(targetString)));
             }
 
         }
@@ -465,6 +469,7 @@ public class AnnotationToXML {
         /**
          * Generates the XML content for the coreference chain object
          * <p/>
+         *
          * @param factory
          * @param corefInfo
          * @param corefChains
@@ -505,13 +510,13 @@ public class AnnotationToXML {
 
             ElementBuilder mentionElem = x.element("mention")
                     .add(x.element("sentence")
-                    .add(Integer.toString(mention.sentNum)))
+                            .add(Integer.toString(mention.sentNum)))
                     .add(x.element("start")
-                    .add(Integer.toString(mention.startIndex)))
+                            .add(Integer.toString(mention.startIndex)))
                     .add(x.element("end")
-                    .add(Integer.toString(mention.endIndex)))
+                            .add(Integer.toString(mention.endIndex)))
                     .add(x.element("head")
-                    .add(Integer.toString(mention.headIndex)));
+                            .add(Integer.toString(mention.headIndex)));
 
             if (representative) {
                 mentionElem.addAttribute("representative", "true");
@@ -565,7 +570,7 @@ public class AnnotationToXML {
                 for (Class<? extends CoreAnnotation> candidate : candidates) {
                     if (!simpleNames.containsKey(candidate)) {
                         String name = simplifiedName(candidate,
-                                                     stripSuffixes, simpleNames
+                                stripSuffixes, simpleNames
                                 .values());
                         simpleNames.put(
                                 (Class<? extends CoreAnnotation<?>>) candidate,
@@ -633,11 +638,12 @@ public class AnnotationToXML {
          * Search (breadth first) the membership tree(s) of any classes that are subclasses of the
          * given {@code targetType}. The search is started at all of the given root nodes.
          * <p/>
+         *
          * @param <T>
          * @param searchRoots
          * @param targetType
          * @return
-         * @throws SecurityException caused by {@link Class#getClasses() }
+         * @throws SecurityException    caused by {@link Class#getClasses() }
          * @throws NullPointerException if any parameter is null, or contains null
          */
         @SuppressWarnings("unchecked")
@@ -740,7 +746,7 @@ public class AnnotationToXML {
                 while (existingNames.contains(name.toString())) {
                     name
                             .replace(mark, name.length(), Integer.toString(
-                            ++number));
+                                    ++number));
                 }
             }
 
@@ -749,7 +755,6 @@ public class AnnotationToXML {
 
         public void configure(Configuration config)
                 throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-
 
 
             if (config.containsKey("annotationRoots")) {
@@ -761,7 +766,7 @@ public class AnnotationToXML {
                         addAnnotationRoot(clazz);
                     } catch (ClassNotFoundException ex) {
                         LOG.warn("Failed to load class for name: " + className,
-                                 ex);
+                                ex);
                     }
                 }
             }
@@ -777,14 +782,14 @@ public class AnnotationToXML {
                     try {
                         Class<? extends CoreAnnotation<?>> clazz =
                                 (Class<? extends CoreAnnotation<?>>) Class
-                                .forName(className);
+                                        .forName(className);
                         addSimplifiedName(clazz, simpleName);
                     } catch (ClassCastException ex) {
                         LOG.warn("Class does not extend CoreAnnotation: "
                                 + className, ex);
                     } catch (ClassNotFoundException ex) {
                         LOG.warn("Failed to load class for name: " + className,
-                                 ex);
+                                ex);
                     }
                 }
 
@@ -805,21 +810,20 @@ public class AnnotationToXML {
             }
 
 
-
             if (config.containsKey("annoBlacklist")) {
                 String[] classNames = config.getStringArray("annoBlacklist");
                 for (String className : classNames) {
                     try {
                         Class<? extends CoreAnnotation<?>> clazz =
                                 (Class<? extends CoreAnnotation<?>>) Class
-                                .forName(className);
+                                        .forName(className);
                         addAnnotationToIgnore(clazz);
                     } catch (ClassCastException ex) {
                         LOG.warn("Class does not extend CoreAnnotation: "
                                 + className, ex);
                     } catch (ClassNotFoundException ex) {
                         LOG.warn("Failed to load class for name: " + className,
-                                 ex);
+                                ex);
                     }
                 }
             }

@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- *
  * @author hamish
  */
 public class CorefAnnotatorFactory extends AbstractAnnotatorFactory implements Serializable {
@@ -19,11 +18,11 @@ public class CorefAnnotatorFactory extends AbstractAnnotatorFactory implements S
     private static final long serialVersionUID = 1L;
 
     public CorefAnnotatorFactory(Properties props) {
-	super(props);
+        super(props);
     }
 
     public Annotator create() {
-	return new DeterministicCorefAnnotator(props);
+        return new DeterministicCorefAnnotator(props);
     }
-    
+
 }

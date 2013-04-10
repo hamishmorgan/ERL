@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 /**
- *
  * @author hiam20
  */
 public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
@@ -159,7 +158,7 @@ public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
 
     /**
      * Create a new knowledge base from the given raw source XML file(s).
-     *
+     * <p/>
      * Path can be a single file, or a directory in which case every file inside is parsed.
      *
      * @param dbFile
@@ -188,7 +187,7 @@ public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
                 Preconditions.checkNotNull(entry, "entry");
 
                 final String id = entry.getId();
-                final String name  = entry.getName();
+                final String name = entry.getName();
                 Preconditions.checkNotNull(id, "id");
                 Preconditions.checkNotNull(name, "name");
 
@@ -212,7 +211,7 @@ public class T9KnowledgeBase extends AbstractCollection<T9Entity> {
                 }
                 if (count % 10000 == 0) {
                     LOG.info(String.format("Processed %d entities. (%f e/s)%n", count,
-                                           count / ((tic.getTime() / 1000.0))));
+                            count / ((tic.getTime() / 1000.0))));
                 }
                 count++;
             }

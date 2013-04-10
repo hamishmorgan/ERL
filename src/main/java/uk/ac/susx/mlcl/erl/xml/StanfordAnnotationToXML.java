@@ -34,9 +34,10 @@ import java.util.Map;
 /**
  * Save annotations to XML.
  * <p/>
- * 
+ * <p/>
  * Mostly Ripped form {@link StanfordCoreNLP}, but modified to support our own annotations.
  * <p/>
+ *
  * @author hamish
  */
 public class StanfordAnnotationToXML {
@@ -60,6 +61,7 @@ public class StanfordAnnotationToXML {
     /**
      * Wrapper around xmlPrint(Annotation, OutputStream). Added for backward compatibility.
      * <p/>
+     *
      * @param annotation
      * @param w          The Writer to send the output to
      * @throws IOException
@@ -74,6 +76,7 @@ public class StanfordAnnotationToXML {
     /**
      * Displays the output of all annotators in XML format.
      * <p/>
+     *
      * @param annotation Contains the output of all annotators
      * @param os         The output stream
      * @throws IOException
@@ -97,8 +100,8 @@ public class StanfordAnnotationToXML {
         Element root = new Element("root", NAMESPACE_URI);
         Document xmlDoc = new Document(root);
         ProcessingInstruction pi = new ProcessingInstruction("xml-stylesheet",
-                                                             "href=\"" + STYLESHEET_NAME
-                + "\" type=\"text/xsl\"");
+                "href=\"" + STYLESHEET_NAME
+                        + "\" type=\"text/xsl\"");
         xmlDoc.insertChild(pi, 0);
         Element docElem = new Element("document", NAMESPACE_URI);
         root.appendChild(docElem);
@@ -149,19 +152,19 @@ public class StanfordAnnotationToXML {
                     Element depInfo = new Element("basic-dependencies", NAMESPACE_URI);
                     addDependencyTreeInfo(depInfo, sentence
                             .get(BasicDependenciesAnnotation.class),
-                                          tokens, NAMESPACE_URI);
+                            tokens, NAMESPACE_URI);
                     sentElem.appendChild(depInfo);
 
                     depInfo = new Element("collapsed-dependencies", NAMESPACE_URI);
                     addDependencyTreeInfo(depInfo, sentence
                             .get(CollapsedDependenciesAnnotation.class),
-                                          tokens, NAMESPACE_URI);
+                            tokens, NAMESPACE_URI);
                     sentElem.appendChild(depInfo);
 
                     depInfo = new Element("collapsed-ccprocessed-dependencies", NAMESPACE_URI);
                     addDependencyTreeInfo(depInfo, sentence
                             .get(CollapsedCCProcessedDependenciesAnnotation.class),
-                                          tokens, NAMESPACE_URI);
+                            tokens, NAMESPACE_URI);
                     sentElem.appendChild(depInfo);
                 }
 
@@ -331,13 +334,13 @@ public class StanfordAnnotationToXML {
         }
 
         setSingleElement(mentionElem, "sentence", curNS,
-                         Integer.toString(mention.sentNum));
+                Integer.toString(mention.sentNum));
         setSingleElement(mentionElem, "start", curNS,
-                         Integer.toString(mention.startIndex));
+                Integer.toString(mention.startIndex));
         setSingleElement(mentionElem, "end", curNS,
-                         Integer.toString(mention.endIndex));
+                Integer.toString(mention.endIndex));
         setSingleElement(mentionElem, "head", curNS,
-                         Integer.toString(mention.headIndex));
+                Integer.toString(mention.headIndex));
 
         chainElem.appendChild(mentionElem);
     }
@@ -410,6 +413,7 @@ public class StanfordAnnotationToXML {
      * Helper method for addWordInfo(). If the value is not null, creates an element of the given
      * name and namespace and adds it to the tokenElement.
      * <p/>
+     *
      * @param tokenElement This is the element to which the newly created element will be added
      * @param elemName     This is the name for the new XML element
      * @param curNS        The current namespace

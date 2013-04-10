@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
- *
  * @author hamish
  */
 public class XMLToStringSerializer extends nu.xom.Serializer {

@@ -18,8 +18,7 @@ import java.io.IOException;
 
 /**
  * Stuff that should be elsewhere!
- * 
- * 
+ *
  * @author hiam20
  */
 public class MiscUtil {
@@ -46,8 +45,6 @@ public class MiscUtil {
 
         return freebase;
     }
-    
-    
-    
+
 
 }

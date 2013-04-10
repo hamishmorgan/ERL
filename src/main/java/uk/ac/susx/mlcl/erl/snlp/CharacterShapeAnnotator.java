@@ -34,6 +34,7 @@ import java.util.Set;
  * can be considered thread-safe if the configuration is not changed, since the configuration fields
  * are the only mutable state.
  * <p/>
+ *
  * @author Hamish Morgan
  */
 @Nonnull
@@ -81,6 +82,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      * Construct a new {@code CharacterShapeAnnotator} configuring it with the given properties
      * object.
      * <p/>
+     *
      * @param props configuration to load
      */
     public CharacterShapeAnnotator(Properties props) {
@@ -91,6 +93,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
     /**
      * Configure (or re-configure) this object with the given properties.
      * <p/>
+     *
      * @param props configuration to load
      */
     public final void configure(Properties props) {
@@ -108,6 +111,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      * NB: If everything implemented this method it could be a relatively sane way of doing
      * dependence management, unless I'm missing something, which is more than likely.
      * <p/>
+     *
      * @return annotations that must be produced before this annotator is used.
      */
     public Set<Class<? extends CoreAnnotation<?>>> getRequiredAnnotations() {
@@ -125,9 +129,9 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
 
     /**
      * Get a collection of all the annotation types that are produced by this annotator.
-     * 
+     *
      * @return annotations produced by the annotator
-     */    
+     */
     public Set<Class<? extends CoreAnnotation<?>>> getSuppliedAnnotations() {
         return Collections.<Class<? extends CoreAnnotation<?>>>singleton(Annotation.class);
     }
@@ -136,6 +140,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      * Set the lemmaUsed property. When true the shape will be derived from the lemma string instead
      * of the token string (in which case LemmaAnnotation must be present).
      * <p/>
+     *
      * @param lemmaUsed whether to use the lemma string instead of the token string.
      */
     public void setLemmaUsed(boolean lemmaUsed) {
@@ -145,6 +150,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
     /**
      * Get whether or not the lemma string should be used instead of the token string.
      * <p/>
+     *
      * @return true if the lemma string instead of the token string, false otherwise.
      */
     public boolean isLemmaUsed() {
@@ -155,6 +161,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      * Process the given {@code annotation }, adding a new layer of type
      * {@code CharacterShapeAnnotator.Annotation} that represents the character shape pattern.
      * <p/>
+     *
      * @param annotation document to annotate
      * @throws IllegalArgumentException when annotation is null or does not contain required keys
      */
@@ -164,9 +171,9 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
 
         // Check requirements
         Preconditions.checkArgument(annotation.containsKey(TokensAnnotation.class),
-                                    "TokensAnnotation is not present.");
+                "TokensAnnotation is not present.");
         Preconditions.checkArgument(!isLemmaUsed() || annotation.containsKey(LemmaAnnotation.class),
-                                    "useLemma is true but LemmaAnnotation is not present.");
+                "useLemma is true but LemmaAnnotation is not present.");
 
         for (CoreLabel token : annotation.get(TokensAnnotation.class)) {
 
@@ -191,6 +198,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
     /**
      * Get the replacement character for the given code-point.
      * <p/>
+     *
      * @param codepoint character to find a replacement for
      * @return replacement
      */

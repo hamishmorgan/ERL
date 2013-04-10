@@ -19,22 +19,22 @@ public class POSTaggerAnnotatorFactory extends AbstractAnnotatorFactory implemen
     private static final long serialVersionUID = 1L;
 
     public POSTaggerAnnotatorFactory(Properties props) {
-	super(props);
+        super(props);
     }
 
     public Annotator create() {
-	try {
-	    String maxLenStr = props.getProperty("pos.maxlen");
-	    int maxLen = Integer.MAX_VALUE;
-	    if (maxLenStr != null) {
-		maxLen = Integer.parseInt(maxLenStr);
-	    }
-	    return new POSTaggerAnnotator(props.getProperty("pos.model",
-							    DefaultPaths.DEFAULT_POS_MODEL),
-					  false, maxLen);
-	} catch (Exception e) {
-	    throw new RuntimeException(e);
-	}
+        try {
+            String maxLenStr = props.getProperty("pos.maxlen");
+            int maxLen = Integer.MAX_VALUE;
+            if (maxLenStr != null) {
+                maxLen = Integer.parseInt(maxLenStr);
+            }
+            return new POSTaggerAnnotator(props.getProperty("pos.model",
+                    DefaultPaths.DEFAULT_POS_MODEL),
+                    false, maxLen);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
-    
+
 }

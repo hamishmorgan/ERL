@@ -41,6 +41,7 @@ import java.util.Set;
  * <
  * p/>
  * <p/>
+ *
  * @author hamish
  */
 public class Freebase2 extends Freebase {
@@ -60,8 +61,8 @@ public class Freebase2 extends Freebase {
               String rootUrl, String servicePath, String applicationName,
               boolean suppressPatternChecks) {
         super(transport, jsonHttpRequestInitializer, httpRequestInitializer,
-              jsonFactory, jsonObjectParser, rootUrl, servicePath,
-              applicationName, suppressPatternChecks);
+                jsonFactory, jsonObjectParser, rootUrl, servicePath,
+                applicationName, suppressPatternChecks);
     }
 
     public Freebase2.Search search(String query) throws IOException {
@@ -115,12 +116,12 @@ public class Freebase2 extends Freebase {
      * Search for all of the given queries as a single batch operations, returning the results as
      * map from each query string to the result object. The format of the result object is
      * determined by the second (format) argument.
-     *
+     * <p/>
      * This method is substantially faster when large numbers of queries need to be performed
      * consecutively.
      *
      * @param queries queries to search for
-     * @param format result format
+     * @param format  result format
      * @return results mapped to each query string
      * @throws IOException if something bad occurs with the lookup
      */
@@ -158,10 +159,10 @@ public class Freebase2 extends Freebase {
 
                 // Need to pre-define and type the arguments or jdk6 gets confused.
                 final HttpRequest httpRequest = search.buildHttpRequest();
-                final Class<AbstractResult> dataClass = (Class<AbstractResult>)format.getDataClass();
+                final Class<AbstractResult> dataClass = (Class<AbstractResult>) format.getDataClass();
 
                 final Class<GoogleJsonError> errorClass = GoogleJsonError.class;
-                final BatchCallback<AbstractResult, GoogleJsonError> callback =  newMapPutCallback(query, successes, failures);
+                final BatchCallback<AbstractResult, GoogleJsonError> callback = newMapPutCallback(query, successes, failures);
                 request.queue(httpRequest, dataClass, errorClass, callback);
             }
             failures.clear();
@@ -182,7 +183,7 @@ public class Freebase2 extends Freebase {
      * map from each query string to an IdResult object.
      *
      * @param queries queries to search for
-     * @param format result format
+     * @param format  result format
      * @return results mapped to each query string
      * @throws IOException if something bad occurs with the lookup
      */
@@ -190,7 +191,7 @@ public class Freebase2 extends Freebase {
         Preconditions.checkNotNull(queries, "queries");
         Preconditions.checkNotNull(format, "format");
         Preconditions.checkArgument(format.getDataClass().equals(IdsResult.class),
-                                    "format must produce an IdsResult type output.");
+                "format must produce an IdsResult type output.");
         final Map<String, AbstractResult> results = batchSearch(queries, format);
         final Map<String, List<String>> ids = Maps.newHashMap();
         for (Map.Entry<String, AbstractResult> result : results.entrySet()) {
@@ -239,10 +240,10 @@ public class Freebase2 extends Freebase {
      * Factory methods that instantiates a new BatchCallback class, which writes it's results to the
      * the key's location in the given map objects.
      *
-     * @param <K> type of key
-     * @param <S> type of result object that is produced on success
-     * @param <F> type of error object that is produced on failure
-     * @param key the location is the maps to write
+     * @param <K>                type of key
+     * @param <S>                type of result object that is produced on success
+     * @param <F>                type of error object that is produced on failure
+     * @param key                the location is the maps to write
      * @param successDestination map of keys to result objects
      * @param failureDestination map of keys to error objects
      * @return a new callback instance
@@ -276,7 +277,7 @@ public class Freebase2 extends Freebase {
             byte[] bytes = Files.toByteArray(path);
             googleApiKey = new String(bytes, Charset.forName("ASCII"));
             LOG.debug("Google API key {} loaded from {}.",
-                      googleApiKey, path);
+                    googleApiKey, path);
         } else {
             googleApiKey = null;
             LOG.warn("{} doesn't exist.", path);
@@ -373,8 +374,8 @@ public class Freebase2 extends Freebase {
         private List<String> lang;
 
         /**
-         *
          * <p/>
+         *
          * @param query
          */
         Search(String query) {
@@ -391,7 +392,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @param query The text you want to search for.
          * @return self (allows method chaining)
          */
@@ -402,7 +402,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public String getCallback() {
@@ -419,7 +418,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public List<String> getDomain() {
@@ -427,7 +425,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @param domain
          * @return self (allows method chaining)
          */
@@ -437,7 +434,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public Boolean getExact() {
@@ -445,7 +441,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @param exact
          * @return self (allows method chaining)
          */
@@ -455,7 +450,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return complex rules and constraints to apply to the query.
          */
         public List<String> getFilter() {
@@ -470,6 +464,7 @@ public class Freebase2 extends Freebase {
          * all, any, should and not operators </li> <li>tthe type, domain, name,</li> <li>talias,
          * with and without operands </li> </ul> the ( and ) parenthesis for grouping and precedence
          * <p/>
+         *
          * @param filter complex rules and constraints to apply to the query.
          * @return self (allows method chaining)
          * @see "http://wiki.freebase.com/wiki/Search_Cookbook"
@@ -480,7 +475,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public SearchFormat getFormat() {
@@ -488,7 +482,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @param format
          * @return self (allows method chaining)
          */
@@ -498,7 +491,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public Boolean getEncode() {
@@ -509,6 +501,7 @@ public class Freebase2 extends Freebase {
          * By default search will return data as-is in Freebase. You can turn on html encoding using
          * this parameter.
          * <p/>
+         *
          * @param encode
          * @return self (allows method chaining)
          */
@@ -518,7 +511,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public Boolean getIndent() {
@@ -526,7 +518,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @param indent
          * @return self (allows method chaining)
          */
@@ -536,7 +527,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return return up to this number of results.
          */
         public Long getLimit() {
@@ -548,6 +538,7 @@ public class Freebase2 extends Freebase {
          * Fewer or more matches may be requested by using the limit parameter with a different
          * value.
          * <p/>
+         *
          * @param limit return up to this number of results.
          * @return self (allows method chaining)
          * @throws IllegalArgumentException if limit < 1
@@ -559,7 +550,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public String getMqlOutput() {
@@ -571,6 +561,7 @@ public class Freebase2 extends Freebase {
          * query to retrieve actual data about the matches. The MQL results are sorted by decreasing
          * relevance score.
          * <p/>
+         *
          * @param mqlOutput
          * @return self (allows method chaining)
          */
@@ -580,7 +571,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public Boolean getPrefixed() {
@@ -588,7 +578,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @param prefixed
          * @return self (allows method chaining)
          */
@@ -598,7 +587,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public Long getStart() {
@@ -610,6 +598,7 @@ public class Freebase2 extends Freebase {
          * example, to present 3 pages of successive 10 results, the same query may be used with
          * limit=10 and start=0, then 10, 20.
          * <p/>
+         *
          * @param start
          * @return self (allows method chaining)
          * @throws IllegalArgumentException if start < 0
@@ -621,7 +610,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public List<String> getType() {
@@ -629,7 +617,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @param type
          * @return self (allows method chaining)
          */
@@ -639,7 +626,6 @@ public class Freebase2 extends Freebase {
         }
 
         /**
-         *
          * @return
          */
         public List<String> getLang() {
@@ -680,15 +666,16 @@ public class Freebase2 extends Freebase {
         /**
          * Returns an instance of a new builder.
          * <p/>
-         * @param transport The transport to use for requests
-         * @param jsonFactory A factory for creating JSON parsers and serializers
+         *
+         * @param transport              The transport to use for requests
+         * @param jsonFactory            A factory for creating JSON parsers and serializers
          * @param httpRequestInitializer The HTTP request initializer or {@code null} for none
          * @since 1.7
          */
         public Builder(HttpTransport transport, JsonFactory jsonFactory,
                        HttpRequestInitializer httpRequestInitializer) {
             super(transport, jsonFactory, DEFAULT_ROOT_URL, DEFAULT_SERVICE_PATH,
-                  httpRequestInitializer);
+                    httpRequestInitializer);
         }
 
         /**

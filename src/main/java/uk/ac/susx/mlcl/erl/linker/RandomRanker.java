@@ -72,13 +72,13 @@ public final class RandomRanker implements CandidateRanker {
 
     /**
      * Swap the elements at indices i and j in the list.
-     * 
-     * @param <T> generic type of the list
+     *
+     * @param <T>  generic type of the list
      * @param list list containing elements to be swapped
-     * @param i index of the first element
-     * @param j index of the second element
+     * @param i    index of the first element
+     * @param j    index of the second element
      * @throws IndexOutOfBoundsException if either index is out of range
-     *         (<tt>index &lt; 0 || index &gt;= list.size()</tt>)
+     *                                   (<tt>index &lt; 0 || index &gt;= list.size()</tt>)
      */
     private static <T> void swap(final List<T> list, final int i, final int j) {
         if (i != j) {

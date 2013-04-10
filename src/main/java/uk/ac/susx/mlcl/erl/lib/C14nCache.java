@@ -57,8 +57,8 @@ import java.util.WeakHashMap;
  * behaviour will be undefined. Concurrent use of the Set interface functionality is fail-fast and
  * will result in a {@link java.util.ConcurrentModificationException}. </p>
  *
- * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
  * @param <T> The type of object that will be held here.
+ * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
  */
 public class C14nCache<T> extends AbstractSet<T> {
 
@@ -78,7 +78,7 @@ public class C14nCache<T> extends AbstractSet<T> {
      */
     private long cacheMissCount;
 
-    
+
     /**
      * Construct a new instance of {@link uk.ac.susx.mlcl.lib.C14nCache}.
      */

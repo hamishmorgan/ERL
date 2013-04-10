@@ -75,5 +75,4 @@ public class AliasMappingGenerator extends ForwardingGenerator {
     }
 
 
-
 }

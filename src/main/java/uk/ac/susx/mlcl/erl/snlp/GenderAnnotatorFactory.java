@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- *
  * @author hamish
  */
 public class GenderAnnotatorFactory extends AbstractAnnotatorFactory implements Serializable {
@@ -20,13 +19,13 @@ public class GenderAnnotatorFactory extends AbstractAnnotatorFactory implements 
     private static final long serialVersionUID = 1L;
 
     public GenderAnnotatorFactory(Properties props) {
-	super(props);
+        super(props);
     }
 
     public Annotator create() {
-	return new GenderAnnotator(false,
-				   props.getProperty("gender.firstnames",
-						     DefaultPaths.DEFAULT_GENDER_FIRST_NAMES));
+        return new GenderAnnotator(false,
+                props.getProperty("gender.firstnames",
+                        DefaultPaths.DEFAULT_GENDER_FIRST_NAMES));
     }
-    
+
 }

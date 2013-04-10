@@ -10,15 +10,13 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
- *
  * @author hiam20
  */
 public interface CandidateGenerator {
 
     /**
-     *
-     *
      * <p/>
+     *
      * @param mention Plain text mention string
      * @return List of candidate entity id's matching the given mention
      * @throws IOException

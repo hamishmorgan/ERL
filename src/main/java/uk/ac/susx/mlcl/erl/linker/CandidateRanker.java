@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- *
  * @author hiam20
  */
 public interface CandidateRanker {

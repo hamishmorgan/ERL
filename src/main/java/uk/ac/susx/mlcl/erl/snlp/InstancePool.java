@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
  * @param <K>
  * @param <T>
  * @author hamish
@@ -108,10 +107,10 @@ public class InstancePool<K, T> {
 
         public InstancePool<K, T> build() {
             final ImmutableMap<K, TypeToken<T>> namesMap = names.build();
-            
-            final ImmutableMap<TypeToken<T>, Factory<T>> factoriesMap = 
+
+            final ImmutableMap<TypeToken<T>, Factory<T>> factoriesMap =
                     ImmutableMap.copyOf(factories);
-            
+
             return new InstancePool<K, T>(
                     namesMap, factoriesMap,
                     defaultConstructionAttempted);

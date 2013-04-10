@@ -14,7 +14,6 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- *
  * @author hiam20
  */
 public class T9Entity implements Serializable {
@@ -156,7 +155,7 @@ public class T9Entity implements Serializable {
         return "Entity{" + "factsClass=" + factsClass + ", facts=" + facts + ", wikiText=" + wikiText + ", id=" + id + ", name=" + name + ", type=" + type + ", wikiTitle=" + wikiTitle + '}';
     }
 
-    public static class Builder  {
+    public static class Builder {
 
         String id; // #REQUIRED
         // #REQUIRED
@@ -206,5 +205,5 @@ public class T9Entity implements Serializable {
             return this;
         }
     }
-    
+
 }

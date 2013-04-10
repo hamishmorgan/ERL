@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- *
  * @author hamish
  */
 public class TrueCaseAnnotatorFactory extends AbstractAnnotatorFactory implements Serializable {
@@ -20,20 +19,20 @@ public class TrueCaseAnnotatorFactory extends AbstractAnnotatorFactory implement
     private static final long serialVersionUID = 1L;
 
     public TrueCaseAnnotatorFactory(Properties props) {
-	super(props);
+        super(props);
     }
 
     public Annotator create() {
-	String model =
-		props.getProperty("truecase.model",
-				  DefaultPaths.DEFAULT_TRUECASE_MODEL);
-	String bias =
-		props.getProperty("truecase.bias",
-				  TrueCaseAnnotator.DEFAULT_MODEL_BIAS);
-	String mixed =
-		props.getProperty("truecase.mixedcasefile",
-				  DefaultPaths.DEFAULT_TRUECASE_DISAMBIGUATION_LIST);
-	return new TrueCaseAnnotator(model, bias, mixed, false);
+        String model =
+                props.getProperty("truecase.model",
+                        DefaultPaths.DEFAULT_TRUECASE_MODEL);
+        String bias =
+                props.getProperty("truecase.bias",
+                        TrueCaseAnnotator.DEFAULT_MODEL_BIAS);
+        String mixed =
+                props.getProperty("truecase.mixedcasefile",
+                        DefaultPaths.DEFAULT_TRUECASE_DISAMBIGUATION_LIST);
+        return new TrueCaseAnnotator(model, bias, mixed, false);
     }
-    
+
 }

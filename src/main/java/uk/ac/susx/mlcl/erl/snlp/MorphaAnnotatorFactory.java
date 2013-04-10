@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- *
  * @author hamish
  */
 public class MorphaAnnotatorFactory extends AbstractAnnotatorFactory implements Serializable {
@@ -19,11 +18,11 @@ public class MorphaAnnotatorFactory extends AbstractAnnotatorFactory implements 
     private static final long serialVersionUID = 1L;
 
     public MorphaAnnotatorFactory(Properties props) {
-	super(props);
+        super(props);
     }
 
     public Annotator create() {
-	return new MorphaAnnotator(false);
+        return new MorphaAnnotator(false);
     }
-    
+
 }

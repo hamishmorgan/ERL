@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- *
  * @author hamish
  */
 @Nonnull
@@ -213,7 +212,6 @@ public enum SearchFormat {
     }
 
     /**
-     *
      * @author hamish
      */
     @Nullable
@@ -297,7 +295,6 @@ public enum SearchFormat {
     }
 
     /**
-     *
      * @author hamish
      */
     @Nullable

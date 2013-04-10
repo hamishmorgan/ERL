@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- *
  * @author hamish
  */
 public class NFLTokenizerAnnotatorFactory extends AbstractAnnotatorFactory implements Serializable {
@@ -20,14 +19,14 @@ public class NFLTokenizerAnnotatorFactory extends AbstractAnnotatorFactory imple
     private static final long serialVersionUID = 1L;
 
     public NFLTokenizerAnnotatorFactory(Properties props) {
-	super(props);
+        super(props);
     }
 
     public Annotator create() {
-	final String className =
-		"edu.stanford.nlp.pipeline.NFLTokenizerAnnotator";
-	return ReflectionLoading.loadByReflection(className);
+        final String className =
+                "edu.stanford.nlp.pipeline.NFLTokenizerAnnotator";
+        return ReflectionLoading.loadByReflection(className);
     }
-    
+
 }
 //
