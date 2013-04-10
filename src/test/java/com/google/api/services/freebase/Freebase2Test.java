@@ -647,7 +647,7 @@ public class Freebase2Test extends AbstractTest {
     }
 
     /**
-     * This test sometimes throw as exception: Read timed out
+     * This simpleTest sometimes throw as exception: Read timed out
      *
      * @throws IOException
      */

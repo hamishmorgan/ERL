@@ -30,7 +30,7 @@ import static java.text.MessageFormat.format;
 public class AnnotationServiceIntegrationTest extends AbstractTest {
 
     private static final Logger LOG = Logger.getLogger(AnnotationServiceIntegrationTest.class);
-    private static final String GW5_SAMPLE_PATH = "src/test/resources/uk/ac/susx/mlcl/erl/nyt_eng_201012_sample.xml.gz";
+    private static final String GW5_SAMPLE_PATH = "src/simpleTest/resources/uk/ac/susx/mlcl/erl/nyt_eng_201012_sample.xml.gz";
     private static AnnotationService instance;
 
     @BeforeClass

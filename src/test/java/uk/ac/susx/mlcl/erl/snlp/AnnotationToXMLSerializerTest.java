@@ -111,8 +111,8 @@ public class AnnotationToXMLSerializerTest extends AbstractTest {
 //        Builder expResult = null;
 //        Builder result = AnnotationToXML.builder();
 //        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+//        // TODO review the generated simpleTest code and remove the default call to fail.
+//        fail("The simpleTest case is a prototype.");
 //    }
 //
 //    /**
@@ -125,8 +125,8 @@ public class AnnotationToXMLSerializerTest extends AbstractTest {
 //        Writer writer = null;
 //        AnnotationToXML instance = null;
 //        instance.xmlPrint(annotation, writer);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+//        // TODO review the generated simpleTest code and remove the default call to fail.
+//        fail("The simpleTest case is a prototype.");
 //    }
 //
 //    /**
@@ -139,8 +139,8 @@ public class AnnotationToXMLSerializerTest extends AbstractTest {
 //        OutputStream outputStream = null;
 //        AnnotationToXML instance = null;
 //        instance.xmlPrint(annotation, outputStream);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+//        // TODO review the generated simpleTest code and remove the default call to fail.
+//        fail("The simpleTest case is a prototype.");
 //    }
 //
 //    /**
@@ -154,7 +154,7 @@ public class AnnotationToXMLSerializerTest extends AbstractTest {
 //        Document expResult = null;
 //        Document result = instance.toDocument(annotation);
 //        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+//        // TODO review the generated simpleTest code and remove the default call to fail.
+//        fail("The simpleTest case is a prototype.");
 //    }
 }

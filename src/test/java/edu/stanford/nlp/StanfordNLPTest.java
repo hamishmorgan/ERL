@@ -560,7 +560,7 @@ public class StanfordNLPTest extends AbstractTest {
 
         // "edu/stanford/nlp/models/regexner/type_map_clean"
         // 
-        props.put("regexner.mapping", "src/test/models/edu/stanford/nlp/models/brighton_type_map");
+        props.put("regexner.mapping", "src/simpleTest/models/edu/stanford/nlp/models/brighton_type_map");
 
         props.put("regexner.ignorecase", "false");
 

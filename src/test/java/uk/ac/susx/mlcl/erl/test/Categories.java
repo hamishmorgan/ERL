@@ -5,7 +5,7 @@
 package uk.ac.susx.mlcl.erl.test;
 
 /**
- * Collection of test categories used to mark tests for exclusion or inclusion in particular testing
+ * Collection of simpleTest categories used to mark tests for exclusion or inclusion in particular testing
  * runs.
  * <p/>
  * @author Hamish Morgan
@@ -14,7 +14,7 @@ public interface Categories {
 
     /**
      * Mark tests that likely to take quite a long time to complete. Definition of slow it pretty
-     * subject and context sensitive, but generally any test that takes longer than a second should
+     * subject and context sensitive, but generally any simpleTest that takes longer than a second should
      * be considered slow.
      * <p/>
      * Slows tests should not be run all the time (i.e on every build) because it will drive me up

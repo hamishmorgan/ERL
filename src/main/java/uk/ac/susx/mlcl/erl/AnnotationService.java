@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.jackson.JacksonFactory;
@@ -64,7 +65,8 @@ public class AnnotationService {
         this.jsonFactory = jsonFactory;
     }
 
-    public static AnnotationService newInstance(Properties props) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+    public static AnnotationService newInstance(Properties props)
+            throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
 
         AnnotatorPool pool = new AnnotatorPool();
         pool.register("tokenize", new TokenizerAnnotatorFactory(props));
@@ -284,83 +286,74 @@ public class AnnotationService {
         writer.flush();
     }
 
-    void annotationToJson(Annotation document, Writer writer) throws IOException {
-        JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
-        generator.enablePrettyPrint();
 
+    private List<List<CoreLabel>> getEntityChunks(Annotation document) {
+        final List<List<CoreLabel>> chunks = Lists.newArrayList();
+        final List<CoreLabel> tokens = document.get(TokensAnnotation.class);
+        final Iterator<CoreLabel> it = tokens.iterator();
+        String prevId = null;
+        String prevType = null;
+        List<CoreLabel> chunk = Lists.newArrayList();
+        while (it.hasNext()) {
+            final CoreLabel nextToken = it.next();
+            final String nextId = nextToken.get(EntityKbIdAnnotation.class);
+            final String nextType = nextToken.get(NamedEntityTagAnnotation.class);
+
+            final boolean entityChanged
+                    = ((prevId != nextId) || ((prevId != null) && !prevId.equals(nextId)))
+                    || ((prevType != nextType) || ((null != nextType) && !prevType.equals(nextType)));
+
+            if (entityChanged) {
+                if(!chunk.isEmpty())
+                    chunks.add(chunk);
+                chunk = Lists.newArrayList();
+            }
+
+            // add current token
+            chunk.add(nextToken);
+            prevId = nextId;
+            prevType = nextType;
+        }
+
+        if(!chunk.isEmpty())
+            chunks.add(chunk);
+        return chunks;
+    }
+
+    private void writeEntityChunks(JsonGenerator generator, Annotation document,  List<List<CoreLabel>> chunks ) throws IOException {
+        final String documentText = document.get(TextAnnotation.class);
+
+        int prevEnd = 0;  // The index of the last character in the sequence
+        for (List<CoreLabel> chunk : chunks) {
+            if (chunk.isEmpty())
+                continue;
+
+            final int start = chunk.get(0).beginPosition();
+            final int end = chunk.get(chunk.size() - 1).endPosition();
+            final String seq = documentText.substring(start, end);
+            final String id = chunk.get(0).get(EntityKbIdAnnotation.class);
+            final String type = chunk.get(0).get(NamedEntityTagAnnotation.class);
+
+            if (start > prevEnd) {
+                writeJsonObj(generator, documentText.substring(prevEnd, start), null, null);
+            }
+
+            writeJsonObj(generator, seq, id, type);
+            prevEnd = end;
+        }
+
+        if (prevEnd < documentText.length()) {
+            writeJsonObj(generator, documentText.substring(prevEnd, documentText.length()), null, null);
+        }
+    }
+
+    void annotationToJson(Annotation document, Writer writer) throws IOException {
+        final  JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
+        generator.enablePrettyPrint();
         generator.writeStartArray();
 
-        final String documentText = document.get(TextAnnotation.class);
-        List<CoreLabel> tokens = document.get(TokensAnnotation.class);
-
-        Iterator<CoreLabel> it = tokens.iterator();
-
-        int sequenceStart = 0;
-        int sequenceEnd = 0;
-        String currentEntityId = null;
-        String currentEntityType = null;
-
-        while (it.hasNext()) {
-
-            final CoreLabel token = it.next();
-
-            final String nextEntityId =
-                    token.containsKey(EntityKbIdAnnotation.class)
-                            ? token.get(EntityKbIdAnnotation.class)
-                            : null;
-
-            final String nextEntityType =
-                    token.containsKey(NamedEntityTagAnnotation.class)
-                            ? token.get(NamedEntityTagAnnotation.class)
-                            : null;
-
-            final boolean newSequence =
-                    (currentEntityId == null
-                            ? currentEntityId != nextEntityId
-                            : !currentEntityId.equals(nextEntityId))
-                            || (currentEntityType == null
-                            ? currentEntityType != nextEntityType
-                            : !currentEntityType.equals(nextEntityType));
-
-            final boolean flushBuilder =
-                    (newSequence || !it.hasNext()) && sequenceStart < sequenceEnd;
-
-
-            if (!newSequence) {
-                sequenceEnd = token.endPosition();
-            }
-
-            // new entity type so flush the old on and start over
-            if (flushBuilder) {
-                String seq = documentText.substring(sequenceStart, sequenceEnd);
-                writeJsonObj(generator, seq, currentEntityId, currentEntityType);
-                sequenceStart = sequenceEnd;
-
-            }
-
-            if (newSequence) {
-
-                // If there is space between the start of the next token and the end 
-                // of the current token then we need to produce a extra json object for
-                // that data
-                if (token.beginPosition() > sequenceEnd) {
-                    writeJsonObj(generator, documentText.substring(
-                            sequenceEnd, token.beginPosition()), null, null);
-                }
-
-                sequenceStart = token.beginPosition();
-                sequenceEnd = token.endPosition();
-
-                currentEntityId = nextEntityId;
-                currentEntityType = nextEntityType;
-            }
-        }
-
-        if (sequenceEnd < documentText.length()) {
-            writeJsonObj(generator, documentText.substring(
-                    sequenceEnd, documentText.length()), null, null);
-        }
-
+        final List<List<CoreLabel>> chunks = getEntityChunks(document);
+        writeEntityChunks(generator, document, chunks);
 
         generator.writeEndArray();
         generator.flush();
