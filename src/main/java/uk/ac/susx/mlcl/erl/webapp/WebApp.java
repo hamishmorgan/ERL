@@ -9,6 +9,9 @@ import nu.xom.xslt.XSLException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.Request;
+import spark.Response;
+import spark.Route;
 import spark.Spark;
 import uk.ac.susx.mlcl.erl.AnnotationService;
 
@@ -39,6 +42,7 @@ public class WebApp {
         // Debug logger write prints a detailed json structor of the entire 
         // request object. 
         Spark.before(new RequestLogger(LogLevel.DEBUG));
+        Spark.after(new ResponseLogger(LogLevel.DEBUG));
 
 
         // The primary link annotation route
@@ -50,7 +54,6 @@ public class WebApp {
 
         Spark.get(new Redirect("/", "/static/index.html"));
 
-        Spark.after(new ResponseLogger(LogLevel.DEBUG));
 
     }
 

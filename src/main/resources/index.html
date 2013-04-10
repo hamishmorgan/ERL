@@ -218,14 +218,13 @@
           //          setLoaded();
           //        });
           //                        
-          //                        
+          //
           $.ajax({
             type: 'POST',
             url: "/annotate/link/",
             dataType: "json",
-            data: {
-              text: $("#inputtextarea").val()
-            },
+            contentType: "application/json",
+            data: '{"text": ' +  escape(JSON.stringify($("#inputtextarea").val())) + '}',
             success: function(data, textStatus, jqXHR){
               __success_jqXHR = jqXHR;
               $("#output").html("&nbsp;");
@@ -247,7 +246,6 @@
                 $("#error .name").html(errorThrown);
                 $("#error .message").html(jqXHR.responseText);            
               }
-
 
 
               $("#error").fadeIn();   

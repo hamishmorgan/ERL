@@ -9,6 +9,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.Throwables;
 import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
+import org.codehaus.jackson.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -27,7 +28,7 @@ import java.nio.charset.Charset;
  */
 public class LinkService extends Route {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StaticResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LinkService.class);
     private static final boolean DEBUG = true;
     private AnnotationService anno;
     private Charset charset = Charset.forName("UTF-8");
@@ -38,14 +39,15 @@ public class LinkService extends Route {
         this.anno = anno;
     }
 
-    public static class RequestData {
+    public static class BasicLinkRequest {
 
+        @com.google.api.client.util.Key
         public String text = null;
 
-        public RequestData() {
+        public BasicLinkRequest() {
         }
 
-        public RequestData(String text) {
+        public BasicLinkRequest(String text) {
             this.text = text;
         }
 
@@ -62,25 +64,37 @@ public class LinkService extends Route {
     public Object handle(final Request request, final Response response) {
 
         // Store the request query, which currently is just a blob of plain text
-        final RequestData data;
+        final BasicLinkRequest data;
 
         // Where we get the query from depends on the content-type of the request
-        final MediaType mediaType = MediaType.parse(request.contentType()).withoutParameters();
-        if(mediaType.is(MediaType.FORM_DATA.withoutParameters())) {
+        final MediaType mediaType = MediaType.parse(request.contentType());;
+        final Charset requestCharset =  mediaType.charset().isPresent()
+                ? mediaType.charset().get()
+                : Charset.defaultCharset();
+
+        if(mediaType.withoutParameters().is(MediaType.FORM_DATA.withoutParameters())) {
             // Query data is URL encoded in the body. This is handled by spark
-            data = new RequestData(request.queryParams("text"));
-        } else if(mediaType.is(MediaType.JSON_UTF_8.withoutParameters())) {
+            data = new BasicLinkRequest(request.queryParams("text"));
+        } else if(mediaType.withoutParameters().is(MediaType.JSON_UTF_8.withoutParameters())) {
             // Query data is a json object
-            JsonParser jsonParser = null;
+            LOG.debug("Decoding JSON body: {}", request.body());
+            final JsonObjectParser oParser = jsonFactory.createJsonObjectParser();
             try {
-                JsonObjectParser oParser = jsonFactory.createJsonObjectParser();
                 Reader r = CharStreams.asCharSource(request.body()).openStream();
-                data = oParser.parseAndClose(r, RequestData.class);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                data = oParser.parseAndClose(r, BasicLinkRequest.class);
+            } catch (JsonParseException e) {
+                halt(HttpStatus.Bad_Request.code(),
+                        buildJsonError(HttpStatus.Bad_Request,
+                                "Failed to parse JSON payload: " + e.getLocalizedMessage()));
+                return "";
+            } catch (IOException impossible) {
+                throw new AssertionError(impossible);
             }
         } else {
-            throw new IllegalArgumentException("Unknown request content type:" + request.contentType());
+            halt(HttpStatus.Bad_Request.code(),
+                    buildJsonError(HttpStatus.Bad_Request,
+                            "Unknown request content type:" + request.contentType()));
+            return "";
         }
 
         response.type("application/json");

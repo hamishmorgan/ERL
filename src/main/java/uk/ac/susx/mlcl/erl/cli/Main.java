@@ -43,10 +43,10 @@ public class Main {
     public enum OutputFormat {
 
         SERIALIZE("ser", "application/java-serialized-object"),
-        TEXT_PLAIN("txt", MimeTypes.TEXT_PLAIN),
-        JSON("json", MimeTypes.TEXT_JSON),
-        XML("xml", MimeTypes.TEXT_XML),
-        HTML("html", MimeTypes.TEXT_HTML);
+        TEXT_PLAIN("txt", MimeTypes.Type.TEXT_PLAIN.asString()),
+        JSON("json", MimeTypes.Type.TEXT_JSON.asString()),
+        XML("xml", MimeTypes.Type.TEXT_XML.asString()),
+        HTML("html", MimeTypes.Type.TEXT_HTML.asString());
         private final String extension;
         private final String mimeType;
 

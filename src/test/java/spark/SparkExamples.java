@@ -41,6 +41,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import uk.ac.susx.mlcl.erl.webapp.LogLevel;
+import uk.ac.susx.mlcl.erl.webapp.RequestLogger;
+import uk.ac.susx.mlcl.erl.webapp.ResponseLogger;
 
 /**
  *
@@ -74,6 +77,10 @@ public class SparkExamples {
     @Before
     public void before() throws IOException, InterruptedException, TimeoutException {
         Spark.setPort(PORT);
+
+        Spark.before(new RequestLogger(LogLevel.DEBUG));
+        Spark.after(new ResponseLogger(LogLevel.DEBUG));
+
         Spark.trace(new Route("/") {
             @Override
             public Object handle(Request request, Response response) {
@@ -82,6 +89,7 @@ public class SparkExamples {
 
             }
         });
+
         Spark.get(new Route("/favicon.ico") {
             @Override
             public Object handle(Request request, Response response) {
@@ -224,7 +232,8 @@ public class SparkExamples {
 
         final String expected = "Hello World!";
         final String path = "/hello";
-        final URL url = new URL(ROOT_URL, path);
+        final String redirectPath = "/redirect";
+
 
         Spark.get(new Route(path) {
             @Override
@@ -233,15 +242,16 @@ public class SparkExamples {
             }
         });
 
-        Spark.get(new Route("/redirect") {
+        Spark.get(new Route(redirectPath) {
             @Override
             public Object handle(Request request, Response response) {
-                response.redirect("/hello");
+                response.redirect(path);
                 return null;
             }
         });
 
-        String actual = runHttpGetString(new URL(ROOT_URL, "/redirect"));
+
+        final String actual = runHttpGetString(new URL(ROOT_URL, redirectPath));
         Assert.assertEquals(expected, actual);
 
     }
@@ -361,7 +371,7 @@ public class SparkExamples {
                 }
             });
 
-            // Deletes the book resource for the provided id 
+            // Deletes the book resource for the provided id
             Spark.delete(new Route("/books/:id") {
                 @Override
                 public Object handle(Request request, Response response) {
@@ -719,7 +729,7 @@ public class SparkExamples {
                 }
             }
 
-            // Increase sleep duration by a small factor 
+            // Increase sleep duration by a small factor
             //      bounded at min: +1, and max: +time remaining
             retryInterval = (long) (retryInterval * Math.sqrt(2)) + 1L;
             if (retryInterval > (endTimeMillis - System.currentTimeMillis())) {

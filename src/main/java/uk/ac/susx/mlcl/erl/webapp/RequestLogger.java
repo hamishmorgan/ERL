@@ -85,9 +85,8 @@ public class RequestLogger extends Filter {
     }
 
     @Override
-    public void handle(Request request, Response response) {
+    public void handle(Request request, Response IGNORED) {
         checkNotNull(request, "request");
-        checkNotNull(response, "response");
 
         if (!level.isEnabled(LOG)) {
             return;
@@ -134,7 +133,9 @@ public class RequestLogger extends Filter {
         }
         g.writeEndObject();
 
-        writeKeyValue("body", request.body(), g);
+        // XXX: Don't touch the body or it may never be retrievable again (due to Spark wackiness)
+//        writeKeyValue("body", request.body(), g);
+
         writeKeyValue("contentType", request.contentType(), g);
         writeKeyValue("requestMethod", request.requestMethod(), g);
 
@@ -243,6 +244,7 @@ public class RequestLogger extends Filter {
                               ? request.contentType()
                               : request.contentType().substring(0, colonIdx));
 
-        return MimeTypes.FORM_ENCODED.equalsIgnoreCase(ctype);
+
+        return MimeTypes.Type.FORM_ENCODED.is(ctype);
     }
 }

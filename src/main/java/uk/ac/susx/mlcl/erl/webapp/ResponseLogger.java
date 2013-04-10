@@ -82,7 +82,7 @@ public class ResponseLogger extends Filter {
     }
 
     @Override
-    public void handle(Request request, Response response) {
+    public void handle(Request ignore, Response response) {
         checkNotNull(response, "response");
 
         if (!level.isEnabled(LOG)) {
@@ -115,7 +115,6 @@ public class ResponseLogger extends Filter {
         g.writeStartObject();
 
         writeKeyValue("body", response.body(), g);
-
         g.writeFieldName("raw");
         writeHttpServletResponse(response.raw(), g);
 
@@ -132,7 +131,6 @@ public class ResponseLogger extends Filter {
         writeKeyValue("characterEncoding", raw.getCharacterEncoding(), g );
         writeKeyValue("contentType", raw.getContentType(), g );
         writeKeyValue("locale", raw.getLocale().toString(), g);
-
         writeKeyValue("toString", raw.toString(), g);
         
         g.writeEndObject();
@@ -183,6 +181,6 @@ public class ResponseLogger extends Filter {
                               ? request.contentType()
                               : request.contentType().substring(0, colonIdx));
 
-        return MimeTypes.FORM_ENCODED.equalsIgnoreCase(ctype);
+        return MimeTypes.Type.FORM_ENCODED.is(ctype);
     }
 }
