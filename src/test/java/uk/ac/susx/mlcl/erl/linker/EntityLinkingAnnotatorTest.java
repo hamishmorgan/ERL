@@ -126,8 +126,8 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
 //        Annotation annotation = null;
 //        EntityLinkingAnnotator instance = null;
 //        instance.annotate(annotation);
-//        // TODO review the generated simpleTest code and remove the default call to fail.
-//        fail("The simpleTest case is a prototype.");
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
     }
 
     /**
@@ -182,8 +182,8 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
 //        EntityLinkingAnnotator expResult = null;
 //        EntityLinkingAnnotator result = EntityLinkingAnnotator.newInstance();
 //        assertEquals(expResult, result);
-//        // TODO review the generated simpleTest code and remove the default call to fail.
-//        fail("The simpleTest case is a prototype.");
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -196,8 +196,8 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
 //        Set expResult = null;
 //        Set result = instance.getRequiredAnnotations();
 //        assertEquals(expResult, result);
-//        // TODO review the generated simpleTest code and remove the default call to fail.
-//        fail("The simpleTest case is a prototype.");
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -210,8 +210,8 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
 //        Set expResult = null;
 //        Set result = instance.getSuppliedAnnotations();
 //        assertEquals(expResult, result);
-//        // TODO review the generated simpleTest code and remove the default call to fail.
-//        fail("The simpleTest case is a prototype.");
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
 //    }
 //
 //
@@ -227,7 +227,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
 //        String expResult = "";
 //        String result = instance.linkFor(annotation, token);
 //        assertEquals(expResult, result);
-//        // TODO review the generated simpleTest code and remove the default call to fail.
-//        fail("The simpleTest case is a prototype.");
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
 //    }
 }

@@ -13,6 +13,7 @@ import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
 
@@ -26,7 +27,7 @@ import java.util.Properties;
 public class AnnotationServiceTest extends AbstractTest {
 
     @Test
-    public void testAnnotationToJson() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+    public void testAnnotationToJson() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final String expected = "[ " +
                 "{\n" +
                 "  \"text\" : \"North Korea\",\n" +
@@ -54,7 +55,7 @@ public class AnnotationServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testAnnotationToJson_TwoWords() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+    public void testAnnotationToJson_TwoWords() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final String expected = "[ {\n" +
                 "  \"text\" : \"North Korea\",\n" +
                 "  \"id\" : \"/nil\",\n" +
@@ -66,7 +67,7 @@ public class AnnotationServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testAnnotationToJson_OneWord() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+    public void testAnnotationToJson_OneWord() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final String expected = "[ {\n" +
                 "  \"text\" : \"North\",\n" +
                 "  \"id\" : \"/nil\",\n" +
@@ -78,7 +79,7 @@ public class AnnotationServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testAnnotationToJson_OneChar() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+    public void testAnnotationToJson_OneChar() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final String expected = "[ {\n" +
                 "  \"text\" : \"x\",\n" +
                 "  \"type\" : \"O\"\n" +
@@ -88,7 +89,7 @@ public class AnnotationServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testAnnotationToJson_OneSpace() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+    public void testAnnotationToJson_OneSpace() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final String expected = "[ {\n" +
                 "  \"text\" : \" \"\n" +
                 "} ]";
@@ -97,13 +98,13 @@ public class AnnotationServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testAnnotationToJson_Empty() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+    public void testAnnotationToJson_Empty() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final String expected = "[ ]";
         String text = "";
         doAnnotationToJsonTest(text, expected);
     }
 
-    private void doAnnotationToJsonTest(String input, String expectedOutput) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+    private void doAnnotationToJsonTest(String input, String expectedOutput) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         try {
             Properties props = new Properties();
             AnnotationService instance = AnnotationService.newInstance(props);

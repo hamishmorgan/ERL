@@ -10,6 +10,7 @@ import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.http.json.JsonHttpRequest;
 import com.google.api.client.http.json.JsonHttpRequestInitializer;
@@ -329,7 +330,7 @@ public class Freebase2Test extends AbstractTest {
         runQuery(q);
     }
 
-    @Test(expected = GoogleJsonResponseException.class)
+    @Test(expected = HttpResponseException.class)
     public void testBadlyFormedQuery() throws IOException {
 
         // there is a missing " in the id's value
@@ -342,7 +343,7 @@ public class Freebase2Test extends AbstractTest {
         runQuery(q);
     }
 
-    @Test(expected = GoogleJsonResponseException.class)
+    @Test(expected = HttpResponseException.class)
     public void testUniquenessError() throws IOException {
 
         String q = " {\n"
@@ -647,7 +648,7 @@ public class Freebase2Test extends AbstractTest {
     }
 
     /**
-     * This simpleTest sometimes throw as exception: Read timed out
+     * This test sometimes throw as exception: Read timed out
      *
      * @throws IOException
      */

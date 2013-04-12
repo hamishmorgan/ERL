@@ -33,7 +33,7 @@ public class AbstractTest {
     @Before()
     public final void _printTestMethod() throws SecurityException, NoSuchMethodException {
         System.out.println(MessageFormat.format(
-                "Running simpleTest: {0}#{1}",
+                "Running test: {0}#{1}",
                 this.getClass().getName(), testName.getMethodName()));
     }
 
@@ -126,7 +126,7 @@ public class AbstractTest {
     }
 
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-    public static final File TEST_DATA_PATH = new File("src/simpleTest/data");
+    public static final File TEST_DATA_PATH = new File("src/test/data");
 
     public static String readTestData(String path) {
         return readTestData(path, DEFAULT_CHARSET);

@@ -112,8 +112,8 @@ public class CleanXmlAnnotator2Test  extends AbstractTest {
 //	Annotation annotation = null;
 //	CleanXmlAnnotator2 instance = new CleanXmlAnnotator2();
 //	instance.annotate(annotation);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -127,8 +127,8 @@ public class CleanXmlAnnotator2Test  extends AbstractTest {
 //	List expResult = null;
 //	List result = instance.process(tokens);
 //	assertEquals(expResult, result);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -143,7 +143,7 @@ public class CleanXmlAnnotator2Test  extends AbstractTest {
 //	List expResult = null;
 //	List result = instance.process(tokens, dateTokens);
 //	assertEquals(expResult, result);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 }

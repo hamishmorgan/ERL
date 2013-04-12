@@ -213,8 +213,8 @@ public class XomBTest {
 //	NodeFactory expResult = null;
 //	NodeFactory result = instance.getFactory();
 //	assertEquals(expResult, result);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -227,8 +227,8 @@ public class XomBTest {
 //	DocumentBuilder expResult = null;
 //	DocumentBuilder result = instance.newDocument();
 //	assertEquals(expResult, result);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -243,8 +243,8 @@ public class XomBTest {
 //	ElementBuilder expResult = null;
 //	ElementBuilder result = instance.newRoot(name, namespace);
 //	assertEquals(expResult, result);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -258,8 +258,8 @@ public class XomBTest {
 //	ElementBuilder expResult = null;
 //	ElementBuilder result = instance.newRoot(name);
 //	assertEquals(expResult, result);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -274,8 +274,8 @@ public class XomBTest {
 //	ElementBuilder expResult = null;
 //	ElementBuilder result = instance.newElement(name, namespace);
 //	assertEquals(expResult, result);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 //
 //    /**
@@ -289,7 +289,7 @@ public class XomBTest {
 //	ElementBuilder expResult = null;
 //	ElementBuilder result = instance.newElement(name);
 //	assertEquals(expResult, result);
-//	// TODO review the generated simpleTest code and remove the default call to fail.
-//	fail("The simpleTest case is a prototype.");
+//	// TODO review the generated test code and remove the default call to fail.
+//	fail("The test case is a prototype.");
 //    }
 }

@@ -15,6 +15,7 @@ import org.junit.*;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
 
@@ -30,11 +31,11 @@ import static java.text.MessageFormat.format;
 public class AnnotationServiceIntegrationTest extends AbstractTest {
 
     private static final Logger LOG = Logger.getLogger(AnnotationServiceIntegrationTest.class);
-    private static final String GW5_SAMPLE_PATH = "src/simpleTest/resources/uk/ac/susx/mlcl/erl/nyt_eng_201012_sample.xml.gz";
+    private static final String GW5_SAMPLE_PATH = "src/test/resources/uk/ac/susx/mlcl/erl/nyt_eng_201012_sample.xml.gz";
     private static AnnotationService instance;
 
     @BeforeClass
-    public static void setUpClass() throws IOException, ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InterruptedException {
+    public static void setUpClass() throws IOException, ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InterruptedException, InvocationTargetException, NoSuchMethodException {
         final Properties props = new Properties();
         instance = AnnotationService.newInstance(props);
 //        instance.preloadLinker(false);

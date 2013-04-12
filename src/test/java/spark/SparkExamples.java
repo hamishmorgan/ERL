@@ -53,7 +53,7 @@ public class SparkExamples {
 
     private static final Log LOG = LogFactory.getLog(SparkExamples.class);
 
-    private static final File FAVICON_PATH = new File("src/simpleTest/resources/spark/favicon.ico");
+    private static final File FAVICON_PATH = new File("src/test/resources/spark/favicon.ico");
 
     private static String PROTOCOL;
 
@@ -533,7 +533,6 @@ public class SparkExamples {
     @Test
     public void testGetFavicon() throws InterruptedException, MalformedURLException, IOException, TimeoutException {
 
-        final String path = "/favicon.ico";
         final URL url = new URL(ROOT_URL, "/favicon.ico");
 
         InputStream in = new FileInputStream(FAVICON_PATH);

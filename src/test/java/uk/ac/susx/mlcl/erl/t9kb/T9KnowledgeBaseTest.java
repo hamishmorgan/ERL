@@ -20,7 +20,7 @@ import uk.ac.susx.mlcl.erl.test.AbstractTest;
  */
 public class T9KnowledgeBaseTest extends AbstractTest {
 
-    private static final File TEST_DATA_DIR = new File("src/simpleTest/data");
+    private static final File TEST_DATA_DIR = new File("src/test/data");
     private static final File TEST_OUTPUT_DIR = new File("target/testout");
 
     public T9KnowledgeBaseTest() {
@@ -29,7 +29,7 @@ public class T9KnowledgeBaseTest extends AbstractTest {
     @BeforeClass
     public static void setUpClass() throws IOException {
         if (!TEST_OUTPUT_DIR.exists() && !TEST_OUTPUT_DIR.mkdirs()) {
-            throw new IOException("Failed to create simpleTest output dir: " + TEST_OUTPUT_DIR);
+            throw new IOException("Failed to create test output dir: " + TEST_OUTPUT_DIR);
         }
     }
 

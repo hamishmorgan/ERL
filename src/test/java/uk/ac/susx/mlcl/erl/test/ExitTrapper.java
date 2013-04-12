@@ -48,7 +48,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * Static utility class that allows calls to {@link System#exit(int) }
  * to be intercepted. This makes direct testing of <tt>main</tt> methods possible, since all calls
  * to {@link System#exit(int) } result in a runtime {@link ExitException}, rather than simply
- * terminating the forked VM (passing the simpleTest).
+ * terminating the forked VM (passing the test).
  *
  * <p>When exit trapping is enabled, the previously installed {@link SecurityManager} will be
  * temporarily encapsulate, over-riding {@link SecurityManager#checkExit(int)}. It will pass all
