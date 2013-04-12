@@ -23,6 +23,7 @@ import uk.ac.susx.mlcl.erl.AnnotationService;
 
 import javax.annotation.Nonnull;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -66,7 +67,7 @@ public class Main {
 
     private boolean run() throws InterruptedException, ClassNotFoundException,
             InstantiationException, ConfigurationException, IllegalAccessException,
-            IOException, XSLException, ParsingException {
+            IOException, XSLException, ParsingException, InvocationTargetException, NoSuchMethodException {
         LOG.info("running");
 
         final AnnotationService anno =

@@ -8,7 +8,7 @@ import com.beust.jcommander.internal.Lists;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.jackson.JacksonFactory;
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Stopwatch;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
@@ -17,8 +17,10 @@ import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
+import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.AnnotatorPool;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.Factory;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
@@ -37,10 +39,9 @@ import uk.ac.susx.mlcl.erl.xml.XMLToStringSerializer;
 import uk.ac.susx.mlcl.erl.xml.XomB;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author hamish
@@ -48,10 +49,8 @@ import java.util.Properties;
 public class AnnotationService {
 
     private static final boolean DEBUG = true;
-    private static final Logger LOG = LoggerFactory.getLogger(
-            AnnotationService.class);
-    //
-//    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private static final Logger LOG = LoggerFactory.getLogger(AnnotationService.class);
+
     private final XomB xomb;
     private final AnnotationToXML xmler;
     private AnnotatorPool pool;
@@ -66,34 +65,18 @@ public class AnnotationService {
     }
 
     public static AnnotationService newInstance(Properties props)
-            throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException {
+            throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        AnnotatorPool pool = new AnnotatorPool();
-        pool.register("tokenize", new TokenizerAnnotatorFactory(props));
-        pool.register("cleanXml", new CleanXmlAnnotator2.Factory(props));
-        pool.register("ssplit", new SentenceSplitAnnotatorFactory(props));
-        pool.register("lemma", new MorphaAnnotatorFactory(props));
-        pool.register("pos", new POSTaggerAnnotatorFactory(props));
-        pool.register("parse", new ParserAnnotatorFactory(props));
-        pool.register("ner", new NERAnnotatorFactory(props));
-        pool.register("coref", new CorefAnnotatorFactory(props));
-        pool.register("el", new EntityLinkingAnnotator.Factory(props));
-
+        AnnotatorPool pool = Anno.createPool(props);
 
         AnnotationToXML.Builder builder = AnnotationToXML.builder();
         builder.configure(new PropertiesConfiguration("sussexXml.properties"));
-//            builder.addAnnotationToIgnore(
-//                    CoreAnnotations.XmlContextAnnotation.class);
-//            builder.addSimplifiedName(
-//                    EntityLinkingAnnotator.EntityKbIdAnnotation.class, "link");
 
         AnnotationToXML xmler = builder.build();
 
         XomB xomb = new XomB();
 
-
         JsonFactory jsonFactory = new JacksonFactory();
-
 
         return new AnnotationService(pool, xmler, xomb, jsonFactory);
     }
@@ -145,15 +128,9 @@ public class AnnotationService {
      * @return
      */
     public Annotation link(Annotation document) {
-        Preconditions.checkNotNull(document, "document");
+        checkNotNull(document, "document");
 
-        final AnnotationPipeline pipeline = new AnnotationPipeline();
-
-        final boolean tokenizeRequired;
-        final boolean splitRequired;
-        final boolean posRequired;
-        final boolean nerRequired;
-        final boolean nelRequired;
+        final EnumSet<Anno> requiredAnnotators = EnumSet.noneOf(Anno.class);
 
         // First check for NEL tags, but to do that we need to find and iterate sentences
         if (document.containsKey(CoreAnnotations.SentencesAnnotation.class)) {
@@ -177,61 +154,44 @@ public class AnnotationService {
                 }
             }
 
-            if (empty) {
-                // Don't need to do anything because there aren't any sentences
-                posRequired = false;
-                nerRequired = false;
-                nelRequired = false;
-            } else {
+            if (!empty) {
 
                 // If we don't find NEL tags then that's required
-                nelRequired = !containsNEL;
-                // IF NEL is required and that aren't NER tags...
-                nerRequired = nelRequired && !containsNER;
-                // If NER is required and that aren't POS tags
-                posRequired = nerRequired && !containsPOS;
-            }
+                if(!containsNEL)
+                    requiredAnnotators.add(Anno.ENTITY_LINKING);
 
-            splitRequired = false;
+                // IF NEL is required and that aren't NER tags...
+                if(requiredAnnotators.contains(Anno.ENTITY_LINKING) && !containsNER)
+                    requiredAnnotators.add(Anno.ENTITY_RECOGNITION);
+
+                // If NER is required and that aren't POS tags
+                if(requiredAnnotators.contains(Anno.ENTITY_RECOGNITION) && !containsPOS)
+                    requiredAnnotators.add(Anno.POS_TAG);
+            }
         } else {
             // There weren't any sentence so we need to do everything
-            splitRequired = true;
-            posRequired = true;
-            nerRequired = true;
-            nelRequired = true;
+            requiredAnnotators.addAll(EnumSet.of(Anno.SENTENCE_SPLIT, Anno.POS_TAG,
+                    Anno.ENTITY_LINKING, Anno.ENTITY_RECOGNITION));
         }
 
         // If sentence splitting is required then check for document level tokens (not we don't need this otherwise,
         // and it may not be present on some de-serialized docs which only include the sentence level tokens.)
-        if (splitRequired && !document.containsKey(CoreAnnotations.TokensAnnotation.class)) {
+        if (requiredAnnotators.contains(Anno.SENTENCE_SPLIT)
+                && !document.containsKey(CoreAnnotations.TokensAnnotation.class)) {
             // Check there is text to tokenize
             if (!document.containsKey(CoreAnnotations.TextAnnotation.class))
                 throw new IllegalArgumentException("Unable to tokenize document because it does not contain the " +
                         "required annotation: TextAnnotation");
-            tokenizeRequired = true;
-        } else {
-            tokenizeRequired = false;
+            requiredAnnotators.add(Anno.TOKENIZE);
         }
 
+        LOG.debug("Addition processing steps required: " + requiredAnnotators.toString());
 
-        LOG.debug("Addition processing steps required: "
-                + (tokenizeRequired ? "tokenize " : "")
-                + (splitRequired ? "ssplit " : "")
-                + (posRequired ? "pos " : "")
-                + (nerRequired ? "ner " : "")
-                + (nelRequired ? "el " : ""));
-        // Add the annotators in the correct order
-        if (tokenizeRequired)
-            pipeline.addAnnotator(pool.get("tokenize"));
-        if (splitRequired)
-            pipeline.addAnnotator(pool.get("ssplit"));
-        if (posRequired)
-            pipeline.addAnnotator(pool.get("pos"));
-        if (nerRequired)
-            pipeline.addAnnotator(pool.get("ner"));
-        if (nelRequired)
-            pipeline.addAnnotator(pool.get("el"));
-
+        final List<Anno> tmp = Lists.newArrayList(requiredAnnotators);
+        Collections.sort(tmp, Anno.ORDER);
+        final AnnotationPipeline pipeline = new AnnotationPipeline();
+        for(Anno a : tmp)
+            pipeline.addAnnotator(pool.get(a.name()));
         pipeline.annotate(document);
 
         return document;
@@ -239,7 +199,7 @@ public class AnnotationService {
 
 
     public Annotation link(String text) {
-        Preconditions.checkNotNull(text, "text");
+        checkNotNull(text, "text");
         final Annotation document = new Annotation(text);
         link(document);
         return document;
@@ -257,8 +217,8 @@ public class AnnotationService {
     }
 
     public void linkAsJson(String text, OutputStream output, Charset charset) throws IOException {
-        Preconditions.checkNotNull(text);
-        Preconditions.checkNotNull(output);
+        checkNotNull(text);
+        checkNotNull(output);
         Writer writer = new BufferedWriter(
                 new OutputStreamWriter(output, charset));
         linkAsJson(text, writer);
@@ -266,14 +226,14 @@ public class AnnotationService {
     }
 
     public void linkAsJson(String text, Writer writer) throws IOException {
-        Preconditions.checkNotNull(text);
-        Preconditions.checkNotNull(writer);
+        checkNotNull(text);
+        checkNotNull(writer);
 
         final Annotation document = link(text);
         annotationToJson(document, writer);
     }
 
-    String annotationToJson(Annotation document) throws IOException {
+    public String annotationToJson(Annotation document) throws IOException {
         final StringWriter writer = new StringWriter();
         annotationToJson(document, writer);
         return writer.toString();
@@ -426,7 +386,7 @@ public class AnnotationService {
     }
 
     private static String xmlEncode(String input) {
-        Preconditions.checkNotNull(input, "input");
+        checkNotNull(input, "input");
 
         // Search through the string for the first character the requires encoding
         int i = 0;
@@ -469,5 +429,55 @@ public class AnnotationService {
         }
 
         return output.toString();
+    }
+
+    /**
+     *
+     */
+    private enum Anno {
+        TOKENIZE(TokenizerAnnotatorFactory.class, 0),
+        CLEAN_XML(CleanXmlAnnotator2.Factory.class, 1),
+        SENTENCE_SPLIT(SentenceSplitAnnotatorFactory.class, 2),
+        LEMMATIZE(MorphaAnnotatorFactory.class, 3),
+        POS_TAG(POSTaggerAnnotatorFactory.class, 4),
+        PARSE(ParserAnnotatorFactory.class, 5),
+        ENTITY_RECOGNITION(NERAnnotatorFactory.class, 6),
+        COREFERRENCE_RESOLUTION(CorefAnnotatorFactory.class, 7),
+        ENTITY_LINKING(EntityLinkingAnnotator.Factory.class, 8);
+        /**
+         *
+         */
+        public static final Comparator<Anno> ORDER = new Comparator<Anno>() {
+            @Override
+            public int compare(Anno o1, Anno o2) {
+                return o1.order - o2.order;
+            }
+        };
+        /**
+         *
+         */
+        private final Class<? extends Factory<Annotator>> factoryClass;
+        /**
+         *
+         */
+        private final int order;
+
+        private Anno(final Class<? extends Factory<Annotator>> factoryClass, final int order) {
+            this.factoryClass = checkNotNull(factoryClass);
+            this.order = order;
+
+        }
+
+        static AnnotatorPool createPool(final Properties props) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+            final AnnotatorPool pool = new AnnotatorPool();
+            for (Anno annotator : Anno.values())
+                pool.register(annotator.name(), annotator.newFactory(props));
+            return pool;
+        }
+
+        public Factory<Annotator> newFactory(final Properties props) throws NoSuchMethodException,
+                IllegalAccessException, InvocationTargetException, InstantiationException {
+            return factoryClass.getConstructor(Properties.class).newInstance(props);
+        }
     }
 }

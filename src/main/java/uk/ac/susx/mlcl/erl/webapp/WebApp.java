@@ -13,6 +13,7 @@ import spark.Spark;
 import uk.ac.susx.mlcl.erl.AnnotationService;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 /**
@@ -53,7 +54,7 @@ public class WebApp {
     void init(Properties props)
             throws ParsingException, IOException, XSLException, ClassNotFoundException,
             InstantiationException, ConfigurationException, IllegalAccessException,
-            InterruptedException {
+            InterruptedException, InvocationTargetException, NoSuchMethodException {
 
         final AnnotationService anno = AnnotationService.newInstance(props);
 
