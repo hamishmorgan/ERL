@@ -11,6 +11,8 @@ import uk.ac.susx.mlcl.erl.test.ExitTrapper;
 
 /**
  *
+ *
+ *
  * @author hiam20
  */
 public class MainTest extends AbstractTest {
@@ -34,10 +36,11 @@ public class MainTest extends AbstractTest {
     }
 
     @Test
-    public void testMain_Simple() throws Exception {
-
-//        final String[] args = {"-o", "-", "example_data/panama.txt"};
-        final String[] args = {"-o", "-", "example_data/point_samson.txt"};
+    public void testMain_Simple_1() throws Exception {
+        final String[] args = {
+                "-o", "-",
+                "example_data/point_samson.txt"
+        };
 
         try {
             ExitTrapper.enable();
@@ -46,4 +49,21 @@ public class MainTest extends AbstractTest {
             ExitTrapper.disable();
         }
     }
+
+    @Test
+    public void testMain_Simple_2() throws Exception {
+
+        final String[] args = {
+                "-o", "-",
+                "example_data/panama.txt"
+        };
+
+        try {
+            ExitTrapper.enable();
+            Main.main(args);
+        } finally {
+            ExitTrapper.disable();
+        }
+    }
+
 }
