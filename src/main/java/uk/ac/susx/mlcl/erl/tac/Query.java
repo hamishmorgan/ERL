@@ -29,7 +29,7 @@ public class Query {
     @Nonnull
     private final Optional<Span> span;
 
-    Query(final String id, final String name, final String docId, final Optional<Span> span) {
+    private Query(final String id, final String name, final String docId, final Optional<Span> span) {
         checkNotNull(id, "id");
         checkNotNull(name, "name");
         checkNotNull(docId, "docId");

@@ -89,12 +89,24 @@ public class MainTest extends AbstractTest {
     }
 
     @Test
-    public void testTacLinks() throws ParsingException, IOException {
-
+    public void testReadTac2009EvaluationLinks() throws ParsingException, IOException {
         final File linksFile = new File(DATA_DIR, "tac_2009_kbp_entity_linking_query_types.tab");
         final List links = readLinks(linksFile);
         assertThat(links.size(), is(equalTo(3904)));
+    }
 
+    @Test
+    public void testReadTac2010EvaluationLinks() throws ParsingException, IOException {
+        final File linksFile = new File(DATA_DIR, "tac_2010_kbp_evaluation_entity_linking_query_types.tab");
+        final List links = readLinks(linksFile);
+        assertThat(links.size(), is(equalTo(2250)));
+    }
+
+    @Test
+    public void testReadTac2010TrainingLinks() throws ParsingException, IOException {
+        final File linksFile = new File(DATA_DIR, "tac_2010_kbp_training_entity_linking_query_types.tab");
+        final List links = readLinks(linksFile);
+        assertThat(links.size(), is(equalTo(1500)));
     }
 
 
