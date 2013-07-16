@@ -16,6 +16,8 @@ import static java.text.MessageFormat.format;
  * (the surface text in the source corpora) and the document ID it originated from. From 2012 onwards there is
  * also span associated with each query, which denotes the beginning and end substring offset for the given mention
  * in the source document.
+ *
+ * @author Hamish Morgan
  */
 public class Query {
     @Nonnull
@@ -74,7 +76,8 @@ public class Query {
 
     @Override
     public String toString() {
-        return format("Query'{'id={0}, name={1}, docId={2}, span={3}'}'",
+        return format("{0}'{'id={1}, name={2}, docId={3}, span={4}'}'",
+                this.getClass().getSimpleName(),
                 getId(), getName(), getDocId(), span.isPresent() ? span.get() : "unset");
     }
 
