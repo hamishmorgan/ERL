@@ -35,7 +35,7 @@ public class Link {
      * indicates if the annotator made use of web searches to make the linking judgment
      */
     @Nonnull
-    private final Optional<Boolean> webUsed;
+    private final Optional<Boolean> webSearch;
     /**
      * indicates the the source genre of the document for the query.
      */
@@ -43,11 +43,11 @@ public class Link {
     private final Optional<Genre> sourceGenre;
 
     private Link(String queryId, String entityNodeId, EntityType entityType,
-                 Optional<Boolean> webUsed, Optional<Genre> sourceGenre) {
+                 Optional<Boolean> webSearch, Optional<Genre> sourceGenre) {
         checkNotNull(queryId, "queryId");
         checkNotNull(entityNodeId, "entityNodeId");
         checkNotNull(entityType, "entityType");
-        checkNotNull(webUsed, "webUsed");
+        checkNotNull(webSearch, "webSearch");
         checkNotNull(sourceGenre, "sourceGenre");
         checkArgument(!queryId.isEmpty(), queryId);
         checkArgument(!entityNodeId.isEmpty(), entityNodeId);
@@ -55,7 +55,7 @@ public class Link {
         this.queryId = queryId;
         this.entityNodeId = entityNodeId;
         this.entityType = entityType;
-        this.webUsed = webUsed;
+        this.webSearch = webSearch;
         this.sourceGenre = sourceGenre;
     }
 
@@ -63,8 +63,8 @@ public class Link {
         this(queryId, entityNodeId, entityType, Optional.<Boolean>absent(), Optional.<Genre>absent());
     }
 
-    public Link(String queryId, String entityNodeId, EntityType entityType, boolean webUsed, Genre sourceGenre) {
-        this(queryId, entityNodeId, entityType, Optional.of(webUsed), Optional.of(sourceGenre));
+    public Link(String queryId, String entityNodeId, EntityType entityType, boolean webSearch, Genre sourceGenre) {
+        this(queryId, entityNodeId, entityType, Optional.of(webSearch), Optional.of(sourceGenre));
     }
 
     public String getQueryId() {
@@ -79,12 +79,12 @@ public class Link {
         return entityType;
     }
 
-    public Boolean getWebUsed() {
-        return webUsed.get();
+    public Boolean getWebSearch() {
+        return webSearch.get();
     }
 
-    public boolean isWebUsedSet() {
-        return webUsed.isPresent();
+    public boolean isWebSearchSet() {
+        return webSearch.isPresent();
     }
 
     public Genre getSourceGenre() {
@@ -97,9 +97,9 @@ public class Link {
 
     @Override
     public String toString() {
-        return format("{0}'{'queryId={1}, entityNodeId={2}, entityType={3}, webUsed={4}, sourceGenre={5}'}'",
+        return format("{0}'{'queryId={1}, entityNodeId={2}, entityType={3}, webSearch={4}, sourceGenre={5}'}'",
                 this.getClass().getSimpleName(), getQueryId(), getEntityNodeId(), getEntityType(),
-                webUsed.isPresent() ? webUsed.get() : "<not set>",
+                webSearch.isPresent() ? webSearch.get() : "<not set>",
                 sourceGenre.isPresent() ? sourceGenre.get() : "<not set>");
     }
 
@@ -114,7 +114,7 @@ public class Link {
         if (entityType != link.entityType) return false;
         if (!queryId.equals(link.queryId)) return false;
         if (!sourceGenre.equals(link.sourceGenre)) return false;
-        if (!webUsed.equals(link.webUsed)) return false;
+        if (!webSearch.equals(link.webSearch)) return false;
 
         return true;
     }
@@ -124,7 +124,7 @@ public class Link {
         int result = queryId.hashCode();
         result = 31 * result + entityNodeId.hashCode();
         result = 31 * result + entityType.hashCode();
-        result = 31 * result + webUsed.hashCode();
+        result = 31 * result + webSearch.hashCode();
         result = 31 * result + sourceGenre.hashCode();
         return result;
     }

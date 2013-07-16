@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.text.MessageFormat.format;
 
 /**
  * Created with IntelliJ IDEA.
@@ -69,15 +70,15 @@ public class Main {
         if (s.equals("false") || s.equals("no") || s.equals("0"))
             return false;
         else
-            throw new NumberFormatException();
+            throw new NumberFormatException(format("Expected a truthy value (e.g \"true\" or \"yes\"), but found {0}", string));
     }
 
-    public static List<Link> readLinks(File linksFile) throws IOException {
+    public static List<Link> readLinks(final File linksFile) throws IOException {
         LOG.debug("Reading links file: {}", linksFile);
 
-        CSVReader reader = new CSVReader(new FileReader(linksFile), '\t');
+        final CSVReader reader = new CSVReader(new FileReader(linksFile), '\t');
         String[] values;
-        ImmutableList.Builder<Link> links = ImmutableList.<Link>builder();
+        final ImmutableList.Builder<Link> links = ImmutableList.<Link>builder();
         while ((values = reader.readNext()) != null) {
 
             final String queryId = values[0];
@@ -86,10 +87,22 @@ public class Main {
 
             final Link link;
             if (values.length == 3) {
+                // TAC-KBP 2009 has three values per column
                 link = new Link(queryId, kbId, entityType);
             } else if (values.length == 5) {
-                final boolean webUsed = parseBoolean(values[3]);
-                final Genre genre = Genre.valueOf(values[4]);
+                // TAC-KBP 2010/2012 has five values per column
+
+                final Genre genre;
+                final boolean webUsed;
+                // in 2012 they swapped the order of webUsed and genre
+                if (Genre.isValidAlias(values[3])) {
+                    genre = Genre.valueOfAlias(values[3]);
+                    webUsed = parseBoolean(values[4]);
+                } else {
+                    webUsed = parseBoolean(values[3]);
+                    genre = Genre.valueOfAlias(values[4]);
+                }
+
                 link = new Link(queryId, kbId, entityType, webUsed, genre);
             } else {
                 throw new AssertionError("Expected exactly 3 or 5 links, but found " + values.length);

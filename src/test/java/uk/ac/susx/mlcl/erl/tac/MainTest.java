@@ -109,5 +109,12 @@ public class MainTest extends AbstractTest {
         assertThat(links.size(), is(equalTo(1500)));
     }
 
+    @Test
+    public void testReadTac2012EvaluationLinks() throws ParsingException, IOException {
+        final File linksFile = new File(DATA_DIR, "tac_2012_kbp_english_evaluation_entity_linking_query_types.tab");
+        final List links = readLinks(linksFile);
+        assertThat(links.size(), is(equalTo(2226)));
+    }
+
 
 }
