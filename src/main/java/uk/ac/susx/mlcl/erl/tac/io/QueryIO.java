@@ -11,19 +11,17 @@ import uk.ac.susx.mlcl.erl.tac.Query;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
-import java.util.List;
+import java.util.regex.Pattern;
 
 /**
- * Created with IntelliJ IDEA.
- * User: hiam20
- * Date: 17/07/2013
- * Time: 14:48
- * To change this template use File | Settings | File Templates.
+ * Base class for reading and writing to Query XML files.
+ *
+ * @author Hamish Morgan
  */
-public abstract class QueryIO {
+public abstract class QueryIO implements BaseIO<Query> {
 
     private static final Logger LOG = LoggerFactory.getLogger(QueryIO.class);
+    private static final Pattern TAC2010_ID_PATTERN = Pattern.compile("^EL[\\d]{5,6}$");
 
     public static QueryIO detectFormat(File queriesFile) throws ParsingException, IOException {
         LOG.debug("Detecting format from queries file: {}", queriesFile);
@@ -37,15 +35,15 @@ public abstract class QueryIO {
     }
 
     static QueryIO detectFormat(Document doc) throws ParsingException, IOException {
-        final Element child = doc.getRootElement().getFirstChildElement("query");
+        final Element child = doc.getRootElement().getFirstChildElement(Tac2009QueryIO.QUERY_ELEM_NAME);
 
         final QueryIO format;
-        if (child.getFirstChildElement("beg") != null) {
+        if (child.getFirstChildElement(Tac2012QueryIO.BEGIN_ELEM_NAME) != null) {
             format = new Tac2012QueryIO();
         } else {
-            final String id = child.getAttribute("id").getValue();
-            if (id.matches("^EL[\\d]{5,6}$"))
-                if (child.getFirstChildElement("entity") != null)
+            final String id = child.getAttribute(Tac2009QueryIO.ID_ATTR_NAME).getValue();
+            if (TAC2010_ID_PATTERN.matcher(id).matches())
+                if (child.getFirstChildElement(Tac2010GoldQueryIO.ENTITY_ELEM_NAME) != null)
                     format = new Tac2010GoldQueryIO();
                 else
                     format = new Tac2010QueryIO();
@@ -56,14 +54,5 @@ public abstract class QueryIO {
         LOG.debug("Detected format: {}", format);
         return format;
     }
-
-    public abstract List<Query> readAll(File queriesFile) throws ParsingException, IOException;
-
-    public abstract List<Query> readAll(Reader queriesReader) throws ParsingException, IOException;
-
-    public abstract void writeAll(File queriesFile, List<Query> queries) throws IOException;
-
-    public abstract void writeAll(Writer queriesWriter, List<Query> queries) throws IOException;
-
 
 }

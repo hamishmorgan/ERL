@@ -1,15 +1,9 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
-import nu.xom.Element;
-import uk.ac.susx.mlcl.erl.tac.Query;
-import uk.ac.susx.mlcl.erl.xml.XomB;
-
 /**
- * Created with IntelliJ IDEA.
- * User: hiam20
- * Date: 17/07/2013
- * Time: 14:48
- * To change this template use File | Settings | File Templates.
+ * Class for reading and writing to Query XML files following TAC 2010 specification.
+ *
+ * @author Hamish Morgan
  */
 public class Tac2010QueryIO extends Tac2009QueryIO {
 

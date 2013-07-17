@@ -13,7 +13,6 @@ import static java.text.MessageFormat.format;
  */
 public class Link {
 
-
     /**
      * query ID
      */
@@ -40,8 +39,11 @@ public class Link {
     @Nonnull
     private final Genre sourceGenre;
 
-    public Link(String queryId, String entityNodeId, EntityType entityType,
-                Boolean webSearch, Genre sourceGenre) {
+    public Link(@Nonnull String queryId,
+                @Nonnull String entityNodeId,
+                @Nonnull EntityType entityType,
+                @Nonnull Boolean webSearch,
+                @Nonnull Genre sourceGenre) {
         checkNotNull(queryId, "queryId");
         checkNotNull(entityNodeId, "entityNodeId");
         checkNotNull(entityType, "entityType");
@@ -57,14 +59,17 @@ public class Link {
         this.sourceGenre = sourceGenre;
     }
 
+    @Nonnull
     public String getQueryId() {
         return queryId;
     }
 
+    @Nonnull
     public String getEntityNodeId() {
         return entityNodeId;
     }
 
+    @Nonnull
     public EntityType getEntityType() {
         return entityType;
     }
@@ -73,6 +78,7 @@ public class Link {
         return webSearch;
     }
 
+    @Nonnull
     public Genre getSourceGenre() {
         return sourceGenre;
     }
@@ -81,7 +87,7 @@ public class Link {
     public String toString() {
         return format("{0}'{'queryId={1}, entityNodeId={2}, entityType={3}, webSearch={4}, sourceGenre={5}'}'",
                 this.getClass().getSimpleName(), getQueryId(), getEntityNodeId(), getEntityType(),
-               isWebSearch(), getSourceGenre());
+                isWebSearch(), getSourceGenre());
     }
 
     @Override
@@ -91,13 +97,12 @@ public class Link {
 
         Link link = (Link) o;
 
-        if (!entityNodeId.equals(link.entityNodeId)) return false;
-        if (entityType != link.entityType) return false;
-        if (!queryId.equals(link.queryId)) return false;
-        if (!sourceGenre.equals(link.sourceGenre)) return false;
-        if (!webSearch.equals(link.webSearch)) return false;
+        return entityNodeId.equals(link.entityNodeId)
+                && entityType == link.entityType
+                && queryId.equals(link.queryId)
+                && sourceGenre.equals(link.sourceGenre)
+                && webSearch.equals(link.webSearch);
 
-        return true;
     }
 
     @Override

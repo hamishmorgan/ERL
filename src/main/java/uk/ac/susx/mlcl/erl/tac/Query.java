@@ -26,13 +26,22 @@ public class Query {
     private final String name;
     @Nonnull
     private final String docId;
+    /**
+     * The location of the surface-text within the given document.
+     */
     @Nonnull
     private final Optional<Span> span;
+    /**
+     * Gold-standard queries contain the expected output kb id.
+     */
     @Nonnull
     private final Optional<String> entityNodeId;
 
-    private Query(final String id, final String name, final String docId,
-                  final Optional<Span> span, Optional<String> entityNodeId) {
+    private Query(@Nonnull final String id,
+                  @Nonnull final String name,
+                  @Nonnull final String docId,
+                  @Nonnull final Optional<Span> span,
+                  @Nonnull Optional<String> entityNodeId) {
         checkNotNull(id, "id");
         checkNotNull(name, "name");
         checkNotNull(docId, "docId");
@@ -59,14 +68,17 @@ public class Query {
         this(id, name, docId, Optional.<Span>absent(), Optional.<String>absent());
     }
 
+    @Nonnull
     public String getId() {
         return id;
     }
 
+    @Nonnull
     public String getName() {
         return name;
     }
 
+    @Nonnull
     public String getDocId() {
         return docId;
     }
@@ -113,13 +125,12 @@ public class Query {
 
         Query query = (Query) o;
 
-        if (!docId.equals(query.docId)) return false;
-        if (!entityNodeId.equals(query.entityNodeId)) return false;
-        if (!id.equals(query.id)) return false;
-        if (!name.equals(query.name)) return false;
-        if (!span.equals(query.span)) return false;
+        return docId.equals(query.docId)
+                && entityNodeId.equals(query.entityNodeId)
+                && id.equals(query.id)
+                && name.equals(query.name)
+                && span.equals(query.span);
 
-        return true;
     }
 
     @Override

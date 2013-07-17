@@ -14,18 +14,16 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: hiam20
- * Date: 17/07/2013
- * Time: 14:48
- * To change this template use File | Settings | File Templates.
+ * Class for reading and writing to Query XML files following TAC 2009 specification.
+ *
+ * @author Hamish Morgan
  */
 public class Tac2009QueryIO extends QueryIO {
 
     static final String ROOT_ELEM_NAME = "kbpentlink";
     static final String QUERY_ELEM_NAME = "query";
-    static final String QUERY_ID_ATTR_NAME = "id";
-    static final String QUERY_NAME_ELEM_NAME = "name";
+    static final String ID_ATTR_NAME = "id";
+    static final String NAME_ELEM_NAME = "name";
     static final String DOC_ID_ELEM_NAME = "docid";
     private static final Logger LOG = LoggerFactory.getLogger(Tac2009QueryIO.class);
 
@@ -61,8 +59,8 @@ public class Tac2009QueryIO extends QueryIO {
     }
 
     Query parseQuery(Element queryElement) {
-        final String id = queryElement.getAttribute(QUERY_ID_ATTR_NAME).getValue();
-        final String name = queryElement.getFirstChildElement(QUERY_NAME_ELEM_NAME).getValue();
+        final String id = queryElement.getAttribute(ID_ATTR_NAME).getValue();
+        final String name = queryElement.getFirstChildElement(NAME_ELEM_NAME).getValue();
         final String docId = queryElement.getFirstChildElement(DOC_ID_ELEM_NAME).getValue();
         return new Query(id, name, docId);
     }
@@ -73,8 +71,7 @@ public class Tac2009QueryIO extends QueryIO {
         for (Query query : queries) {
             root.add(formatQuery(x, query));
         }
-        Document doc = x.document().setRoot(root).build();
-        return doc;
+        return x.document().setRoot(root).build();
     }
 
     @Override
@@ -95,8 +92,8 @@ public class Tac2009QueryIO extends QueryIO {
 
     XomB.ElementBuilder formatQuery(XomB x, Query query) {
         return x.element(QUERY_ELEM_NAME)
-                .addAttribute(QUERY_ID_ATTR_NAME, query.getId())
-                .add(x.element(QUERY_NAME_ELEM_NAME).add(query.getName()))
+                .addAttribute(ID_ATTR_NAME, query.getId())
+                .add(x.element(NAME_ELEM_NAME).add(query.getName()))
                 .add(x.element(DOC_ID_ELEM_NAME).add(query.getDocId()));
     }
 

@@ -15,11 +15,9 @@ import java.io.*;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: hiam20
- * Date: 17/07/2013
- * Time: 14:48
- * To change this template use File | Settings | File Templates.
+ * Base class for reading and writing entity links tabular files, following the TAC 2009 specification.
+ *
+ * @author Hamish Morgan
  */
 public class Tac2009LinkIO extends LinkIO {
 
@@ -30,7 +28,7 @@ public class Tac2009LinkIO extends LinkIO {
         final CSVReader reader = new CSVReader(linkReader,
                 CSV_SEPARATOR, CSV_QUOTE_CHAR, CSV_ESCAPE_CHAR, CSV_SKIP_LINES);
         String[] values;
-        final ImmutableList.Builder<Link> links = ImmutableList.<Link>builder();
+        final ImmutableList.Builder<Link> links = ImmutableList.builder();
         while ((values = reader.readNext()) != null) {
             final Link link = new Link(
                     values[0],
@@ -63,14 +61,6 @@ public class Tac2009LinkIO extends LinkIO {
         }
     }
 
-    boolean parseWebSearch(String[] values) {
-        return true;
-    }
-
-    Genre parseGenre(String[] values) {
-        return Genre.NW;
-    }
-
     @Override
     public void writeAll(Writer linksWriter, List<Link> links) throws IOException {
         final CSVWriter writer = new CSVWriter(linksWriter,
@@ -99,6 +89,14 @@ public class Tac2009LinkIO extends LinkIO {
         } finally {
             closer.close();
         }
+    }
+
+    boolean parseWebSearch(String[] values) {
+        return true;
+    }
+
+    Genre parseGenre(String[] values) {
+        return Genre.NW;
     }
 
     String[] formatLink(Link link) {

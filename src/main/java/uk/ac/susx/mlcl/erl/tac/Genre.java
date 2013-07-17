@@ -8,14 +8,13 @@ package uk.ac.susx.mlcl.erl.tac;
 public enum Genre {
 
 
-//    /**
-//     * web data
-//     */
-//    WL,
     /**
      * news-wire data
      */
     NW,
 
-    WB;
+    /**
+     * web data
+     */
+    WB
 }

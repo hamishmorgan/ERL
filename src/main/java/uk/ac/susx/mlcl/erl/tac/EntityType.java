@@ -6,5 +6,16 @@ package uk.ac.susx.mlcl.erl.tac;
  * @author Hamish Morgan
  */
 public enum EntityType {
-    ORG, PER, GPE
+    /**
+     * Organisation entity type
+     */
+    ORG,
+    /**
+     * Person entity type
+     */
+    PER,
+    /**
+     * Geo-Political entity type (a.k.a Location)
+     */
+    GPE
 }

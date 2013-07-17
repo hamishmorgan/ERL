@@ -4,12 +4,11 @@ import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.Link;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 17/07/2013
-* Time: 14:48
-* To change this template use File | Settings | File Templates.
-*/
+ * Base class for reading and writing entity links tabular files, following the TAC 2010 specification.
+ *
+ * @author Hamish Morgan
+ */
+
 public class Tac2012LinkIO extends Tac2010LinkIO {
 
     @Override

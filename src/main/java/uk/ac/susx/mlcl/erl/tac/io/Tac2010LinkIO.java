@@ -7,15 +7,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.text.MessageFormat.format;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 17/07/2013
-* Time: 14:48
-* To change this template use File | Settings | File Templates.
-*/
+ * Base class for reading and writing entity links tabular files, following the TAC 2010 specification.
+ *
+ * @author Hamish Morgan
+ */
+
 public class Tac2010LinkIO extends Tac2009LinkIO {
 
-    static final boolean parseBoolean(final String string) {
+    static boolean parseBoolean(final String string) {
         checkNotNull(string, "s");
         final String s = string.trim().toLowerCase();
         if (s.equals("true") || s.equals("yes") || s.equals("1"))
