@@ -11,6 +11,7 @@ import uk.ac.susx.mlcl.erl.tac.Query;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.List;
 
 /**
@@ -55,8 +56,11 @@ public abstract class QueryIO {
 
     public abstract List<Query> readAll(File queriesFile) throws ParsingException, IOException;
 
-//    public abstract List<Query> readAll(Reader queriesReader) throws ParsingException, IOException;
+    public abstract List<Query> readAll(Reader queriesReader) throws ParsingException, IOException;
 
     public abstract void writeAll(File queriesFile, List<Query> queries) throws IOException;
+
+    public abstract void writeAll(Writer queriesWriter, List<Query> queries) throws IOException;
+
 
 }

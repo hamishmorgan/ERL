@@ -2,25 +2,24 @@ package uk.ac.susx.mlcl.erl.tac.io;
 
 import com.google.common.collect.ImmutableList;
 import nu.xom.*;
+import org.eclipse.jetty.io.WriterOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.tac.Query;
 import uk.ac.susx.mlcl.erl.xml.XomB;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.List;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 17/07/2013
-* Time: 14:48
-* To change this template use File | Settings | File Templates.
-*/
+ * Created with IntelliJ IDEA.
+ * User: hiam20
+ * Date: 17/07/2013
+ * Time: 14:48
+ * To change this template use File | Settings | File Templates.
+ */
 public class Tac2009QueryIO extends QueryIO {
 
     static final String ROOT_ELEM_NAME = "kbpentlink";
@@ -35,10 +34,19 @@ public class Tac2009QueryIO extends QueryIO {
         LOG.debug("Reading queries file: {}", queriesFile);
         Builder parser = new Builder();
         Document doc = parser.build(queriesFile);
+        return readAll(doc);
+    }
 
+    @Override
+    public List<Query> readAll(Reader queriesReader) throws ParsingException, IOException {
+        Builder parser = new Builder();
+        Document doc = parser.build(queriesReader);
+        return readAll(doc);
+    }
+
+    List<Query> readAll(Document doc) throws ParsingException, IOException {
         LOG.debug("doc={0}, baseURI={1}, docType={2}, rootElement={0}",
                 doc, doc.getBaseURI(), doc.getDocType(), doc.getRootElement());
-
 
         Elements children = doc.getRootElement().getChildElements();
         ImmutableList.Builder<Query> queries = ImmutableList.builder();
@@ -59,16 +67,29 @@ public class Tac2009QueryIO extends QueryIO {
         return new Query(id, name, docId);
     }
 
-    @Override
-    public void writeAll(File file, List<Query> queries) throws IOException {
+    Document toXmlDocument(List<Query> queries) {
         final XomB x = new XomB();
         final XomB.ElementBuilder root = x.element(ROOT_ELEM_NAME);
         for (Query query : queries) {
             root.add(formatQuery(x, query));
         }
+        Document doc = x.document().setRoot(root).build();
+        return doc;
+    }
+
+    @Override
+    public void writeAll(File file, List<Query> queries) throws IOException {
         XomUtil.writeDocument(
-                x.document().setRoot(root).build(),
+                toXmlDocument(queries),
                 new FileOutputStream(file),
+                Charset.forName("UTF-8"));
+    }
+
+    @Override
+    public void writeAll(Writer queriesWriter, List<Query> queries) throws IOException {
+        XomUtil.writeDocument(
+                toXmlDocument(queries),
+                new WriterOutputStream(queriesWriter, "UTF-8"),
                 Charset.forName("UTF-8"));
     }
 
