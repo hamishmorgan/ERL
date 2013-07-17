@@ -15,20 +15,15 @@ import java.io.*;
 import java.util.List;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 17/07/2013
-* Time: 14:48
-* To change this template use File | Settings | File Templates.
-*/
+ * Created with IntelliJ IDEA.
+ * User: hiam20
+ * Date: 17/07/2013
+ * Time: 14:48
+ * To change this template use File | Settings | File Templates.
+ */
 public class Tac2009LinkIO extends LinkIO {
 
     private static final Logger LOG = LoggerFactory.getLogger(Tac2009LinkIO.class);
-    private static final char CSV_SEPARATOR = '\t';
-    private static final char CSV_QUOTE_CHAR = CSVWriter.NO_QUOTE_CHARACTER;
-    private static final char CSV_ESCAPE_CHAR = CSVWriter.NO_ESCAPE_CHARACTER;
-    private static final String CSV_LINE_END = "\n";
-    private static final int CSV_SKIP_LINES = 0;
 
     @Override
     public List<Link> readAll(Reader linkReader) throws ParsingException, IOException {
@@ -59,6 +54,8 @@ public class Tac2009LinkIO extends LinkIO {
                     closer.register(new BufferedReader(
                             closer.register(new FileReader(linksFile))));
             return readAll(reader);
+        } catch (ParsingException e) {
+            throw closer.rethrow(e, ParsingException.class);
         } catch (Throwable e) {
             throw closer.rethrow(e);
         } finally {

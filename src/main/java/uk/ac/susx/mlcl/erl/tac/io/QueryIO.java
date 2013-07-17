@@ -50,6 +50,6 @@ public abstract class QueryIO {
 
 //    public abstract List<Query> readAll(Reader queriesReader) throws ParsingException, IOException;
 
-//    public abstract void writeAll(Writer queriesWriter, List<Query> queries) throws IOException;
+    public abstract void writeAll(File queriesFile, List<Query> queries) throws IOException;
 
 }

@@ -1,6 +1,8 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import com.google.common.io.Closer;
 import nu.xom.ParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,20 +13,41 @@ import java.io.*;
 import java.util.List;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 17/07/2013
-* Time: 14:48
-* To change this template use File | Settings | File Templates.
-*/
+ * Created with IntelliJ IDEA.
+ * User: hiam20
+ * Date: 17/07/2013
+ * Time: 14:48
+ * To change this template use File | Settings | File Templates.
+ */
 public abstract class LinkIO {
 
+    static final char CSV_SEPARATOR = '\t';
+    static final char CSV_QUOTE_CHAR = CSVWriter.NO_QUOTE_CHARACTER;
+    static final char CSV_ESCAPE_CHAR = CSVWriter.NO_ESCAPE_CHARACTER;
+    static final String CSV_LINE_END = "\n";
+    static final int CSV_SKIP_LINES = 0;
     private static final Logger LOG = LoggerFactory.getLogger(LinkIO.class);
 
     public static LinkIO detectFormat(final File linksFile) throws IOException {
         LOG.debug("Detecting format from links file: {}", linksFile);
 
-        final CSVReader reader = new CSVReader(new FileReader(linksFile), '\t');
+        final Closer closer = Closer.create();
+        try {
+            final Reader reader =
+                    closer.register(new BufferedReader(
+                            closer.register(new FileReader(linksFile))));
+            return detectFormat(new FileReader(linksFile));
+        } catch (Throwable e) {
+            throw closer.rethrow(e);
+        } finally {
+            closer.close();
+        }
+    }
+
+    public static LinkIO detectFormat(final Reader linksReader) throws IOException {
+
+        final CSVReader reader = new CSVReader(linksReader,
+                CSV_SEPARATOR, CSV_QUOTE_CHAR, CSV_ESCAPE_CHAR, CSV_SKIP_LINES);
         String[] values = reader.readNext();
 
         final LinkIO format;

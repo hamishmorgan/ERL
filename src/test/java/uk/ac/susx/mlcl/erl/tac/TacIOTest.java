@@ -222,7 +222,7 @@ public class TacIOTest {
 
         @Test
         public void testDetectFormatFromLinks() throws ParsingException, IOException {
-            assertEquals(linkIoClass, QueryIO.detectFormat(getLinkFile()).getClass());
+            assertEquals(linkIoClass, LinkIO.detectFormat(getLinkFile()).getClass());
         }
 
     }
