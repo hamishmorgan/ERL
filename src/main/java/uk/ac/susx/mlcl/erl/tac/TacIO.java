@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Closer;
+import edu.stanford.nlp.util.ArrayUtils;
 import nu.xom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,18 +75,8 @@ public class TacIO {
 
     }
 
-    private static final boolean parseBoolean(final String string) {
-        checkNotNull(string, "s");
-        final String s = string.trim().toLowerCase();
-        if (s.equals("true") || s.equals("yes") || s.equals("1"))
-            return true;
-        if (s.equals("false") || s.equals("no") || s.equals("0"))
-            return false;
-        else
-            throw new NumberFormatException(format("Expected a truthy value (e.g \"true\" or \"yes\"), but found {0}", string));
-    }
 
-    interface QueryIO {
+    public interface QueryIO {
 
         List<Query> readAll(File queriesFile) throws ParsingException, IOException;
 
@@ -93,7 +84,7 @@ public class TacIO {
 
     }
 
-    interface LinkIO {
+    public interface LinkIO {
 
         List<Link> readAll(File linksFile) throws ParsingException, IOException;
 
@@ -104,7 +95,7 @@ public class TacIO {
         void writeAll(Writer linkWriter, List<Link> links) throws IOException;
     }
 
-    static class Tac2009QueryIO implements QueryIO {
+    public static class Tac2009QueryIO implements QueryIO {
 
         static final String QUERY_ID_ATTR_NAME = "id";
         static final String QUERY_NAME_ELEM_NAME = "name";
@@ -145,12 +136,12 @@ public class TacIO {
         }
     }
 
-    static class Tac2010QueryIO extends Tac2009QueryIO {
+    public static class Tac2010QueryIO extends Tac2009QueryIO {
 
 
     }
 
-    static class Tac2012QueryIO extends Tac2009QueryIO {
+    public static class Tac2012QueryIO extends Tac2009QueryIO {
 
         static final String BEGIN_ELEM_NAME = "beg";
         static final String END_ELEM_NAME = "end";
@@ -166,7 +157,7 @@ public class TacIO {
         }
     }
 
-    static class Tac2009LinkIO implements LinkIO {
+    public static class Tac2009LinkIO implements LinkIO {
 
         private static final char CSV_SEPARATOR = '\t';
         private static final char CSV_QUOTE_CHAR = CSVWriter.NO_QUOTE_CHARACTER;
@@ -181,7 +172,12 @@ public class TacIO {
             String[] values;
             final ImmutableList.Builder<Link> links = ImmutableList.<Link>builder();
             while ((values = reader.readNext()) != null) {
-                final Link link = parseLink(values);
+                final Link link = new Link(
+                        values[0],
+                        values[1],
+                        EntityType.valueOf(values[2]),
+                        parseWebSearch(values),
+                        parseGenre(values));
                 LOG.debug("Read link: {}", link);
                 links.add(link);
             }
@@ -205,13 +201,12 @@ public class TacIO {
             }
         }
 
-        Link parseLink(String[] values) {
-            assert values.length == 3 : "Expected exactly 3 columns but found " + values.length;
+        boolean parseWebSearch(String[] values) {
+            return true;
+        }
 
-            final String queryId = values[0];
-            final String entityNodeId = values[1];
-            final EntityType entityType = EntityType.valueOf(values[2]);
-            return new Link(queryId, entityNodeId, entityType, true, Genre.NW);
+        Genre parseGenre(String[] values) {
+            return Genre.NW;
         }
 
         @Override
@@ -221,7 +216,7 @@ public class TacIO {
             try {
                 for (Link link : links) {
                     LOG.debug("Writing link: {}", link);
-                    writeLink(writer, link);
+                    writer.writeNext(formatLink(link));
                 }
             } finally {
                 writer.flush();
@@ -244,66 +239,85 @@ public class TacIO {
             }
         }
 
-        void writeLink(final CSVWriter writer, final Link link) {
-            writer.writeNext(new String[]{
+        String[] formatLink(Link link) {
+            return new String[]{
                     link.getQueryId(),
                     link.getEntityNodeId(),
                     link.getEntityType().name()
-            });
+            };
         }
     }
 
-    static class Tac2010LinkIO extends Tac2009LinkIO {
-        @Override
-        Link parseLink(String[] values) {
-            assert values.length == 5 : "Expected exactly 5 columns but found " + values.length;
+    public static class Tac2010LinkIO extends Tac2009LinkIO {
 
-            final String queryId = values[0];
-            final String kbId = values[1];
-            final EntityType entityType = EntityType.valueOf(values[2]);
-            final boolean webUsed = parseBoolean(values[3]);
+        static final boolean parseBoolean(final String string) {
+            checkNotNull(string, "s");
+            final String s = string.trim().toLowerCase();
+            if (s.equals("true") || s.equals("yes") || s.equals("1"))
+                return true;
+            if (s.equals("false") || s.equals("no") || s.equals("0"))
+                return false;
+            else
+                throw new NumberFormatException(format("Expected a truthy value (e.g \"true\" or \"yes\"), but found {0}", string));
+        }
+
+        @Override
+        boolean parseWebSearch(String[] values) {
+            return parseBoolean(values[3]);
+        }
+
+        @Override
+        Genre parseGenre(String[] values) {
             // 2010 used "WL" for web data instead of "WB"
-            final Genre genre = values[4].equals("WL") ? Genre.WB : Genre.valueOf(values[4]);
-            return new Link(queryId, kbId, entityType, webUsed, genre);
+            return values[4].equals("WL") ? Genre.WB : Genre.valueOf(values[4]);
         }
 
         @Override
-        void writeLink(final CSVWriter writer, final Link link) {
-            writer.writeNext(new String[]{
+        String[] formatLink(final Link link) {
+            return new String[]{
                     link.getQueryId(),
                     link.getEntityNodeId(),
                     link.getEntityType().name(),
                     link.isWebSearch() ? "YES" : "NO",
-                    // 2010 used "WL" for web data instead of "WB"
-                    link.getSourceGenre() == Genre.WB ? "WL" : link.getSourceGenre().name()
-            });
+                    formatGenre(link.getSourceGenre())
+            };
+        }
+
+        String formatGenre(Genre genre) {
+            // 2010 used "WL" for web data instead of "WB"
+            return genre == Genre.WB ? "WL" : genre.name();
         }
     }
 
-    static class Tac2012LinkIO extends Tac2009LinkIO {
+    public static class Tac2012LinkIO extends Tac2010LinkIO {
+
         @Override
-        Link parseLink(String[] values) {
-            assert values.length == 5 : "Expected exactly 5 columns but found " + values.length;
+        String[] formatLink(final Link link) {
+            final String[] values = super.formatLink(link);
 
-            final String queryId = values[0];
-            final String kbId = values[1];
-            final EntityType entityType = EntityType.valueOf(values[2]);
-            final Genre genre = Genre.valueOf(values[3]);
-            final boolean webUsed = parseBoolean(values[4]);
-            return new Link(queryId, kbId, entityType, webUsed, genre);
+            // swap webSearch (3) and genre (4)
+            final String tmp = values[3];
+            values[3] = values[4];
+            values[4] = tmp;
 
+            return values;
         }
 
         @Override
-        void writeLink(final CSVWriter writer, final Link link) {
-            writer.writeNext(new String[]{
-                    link.getQueryId(),
-                    link.getEntityNodeId(),
-                    link.getEntityType().name(),
-                    link.getSourceGenre().name(),
-                    link.isWebSearch() ? "YES" : "NO",
-            });
+        String formatGenre(Genre genre) {
+            return genre.name();
         }
+
+        @Override
+        boolean parseWebSearch(String[] values) {
+            return parseBoolean(values[4]);
+        }
+
+        @Override
+        Genre parseGenre(String[] values) {
+            return Genre.valueOf(values[3]);
+        }
+
     }
 
 }
