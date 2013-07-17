@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import uk.ac.susx.mlcl.erl.tac.io.*;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.File;
@@ -35,11 +36,11 @@ public class TacIOTest {
     @RunWith(Parameterized.class)
     public static class LinkIORegressionInstances {
 
-        private final Class<? extends TacIO.LinkIO> cls;
+        private final Class<? extends LinkIO> cls;
         private final String data;
         private final Link link;
 
-        public LinkIORegressionInstances(Class<? extends TacIO.LinkIO> cls, String data, Link link) {
+        public LinkIORegressionInstances(Class<? extends LinkIO> cls, String data, Link link) {
             this.cls = cls;
             this.data = data;
             this.link = link;
@@ -49,44 +50,45 @@ public class TacIOTest {
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
                     {
-                            TacIO.Tac2010LinkIO.class,
+                            Tac2010LinkIO.class,
                             "EL000281\tNIL0001\tGPE\tNO\tWL",
                             new Link("EL000281", "NIL0001", EntityType.GPE, false, Genre.WB)
                     },
                     {
-                            TacIO.Tac2010LinkIO.class,
+                            Tac2010LinkIO.class,
                             "EL001344\tE0374684\tGPE\tYES\tWL",
                             new Link("EL001344", "E0374684", EntityType.GPE, true, Genre.WB)
                     },
                     {
-                            TacIO.Tac2009LinkIO.class,
+                            Tac2009LinkIO.class,
                             "EL1\tNIL0001\tPER",
                             new Link("EL1", "NIL0001", EntityType.PER, true, Genre.NW)
                     },
                     {
-                            TacIO.Tac2009LinkIO.class,
+                            Tac2009LinkIO.class,
                             "EL05306\tE0421536\tORG",
                             new Link("EL05306", "E0421536", EntityType.ORG, true, Genre.NW)
                     },
                     {
-                            TacIO.Tac2012LinkIO.class,
+                            Tac2012LinkIO.class,
                             "EL_ENG_00001\tE0800145\tPER\tWB\tNO",
                             new Link("EL_ENG_00001", "E0800145", EntityType.PER, false, Genre.WB)
                     },
             });
         }
 
+
         @Test
-        public void testReadLink() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
-            final TacIO.LinkIO instance = cls.newInstance();
+        public void testRead() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+            final LinkIO instance = cls.newInstance();
             final List<Link> links = instance.readAll(new StringReader(data));
             assertTrue(links.size() == 1);
             assertEquals(link, links.get(0));
         }
 
         @Test
-        public void testWriteLink() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
-            final TacIO.LinkIO instance = cls.newInstance();
+        public void testWrite() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+            final LinkIO instance = cls.newInstance();
             final StringWriter writer = new StringWriter();
             instance.writeAll(writer, ImmutableList.of(link));
             assertEquals(data.trim(), writer.toString().trim());
@@ -99,14 +101,14 @@ public class TacIOTest {
      */
     @RunWith(Parameterized.class)
     public static class DataFileTests extends AbstractTest {
-        private final Class<? extends TacIO.QueryIO> queryIoClass;
-        private final Class<? extends TacIO.LinkIO> linkIoClass;
+        private final Class<? extends QueryIO> queryIoClass;
+        private final Class<? extends LinkIO> linkIoClass;
         private final String queriesFileName;
         private final String linksFileName;
         private final int expectedSize;
 
-        public DataFileTests(Class<? extends TacIO.QueryIO> queryIoClass,
-                             Class<? extends TacIO.LinkIO> linkIoClass,
+        public DataFileTests(Class<? extends QueryIO> queryIoClass,
+                             Class<? extends LinkIO> linkIoClass,
                              String queriesFileName, String linksFileName, int expectedSize) {
             this.queryIoClass = queryIoClass;
             this.linkIoClass = linkIoClass;
@@ -119,29 +121,29 @@ public class TacIOTest {
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
                     {
-                            TacIO.Tac2012QueryIO.class,
-                            TacIO.Tac2012LinkIO.class,
+                            Tac2012QueryIO.class,
+                            Tac2012LinkIO.class,
                             "tac_2012_kbp_english_evaluation_entity_linking_queries.xml",
                             "tac_2012_kbp_english_evaluation_entity_linking_query_types.tab",
                             2226
                     },
                     {
-                            TacIO.Tac2009QueryIO.class,
-                            TacIO.Tac2009LinkIO.class,
+                            Tac2009QueryIO.class,
+                            Tac2009LinkIO.class,
                             "tac_2009_kbp_entity_linking_queries.xml",
                             "tac_2009_kbp_entity_linking_query_types.tab",
                             3904
                     },
                     {
-                            TacIO.Tac2010QueryIO.class,
-                            TacIO.Tac2010LinkIO.class,
+                            Tac2010QueryIO.class,
+                            Tac2010LinkIO.class,
                             "tac_2010_kbp_evaluation_entity_linking_queries.xml",
                             "tac_2010_kbp_evaluation_entity_linking_query_types.tab",
                             2250
                     },
                     {
-                            TacIO.Tac2010QueryIO.class,
-                            TacIO.Tac2009LinkIO.class,
+                            Tac2010QueryIO.class,
+                            Tac2009LinkIO.class,
                             "tac_2010_kbp_training_entity_linking_queries.xml",
                             "tac_2010_kbp_training_entity_linking_query_types.tab",
                             1500
@@ -149,7 +151,7 @@ public class TacIOTest {
             });
         }
 
-        private static List<Link> doReadLinks(TacIO.LinkIO instance, File linksFile) throws ParsingException, IOException {
+        private static List<Link> doReadLinks(LinkIO instance, File linksFile) throws ParsingException, IOException {
             final List<Link> links = instance.readAll(linksFile);
             assertNotNull(links);
             assertFalse(links.isEmpty());
@@ -157,7 +159,7 @@ public class TacIOTest {
             return links;
         }
 
-        private static List<Query> doReadQueries(TacIO.QueryIO instance, File queriesFile) throws ParsingException, IOException {
+        private static List<Query> doReadQueries(QueryIO instance, File queriesFile) throws ParsingException, IOException {
             final List<Query> queries = instance.readAll(queriesFile);
             assertNotNull(queries);
             assertFalse(queries.isEmpty());
@@ -215,12 +217,12 @@ public class TacIOTest {
 
         @Test
         public void testDetectFormatFromQueries() throws ParsingException, IOException {
-            assertEquals(queryIoClass, TacIO.detectFormatFromQueries(getQueryFile()).getClass());
+            assertEquals(queryIoClass, QueryIO.detectFormat(getQueryFile()).getClass());
         }
 
         @Test
         public void testDetectFormatFromLinks() throws ParsingException, IOException {
-            assertEquals(linkIoClass, TacIO.detectFormatFromLinks(getLinkFile()).getClass());
+            assertEquals(linkIoClass, QueryIO.detectFormat(getLinkFile()).getClass());
         }
 
     }
