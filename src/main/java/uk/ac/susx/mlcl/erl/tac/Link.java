@@ -79,7 +79,7 @@ public class Link {
         return entityType;
     }
 
-    public Boolean getWebSearch() {
+    public boolean isWebSearch() {
         return webSearch.get();
     }
 
