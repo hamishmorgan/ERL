@@ -1,5 +1,6 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
+import com.google.common.io.Closer;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.tac.Query;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -32,16 +34,28 @@ public abstract class QueryIO implements BaseIO<Query> {
 
     public static QueryIO detectFormat(URL queriesUrl) throws ParsingException, IOException {
         LOG.debug("Detecting format from queries url: {}", queriesUrl);
-        Builder parser = new Builder();
-        return detectFormat(parser.build(queriesUrl.openStream()));
+        final Builder parser = new Builder();
+        final Closer closer = Closer.create();
+        try {
+            return detectFormat(parser.build(
+                    closer.register(new BufferedInputStream(
+                            closer.register(queriesUrl.openStream())))));
+        } catch (ParsingException e) {
+            throw closer.rethrow(e, ParsingException.class);
+        } catch (Throwable t) {
+            throw closer.rethrow(t);
+        } finally {
+            closer.close();
+        }
     }
 
     public static QueryIO detectFormat(Reader queriesReader) throws ParsingException, IOException {
-        Builder parser = new Builder();
+        final Builder parser = new Builder();
         return detectFormat(parser.build(queriesReader));
     }
 
     private static QueryIO detectFormat(Document doc) {
+        LOG.debug("Detecting format from document: {}", doc);
         final Element child = doc.getRootElement().getFirstChildElement(Tac2009QueryIO.QUERY_ELEM_NAME);
 
         final QueryIO format;

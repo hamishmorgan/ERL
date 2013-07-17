@@ -1,6 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.Closer;
 import nu.xom.*;
 import org.eclipse.jetty.io.WriterOutputStream;
 import org.slf4j.Logger;
@@ -34,23 +35,34 @@ public class Tac2009QueryIO extends QueryIO {
     @Override
     public List<Query> readAll(File queriesFile) throws ParsingException, IOException {
         LOG.debug("Reading queries from file: {}", queriesFile);
-        Builder parser = new Builder();
-        Document doc = parser.build(queriesFile);
+        final Builder parser = new Builder();
+        final Document doc = parser.build(queriesFile);
         return readAll(doc);
     }
 
     @Override
     public List<Query> readAll(URL url) throws ParsingException, IOException {
         LOG.debug("Reading queries from url: {}", url);
-        Builder parser = new Builder();
-        Document doc = parser.build(url.openStream());
-        return readAll(doc);
+        final Builder parser = new Builder();
+        final Closer closer = Closer.create();
+        try {
+            final Document doc = parser.build(
+                    closer.register(new BufferedInputStream(
+                            closer.register(url.openStream()))));
+            return readAll(doc);
+        } catch (ParsingException e) {
+            throw closer.rethrow(e, ParsingException.class);
+        } catch (Throwable t) {
+            throw closer.rethrow(t);
+        } finally {
+            closer.close();
+        }
     }
 
     @Override
     public List<Query> readAll(Reader queriesReader) throws ParsingException, IOException {
-        Builder parser = new Builder();
-        Document doc = parser.build(queriesReader);
+        final Builder parser = new Builder();
+        final Document doc = parser.build(queriesReader);
         return readAll(doc);
     }
 
@@ -89,10 +101,18 @@ public class Tac2009QueryIO extends QueryIO {
     @Override
     public void writeAll(File file, List<Query> queries) throws IOException {
         LOG.debug(MessageFormat.format("Writing queries to file: {0}", file));
-        XomUtil.writeDocument(
-                toXmlDocument(queries),
-                new FileOutputStream(file),
-                Charset.forName("UTF-8"));
+        final Closer closer = Closer.create();
+        try {
+            XomUtil.writeDocument(
+                    toXmlDocument(queries),
+                    closer.register(new BufferedOutputStream(
+                            closer.register(new FileOutputStream(file)))),
+                    Charset.forName("UTF-8"));
+        } catch (Throwable t) {
+            throw closer.rethrow(t);
+        } finally {
+            closer.close();
+        }
     }
 
     @Override
@@ -101,21 +121,31 @@ public class Tac2009QueryIO extends QueryIO {
         if (url.getProtocol().equalsIgnoreCase("file")) {
             writeAll(new File(url.toURI()), queries);
         } else {
-            URLConnection con = url.openConnection();
-            con.setDoOutput(true);
-            XomUtil.writeDocument(
-                    toXmlDocument(queries),
-                    con.getOutputStream(),
-                    Charset.forName("UTF-8"));
+            final Closer closer = Closer.create();
+            try {
+                URLConnection con = url.openConnection();
+                con.setDoOutput(true);
+                XomUtil.writeDocument(
+                        toXmlDocument(queries),
+                        closer.register(new BufferedOutputStream(
+                                closer.register(con.getOutputStream()))),
+                        Charset.forName("UTF-8"));
+            } catch (Throwable t) {
+                throw closer.rethrow(t);
+            } finally {
+                closer.close();
+            }
         }
     }
 
     @Override
     public void writeAll(Writer queriesWriter, List<Query> queries) throws IOException {
-        XomUtil.writeDocument(
-                toXmlDocument(queries),
-                new WriterOutputStream(queriesWriter, "UTF-8"),
-                Charset.forName("UTF-8"));
+        final OutputStream out = new WriterOutputStream(queriesWriter, "UTF-8");
+        try {
+            XomUtil.writeDocument(toXmlDocument(queries), out, Charset.forName("UTF-8"));
+        } finally {
+            out.flush();
+        }
     }
 
     XomB.ElementBuilder formatQuery(XomB x, Query query) {
