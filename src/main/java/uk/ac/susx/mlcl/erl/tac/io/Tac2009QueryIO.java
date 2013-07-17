@@ -54,7 +54,7 @@ public class Tac2009QueryIO extends QueryIO {
         return readAll(doc);
     }
 
-    List<Query> readAll(Document doc) throws ParsingException, IOException {
+    List<Query> readAll(Document doc) {
         LOG.debug("doc={0}, baseURI={1}, docType={2}, rootElement={0}",
                 doc, doc.getBaseURI(), doc.getDocType(), doc.getRootElement());
 

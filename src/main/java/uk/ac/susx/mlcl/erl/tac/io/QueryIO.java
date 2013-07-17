@@ -41,7 +41,7 @@ public abstract class QueryIO implements BaseIO<Query> {
         return detectFormat(parser.build(queriesReader));
     }
 
-    static QueryIO detectFormat(Document doc) throws ParsingException, IOException {
+    private static QueryIO detectFormat(Document doc) {
         final Element child = doc.getRootElement().getFirstChildElement(Tac2009QueryIO.QUERY_ELEM_NAME);
 
         final QueryIO format;
