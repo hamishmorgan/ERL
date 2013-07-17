@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.tac.Link;
 
 import java.io.*;
+import java.net.URL;
+import java.util.Arrays;
 
 /**
  * Base class for reading and writing to entity links tabular files.
@@ -22,6 +24,22 @@ public abstract class LinkIO implements BaseIO<Link> {
     static final String CSV_LINE_END = System.getProperty("line.separator");
     static final int CSV_SKIP_LINES = 0;
     private static final Logger LOG = LoggerFactory.getLogger(LinkIO.class);
+
+    public static LinkIO detectFormat(final URL linksUrl) throws IOException {
+        LOG.debug("Detecting format from links url: {}", linksUrl);
+
+        final Closer closer = Closer.create();
+        try {
+            return detectFormat(
+                    closer.register(new BufferedReader(
+                            closer.register(new InputStreamReader(
+                                    closer.register(linksUrl.openStream()))))));
+        } catch (Throwable e) {
+            throw closer.rethrow(e);
+        } finally {
+            closer.close();
+        }
+    }
 
     public static LinkIO detectFormat(final File linksFile) throws IOException {
         LOG.debug("Detecting format from links file: {}", linksFile);
@@ -60,7 +78,8 @@ public abstract class LinkIO implements BaseIO<Link> {
                 throw new AssertionError("Expected either columns 4 or 5 to be web");
             }
         } else {
-            throw new AssertionError("Expected exactly 3 or 5 links, but found " + values.length);
+            throw new AssertionError("Expected exactly 3 or 5 links, but found " + values.length + ", in values "
+                    + Arrays.toString(values));
         }
 
         LOG.debug("Detected format: {}", format);

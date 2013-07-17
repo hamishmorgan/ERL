@@ -1,19 +1,25 @@
-package uk.ac.susx.mlcl.erl.tac;
+package uk.ac.susx.mlcl.erl.tac.io;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Resources;
 import nu.xom.ParsingException;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.susx.mlcl.erl.tac.io.*;
+import uk.ac.susx.mlcl.erl.tac.EntityType;
+import uk.ac.susx.mlcl.erl.tac.Genre;
+import uk.ac.susx.mlcl.erl.tac.Link;
+import uk.ac.susx.mlcl.erl.tac.Query;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -27,11 +33,13 @@ import static org.junit.Assert.*;
  */
 @RunWith(Enclosed.class)
 public class TacIOTest {
-    private static final File DATA_DIR = new File("/Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/Data");
+
+    //    private static final File DATA_DIR = new File("/Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/repo/src/test/resources/uk/ac/susx/mlcl/erl/tac/io");
     private static final File OUTPUT_DIR = new File("/Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/Data/out");
 
     static {
     }
+
     /**
      * Focused regression tests that check specific instance of links.
      */
@@ -259,12 +267,28 @@ public class TacIOTest {
             });
         }
 
+        private static List<Link> doReadLinks(LinkIO instance, URL linksURL) throws ParsingException, IOException {
+            final List<Link> links = instance.readAll(linksURL);
+            assertNotNull(links);
+            assertFalse(links.isEmpty());
+            assertThat(ImmutableSet.copyOf(links).size(), is(equalTo(links.size())));
+            return links;
+        }
+
         private static List<Link> doReadLinks(LinkIO instance, File linksFile) throws ParsingException, IOException {
             final List<Link> links = instance.readAll(linksFile);
             assertNotNull(links);
             assertFalse(links.isEmpty());
             assertThat(ImmutableSet.copyOf(links).size(), is(equalTo(links.size())));
             return links;
+        }
+
+        private static List<Query> doReadQueries(QueryIO instance, URL queriesUrl) throws ParsingException, IOException {
+            final List<Query> queries = instance.readAll(queriesUrl);
+            assertNotNull(queries);
+            assertFalse(queries.isEmpty());
+            assertThat(ImmutableSet.copyOf(queries).size(), is(equalTo(queries.size())));
+            return queries;
         }
 
         private static List<Query> doReadQueries(QueryIO instance, File queriesFile) throws ParsingException, IOException {
@@ -275,30 +299,68 @@ public class TacIOTest {
             return queries;
         }
 
-        public File getQueryFile() {
-            return new File(DATA_DIR, queriesFileName);
+        public File getQueryFile() throws URISyntaxException {
+            return new File(getQueryUrl().toURI());
         }
 
-        public File getLinkFile() {
-            return new File(DATA_DIR, linksFileName);
+        public URL getQueryUrl() {
+            return Resources.getResource(TacIOTest.class, queriesFileName);
+        }
+
+        public File getLinksFile() throws URISyntaxException {
+            return new File(getLinksUrl().toURI());
+        }
+
+        public URL getLinksUrl() {
+            return Resources.getResource(TacIOTest.class, linksFileName);
         }
 
         @Test
-        public void testReadLinks() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
-            final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinkFile());
+        public void testReadLinksUrl() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+            final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinksUrl());
             assertThat(links.size(), is(equalTo(expectedSize)));
         }
 
         @Test
-        public void testDetectAndReadLinks() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
-            final List<Link> links = doReadLinks(LinkIO.detectFormat(getLinkFile()), getLinkFile());
+        public void testDetectAndReadLinksUrl() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+            final List<Link> links = doReadLinks(LinkIO.detectFormat(getLinksUrl()), getLinksUrl());
             assertThat(links.size(), is(equalTo(expectedSize)));
         }
 
         @Test
-        public void testWriteLinks() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
-            final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinkFile());
+        public void testWriteLinksUrl() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
+            final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinksUrl());
             final File dstFile = new File(OUTPUT_DIR, linksFileName);
+            dstFile.deleteOnExit();
+            final URL dstURL = dstFile.toURI().toURL();
+
+            linkIoClass.newInstance().writeAll(dstURL, links);
+
+            assertTrue(dstFile.exists());
+            assertTrue(dstFile.length() > 0);
+
+            final List<Link> links2 = doReadLinks(linkIoClass.newInstance(), dstURL);
+            assertEquals(links, links2);
+        }
+
+
+        @Test
+        public void testReadLinksFile() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
+            final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinksFile());
+            assertThat(links.size(), is(equalTo(expectedSize)));
+        }
+
+        @Test
+        public void testDetectAndReadLinksFile() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
+            final List<Link> links = doReadLinks(LinkIO.detectFormat(getLinksFile()), getLinksFile());
+            assertThat(links.size(), is(equalTo(expectedSize)));
+        }
+
+        @Test
+        public void testWriteLinksFile() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
+            final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinksFile());
+            final File dstFile = new File(OUTPUT_DIR, linksFileName);
+            dstFile.deleteOnExit();
 
             linkIoClass.newInstance().writeAll(dstFile, links);
 
@@ -310,21 +372,50 @@ public class TacIOTest {
         }
 
         @Test
-        public void testReadQueries() throws IllegalAccessException, InstantiationException, ParsingException, IOException {
+        public void testReadQueriesUrl() throws IllegalAccessException, InstantiationException, ParsingException, IOException {
+            final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryUrl());
+            assertThat(queries.size(), is(equalTo(expectedSize)));
+        }
+
+        @Test
+        public void testDetectAndReadQueriesUrl() throws IllegalAccessException, InstantiationException, ParsingException, IOException {
+            final List<Query> queries = doReadQueries(QueryIO.detectFormat(getQueryUrl()), getQueryUrl());
+            assertThat(queries.size(), is(equalTo(expectedSize)));
+        }
+
+        @Test
+        public void testWriteQueriesUrl() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
+            final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryUrl());
+            final File dstFile = new File(OUTPUT_DIR, queriesFileName);
+            dstFile.deleteOnExit();
+            final URL dstURL = dstFile.toURI().toURL();
+
+            queryIoClass.newInstance().writeAll(dstURL, queries);
+
+            assertTrue(dstFile.exists());
+            assertTrue(dstFile.length() > 0);
+
+            final List<Query> queries2 = doReadQueries(queryIoClass.newInstance(), dstURL);
+            assertEquals(queries, queries2);
+        }
+
+        @Test
+        public void testReadQueriesFile() throws IllegalAccessException, InstantiationException, ParsingException, IOException, URISyntaxException {
             final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryFile());
             assertThat(queries.size(), is(equalTo(expectedSize)));
         }
 
         @Test
-        public void testDetectAndReadQueries() throws IllegalAccessException, InstantiationException, ParsingException, IOException {
+        public void testDetectAndReadQueriesFile() throws IllegalAccessException, InstantiationException, ParsingException, IOException, URISyntaxException {
             final List<Query> queries = doReadQueries(QueryIO.detectFormat(getQueryFile()), getQueryFile());
             assertThat(queries.size(), is(equalTo(expectedSize)));
         }
 
         @Test
-        public void testWriteQueries() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+        public void testWriteQueriesFile() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
             final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryFile());
             final File dstFile = new File(OUTPUT_DIR, queriesFileName);
+            dstFile.deleteOnExit();
 
             queryIoClass.newInstance().writeAll(dstFile, queries);
 
@@ -336,13 +427,23 @@ public class TacIOTest {
         }
 
         @Test
-        public void testDetectFormatFromQueries() throws ParsingException, IOException {
+        public void testDetectFormatFromQueriesUrl() throws ParsingException, IOException {
+            assertEquals(queryIoClass, QueryIO.detectFormat(getQueryUrl()).getClass());
+        }
+
+        @Test
+        public void testDetectFormatFromQueriesFile() throws ParsingException, IOException, URISyntaxException {
             assertEquals(queryIoClass, QueryIO.detectFormat(getQueryFile()).getClass());
         }
 
         @Test
-        public void testDetectFormatFromLinks() throws ParsingException, IOException {
-            assertEquals(linkIoClass, LinkIO.detectFormat(getLinkFile()).getClass());
+        public void testDetectFormatFromLinksUrl() throws ParsingException, IOException {
+            assertEquals(linkIoClass, LinkIO.detectFormat(getLinksUrl()).getClass());
+        }
+
+        @Test
+        public void testDetectFormatFromLinksFile() throws ParsingException, IOException, URISyntaxException {
+            assertEquals(linkIoClass, LinkIO.detectFormat(getLinksFile()).getClass());
         }
 
     }

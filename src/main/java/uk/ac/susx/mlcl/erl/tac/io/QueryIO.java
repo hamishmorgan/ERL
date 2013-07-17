@@ -11,6 +11,7 @@ import uk.ac.susx.mlcl.erl.tac.Query;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 import java.util.regex.Pattern;
 
 /**
@@ -27,6 +28,12 @@ public abstract class QueryIO implements BaseIO<Query> {
         LOG.debug("Detecting format from queries file: {}", queriesFile);
         Builder parser = new Builder();
         return detectFormat(parser.build(queriesFile));
+    }
+
+    public static QueryIO detectFormat(URL queriesUrl) throws ParsingException, IOException {
+        LOG.debug("Detecting format from queries url: {}", queriesUrl);
+        Builder parser = new Builder();
+        return detectFormat(parser.build(queriesUrl.openStream()));
     }
 
     public static QueryIO detectFormat(Reader queriesReader) throws ParsingException, IOException {

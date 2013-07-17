@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -17,9 +19,13 @@ public interface BaseIO<T> {
 
     void writeAll(File file, List<T> items) throws IOException;
 
+    void writeAll(URL url, List<T> items) throws IOException, URISyntaxException;
+
     void writeAll(Writer writer, List<T> items) throws IOException;
 
     List<T> readAll(File file) throws ParsingException, IOException;
+
+    List<T> readAll(URL url) throws ParsingException, IOException;
 
     List<T> readAll(Reader reader) throws ParsingException, IOException;
 

@@ -10,7 +10,11 @@ import uk.ac.susx.mlcl.erl.xml.XomB;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -29,9 +33,17 @@ public class Tac2009QueryIO extends QueryIO {
 
     @Override
     public List<Query> readAll(File queriesFile) throws ParsingException, IOException {
-        LOG.debug("Reading queries file: {}", queriesFile);
+        LOG.debug("Reading queries from file: {}", queriesFile);
         Builder parser = new Builder();
         Document doc = parser.build(queriesFile);
+        return readAll(doc);
+    }
+
+    @Override
+    public List<Query> readAll(URL url) throws ParsingException, IOException {
+        LOG.debug("Reading queries from url: {}", url);
+        Builder parser = new Builder();
+        Document doc = parser.build(url.openStream());
         return readAll(doc);
     }
 
@@ -76,10 +88,26 @@ public class Tac2009QueryIO extends QueryIO {
 
     @Override
     public void writeAll(File file, List<Query> queries) throws IOException {
+        LOG.debug(MessageFormat.format("Writing queries to file: {0}", file));
         XomUtil.writeDocument(
                 toXmlDocument(queries),
                 new FileOutputStream(file),
                 Charset.forName("UTF-8"));
+    }
+
+    @Override
+    public void writeAll(URL url, List<Query> queries) throws IOException, URISyntaxException {
+        LOG.debug(MessageFormat.format("Writing queries to url: {0}", url));
+        if (url.getProtocol().equalsIgnoreCase("file")) {
+            writeAll(new File(url.toURI()), queries);
+        } else {
+            URLConnection con = url.openConnection();
+            con.setDoOutput(true);
+            XomUtil.writeDocument(
+                    toXmlDocument(queries),
+                    con.getOutputStream(),
+                    Charset.forName("UTF-8"));
+        }
     }
 
     @Override

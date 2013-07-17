@@ -12,6 +12,9 @@ import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.Link;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 /**
@@ -62,6 +65,26 @@ public class Tac2009LinkIO extends LinkIO {
     }
 
     @Override
+    public List<Link> readAll(URL linksUrl) throws ParsingException, IOException {
+        LOG.debug("Reading links url: {}", linksUrl);
+
+        final Closer closer = Closer.create();
+        try {
+            final Reader reader =
+                    closer.register(new BufferedReader(
+                            closer.register(new InputStreamReader(
+                                    closer.register(linksUrl.openStream())))));
+            return readAll(reader);
+        } catch (ParsingException e) {
+            throw closer.rethrow(e, ParsingException.class);
+        } catch (Throwable e) {
+            throw closer.rethrow(e);
+        } finally {
+            closer.close();
+        }
+    }
+
+    @Override
     public void writeAll(Writer linksWriter, List<Link> links) throws IOException {
         final CSVWriter writer = new CSVWriter(linksWriter,
                 CSV_SEPARATOR, CSV_QUOTE_CHAR, CSV_ESCAPE_CHAR, CSV_LINE_END);
@@ -88,6 +111,29 @@ public class Tac2009LinkIO extends LinkIO {
             throw closer.rethrow(e);
         } finally {
             closer.close();
+        }
+    }
+
+    @Override
+    public void writeAll(URL linksUrl, List<Link> links) throws IOException, URISyntaxException {
+        LOG.debug("Writing links to file: {}", linksUrl);
+        if (linksUrl.getProtocol().equalsIgnoreCase("file")) {
+            writeAll(new File(linksUrl.toURI()), links);
+        } else {
+            final Closer closer = Closer.create();
+            try {
+                URLConnection con = linksUrl.openConnection();
+                con.setDoOutput(true);
+                final Writer writer =
+                        closer.register(new BufferedWriter(
+                                closer.register(new OutputStreamWriter(
+                                        closer.register(con.getOutputStream())))));
+                writeAll(writer, links);
+            } catch (Throwable e) {
+                throw closer.rethrow(e);
+            } finally {
+                closer.close();
+            }
         }
     }
 
