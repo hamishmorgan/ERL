@@ -45,7 +45,10 @@ public abstract class QueryIO {
         } else {
             final String id = child.getAttribute("id").getValue();
             if (id.matches("^EL[\\d]{5,6}$"))
-                format = new Tac2010QueryIO();
+                if (child.getFirstChildElement("entity") != null)
+                    format = new Tac2010GoldQueryIO();
+                else
+                    format = new Tac2010QueryIO();
             else
                 format = new Tac2009QueryIO();
         }

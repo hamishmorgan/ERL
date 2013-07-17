@@ -30,11 +30,13 @@ public class TacIOTest {
     private static final File DATA_DIR = new File("/Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/Data");
     private static final File OUTPUT_DIR = new File("/Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/Data/out");
 
+    static {
+    }
     /**
      * Focused regression tests that check specific instance of links.
      */
     @RunWith(Parameterized.class)
-    public static class LinkIORegressionInstances {
+    public static class LinkIORegressionInstances extends AbstractTest {
 
         private final Class<? extends LinkIO> cls;
         private final String data;
@@ -141,18 +143,18 @@ public class TacIOTest {
                                     "</kbpentlink>\n",
                             new Query("EL001125", "El Salvador", "eng-NG-31-142693-10076185")
                     },
-//                    {
-//                            Tac2010QueryIO.class,
-//                            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-//                                    "<kbpentlink xml:base=\"\">\n" +
-//                                    "   <query id=\"EL10345\">\n" +
-//                                    "    <name>FDIC</name>\n" +
-//                                    "    <docid>eng-WL-11-174606-12978493</docid>\n" +
-//                                    "    <entity>E0348440</entity>\n" +
-//                                    "  </query>\n" +
-//                                    "</kbpentlink>\n",
-//                            new Query("EL10345", "FDIC", "eng-WL-11-174606-12978493")
-//                    },
+                    {
+                            Tac2010GoldQueryIO.class,
+                            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                    "<kbpentlink xml:base=\"\">\n" +
+                                    "   <query id=\"EL10345\">\n" +
+                                    "    <name>FDIC</name>\n" +
+                                    "    <docid>eng-WL-11-174606-12978493</docid>\n" +
+                                    "    <entity>E0348440</entity>\n" +
+                                    "  </query>\n" +
+                                    "</kbpentlink>\n",
+                            new Query("EL10345", "FDIC", "eng-WL-11-174606-12978493", "E0348440")
+                    },
                     {
                             Tac2012QueryIO.class,
                             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -172,6 +174,14 @@ public class TacIOTest {
         @Test
         public void testDetectFormat() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
             assertEquals(cls, QueryIO.detectFormat(new StringReader(data)).getClass());
+        }
+
+        @Test
+        public void testDetectAndRead() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+            final QueryIO instance = QueryIO.detectFormat(new StringReader(data));
+            final List<Query> links = instance.readAll(new StringReader(data));
+            assertTrue(links.size() == 1);
+            assertEquals(query, links.get(0));
         }
 
         @Test
@@ -240,7 +250,7 @@ public class TacIOTest {
                             2250
                     },
                     {
-                            Tac2010QueryIO.class,
+                            Tac2010GoldQueryIO.class,
                             Tac2009LinkIO.class,
                             "tac_2010_kbp_training_entity_linking_queries.xml",
                             "tac_2010_kbp_training_entity_linking_query_types.tab",
@@ -280,6 +290,12 @@ public class TacIOTest {
         }
 
         @Test
+        public void testDetectAndReadLinks() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+            final List<Link> links = doReadLinks(LinkIO.detectFormat(getLinkFile()), getLinkFile());
+            assertThat(links.size(), is(equalTo(expectedSize)));
+        }
+
+        @Test
         public void testWriteLinks() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
             final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinkFile());
             final File dstFile = new File(OUTPUT_DIR, linksFileName);
@@ -296,6 +312,12 @@ public class TacIOTest {
         @Test
         public void testReadQueries() throws IllegalAccessException, InstantiationException, ParsingException, IOException {
             final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryFile());
+            assertThat(queries.size(), is(equalTo(expectedSize)));
+        }
+
+        @Test
+        public void testDetectAndReadQueries() throws IllegalAccessException, InstantiationException, ParsingException, IOException {
+            final List<Query> queries = doReadQueries(QueryIO.detectFormat(getQueryFile()), getQueryFile());
             assertThat(queries.size(), is(equalTo(expectedSize)));
         }
 

@@ -28,26 +28,35 @@ public class Query {
     private final String docId;
     @Nonnull
     private final Optional<Span> span;
+    @Nonnull
+    private final Optional<String> entityNodeId;
 
-    private Query(final String id, final String name, final String docId, final Optional<Span> span) {
+    private Query(final String id, final String name, final String docId,
+                  final Optional<Span> span, Optional<String> entityNodeId) {
         checkNotNull(id, "id");
         checkNotNull(name, "name");
         checkNotNull(docId, "docId");
         checkNotNull(span, "span");
+        checkNotNull(entityNodeId, "entityNodeId");
         this.id = id;
         this.name = name;
         this.docId = docId;
         this.span = span;
+        this.entityNodeId = entityNodeId;
     }
 
 
     public Query(final String id, final String name, final String docId, final int beg, final int end) {
-        this(id, name, docId, Optional.of(new Span(beg, end)));
+        this(id, name, docId, Optional.of(new Span(beg, end)), Optional.<String>absent());
         checkElementIndex(beg, end);
     }
 
+    public Query(final String id, final String name, final String docId, final String entityNodeId) {
+        this(id, name, docId, Optional.<Span>absent(), Optional.of(entityNodeId));
+    }
+
     public Query(final String id, final String name, final String docId) {
-        this(id, name, docId, Optional.<Span>absent());
+        this(id, name, docId, Optional.<Span>absent(), Optional.<String>absent());
     }
 
     public String getId() {
@@ -74,11 +83,27 @@ public class Query {
         return span.get().end();
     }
 
+    @Nonnull
+    public Span getSpan() {
+        return span.get();
+    }
+
+    @Nonnull
+    public String getEntityNodeId() {
+        return entityNodeId.get();
+    }
+
+    public boolean isEntityNodeIdSet() {
+        return entityNodeId.isPresent();
+    }
+
     @Override
     public String toString() {
         return format("{0}'{'id={1}, name={2}, docId={3}, span={4}'}'",
                 this.getClass().getSimpleName(),
-                getId(), getName(), getDocId(), span.isPresent() ? span.get() : "unset");
+                getId(), getName(), getDocId(),
+                isSpanSet() ? getSpan() : "<not set>",
+                isEntityNodeIdSet() ? getEntityNodeId() : "<not set>");
     }
 
     @Override
@@ -89,6 +114,7 @@ public class Query {
         Query query = (Query) o;
 
         if (!docId.equals(query.docId)) return false;
+        if (!entityNodeId.equals(query.entityNodeId)) return false;
         if (!id.equals(query.id)) return false;
         if (!name.equals(query.name)) return false;
         if (!span.equals(query.span)) return false;
@@ -102,6 +128,7 @@ public class Query {
         result = 31 * result + name.hashCode();
         result = 31 * result + docId.hashCode();
         result = 31 * result + span.hashCode();
+        result = 31 * result + entityNodeId.hashCode();
         return result;
     }
 }
