@@ -123,7 +123,7 @@ public class Tac2009QueryIO extends QueryIO {
         } else {
             final Closer closer = Closer.create();
             try {
-                URLConnection con = url.openConnection();
+                final URLConnection con = url.openConnection();
                 con.setDoOutput(true);
                 XomUtil.writeDocument(
                         toXmlDocument(queries),
