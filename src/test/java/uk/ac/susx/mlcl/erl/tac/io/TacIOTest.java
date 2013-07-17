@@ -34,12 +34,6 @@ import static org.junit.Assert.*;
 @RunWith(Enclosed.class)
 public class TacIOTest {
 
-    //    private static final File DATA_DIR = new File("/Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/repo/src/test/resources/uk/ac/susx/mlcl/erl/tac/io");
-    private static final File OUTPUT_DIR = new File("/Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/Data/out");
-
-    static {
-    }
-
     /**
      * Focused regression tests that check specific instance of links.
      */
@@ -128,6 +122,7 @@ public class TacIOTest {
 
         @Parameterized.Parameters(name = "{index}: {0}")
         public static Collection<Object[]> data() {
+            // noinspection HardcodedLineSeparator
             return Arrays.asList(new Object[][]{
                     {
                             Tac2009QueryIO.class,
@@ -327,22 +322,26 @@ public class TacIOTest {
             assertThat(links.size(), is(equalTo(expectedSize)));
         }
 
+        File newTempFile() throws IOException {
+            final File tmpFile = File.createTempFile(this.getClass().getName(), ".tmp");
+            tmpFile.deleteOnExit();
+            return tmpFile;
+        }
+
+        URL newTempUrl() throws IOException {
+            return newTempFile().toURI().toURL();
+        }
+
         @Test
         public void testWriteLinksUrl() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
             final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinksUrl());
-            final File dstFile = new File(OUTPUT_DIR, linksFileName);
-            dstFile.deleteOnExit();
-            final URL dstURL = dstFile.toURI().toURL();
+            final URL dstURL = newTempUrl();
 
             linkIoClass.newInstance().writeAll(dstURL, links);
-
-            assertTrue(dstFile.exists());
-            assertTrue(dstFile.length() > 0);
 
             final List<Link> links2 = doReadLinks(linkIoClass.newInstance(), dstURL);
             assertEquals(links, links2);
         }
-
 
         @Test
         public void testReadLinksFile() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
@@ -359,8 +358,7 @@ public class TacIOTest {
         @Test
         public void testWriteLinksFile() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
             final List<Link> links = doReadLinks(linkIoClass.newInstance(), getLinksFile());
-            final File dstFile = new File(OUTPUT_DIR, linksFileName);
-            dstFile.deleteOnExit();
+            final File dstFile = newTempFile();
 
             linkIoClass.newInstance().writeAll(dstFile, links);
 
@@ -386,14 +384,9 @@ public class TacIOTest {
         @Test
         public void testWriteQueriesUrl() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
             final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryUrl());
-            final File dstFile = new File(OUTPUT_DIR, queriesFileName);
-            dstFile.deleteOnExit();
-            final URL dstURL = dstFile.toURI().toURL();
+            final URL dstURL = newTempUrl();
 
             queryIoClass.newInstance().writeAll(dstURL, queries);
-
-            assertTrue(dstFile.exists());
-            assertTrue(dstFile.length() > 0);
 
             final List<Query> queries2 = doReadQueries(queryIoClass.newInstance(), dstURL);
             assertEquals(queries, queries2);
@@ -414,8 +407,7 @@ public class TacIOTest {
         @Test
         public void testWriteQueriesFile() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {
             final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryFile());
-            final File dstFile = new File(OUTPUT_DIR, queriesFileName);
-            dstFile.deleteOnExit();
+            final File dstFile = newTempFile();
 
             queryIoClass.newInstance().writeAll(dstFile, queries);
 
