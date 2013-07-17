@@ -157,6 +157,14 @@ public class TacIOTest {
             return links;
         }
 
+        private static List<Query> doReadQueries(TacIO.QueryIO instance, File queriesFile) throws ParsingException, IOException {
+            final List<Query> queries = instance.readAll(queriesFile);
+            assertNotNull(queries);
+            assertFalse(queries.isEmpty());
+            assertThat(ImmutableSet.copyOf(queries).size(), is(equalTo(queries.size())));
+            return queries;
+        }
+
         public File getQueryFile() {
             return new File(DATA_DIR, queriesFileName);
         }
@@ -187,11 +195,22 @@ public class TacIOTest {
 
         @Test
         public void testReadQueries() throws IllegalAccessException, InstantiationException, ParsingException, IOException {
-            final List<Query> result = queryIoClass.newInstance().readAll(getQueryFile());
-            assertNotNull(result);
-            assertFalse(result.isEmpty());
-            assertThat(ImmutableSet.copyOf(result).size(), is(equalTo(result.size())));
-            assertThat(result.size(), is(equalTo(expectedSize)));
+            final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryFile());
+            assertThat(queries.size(), is(equalTo(expectedSize)));
+        }
+
+        @Test
+        public void testWriteQueries() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+            final List<Query> queries = doReadQueries(queryIoClass.newInstance(), getQueryFile());
+            final File dstFile = new File(OUTPUT_DIR, queriesFileName);
+
+            queryIoClass.newInstance().writeAll(dstFile, queries);
+
+            assertTrue(dstFile.exists());
+            assertTrue(dstFile.length() > 0);
+
+            final List<Query> queries2 = doReadQueries(queryIoClass.newInstance(), dstFile);
+            assertEquals(queries, queries2);
         }
 
         @Test

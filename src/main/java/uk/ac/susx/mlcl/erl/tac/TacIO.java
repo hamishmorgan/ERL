@@ -4,12 +4,14 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Closer;
-import edu.stanford.nlp.util.ArrayUtils;
 import nu.xom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.susx.mlcl.erl.xml.XomB;
+import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -80,7 +82,7 @@ public class TacIO {
 
         List<Query> readAll(File queriesFile) throws ParsingException, IOException;
 
-        void writeAll(File queriesFile, List<Query> queries);
+        void writeAll(File queriesFile, List<Query> queries) throws IOException;
 
     }
 
@@ -97,6 +99,8 @@ public class TacIO {
 
     public static class Tac2009QueryIO implements QueryIO {
 
+        static final String ROOT_ELEM_NAME = "kbpentlink";
+        static final String QUERY_ELEM_NAME = "query";
         static final String QUERY_ID_ATTR_NAME = "id";
         static final String QUERY_NAME_ELEM_NAME = "name";
         static final String DOC_ID_ELEM_NAME = "docid";
@@ -131,9 +135,26 @@ public class TacIO {
         }
 
         @Override
-        public void writeAll(File file, List<Query> queries) {
-            throw new UnsupportedOperationException("not yet implemented");
+        public void writeAll(File file, List<Query> queries) throws IOException {
+            final XomB x = new XomB();
+            final XomB.ElementBuilder root = x.element(ROOT_ELEM_NAME);
+            for (Query query : queries) {
+                root.add(formatQuery(x, query));
+            }
+            XomUtil.writeDocument(
+                    x.document().setRoot(root).build(),
+                    new FileOutputStream(file),
+                    Charset.forName("UTF-8"));
         }
+
+        XomB.ElementBuilder formatQuery(XomB x, Query query) {
+            return x.element(QUERY_ELEM_NAME)
+                    .addAttribute(QUERY_ID_ATTR_NAME, query.getId())
+                    .add(x.element(QUERY_NAME_ELEM_NAME).add(query.getName()))
+                    .add(x.element(DOC_ID_ELEM_NAME).add(query.getDocId()));
+        }
+
+
     }
 
     public static class Tac2010QueryIO extends Tac2009QueryIO {
@@ -155,6 +176,17 @@ public class TacIO {
             final int end = Integer.parseInt(queryElement.getFirstChildElement(END_ELEM_NAME).getValue());
             return new Query(id, name, docId, beg, end);
         }
+
+        @Override
+        XomB.ElementBuilder formatQuery(XomB x, Query query) {
+            return x.element(QUERY_ELEM_NAME)
+                    .addAttribute(QUERY_ID_ATTR_NAME, query.getId())
+                    .add(x.element(QUERY_NAME_ELEM_NAME).add(query.getName()))
+                    .add(x.element(DOC_ID_ELEM_NAME).add(query.getDocId()))
+                    .add(x.element(BEGIN_ELEM_NAME).add(Integer.toString(query.getBeg())))
+                    .add(x.element(END_ELEM_NAME).add(Integer.toString(query.getEnd())));
+        }
+
     }
 
     public static class Tac2009LinkIO implements LinkIO {
