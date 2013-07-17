@@ -1,7 +1,5 @@
 package uk.ac.susx.mlcl.erl.tac;
 
-import com.google.common.base.Optional;
-
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -35,15 +33,15 @@ public class Link {
      * indicates if the annotator made use of web searches to make the linking judgment
      */
     @Nonnull
-    private final Optional<Boolean> webSearch;
+    private final Boolean webSearch;
     /**
      * indicates the the source genre of the document for the query.
      */
     @Nonnull
-    private final Optional<Genre> sourceGenre;
+    private final Genre sourceGenre;
 
-    private Link(String queryId, String entityNodeId, EntityType entityType,
-                 Optional<Boolean> webSearch, Optional<Genre> sourceGenre) {
+    public Link(String queryId, String entityNodeId, EntityType entityType,
+                Boolean webSearch, Genre sourceGenre) {
         checkNotNull(queryId, "queryId");
         checkNotNull(entityNodeId, "entityNodeId");
         checkNotNull(entityType, "entityType");
@@ -59,14 +57,6 @@ public class Link {
         this.sourceGenre = sourceGenre;
     }
 
-    public Link(String queryId, String entityNodeId, EntityType entityType) {
-        this(queryId, entityNodeId, entityType, Optional.<Boolean>absent(), Optional.<Genre>absent());
-    }
-
-    public Link(String queryId, String entityNodeId, EntityType entityType, boolean webSearch, Genre sourceGenre) {
-        this(queryId, entityNodeId, entityType, Optional.of(webSearch), Optional.of(sourceGenre));
-    }
-
     public String getQueryId() {
         return queryId;
     }
@@ -80,27 +70,18 @@ public class Link {
     }
 
     public boolean isWebSearch() {
-        return webSearch.get();
-    }
-
-    public boolean isWebSearchSet() {
-        return webSearch.isPresent();
+        return webSearch;
     }
 
     public Genre getSourceGenre() {
-        return sourceGenre.get();
-    }
-
-    public boolean isSourceGenreSet() {
-        return sourceGenre.isPresent();
+        return sourceGenre;
     }
 
     @Override
     public String toString() {
         return format("{0}'{'queryId={1}, entityNodeId={2}, entityType={3}, webSearch={4}, sourceGenre={5}'}'",
                 this.getClass().getSimpleName(), getQueryId(), getEntityNodeId(), getEntityType(),
-                webSearch.isPresent() ? webSearch.get() : "<not set>",
-                sourceGenre.isPresent() ? sourceGenre.get() : "<not set>");
+               isWebSearch(), getSourceGenre());
     }
 
     @Override

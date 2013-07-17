@@ -211,7 +211,7 @@ public class TacIO {
             final String queryId = values[0];
             final String entityNodeId = values[1];
             final EntityType entityType = EntityType.valueOf(values[2]);
-            return new Link(queryId, entityNodeId, entityType);
+            return new Link(queryId, entityNodeId, entityType, true, Genre.NW);
         }
 
         @Override

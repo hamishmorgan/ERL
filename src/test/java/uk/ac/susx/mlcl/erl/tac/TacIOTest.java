@@ -61,12 +61,12 @@ public class TacIOTest {
                     {
                             TacIO.Tac2009LinkIO.class,
                             "EL1\tNIL0001\tPER",
-                            new Link("EL1", "NIL0001", EntityType.PER)
+                            new Link("EL1", "NIL0001", EntityType.PER, true, Genre.NW)
                     },
                     {
                             TacIO.Tac2009LinkIO.class,
                             "EL05306\tE0421536\tORG",
-                            new Link("EL05306", "E0421536", EntityType.ORG)
+                            new Link("EL05306", "E0421536", EntityType.ORG, true, Genre.NW)
                     },
                     {
                             TacIO.Tac2012LinkIO.class,
