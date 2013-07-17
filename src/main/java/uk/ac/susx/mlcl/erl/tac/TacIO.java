@@ -15,106 +15,43 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.text.MessageFormat.format;
 
 /**
- *
+ * Static utility library that provides functions for reading and writing tac data formats.
  */
 public class TacIO {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    private static final QueryParser TAC_2009_QUERY_PARSER = new QueryParser() {
-        @Override
-        public Query parse(Element queryElement) {
-            final String id = queryElement.getAttribute("id").getValue();
-            final String name = queryElement.getFirstChildElement("name").getValue();
-            final String docId = queryElement.getFirstChildElement("docid").getValue();
-            return new Query(id, name, docId);
-        }
-    };
-    private static final QueryParser TAC_2012_QUERY_PARSER = new QueryParser() {
-        @Override
-        public Query parse(Element queryElement) {
-            final String id = queryElement.getAttribute("id").getValue();
-            final String name = queryElement.getFirstChildElement("name").getValue();
-            final String docId = queryElement.getFirstChildElement("docid").getValue();
-            final int beg = Integer.parseInt(queryElement.getFirstChildElement("beg").getValue());
-            final int end = Integer.parseInt(queryElement.getFirstChildElement("end").getValue());
-            return new Query(id, name, docId, beg, end);
-        }
-    };
-    private static final LinkParser TAC2009_LINK_PARSER = new LinkParser() {
-        @Override
-        public Link parseLink(String[] values) {
-            final String queryId = values[0];
-            final String kbId = values[1];
-            final EntityType entityType = EntityType.valueOf(values[2]);
-            return new Link(queryId, kbId, entityType);
-        }
-    };
-    private static final LinkParser TAC2010_LINK_PARSER = new LinkParser() {
-        @Override
-        public Link parseLink(String[] values) {
-            final String queryId = values[0];
-            final String kbId = values[1];
-            final EntityType entityType = EntityType.valueOf(values[2]);
-            final boolean webUsed = parseBoolean(values[3]);
-            final Genre genre = Genre.valueOfAlias(values[4]);
-            return new Link(queryId, kbId, entityType, webUsed, genre);
-        }
-    };
-    private static final LinkParser TAC2012_LINK_PARSER = new LinkParser() {
-        @Override
-        public Link parseLink(String[] values) {
-            final String queryId = values[0];
-            final String kbId = values[1];
-            final EntityType entityType = EntityType.valueOf(values[2]);
-            final Genre genre = Genre.valueOfAlias(values[3]);
-            final boolean webUsed = parseBoolean(values[4]);
-            return new Link(queryId, kbId, entityType, webUsed, genre);
+    private static final Logger LOG = LoggerFactory.getLogger(TacIO.class);
 
-        }
-    };
-
-    private static final boolean parseBoolean(final String string) {
-        checkNotNull(string, "s");
-        final String s = string.trim().toLowerCase();
-        if (s.equals("true") || s.equals("yes") || s.equals("1"))
-            return true;
-        if (s.equals("false") || s.equals("no") || s.equals("0"))
-            return false;
-        else
-            throw new NumberFormatException(format("Expected a truthy value (e.g \"true\" or \"yes\"), but found {0}", string));
-    }
-
-    public static Format detectFormatFromQueries(File queriesFile) throws ParsingException, IOException {
+    public static QueryIO detectFormatFromQueries(File queriesFile) throws ParsingException, IOException {
         LOG.debug("Detecting format from queries file: {}", queriesFile);
         Builder parser = new Builder();
         Document doc = parser.build(queriesFile);
         final Element child = doc.getRootElement().getFirstChildElement("query");
 
-        final Format format;
+        final QueryIO format;
         if (child.getFirstChildElement("beg") != null) {
-            format = Format.TAC2012;
+            format = new Tac2012QueryIO();
         } else {
             final String id = child.getAttribute("id").getValue();
             if (id.matches("^EL[\\d]{5,6}$"))
-                format = Format.TAC2010;
+                format = new Tac2010QueryIO();
             else
-                format = Format.TAC2009;
+                format = new Tac2009QueryIO();
         }
 
         LOG.debug("Detected format: {}", format);
         return format;
     }
 
-    public static Format detectFormatFromLinks(final File linksFile) throws IOException {
+    public static LinkIO detectFormatFromLinks(final File linksFile) throws IOException {
         LOG.debug("Detecting format from links file: {}", linksFile);
 
         final CSVReader reader = new CSVReader(new FileReader(linksFile), '\t');
         String[] values = reader.readNext();
 
-        final Format format;
+        final LinkIO format;
         if (values.length == 3) {
             // TAC-KBP 2009 has three values per column
-            format = Format.TAC2009;
+            format = new Tac2009LinkIO();
         } else if (values.length == 5) {
             // TAC-KBP 2010/2012 has five values per column
 
@@ -122,9 +59,9 @@ public class TacIO {
             final boolean webUsed;
             // in 2012 they swapped the order of webUsed and genre
             if (values[4].equals("YES") || values[4].equals("NO")) {
-                format = Format.TAC2012;
+                format = new Tac2012LinkIO();
             } else if (values[3].equals("YES") || values[3].equals("NO")) {
-                format = Format.TAC2010;
+                format = new Tac2010LinkIO();
             } else {
                 throw new AssertionError("Expected either columns 4 or 5 to be web");
             }
@@ -137,31 +74,41 @@ public class TacIO {
 
     }
 
+    private static final boolean parseBoolean(final String string) {
+        checkNotNull(string, "s");
+        final String s = string.trim().toLowerCase();
+        if (s.equals("true") || s.equals("yes") || s.equals("1"))
+            return true;
+        if (s.equals("false") || s.equals("no") || s.equals("0"))
+            return false;
+        else
+            throw new NumberFormatException(format("Expected a truthy value (e.g \"true\" or \"yes\"), but found {0}", string));
+    }
 
-    public enum Format {
-        DETECT(null, null) {
-            @Override
-            public List<Query> readQueries(File queriesFile) throws ParsingException, IOException {
-                return detectFormatFromQueries(queriesFile).readQueries(queriesFile);
-            }
+    interface QueryIO {
 
-            @Override
-            public List<Link> readLinks(final File linksFile) throws IOException {
-                return detectFormatFromLinks(linksFile).readLinks(linksFile);
-            }
-        },
-        TAC2009(TAC_2009_QUERY_PARSER, TAC2009_LINK_PARSER) {},
-        TAC2010(TAC_2009_QUERY_PARSER, TAC2010_LINK_PARSER) {},
-        TAC2012(TAC_2012_QUERY_PARSER, TAC2012_LINK_PARSER) {};
-        private final QueryParser queryParser;
-        private final LinkParser linkParser;
+        List<Query> readAll(File queriesFile) throws ParsingException, IOException;
 
-        private Format(QueryParser queryParser, LinkParser linkParser) {
-            this.queryParser = queryParser;
-            this.linkParser = linkParser;
-        }
+        void writeAll(File queriesFile, List<Query> queries);
 
-        public List<Query> readQueries(File queriesFile) throws ParsingException, IOException {
+    }
+
+    interface LinkIO {
+
+        List<Link> readAll(File linksFile) throws ParsingException, IOException;
+
+        void writeAll(File linksFile, List<Link> links);
+
+    }
+
+    static class Tac2009QueryIO implements QueryIO {
+
+        static final String QUERY_ID_ATTR_NAME = "id";
+        static final String QUERY_NAME_ELEM_NAME = "name";
+        static final String DOC_ID_ELEM_NAME = "docid";
+
+        @Override
+        public List<Query> readAll(File queriesFile) throws ParsingException, IOException {
             LOG.debug("Reading queries file: {}", queriesFile);
             Builder parser = new Builder();
             Document doc = parser.build(queriesFile);
@@ -174,7 +121,7 @@ public class TacIO {
             ImmutableList.Builder<Query> queries = ImmutableList.builder();
             for (int i = 0; i < children.size(); i++) {
                 final Element child = children.get(i);
-                final Query query = queryParser.parse(child);
+                final Query query = parseQuery(child);
                 LOG.debug("Read query: {}", query);
                 queries.add(query);
             }
@@ -182,30 +129,99 @@ public class TacIO {
             return queries.build();
         }
 
-        public List<Link> readLinks(final File linksFile) throws IOException {
+        Query parseQuery(Element queryElement) {
+            final String id = queryElement.getAttribute(QUERY_ID_ATTR_NAME).getValue();
+            final String name = queryElement.getFirstChildElement(QUERY_NAME_ELEM_NAME).getValue();
+            final String docId = queryElement.getFirstChildElement(DOC_ID_ELEM_NAME).getValue();
+            return new Query(id, name, docId);
+        }
+
+        @Override
+        public void writeAll(File file, List<Query> queries) {
+            throw new UnsupportedOperationException("not yet implemented");
+        }
+    }
+
+    static class Tac2010QueryIO extends Tac2009QueryIO {
+
+
+    }
+
+    static class Tac2012QueryIO extends Tac2009QueryIO {
+
+        static final String BEGIN_ELEM_NAME = "beg";
+        static final String END_ELEM_NAME = "end";
+
+        @Override
+        Query parseQuery(Element queryElement) {
+            final String id = queryElement.getAttribute(QUERY_ID_ATTR_NAME).getValue();
+            final String name = queryElement.getFirstChildElement(QUERY_NAME_ELEM_NAME).getValue();
+            final String docId = queryElement.getFirstChildElement(DOC_ID_ELEM_NAME).getValue();
+            final int beg = Integer.parseInt(queryElement.getFirstChildElement(BEGIN_ELEM_NAME).getValue());
+            final int end = Integer.parseInt(queryElement.getFirstChildElement(END_ELEM_NAME).getValue());
+            return new Query(id, name, docId, beg, end);
+        }
+    }
+
+    static class Tac2009LinkIO implements LinkIO {
+
+        @Override
+        public List<Link> readAll(File linksFile) throws ParsingException, IOException {
             LOG.debug("Reading links file: {}", linksFile);
 
             final CSVReader reader = new CSVReader(new FileReader(linksFile), '\t');
             String[] values;
             final ImmutableList.Builder<Link> links = ImmutableList.<Link>builder();
             while ((values = reader.readNext()) != null) {
-                final Link link = linkParser.parseLink(values);
+                final Link link = parseLink(values);
                 LOG.debug("Read link: {}", link);
                 links.add(link);
             }
             return links.build();
         }
+
+        Link parseLink(String[] values) {
+            assert values.length == 3;
+
+            final String queryId = values[0];
+            final String kbId = values[1];
+            final EntityType entityType = EntityType.valueOf(values[2]);
+            return new Link(queryId, kbId, entityType);
+        }
+
+        @Override
+        public void writeAll(File linksFile, List<Link> links) {
+            throw new UnsupportedOperationException("not yet implemented");
+        }
     }
 
+    static class Tac2010LinkIO extends Tac2009LinkIO {
+        @Override
+        public Link parseLink(String[] values) {
+            assert values.length == 5;
 
-    private interface LinkParser {
-        Link parseLink(String[] values);
+            final String queryId = values[0];
+            final String kbId = values[1];
+            final EntityType entityType = EntityType.valueOf(values[2]);
+            final boolean webUsed = parseBoolean(values[3]);
+            final Genre genre = Genre.valueOfAlias(values[4]);
+            return new Link(queryId, kbId, entityType, webUsed, genre);
+        }
     }
 
+    static class Tac2012LinkIO extends Tac2009LinkIO {
+        @Override
+        public Link parseLink(String[] values) {
+            assert values.length == 5;
 
-    private interface QueryParser {
-        Query parse(Element queryElement);
+            final String queryId = values[0];
+            final String kbId = values[1];
+            final EntityType entityType = EntityType.valueOf(values[2]);
+            final Genre genre = Genre.valueOfAlias(values[3]);
+            final boolean webUsed = parseBoolean(values[4]);
+            return new Link(queryId, kbId, entityType, webUsed, genre);
+
+        }
     }
-
 
 }
