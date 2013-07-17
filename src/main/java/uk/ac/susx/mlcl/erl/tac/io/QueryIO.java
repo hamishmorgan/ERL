@@ -11,16 +11,15 @@ import uk.ac.susx.mlcl.erl.tac.Query;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
 import java.util.List;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 17/07/2013
-* Time: 14:48
-* To change this template use File | Settings | File Templates.
-*/
+ * Created with IntelliJ IDEA.
+ * User: hiam20
+ * Date: 17/07/2013
+ * Time: 14:48
+ * To change this template use File | Settings | File Templates.
+ */
 public abstract class QueryIO {
 
     private static final Logger LOG = LoggerFactory.getLogger(QueryIO.class);
@@ -28,7 +27,15 @@ public abstract class QueryIO {
     public static QueryIO detectFormat(File queriesFile) throws ParsingException, IOException {
         LOG.debug("Detecting format from queries file: {}", queriesFile);
         Builder parser = new Builder();
-        Document doc = parser.build(queriesFile);
+        return detectFormat(parser.build(queriesFile));
+    }
+
+    public static QueryIO detectFormat(Reader queriesReader) throws ParsingException, IOException {
+        Builder parser = new Builder();
+        return detectFormat(parser.build(queriesReader));
+    }
+
+    static QueryIO detectFormat(Document doc) throws ParsingException, IOException {
         final Element child = doc.getRootElement().getFirstChildElement("query");
 
         final QueryIO format;
