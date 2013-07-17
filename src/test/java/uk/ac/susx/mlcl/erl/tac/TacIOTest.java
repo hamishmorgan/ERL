@@ -78,6 +78,12 @@ public class TacIOTest {
         }
 
 
+
+        @Test
+        public void testDetectFormat() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
+            assertEquals(cls, LinkIO.detectFormat(new StringReader(data)).getClass());
+        }
+
         @Test
         public void testRead() throws ParsingException, IOException, IllegalAccessException, InstantiationException {
             final LinkIO instance = cls.newInstance();
