@@ -10,10 +10,12 @@ public enum EntityType {
      * Organisation entity type
      */
     ORG,
+
     /**
      * Person entity type
      */
     PER,
+
     /**
      * Geo-Political entity type (a.k.a Location)
      */
@@ -22,5 +24,5 @@ public enum EntityType {
     /**
      * Unknown type
      */
-    UKN;
+    UKN
 }

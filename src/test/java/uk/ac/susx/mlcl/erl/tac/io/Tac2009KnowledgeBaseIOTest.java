@@ -4,9 +4,8 @@
  */
 package uk.ac.susx.mlcl.erl.tac.io;
 
-import org.junit.*;
+import org.junit.Test;
 import org.xml.sax.SAXException;
-import uk.ac.susx.mlcl.erl.tac.kb.Entity;
 import uk.ac.susx.mlcl.erl.tac.kb.TacKnowledgeBase;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
@@ -14,28 +13,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 /**
- *
  * @author hiam20
  */
 public class Tac2009KnowledgeBaseIOTest extends AbstractTest {
 
-    public Tac2009KnowledgeBaseIOTest() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     private void deleteMapDBIfExists(File path) throws IOException {
 
@@ -56,14 +40,12 @@ public class Tac2009KnowledgeBaseIOTest extends AbstractTest {
     @Test
     public void testCreate() throws ParserConfigurationException, SAXException, IOException {
 
-
         File xmlFile = getResourceAsFile("tac09-kb-sample.xml");
         File dbFile = newTempFile();
 
         deleteMapDBIfExists(dbFile);
 
         TacKnowledgeBase kb = Tac2009KnowledgeBaseIO.create(dbFile, xmlFile);
-
 
         assertFalse(kb.isEmpty());
 

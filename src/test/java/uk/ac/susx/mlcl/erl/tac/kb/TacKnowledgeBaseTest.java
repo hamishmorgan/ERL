@@ -4,9 +4,10 @@
  */
 package uk.ac.susx.mlcl.erl.tac.kb;
 
+import com.google.common.io.Closer;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.susx.mlcl.erl.tac.io.Tac2009KnowledgeBaseIO;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.File;
@@ -19,15 +20,40 @@ import static org.junit.Assert.*;
  */
 public class TacKnowledgeBaseTest extends AbstractTest {
 
+    private final String dbResourceName;
+    private final Closer closer = Closer.create();
+
+    protected TacKnowledgeBaseTest(String dbResourceName) {
+        this.dbResourceName = dbResourceName;
+    }
+
+    public TacKnowledgeBaseTest() {
+        this("tac09-kb-sample.mapdb");
+    }
+
+    @After
+    public void closeDatabase() throws IOException {
+        try {
+            closer.close();
+        } catch (Throwable t) {
+            // swallow
+        }
+    }
+
+    TacKnowledgeBase getInstance() {
+        final File dbFile = getResourceAsFile(dbResourceName);
+        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
+        closer.register(instance);
+        return instance;
+    }
 
     /**
      * Test of open method, of class TacKnowledgeBase.
      */
     @Test
     public void testOpen() {
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-        TacKnowledgeBase kb = TacKnowledgeBase.open(dbFile);
-        kb.close();
+        final TacKnowledgeBase instance = getInstance();
+        assertNotNull(instance);
     }
 
     /**
@@ -35,17 +61,10 @@ public class TacKnowledgeBaseTest extends AbstractTest {
      */
     @Test
     public void testGetEntityById() throws IOException {
-
-        String id = "E0000051";
-
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
-
-        Entity result = instance.getEntityById(id);
-
-        assertEquals(id, result.getId());
-
-        instance.close();
+        final String entityId = "E0000051";
+        final TacKnowledgeBase instance = getInstance();
+        final Entity result = instance.getEntityById(entityId);
+        assertEquals(entityId, result.getId());
     }
 
     /**
@@ -53,13 +72,9 @@ public class TacKnowledgeBaseTest extends AbstractTest {
      */
     @Test
     public void testGetEntityByName() throws IOException {
-        String name = "Panama";
-
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
-        Entity result = instance.getEntityByName(name);
-
+        final String name = "Panama";
+        final TacKnowledgeBase instance = getInstance();
+        final Entity result = instance.getEntityByName(name);
         assertEquals(name, result.getName());
     }
 
@@ -70,13 +85,9 @@ public class TacKnowledgeBaseTest extends AbstractTest {
     @Test
     @Ignore(value = "Accent c18n is not currently supported.")
     public void testGetEntityByName2() throws IOException {
-        String name = "Panamá";
-
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
-        Entity result = instance.getEntityByName(name);
-
+        final String name = "Panamá";
+        final TacKnowledgeBase instance = getInstance();
+        final Entity result = instance.getEntityByName(name);
         assertNotNull(result);
         assertEquals(name, result.getName());
     }
@@ -86,11 +97,10 @@ public class TacKnowledgeBaseTest extends AbstractTest {
      */
     @Test
     public void testGetNameById() throws IOException {
-        String name = "Hardtner, Kansas";
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
-        String expResult = "E0000053";
-        String result = instance.getNameById(name);
+        final String name = "Hardtner, Kansas";
+        final TacKnowledgeBase instance = getInstance();
+        final String expResult = "E0000053";
+        final String result = instance.getNameById(name);
         assertEquals(expResult, result);
     }
 
@@ -99,9 +109,8 @@ public class TacKnowledgeBaseTest extends AbstractTest {
      */
     @Test
     public void testGetTextForId() throws IOException {
-        String id = "E0000075";
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
+        final String id = "E0000075";
+        final TacKnowledgeBase instance = getInstance();
         String expResult =
                 "Sepulga River\n"
                         + "\n"
@@ -112,9 +121,6 @@ public class TacKnowledgeBaseTest extends AbstractTest {
                         + "Coordinates needed:\n"
                         + "";
         String result = instance.getTextForId(id);
-//        
-//        System.out.println(expResult);
-//        System.out.println(result);
         assertEquals(expResult, result);
     }
 
@@ -123,10 +129,8 @@ public class TacKnowledgeBaseTest extends AbstractTest {
      */
     @Test
     public void testClose() {
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
+        final TacKnowledgeBase instance = getInstance();
         instance.close();
-
         try {
             instance.getEntityById("E0000075");
             fail();
@@ -137,26 +141,20 @@ public class TacKnowledgeBaseTest extends AbstractTest {
 
     @Test
     public void testSize() throws IOException {
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
+        final TacKnowledgeBase instance = getInstance();
         int actualSize = instance.size();
-
         assertEquals(133, actualSize);
     }
 
     @Test
     public void testIsEmpty() throws IOException {
-        final File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
-
+        final TacKnowledgeBase instance = getInstance();
         assertFalse("Expected db to be non-empty but found that it was empty.", instance.isEmpty());
     }
 
     @Test
     public void testIterator() throws IOException {
-        File dbFile = getResourceAsFile("tac09-kb-sample.mapdb");
-        TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);
-
+        final TacKnowledgeBase instance = getInstance();
         System.out.print("Entities: ");
         for (Entity entity : instance) {
             System.out.print(entity.getId() + ", ");

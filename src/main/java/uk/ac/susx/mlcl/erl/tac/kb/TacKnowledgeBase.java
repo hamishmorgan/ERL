@@ -4,43 +4,58 @@
  */
 package uk.ac.susx.mlcl.erl.tac.kb;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mapdb.DB;
 import org.mapdb.HTreeMap;
 import uk.ac.susx.mlcl.erl.tac.io.Tac2009KnowledgeBaseIO;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.logging.Logger;
+
+import static java.text.MessageFormat.format;
 
 /**
- * @author hiam20
+ * A simple implementation of a database for storing and searching the Tac 2009 Knowledge Base.
+ *
+ * @author Hamish Morgan
  */
-public class TacKnowledgeBase extends AbstractCollection<Entity> {
+public class TacKnowledgeBase extends AbstractCollection<Entity> implements Closeable {
 
-    private static final Logger LOG = Logger.getLogger(TacKnowledgeBase.class.getName());
-    private final DB db;
+    private static final Log LOG = LogFactory.getLog(TacKnowledgeBase.class);
+    private final DB database;
     private final HTreeMap<String, Entity> idIndex;
     private final HTreeMap<String, String> nameIndex;
 
-    private TacKnowledgeBase(DB db, HTreeMap<String, Entity> idIndex, HTreeMap<String, String> nameIndex) {
-        this.db = db;
+    /**
+     * Dependency injection constructor. Use {@link TacKnowledgeBase#open(java.io.File)} )} instead.
+     *
+     * @param database  The database connection object, used for closing
+     * @param idIndex   Index of entity id's to entity objects
+     * @param nameIndex Index of entity names to entity objects.
+     */
+    private TacKnowledgeBase(DB database, HTreeMap<String, Entity> idIndex, HTreeMap<String, String> nameIndex) {
+        this.database = database;
         this.idIndex = idIndex;
         this.nameIndex = nameIndex;
     }
 
-
     public static TacKnowledgeBase open(File dbFile) {
+        LOG.info(format("Opening database: {0}", dbFile));
         final DB db = Tac2009KnowledgeBaseIO.openDB(dbFile);
         final HTreeMap<String, Entity> idIndex = db.getHashMap("entity-id-index");
         final HTreeMap<String, String> nameIndex = db.getHashMap("entity-name-index");
-        return new TacKnowledgeBase(db, idIndex, nameIndex);
+        final TacKnowledgeBase kb = new TacKnowledgeBase(db, idIndex, nameIndex);
+        LOG.debug(format("Database opened: {0}", kb));
+        return kb;
     }
 
     private void checkState() throws IOException {
-        if (db.isClosed()) {
+        if (database.isClosed()) {
             throw new IOException("The database is closed.");
         }
     }
@@ -65,8 +80,8 @@ public class TacKnowledgeBase extends AbstractCollection<Entity> {
     }
 
     public void close() {
-        db.commit();
-        db.close();
+        database.commit();
+        database.close();
     }
 
     @Override
