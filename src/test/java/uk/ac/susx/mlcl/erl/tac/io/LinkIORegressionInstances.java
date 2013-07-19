@@ -42,6 +42,11 @@ public class LinkIORegressionInstances extends AbstractTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {
+                        Tac2009LinkIO.class,
+                        "EL1\tNIL0001\tPER",
+                        new Link("EL1", "NIL0001", EntityType.PER, true, Genre.NW)
+                },
+                {
                         Tac2010LinkIO.class,
                         "EL000281\tNIL0001\tGPE\tNO\tWL",
                         new Link("EL000281", "NIL0001", EntityType.GPE, false, Genre.WB)
@@ -52,14 +57,14 @@ public class LinkIORegressionInstances extends AbstractTest {
                         new Link("EL001344", "E0374684", EntityType.GPE, true, Genre.WB)
                 },
                 {
-                        Tac2009LinkIO.class,
-                        "EL1\tNIL0001\tPER",
-                        new Link("EL1", "NIL0001", EntityType.PER, true, Genre.NW)
-                },
-                {
-                        Tac2009LinkIO.class,
+                        Tac2010GoldLinkIO.class,
                         "EL05306\tE0421536\tORG",
                         new Link("EL05306", "E0421536", EntityType.ORG, true, Genre.NW)
+                },
+                {      // 2011
+                        Tac2011LinkIO.class,
+                        "EL_00001\tNIL290\tPER\tNW\tNO",
+                        new Link("EL_00001", "NIL290", EntityType.PER, false, Genre.NW)
                 },
                 {
                         Tac2012LinkIO.class,

@@ -75,6 +75,18 @@ public class QueryIORegressionInstances extends AbstractTest {
                         new Query("EL10345", "FDIC", "eng-WL-11-174606-12978493", "E0348440")
                 },
                 {
+                        // 2011
+                        Tac2011QueryIO.class,
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                "<kbpentlink xml:base=\"\">\n" +
+                                "   <query id=\"EL_00004\">\n" +
+                                "    <name>A.J. Smith</name>\n" +
+                                "    <docid>NYT_ENG_20070624.0085.LDC2009T13</docid>\n" +
+                                "  </query>\n" +
+                                "</kbpentlink>\n",
+                        new Query("EL_00004", "A.J. Smith", "NYT_ENG_20070624.0085.LDC2009T13")
+                },
+                {
                         Tac2012QueryIO.class,
                         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                                 "<kbpentlink xml:base=\"\">\n" +

@@ -10,7 +10,8 @@ import uk.ac.susx.mlcl.erl.xml.XomB;
  * @author Hamish Morgan
  */
 
-public class Tac2012QueryIO extends Tac2009QueryIO {
+public class Tac2012QueryIO extends Tac2011QueryIO {
+
 
     static final String BEGIN_ELEM_NAME = "beg";
     static final String END_ELEM_NAME = "end";
@@ -34,5 +35,4 @@ public class Tac2012QueryIO extends Tac2009QueryIO {
                 .add(x.element(BEGIN_ELEM_NAME).add(Integer.toString(query.getBeg())))
                 .add(x.element(END_ELEM_NAME).add(Integer.toString(query.getEnd())));
     }
-
 }

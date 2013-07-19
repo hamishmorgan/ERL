@@ -71,10 +71,17 @@ public class TacIODataFileTests extends AbstractTest {
                 },
                 {
                         Tac2010GoldQueryIO.class,
-                        Tac2009LinkIO.class,
+                        Tac2010GoldLinkIO.class,
                         "tac_2010_kbp_training_entity_linking_queries.xml",
                         "tac_2010_kbp_training_entity_linking_query_types.tab",
                         1500
+                },
+                {
+                        Tac2011QueryIO.class,
+                        Tac2011LinkIO.class,
+                        "tac_2011_kbp_english_evaluation_entity_linking_queries.xml",
+                        "tac_2011_kbp_english_evaluation_entity_linking_query_types.tab",
+                        2250
                 },
         });
     }
