@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.susx.mlcl.erl.t9kb;
+package uk.ac.susx.mlcl.erl.tac.kb;
 
 import com.google.common.collect.Lists;
 
@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author hiam20
  */
 @Immutable
-public class T9Fact implements Serializable {
+public class Fact implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private final Collection<CharSequence> links; // 0-or-more
@@ -29,7 +29,7 @@ public class T9Fact implements Serializable {
     private final String name; // #REQUIRED
     // #REQUIRED
 
-    public T9Fact(Collection<CharSequence> links, String name) {
+    public Fact(Collection<CharSequence> links, String name) {
         this.links = checkNotNull(links, "links");
         this.name = checkNotNull(name, "name");
     }
@@ -45,14 +45,14 @@ public class T9Fact implements Serializable {
         }
 
         public Builder addLink(String entity_id, String data) {
-            return addLink(new T9Link.Builder().setEntityId(entity_id).appendData(data).build());
+            return addLink(new Link.Builder().setEntityId(entity_id).appendData(data).build());
         }
 
         public Builder addLink(String data) {
-            return addLink(new T9Link.Builder().appendData(data).build());
+            return addLink(new Link.Builder().appendData(data).build());
         }
 
-        public Builder addLink(T9Link link) {
+        public Builder addLink(Link link) {
             links.add(link);
             return this;
         }
@@ -67,8 +67,8 @@ public class T9Fact implements Serializable {
             return this;
         }
 
-        public T9Fact build() {
-            return new T9Fact(links, name);
+        public Fact build() {
+            return new Fact(links, name);
         }
     }
 
@@ -88,7 +88,7 @@ public class T9Fact implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final T9Fact other = (T9Fact) obj;
+        final Fact other = (Fact) obj;
         if (this.links != other.links && (this.links == null || !this.links.equals(other.links))) {
             return false;
         }

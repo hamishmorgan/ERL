@@ -7,14 +7,13 @@ import nu.xom.Element;
 import nu.xom.ParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.susx.mlcl.erl.tac.Query;
+import uk.ac.susx.mlcl.erl.tac.queries.Query;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
-import java.util.regex.Pattern;
 
 /**
  * Base class for reading and writing to Query XML files.

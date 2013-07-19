@@ -5,7 +5,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.google.common.io.Closer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.susx.mlcl.erl.tac.Link;
+import uk.ac.susx.mlcl.erl.tac.queries.Link;
 
 import java.io.*;
 import java.net.URL;

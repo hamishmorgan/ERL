@@ -6,8 +6,8 @@ import nu.xom.ParsingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.susx.mlcl.erl.tac.Link;
-import uk.ac.susx.mlcl.erl.tac.Query;
+import uk.ac.susx.mlcl.erl.tac.queries.Link;
+import uk.ac.susx.mlcl.erl.tac.queries.Query;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.File;
@@ -146,15 +146,6 @@ public class TacIODataFileTests extends AbstractTest {
         assertThat(links.size(), is(equalTo(expectedSize)));
     }
 
-    File newTempFile() throws IOException {
-        final File tmpFile = File.createTempFile(this.getClass().getName(), ".tmp");
-        tmpFile.deleteOnExit();
-        return tmpFile;
-    }
-
-    URL newTempUrl() throws IOException {
-        return newTempFile().toURI().toURL();
-    }
 
     @Test
     public void testWriteLinksUrl() throws ParsingException, IOException, IllegalAccessException, InstantiationException, URISyntaxException {

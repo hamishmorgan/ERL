@@ -1,7 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
 import uk.ac.susx.mlcl.erl.tac.Genre;
-import uk.ac.susx.mlcl.erl.tac.Link;
+import uk.ac.susx.mlcl.erl.tac.queries.Link;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.text.MessageFormat.format;

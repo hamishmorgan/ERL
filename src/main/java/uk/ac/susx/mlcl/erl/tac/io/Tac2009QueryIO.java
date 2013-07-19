@@ -6,7 +6,7 @@ import nu.xom.*;
 import org.eclipse.jetty.io.WriterOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.susx.mlcl.erl.tac.Query;
+import uk.ac.susx.mlcl.erl.tac.queries.Query;
 import uk.ac.susx.mlcl.erl.xml.XomB;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 

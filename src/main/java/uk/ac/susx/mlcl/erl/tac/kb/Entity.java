@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.susx.mlcl.erl.t9kb;
+package uk.ac.susx.mlcl.erl.tac.kb;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -16,17 +16,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author hiam20
  */
-public class T9Entity implements Serializable {
+public class Entity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public enum Type {
-
-        PER, // - PERson
-        ORG, // - ORGanization
-        GPE, // - GeoPolitical Entity
-        UKN // - UnKnowN
-        // - UnKnowN
-    }
     // Elements
     /**
      * This corresponds to the template name used in the infobox on the entity's wiki page
@@ -35,7 +27,7 @@ public class T9Entity implements Serializable {
     /**
      *
      */
-    private final Collection<T9Fact> facts; // 1-or-more
+    private final Collection<Fact> facts; // 1-or-more
     // 1-or-more
     /**
      * wiki_text contains a plain text rendering of the entity's Wikipedia article.
@@ -57,7 +49,7 @@ public class T9Entity implements Serializable {
     /**
      *
      */
-    private final Type type; // #REQUIRED
+    private final EntityType type; // #REQUIRED
     // #REQUIRED
     /**
      * This is the canonical title for the entity's Wikipedia article in the October 2008
@@ -66,7 +58,7 @@ public class T9Entity implements Serializable {
     private final Optional<String> wikiTitle; // #IMPLIED
     // #IMPLIED
 
-    public T9Entity(Optional<String> factsClass, Collection<T9Fact> facts, Optional<String> wikiText, String id, String name, Type type, Optional<String> wikiTitle) {
+    public Entity(Optional<String> factsClass, Collection<Fact> facts, Optional<String> wikiText, String id, String name, EntityType type, Optional<String> wikiTitle) {
         this.factsClass = checkNotNull(factsClass, "factsClass");
         this.facts = checkNotNull(facts, "facts");
         this.wikiText = checkNotNull(wikiText, "wikiText");
@@ -80,7 +72,7 @@ public class T9Entity implements Serializable {
         return factsClass;
     }
 
-    public Collection<T9Fact> getFacts() {
+    public Collection<Fact> getFacts() {
         return facts;
     }
 
@@ -96,7 +88,7 @@ public class T9Entity implements Serializable {
         return name;
     }
 
-    public Type getType() {
+    public EntityType getType() {
         return type;
     }
 
@@ -125,7 +117,7 @@ public class T9Entity implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final T9Entity other = (T9Entity) obj;
+        final Entity other = (Entity) obj;
         if (this.factsClass != other.factsClass && (this.factsClass == null || !this.factsClass.equals(other.factsClass))) {
             return false;
         }
@@ -161,17 +153,17 @@ public class T9Entity implements Serializable {
         // #REQUIRED
         String name; // #REQUIRED
         // #REQUIRED
-        Type type; // #REQUIRED
+        EntityType type; // #REQUIRED
         // #REQUIRED
         Optional<String> factsClass;
         Optional<String> wikiText; // 0-or-1
         // 0-or-1
         Optional<String> wikiTitle; // #IMPLIED
         // #IMPLIED
-        private List<T9Fact> facts; // 1-or-more
+        private List<Fact> facts; // 1-or-more
         // 1-or-more
 
-        public Builder(String id, String name, Type type) {
+        public Builder(String id, String name, EntityType type) {
             this.id = id;
             this.name = name;
             this.type = type;
@@ -181,8 +173,8 @@ public class T9Entity implements Serializable {
             facts = Lists.newArrayList();
         }
 
-        public T9Entity build() {
-            return new T9Entity(factsClass, facts, wikiText, id, name, type, wikiTitle);
+        public Entity build() {
+            return new Entity(factsClass, facts, wikiText, id, name, type, wikiTitle);
         }
 
         public Builder setFactsClass(String factsClass) {
@@ -200,7 +192,7 @@ public class T9Entity implements Serializable {
             return this;
         }
 
-        public Builder addFact(T9Fact fact) {
+        public Builder addFact(Fact fact) {
             facts.add(fact);
             return this;
         }

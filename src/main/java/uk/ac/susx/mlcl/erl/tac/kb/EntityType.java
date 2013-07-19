@@ -1,4 +1,4 @@
-package uk.ac.susx.mlcl.erl.tac;
+package uk.ac.susx.mlcl.erl.tac.kb;
 
 /**
  * Enum of valid entity types; organizations, persons, and locations (geo-political entities).
@@ -17,5 +17,10 @@ public enum EntityType {
     /**
      * Geo-Political entity type (a.k.a Location)
      */
-    GPE
+    GPE,
+
+    /**
+     * Unknown type
+     */
+    UKN;
 }

@@ -5,6 +5,7 @@
 package uk.ac.susx.mlcl.erl.test;
 
 import com.google.common.io.Files;
+import com.google.common.io.Resources;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,12 +15,15 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
+import static java.text.MessageFormat.format;
 import static org.junit.Assert.*;
 
 /**
@@ -27,15 +31,10 @@ import static org.junit.Assert.*;
  */
 public class AbstractTest {
 
+    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+    public static final File TEST_DATA_PATH = new File("src/test/data");
     @Rule()
     public final TestName testName = new TestName();
-
-    @Before()
-    public final void _printTestMethod() throws SecurityException, NoSuchMethodException {
-        System.out.println(MessageFormat.format(
-                "Running test: {0}#{1}",
-                this.getClass().getName(), testName.getMethodName()));
-    }
 
     /**
      * TODO: Probably useful enough to move to a general purpose library
@@ -125,9 +124,6 @@ public class AbstractTest {
         return rand;
     }
 
-    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-    public static final File TEST_DATA_PATH = new File("src/test/data");
-
     public static String readTestData(String path) {
         return readTestData(path, DEFAULT_CHARSET);
     }
@@ -143,4 +139,54 @@ public class AbstractTest {
         }
 
     }
+
+    @Before()
+    public final void _printTestMethod() throws SecurityException, NoSuchMethodException {
+        System.out.println(MessageFormat.format(
+                "Running test: {0}#{1}",
+                this.getClass().getName(), testName.getMethodName()));
+    }
+
+    /**
+     * Returns a {@code File} pointing to {@code resourceName} that is relative to
+     * the current class context, if the resource is found in the class path.
+     *
+     * @return the resource File
+     * @throws IllegalArgumentException if resource is not found or cannot be accessed as a file.
+     */
+    protected File getResourceAsFile(String name) {
+        final URL resource = getResource(name);
+        if (resource.getProtocol().equalsIgnoreCase("file"))
+            try {
+                return new File(resource.toURI());
+            } catch (URISyntaxException e) {
+                // occurs when the resource URL is not strictly RFC2396 compliant (which it should be.)
+                throw new AssertionError(e);
+            }
+        else
+            throw new IllegalArgumentException(format("Unsupported protocol in url '{1}'", resource));
+    }
+
+    /**
+     * Returns a {@code URL} pointing to {@code resourceName} that is relative to
+     * the current class context, if the resource is found in the class path.
+     *
+     * @return the resource URL
+     * @throws IllegalArgumentException if resource is not found
+     */
+    protected URL getResource(String name) {
+        return Resources.getResource(this.getClass(), name);
+    }
+
+    public File newTempFile() throws IOException {
+        final File tmpFile = File.createTempFile(this.getClass().getName(), ".tmp");
+        tmpFile.deleteOnExit();
+        return tmpFile;
+    }
+
+    public URL newTempUrl() throws IOException {
+        return newTempFile().toURI().toURL();
+    }
+
+
 }

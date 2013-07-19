@@ -7,9 +7,9 @@ import com.google.common.io.Closer;
 import nu.xom.ParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.susx.mlcl.erl.tac.EntityType;
+import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 import uk.ac.susx.mlcl.erl.tac.Genre;
-import uk.ac.susx.mlcl.erl.tac.Link;
+import uk.ac.susx.mlcl.erl.tac.queries.Link;
 
 import java.io.*;
 import java.net.URISyntaxException;

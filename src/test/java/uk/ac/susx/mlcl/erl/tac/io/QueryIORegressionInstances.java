@@ -5,7 +5,7 @@ import nu.xom.ParsingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.susx.mlcl.erl.tac.Query;
+import uk.ac.susx.mlcl.erl.tac.queries.Query;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.IOException;

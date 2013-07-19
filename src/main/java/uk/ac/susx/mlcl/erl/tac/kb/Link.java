@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.susx.mlcl.erl.t9kb;
+package uk.ac.susx.mlcl.erl.tac.kb;
 
 import com.google.common.base.Optional;
 
@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author hiam20
  */
 @Immutable
-public class T9Link implements CharSequence, Serializable {
+public class Link implements CharSequence, Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -29,7 +29,7 @@ public class T9Link implements CharSequence, Serializable {
      */
     private final String data;
 
-    T9Link(Optional<String> entity_id, String data) {
+    Link(Optional<String> entity_id, String data) {
         this.entity_id = checkNotNull(entity_id, "entity_id");
         this.data = checkNotNull(data, "data");
     }
@@ -55,7 +55,7 @@ public class T9Link implements CharSequence, Serializable {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        final T9Link other = (T9Link) obj;
+        final Link other = (Link) obj;
         if (this.entity_id != other.entity_id && (this.entity_id == null || !this.entity_id.equals(other.entity_id))) {
             return false;
         }
@@ -111,8 +111,8 @@ public class T9Link implements CharSequence, Serializable {
             return this;
         }
 
-        public T9Link build() {
-            return new T9Link(entity_id, data.toString());
+        public Link build() {
+            return new Link(entity_id, data.toString());
         }
     }
 }

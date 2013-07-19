@@ -5,9 +5,9 @@ import nu.xom.ParsingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.susx.mlcl.erl.tac.EntityType;
+import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 import uk.ac.susx.mlcl.erl.tac.Genre;
-import uk.ac.susx.mlcl.erl.tac.Link;
+import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.IOException;

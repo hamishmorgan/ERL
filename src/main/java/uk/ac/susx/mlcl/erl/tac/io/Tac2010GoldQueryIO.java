@@ -1,7 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
 import nu.xom.Element;
-import uk.ac.susx.mlcl.erl.tac.Query;
+import uk.ac.susx.mlcl.erl.tac.queries.Query;
 import uk.ac.susx.mlcl.erl.xml.XomB;
 
 /**

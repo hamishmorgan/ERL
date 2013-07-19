@@ -1,4 +1,7 @@
-package uk.ac.susx.mlcl.erl.tac;
+package uk.ac.susx.mlcl.erl.tac.queries;
+
+import uk.ac.susx.mlcl.erl.tac.Genre;
+import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 
 import javax.annotation.Nonnull;
 
