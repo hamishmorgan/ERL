@@ -22,17 +22,7 @@ import static org.junit.Assert.*;
  */
 public class Tac2009KnowledgeBaseIOTest extends AbstractTest {
 
-//    private static final File TEST_DATA_DIR = new File("src/test/data");
-    private static final File TEST_OUTPUT_DIR = new File("target/testout");
-
     public Tac2009KnowledgeBaseIOTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws IOException {
-        if (!TEST_OUTPUT_DIR.exists() && !TEST_OUTPUT_DIR.mkdirs()) {
-            throw new IOException("Failed to create test output dir: " + TEST_OUTPUT_DIR);
-        }
     }
 
     @AfterClass
@@ -65,7 +55,6 @@ public class Tac2009KnowledgeBaseIOTest extends AbstractTest {
 
     @Test
     public void testCreate() throws ParserConfigurationException, SAXException, IOException {
-        System.out.println("testCreate");
 
 
         File xmlFile = getResourceAsFile("tac09-kb-sample.xml");

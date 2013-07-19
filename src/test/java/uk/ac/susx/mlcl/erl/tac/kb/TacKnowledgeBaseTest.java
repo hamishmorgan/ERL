@@ -6,6 +6,7 @@ package uk.ac.susx.mlcl.erl.tac.kb;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import uk.ac.susx.mlcl.erl.tac.io.Tac2009KnowledgeBaseIO;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.File;

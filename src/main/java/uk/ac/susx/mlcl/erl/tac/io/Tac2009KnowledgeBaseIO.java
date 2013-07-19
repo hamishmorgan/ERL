@@ -3,6 +3,8 @@ package uk.ac.susx.mlcl.erl.tac.io;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -12,11 +14,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 import uk.ac.susx.mlcl.erl.lib.C14nCache;
-import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
-import uk.ac.susx.mlcl.erl.tac.kb.Entity;
-import uk.ac.susx.mlcl.erl.tac.kb.Fact;
-import uk.ac.susx.mlcl.erl.tac.kb.Link;
-import uk.ac.susx.mlcl.erl.tac.kb.TacKnowledgeBase;
+import uk.ac.susx.mlcl.erl.tac.kb.*;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -26,13 +24,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import static java.text.MessageFormat.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import static java.text.MessageFormat.format;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,7 +41,7 @@ import java.util.logging.Logger;
  */
 public class Tac2009KnowledgeBaseIO {
 
-    private static final Logger LOG = Logger.getLogger(Tac2009KnowledgeBaseIO.class.getName());
+    private static final Log LOG = LogFactory.getLog(Tac2009KnowledgeBaseIO.class);
 
     /**
      * Create a new knowledge base from the given raw source XML file(s).
@@ -59,9 +57,12 @@ public class Tac2009KnowledgeBaseIO {
      * @throws java.io.IOException
      */
     public static TacKnowledgeBase create(File dbFile, File dataPath) throws ParserConfigurationException, SAXException, IOException {
+
+        LOG.info(format("Creating knowledge-base DB, from XML resource {0}, to {1}", dataPath, dbFile));
+        LOG.debug("Initializing database.");
         final DB db = openDB(dbFile);
-        final HTreeMap<String, Entity> idIndex = db.createHashMap("entity-id-index", true, null, null);
-        final HTreeMap<String, String> nameIndex = db.createHashMap("entity-name-index", true, null, null);
+        final HTreeMap<String, Entity> idIndex = db.createHashMap("entity-id-index").keepCounter(true).make();
+        final HTreeMap<String, String> nameIndex = db.createHashMap("entity-name-index").keepCounter(true).make();
         final SAXParserFactory saxFactory = SAXParserFactory.newInstance();
         final SAXParser saxParser = saxFactory.newSAXParser();
         final DefaultHandler handler = new Tac2009SaxHandler(new TacEntryHandler() {
@@ -133,14 +134,19 @@ public class Tac2009KnowledgeBaseIO {
             saxParser.parse(part, handler);
         }
 
+        LOG.debug("Committing changes.");
         db.commit();
+
+        LOG.debug("Closing database.");
         db.close();
+
+        LOG.debug("All done.");
 
         return TacKnowledgeBase.open(dbFile);
     }
 
     public static DB openDB(URL url) throws URISyntaxException {
-        if(url.getProtocol().equalsIgnoreCase("file"))
+        if (url.getProtocol().equalsIgnoreCase("file"))
             return openDB(new File(url.toURI()));
         else
             throw new IllegalArgumentException(format("Unsupported protocol in url '{1}'", url));
@@ -152,6 +158,15 @@ public class Tac2009KnowledgeBaseIO {
                 .writeAheadLogDisable()
                 .closeOnJvmShutdown()
                 .make();
+    }
+
+    /**
+     * @author hiam20
+     */
+    public interface TacEntryHandler {
+
+        void entry(Entity entry);
+
     }
 
     /**
@@ -170,7 +185,7 @@ public class Tac2009KnowledgeBaseIO {
         /**
          *
          */
-        private static final Logger LOG = Logger.getLogger(Tac2009SaxHandler.class.getName());
+        private static final Log LOG = LogFactory.getLog(Tac2009SaxHandler.class);
         private final Stats stats = new Stats();
         //
         private final ContentHandler rootState = new RootHandler();
@@ -224,17 +239,17 @@ public class Tac2009KnowledgeBaseIO {
 
         @Override
         public void warning(SAXParseException e) throws SAXException {
-            LOG.log(Level.WARNING, null, e);
+            LOG.warn("", e);
         }
 
         @Override
         public void error(SAXParseException e) throws SAXException {
-            LOG.log(Level.SEVERE, null, e);
+            LOG.error("", e);
         }
 
         @Override
         public void fatalError(SAXParseException e) throws SAXException {
-            LOG.log(Level.SEVERE, null, e);
+            LOG.fatal("", e);
         }
 
         @Override
@@ -246,8 +261,6 @@ public class Tac2009KnowledgeBaseIO {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             states.peek().endElement(uri, localName, qName);
         }
-
-        ;
 
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
@@ -480,16 +493,6 @@ public class Tac2009KnowledgeBaseIO {
                 text.append(ch, start, length);
             }
         }
-    }
-
-
-    /**
-     * @author hiam20
-     */
-    public interface TacEntryHandler {
-
-        void entry(Entity entry);
-
     }
 
 
