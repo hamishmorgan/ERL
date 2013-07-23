@@ -19,6 +19,16 @@ import java.nio.charset.Charset;
 @Nonnull
 public class XomUtil {
 
+    public static String toString(Element element) {
+        detachChildren(element);
+        return toString(new XomB().document().setRoot(element).build());
+    }
+
+    public static String toString(Element element, Charset charset) {
+        detachChildren(element);
+        return toString(new XomB().document().setRoot(element).build(), charset);
+    }
+
     public static String toString(Document document) {
         return toString(document, Charset.defaultCharset());
     }
@@ -44,7 +54,7 @@ public class XomUtil {
         Serializer ser = new Serializer(outputStream, encoding.name());
         ser.setIndent(2);
         ser.setMaxLength(0);
-//        ser.setLineSeparator("\n");
+        ser.setLineSeparator("\n");
 
         // XXX all elements inherit root elements base uri unless explicitly set (even if an
         // ancestor overrides that base.) Not sure this is correct.
@@ -134,6 +144,47 @@ public class XomUtil {
         }
         for (Nodes nodes : remainder) {
             detachChildren(nodes);
+        }
+    }
+
+    public static void detachChildren(final Node first,
+                                      final Node... remainder) {
+        Preconditions.checkNotNull(first, "first");
+        Preconditions.checkNotNull(remainder, "remainder");
+
+        Node child = first;
+        ParentNode parent = child.getParent();
+        if (parent != null)
+            parent.removeChild(child);
+
+        if (remainder.length > 0)
+            for (Node node : remainder) {
+                detachChildren(node);
+            }
+    }
+
+    public static String getPrintableText(Node node) {
+        final StringBuilder builder = new StringBuilder();
+        getPrintableText(node, builder);
+        return builder.toString();
+    }
+
+    public static void getPrintableText(Node node, StringBuilder builder) {
+        if (node.getClass().equals(Text.class)) {
+            builder.append(((Text) node).getValue());
+        } else if (node.getClass().equals(Element.class)) {
+            for (int i = 0; i < node.getChildCount(); i++)
+                getPrintableText(node.getChild(i), builder);
+        } else if (node.getClass().equals(Document.class)) {
+            getPrintableText(((Document) node).getRootElement(), builder);
+        } else {
+            assert node.getClass().equals(Attribute.class)
+                    || node.getClass().equals(Comment.class)
+                    || node.getClass().equals(DocType.class)
+                    || node.getClass().equals(Namespace.class)
+                    || node.getClass().equals(ProcessingInstruction.class)
+                    || node.getClass().equals(Attribute.class)
+                    || node.getClass().equals(ParentNode.class);
         }
     }
 }
