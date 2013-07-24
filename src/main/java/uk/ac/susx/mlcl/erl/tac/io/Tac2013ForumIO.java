@@ -3,7 +3,6 @@ package uk.ac.susx.mlcl.erl.tac.io;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import nu.xom.Element;
-import nu.xom.Elements;
 import nu.xom.Node;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,13 +35,13 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
         LOG.debug("id: " + id);
 
         // read the headline element
-        final Elements headlineElements = doc.getChildElements(HEADLINE_ELEMENT_NAME);
-        assert headlineElements.size() <= 1;
 
-        final Optional<String> headline = headlineElements.size() == 1
-                ? Optional.of(XomUtil.getPrintableText(headlineElements.get(0)))
+        final Element headlineElement = getFirstChildElementsWhere(doc, elementNameEqualsIgnoreCase(HEADLINE_ELEMENT_NAME));
+        final Optional<String> headline = headlineElement != null
+                ? Optional.of(XomUtil.getPrintableText(headlineElement))
                 : Optional.<String>absent();
         LOG.debug("headline: " + headline);
+
 
         final ImmutableList.Builder<ForumDocument.Post> posts = ImmutableList.builder();
         for (int i = 0; i < doc.getChildCount(); i++) {

@@ -90,7 +90,7 @@ public class GeneratorCollection
      * @param aggregationMethod
      */
     protected GeneratorCollection(final List<CandidateGenerator> children, final AggregationMethod aggregationMethod) {
-        this.children = checkNotNull(children, "children");
+        this.children = checkNotNull(children, "childrenOf");
         this.aggregationMethod = checkNotNull(aggregationMethod, "aggregationMethod");
     }
 

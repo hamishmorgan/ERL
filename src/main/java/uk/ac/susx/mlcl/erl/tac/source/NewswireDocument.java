@@ -1,17 +1,18 @@
 package uk.ac.susx.mlcl.erl.tac.source;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
 import java.util.List;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 23/07/2013
-* Time: 16:10
-* To change this template use File | Settings | File Templates.
-*/
-class NewswireDocument extends SourceDocument {
+ * Created with IntelliJ IDEA.
+ * User: hiam20
+ * Date: 23/07/2013
+ * Time: 16:10
+ * To change this template use File | Settings | File Templates.
+ */
+public class NewswireDocument extends SourceDocument {
 
     //    Newswire data in all three languages use the following markup
     //    framework:
@@ -40,21 +41,54 @@ class NewswireDocument extends SourceDocument {
     //    XML.
 
 
-
     // E.g: Santiago, May 31, 2009 (AFP)
+    private final Type type;
     private final Optional<String> dateline;
     private final List<String> paragraphs;
-    private final Type type;
 
-    NewswireDocument(String id, Optional<String> headline, Optional<String> dateline, List<String> paragraphs, Type type) {
+    public NewswireDocument(String id, Type type, Optional<String> headline, Optional<String> dateline, List<String> paragraphs) {
         super(id, headline);
         this.dateline = dateline;
         this.paragraphs = paragraphs;
         this.type = type;
     }
 
-    enum Type {
-        story
+    public Objects.ToStringHelper toStringHelper() {
+        return Objects.toStringHelper(this)
+                .add("type", type)
+                .add("dateline", dateline)
+                .add("paragraphs", paragraphs);
     }
 
+    public enum Type {
+        story,
+        advis,
+        multi,
+        other
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        NewswireDocument that = (NewswireDocument) o;
+
+        if (!dateline.equals(that.dateline)) return false;
+        if (!paragraphs.equals(that.paragraphs)) return false;
+        if (type != that.type) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + type.hashCode();
+        result = 31 * result + dateline.hashCode();
+        result = 31 * result + paragraphs.hashCode();
+        return result;
+    }
 }

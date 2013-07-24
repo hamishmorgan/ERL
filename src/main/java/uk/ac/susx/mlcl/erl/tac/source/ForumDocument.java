@@ -63,6 +63,26 @@ public class ForumDocument extends SourceDocument {
                 .add("posts", posts);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        ForumDocument that = (ForumDocument) o;
+
+        if (!posts.equals(that.posts)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + posts.hashCode();
+        return result;
+    }
+
     public static class Post {
         private final String id;
         private final String author;

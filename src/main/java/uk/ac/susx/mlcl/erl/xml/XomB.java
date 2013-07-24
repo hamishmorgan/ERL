@@ -288,7 +288,7 @@ public class XomB {
         private Optional<URI> baseURI;
 
         /**
-         * Build an immutable list of children.
+         * Build an immutable list of childrenOf.
          */
         private final ImmutableList.Builder<Node> children;
 
