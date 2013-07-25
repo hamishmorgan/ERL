@@ -1,11 +1,8 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closer;
@@ -22,6 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.collect.Iterators.*;
+
 /**
  * Abstract super class for source corpora IO implementations.
  *
@@ -36,6 +37,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
     private static final String INPUT_SUFFIX = String.format("%n</%s>", ROOT_ELEMENT_NAME);
 
     public static Iterable<Node> childrenOf(final Node parent) {
+        checkNotNull(parent, "parent");
         return new Iterable<Node>() {
             @Override
             public Iterator<Node> iterator() {
@@ -66,21 +68,23 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         };
     }
 
-
     public static Iterable<Node> childrenWhere(final Node parent, final Predicate<Node> condition) {
+        checkNotNull(parent, "parent");
+        checkNotNull(condition, "condition");
         return new Iterable<Node>() {
             @Override
             public Iterator<Node> iterator() {
-                return Iterators.filter(childrenOf(parent).iterator(), condition);
+                return filter(childrenOf(parent).iterator(), condition);
             }
         };
     }
 
     public static Iterable<Element> childElementsOf(final Node parent) {
+        checkNotNull(parent, "parent");
         return new Iterable<Element>() {
             @Override
             public Iterator<Element> iterator() {
-                return Iterators.transform(
+                return transform(
                         childrenWhere(parent, isElement()).iterator(),
                         cast(Node.class, Element.class)
                 );
@@ -90,24 +94,39 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
     }
 
     public static Iterable<Element> childElementsWhere(final Element parent, final Predicate<Element> condition) {
+        checkNotNull(parent, "parent");
+        checkNotNull(condition, "condition");
         return new Iterable<Element>() {
             @Override
             public Iterator<Element> iterator() {
-                return Iterators.filter(childElementsOf(parent).iterator(), condition);
+                return filter(childElementsOf(parent).iterator(), condition);
             }
         };
     }
 
-
     public static List<Node> getChildrenWhere(Node parent, Predicate<Node> condition) {
+        checkNotNull(parent, "parent");
+        checkNotNull(condition, "condition");
         return ImmutableList.copyOf(childrenWhere(parent, condition));
     }
 
     public static Node getFirstChildWhere(Node parent, Predicate<Node> condition) {
-        return Iterators.getNext(childrenWhere(parent, condition).iterator(), null);
+        checkNotNull(parent, "parent");
+        checkNotNull(condition, "condition");
+        return getNext(childrenWhere(parent, condition).iterator(), null);
+    }
+
+    public static List<Node> getChildrenOf(Node parent) {
+        return ImmutableList.copyOf(childrenOf(parent));
+    }
+
+    public static List<Element> getChildElementsOf(Node parent) {
+        return ImmutableList.copyOf(childElementsOf(parent));
     }
 
     public static <F, T extends F> Function<F, T> cast(final Class<F> fromCls, final Class<T> toClass) {
+        checkNotNull(fromCls, "fromCls");
+        checkNotNull(toClass, "toClass");
         return new Function<F, T>() {
             @Nullable
             @Override
@@ -118,16 +137,23 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
     }
 
     public static List<Element> getChildElementsWhere(Node parent, Predicate<Node> condition) {
+        checkNotNull(parent, "parent");
+        checkNotNull(condition, "condition");
         return ImmutableList.copyOf(
-                Iterators.transform(
-                        childrenWhere(parent, Predicates.and(isElement(), condition)).iterator(),
+                transform(
+                        childrenWhere(parent, and(isElement(), condition)).iterator(),
                         cast(Node.class, Element.class)));
     }
 
     public static
     @Nullable
-    Element getFirstChildElementsWhere(Element parent, Predicate<Node> condition) {
-        return (Element) getFirstChildWhere(parent, Predicates.and(isElement(), condition));
+    Element getFirstChildElementsWhere(Element parent, Predicate<Element> condition) {
+        checkNotNull(parent, "parent");
+        checkNotNull(condition, "condition");
+        return getNext(filter(
+                transform(childrenWhere(parent, isElement()).iterator(),
+                        cast(Node.class, Element.class)),
+                condition), null);
     }
 
     static Predicate<Node> isElement() {
@@ -138,16 +164,27 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
             }
         };
     }
+//
+//    static Predicate<Node> elementNameEqualsIgnoreCase(final String string) {
+//        return new Predicate<Node>() {
+//            @Override
+//            public boolean apply(@Nullable Node input) {
+//                Preconditions.checkArgument(input instanceof Element);
+//                return ((Element) input).getLocalName().equalsIgnoreCase(string);
+//            }
+//        };
+//    }
 
-    static Predicate<Node> elementNameEqualsIgnoreCase(final String string) {
-        return new Predicate<Node>() {
+    static Predicate<Element> nameEqualsIgnoreCase(final String string) {
+        checkNotNull(string, "string");
+        return new Predicate<Element>() {
             @Override
-            public boolean apply(@Nullable Node input) {
-                Preconditions.checkArgument(input instanceof Element);
-                return ((Element) input).getLocalName().equalsIgnoreCase(string);
+            public boolean apply(@Nullable Element input) {
+                return input.getLocalName().equalsIgnoreCase(string);
             }
         };
     }
+
 
 //    static Predicate<Element> nameEqualsIgnoreCase(final String string) {
 //        return new Predicate<Element>() {
@@ -203,5 +240,6 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
     }
 
     abstract T parseDocElement(Element element);
+
 
 }

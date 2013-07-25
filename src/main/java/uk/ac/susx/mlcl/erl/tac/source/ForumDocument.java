@@ -5,6 +5,7 @@ import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -16,6 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Time: 15:59
  * To change this template use File | Settings | File Templates.
  */
+@Immutable
 public class ForumDocument extends SourceDocument {
 
 
@@ -89,6 +91,7 @@ public class ForumDocument extends SourceDocument {
         return result;
     }
 
+    @Immutable
     public static class Post {
         @Nonnull
         private final String id;
@@ -157,6 +160,7 @@ public class ForumDocument extends SourceDocument {
 
     }
 
+    @Immutable
     public static class Block {
 
         @Nonnull
@@ -193,6 +197,7 @@ public class ForumDocument extends SourceDocument {
 
     }
 
+    @Immutable
     public static class Quote extends Block {
 
         @Nonnull

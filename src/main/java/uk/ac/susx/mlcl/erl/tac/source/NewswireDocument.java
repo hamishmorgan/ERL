@@ -3,6 +3,7 @@ package uk.ac.susx.mlcl.erl.tac.source;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.List;
 
 /**
@@ -12,6 +13,7 @@ import java.util.List;
  * Time: 16:10
  * To change this template use File | Settings | File Templates.
  */
+@Immutable
 public class NewswireDocument extends SourceDocument {
 
     //    Newswire data in all three languages use the following markup

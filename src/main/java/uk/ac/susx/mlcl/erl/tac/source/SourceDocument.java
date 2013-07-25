@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -21,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 //
 //
 //
+@Immutable
 public abstract class SourceDocument {
     @Nonnull
     private final String id;

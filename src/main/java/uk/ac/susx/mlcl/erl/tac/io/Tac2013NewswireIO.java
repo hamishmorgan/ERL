@@ -75,7 +75,7 @@ public class Tac2013NewswireIO extends AbstractTac2013SourceIO<NewswireDocument>
 
     private Optional<String> parseHeadlineElement(final Element doc) {
         final Element headlineElement = getFirstChildElementsWhere(
-                doc, elementNameEqualsIgnoreCase(HEADLINE_ELEMENT_NAME));
+                doc, nameEqualsIgnoreCase(HEADLINE_ELEMENT_NAME));
         final Optional<String> headline = headlineElement != null
                 ? Optional.of(XomUtil.getPrintableText(headlineElement).trim())
                 : Optional.<String>absent();
@@ -85,7 +85,7 @@ public class Tac2013NewswireIO extends AbstractTac2013SourceIO<NewswireDocument>
 
     private Optional<String> parseDatelineElement(final Element doc) {
         final Element datelineElement = getFirstChildElementsWhere(
-                doc, elementNameEqualsIgnoreCase(DATELINE_ELEMENT_NAME));
+                doc, nameEqualsIgnoreCase(DATELINE_ELEMENT_NAME));
         final Optional<String> dateline = datelineElement == null
                 ? Optional.<String>absent()
                 : Optional.of(XomUtil.getPrintableText(datelineElement).trim());

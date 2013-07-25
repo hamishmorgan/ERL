@@ -48,7 +48,7 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
 
         // read the headline element
 
-        final Element headlineElement = getFirstChildElementsWhere(doc, elementNameEqualsIgnoreCase(HEADLINE_ELEMENT_NAME));
+        final Element headlineElement = getFirstChildElementsWhere(doc, nameEqualsIgnoreCase(HEADLINE_ELEMENT_NAME));
         final Optional<String> headline = headlineElement != null
                 ? Optional.of(XomUtil.getPrintableText(headlineElement).trim())
                 : Optional.<String>absent();
