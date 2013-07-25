@@ -5,6 +5,8 @@ import com.google.common.base.Optional;
 
 import javax.annotation.Nonnull;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Created with IntelliJ IDEA.
  * User: hiam20
@@ -25,15 +27,17 @@ public abstract class SourceDocument {
     @Nonnull
     private final Optional<String> headline;
 
-    public SourceDocument(String id, Optional<String> headline) {
-        this.id = id;
-        this.headline = headline;
+    public SourceDocument(@Nonnull final String id, @Nonnull final Optional<String> headline) {
+        this.id = checkNotNull(id, "id");
+        this.headline = checkNotNull(headline, "headline");
     }
 
+    @Nonnull
     public String getId() {
         return id;
     }
 
+    @Nonnull
     public String getHeadline() {
         return headline.get();
     }
@@ -42,28 +46,20 @@ public abstract class SourceDocument {
         return headline.isPresent();
     }
 
-    public Objects.ToStringHelper toStringHelper() {
-        return Objects.toStringHelper(this)
-                .add("id", id)
-                .add("headline", headline);
-    }
-
     @Override
     public String toString() {
-        return toStringHelper().toString();
+        return Objects.toStringHelper(this)
+                .add("id", getId())
+                .add("headline", isHeadlineSet() ? getHeadline() : "<none>")
+                .toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         SourceDocument that = (SourceDocument) o;
-
-        if (!headline.equals(that.headline)) return false;
-        if (!id.equals(that.id)) return false;
-
-        return true;
+        return headline.equals(that.headline) && id.equals(that.id);
     }
 
     @Override

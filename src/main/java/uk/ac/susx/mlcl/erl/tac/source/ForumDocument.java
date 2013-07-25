@@ -4,7 +4,10 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,20 +50,27 @@ public class ForumDocument extends SourceDocument {
     //    <post author="bitterlyclingin" datetime="2012-04-03T06:25:00" id="p1">
 
 
+    @Nonnull
     private final List<Post> posts;
 
-    public ForumDocument(String id, Optional<String> headline, List<Post> posts) {
+    public ForumDocument(@Nonnull final String id, @Nonnull final Optional<String> headline,
+                         @Nonnull final List<Post> posts) {
         super(id, headline);
-        this.posts = posts;
+        this.posts = checkNotNull(posts, "posts");
     }
 
+    @Nonnull
     public List<Post> getPosts() {
         return posts;
     }
 
-    public Objects.ToStringHelper toStringHelper() {
+    @Override
+    public String toString() {
         return Objects.toStringHelper(this)
-                .add("posts", posts);
+                .add("id", getId())
+                .add("headline", isHeadlineSet() ? getHeadline() : "<none>")
+                .add("posts", getPosts())
+                .toString();
     }
 
     @Override
@@ -68,12 +78,8 @@ public class ForumDocument extends SourceDocument {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-
-        ForumDocument that = (ForumDocument) o;
-
-        if (!posts.equals(that.posts)) return false;
-
-        return true;
+        final ForumDocument that = (ForumDocument) o;
+        return posts.equals(that.posts);
     }
 
     @Override
@@ -84,86 +90,146 @@ public class ForumDocument extends SourceDocument {
     }
 
     public static class Post {
+        @Nonnull
         private final String id;
+        @Nonnull
         private final String author;
+        @Nonnull
         private final DateTime date;
+        @Nonnull
         private final List<Block> paragraphs;
 
-        public Post(String id, String author, DateTime date, List<Block> paragraphs) {
-            this.id = id;
-            this.author = author;
-            this.date = date;
-            this.paragraphs = paragraphs;
+        public Post(@Nonnull final String id, @Nonnull final String author,
+                    @Nonnull final DateTime date, @Nonnull final List<Block> paragraphs) {
+            this.id = checkNotNull(id, "id");
+            this.author = checkNotNull(author, "author");
+            this.date = checkNotNull(date, "date");
+            this.paragraphs = checkNotNull(paragraphs, "paragraphs");
         }
 
+        @Nonnull
         public String getId() {
             return id;
         }
 
+        @Nonnull
         public String getAuthor() {
             return author;
         }
 
+        @Nonnull
         public DateTime getDate() {
             return date;
         }
 
+        @Nonnull
         public List<Block> getParagraphs() {
             return paragraphs;
         }
 
-        public Objects.ToStringHelper toStringHelper() {
-            return Objects.toStringHelper(this)
-                    .add("id", id)
-                    .add("author", author)
-                    .add("date", date)
-                    .add("paragraphs", paragraphs);
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Post post = (Post) o;
+            return author.equals(post.author) && date.equals(post.date)
+                    && id.equals(post.id) && paragraphs.equals(post.paragraphs);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id.hashCode();
+            result = 31 * result + author.hashCode();
+            result = 31 * result + date.hashCode();
+            result = 31 * result + paragraphs.hashCode();
+            return result;
         }
 
         @Override
         public String toString() {
-            return toStringHelper().toString();
+            return Objects.toStringHelper(this)
+                    .add("id", getId())
+                    .add("author", getAuthor())
+                    .add("date", getDate())
+                    .add("paragraphs", getParagraphs())
+                    .toString();
         }
 
     }
 
     public static class Block {
 
+        @Nonnull
         private final String text;
 
-        public Block(String text) {
-            this.text = text;
+        public Block(@Nonnull String text) {
+            this.text = checkNotNull(text, "text");
         }
 
+        @Nonnull
         public String getText() {
             return text;
         }
 
-        public Objects.ToStringHelper toStringHelper() {
-            return Objects.toStringHelper(this).add("text", text);
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Block block = (Block) o;
+            return text.equals(block.text);
+        }
+
+        @Override
+        public int hashCode() {
+            return text.hashCode();
         }
 
         @Override
         public String toString() {
-            return toStringHelper().toString();
+            return Objects.toStringHelper(this)
+                    .add("text", getText())
+                    .toString();
         }
+
     }
 
     public static class Quote extends Block {
 
+        @Nonnull
         private final String originalAuthor;
 
-        public Quote(String text, String originalAuthor) {
+        public Quote(@Nonnull String originalAuthor, @Nonnull String text) {
             super(text);
-            this.originalAuthor = originalAuthor;
+            this.originalAuthor = checkNotNull(originalAuthor, "originalAuthor");
         }
 
+        @Nonnull
         public String getOriginalAuthor() {
             return originalAuthor;
         }
 
-        public Objects.ToStringHelper toStringHelper() {
-            return super.toStringHelper().add("originalAuthor", originalAuthor);
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
+            final Quote quote = (Quote) o;
+            return originalAuthor.equals(quote.originalAuthor);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + originalAuthor.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this)
+                    .add("originalAuthor", getOriginalAuthor())
+                    .add("text", getText())
+                    .toString();
         }
     }
 }

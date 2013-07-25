@@ -1,6 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import nu.xom.Element;
 import nu.xom.Node;
@@ -25,6 +26,17 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
     private static final String POST_DATE_ATTRIBUTE_NAME = "datetime";
     private static final String QUOTE_ORIGINAL_AUTHOR_ATTRIBUTE_NAME = "orig_author";
 
+    private static void flushTextToBlocks(
+            final StringBuilder srcTextBuilder,
+            final ImmutableCollection.Builder<? super ForumDocument.Block> dstBlocksBuilder) {
+        if (srcTextBuilder.length() > 0) {
+            final String text = srcTextBuilder.toString().trim();
+            if (!text.isEmpty())
+                dstBlocksBuilder.add(new ForumDocument.Block(text));
+            srcTextBuilder.setLength(0);
+        }
+    }
+
     @Override
     protected ForumDocument parseDocElement(Element doc) {
         assert doc.getLocalName().equalsIgnoreCase(DOC_ELEMENT_NAME);
@@ -38,7 +50,7 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
 
         final Element headlineElement = getFirstChildElementsWhere(doc, elementNameEqualsIgnoreCase(HEADLINE_ELEMENT_NAME));
         final Optional<String> headline = headlineElement != null
-                ? Optional.of(XomUtil.getPrintableText(headlineElement))
+                ? Optional.of(XomUtil.getPrintableText(headlineElement).trim())
                 : Optional.<String>absent();
         LOG.debug("headline: " + headline);
 
@@ -70,23 +82,19 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
         final DateTime date = new DateTime(post.getAttribute(POST_DATE_ATTRIBUTE_NAME).getValue());
 
         final ImmutableList.Builder<ForumDocument.Block> blocksBuilder = ImmutableList.builder();
-        StringBuilder textBuilder = new StringBuilder();
+        final StringBuilder textBuilder = new StringBuilder();
         for (int i = 0; i < post.getChildCount(); i++) {
             final Node child = post.getChild(i);
             if (child.getClass().equals(Element.class)
                     && ((Element) child).getLocalName().equalsIgnoreCase(QUOTE_ELEMENT_NAME)) {
-                if (textBuilder.length() > 0) {
-                    blocksBuilder.add(new ForumDocument.Block(textBuilder.toString()));
-                    textBuilder = new StringBuilder();
-                }
+                flushTextToBlocks(textBuilder, blocksBuilder);
                 blocksBuilder.add(parseQuote((Element) child));
             } else {
                 textBuilder.append(XomUtil.getPrintableText(child));
             }
 
         }
-        if (textBuilder.length() > 0)
-            blocksBuilder.add(new ForumDocument.Block(textBuilder.toString()));
+        flushTextToBlocks(textBuilder, blocksBuilder);
 
         return new ForumDocument.Post(id, author, date, blocksBuilder.build());
     }
@@ -97,9 +105,9 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
         assert quote.getAttributeCount() == 1;
         final String originalAuthor = quote.getAttribute(QUOTE_ORIGINAL_AUTHOR_ATTRIBUTE_NAME).getValue();
 
-        final String text = XomUtil.getPrintableText(quote);
+        final String text = XomUtil.getPrintableText(quote).trim();
 
-        return new ForumDocument.Quote(text, originalAuthor);
+        return new ForumDocument.Quote(originalAuthor, text);
     }
 
 }
