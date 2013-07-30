@@ -77,8 +77,8 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
 
         final WebDocument.Source source = WebDocument.Source.valueOf(doctypeElement.getAttribute(SOURCE_ATTRIBUTE_NAME.toLowerCase()).getValue().trim());
 
-        final DateTime date = DateTime.parse(
-                getFirstChildElementsWhere(docElement, nameEqualsIgnoreCase(DATE_ELEMENT_NAME)).getValue().trim());
+        final DateTime date = parseDateString(
+                getFirstChildElementsWhere(docElement, nameEqualsIgnoreCase(DATE_ELEMENT_NAME)).getValue());
 
         LOG.debug("Processing document id = " + id + ", source = " + source);
 
@@ -113,7 +113,7 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
 
         final Optional<DateTime> date = dateElement == null
                 ? Optional.<DateTime>absent()
-                : Optional.of(DateTime.parse(dateElement.getValue().trim()));
+                : Optional.of(parseDateString(dateElement.getValue()));
 
         final StringBuilder textBuilder = new StringBuilder();
         for (final Node node : childrenOf(postElement)) {

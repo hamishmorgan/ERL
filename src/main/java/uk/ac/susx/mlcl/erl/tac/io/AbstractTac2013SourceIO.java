@@ -10,6 +10,9 @@ import nu.xom.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ccil.cowan.tagsoup.Parser;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -199,6 +202,12 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //        };
 //    }
 
+    protected static DateTime parseDateString(final String dateString) {
+        return ISODateTimeFormat.dateTimeParser()
+                .parseLocalDateTime(dateString.trim())
+                .toDateTime(DateTimeZone.UTC);
+    }
+
     public List<T> readAll(final ByteSource rawSource) throws IOException, ParsingException, SAXException {
 
 //        final ByteSource joinedSource = rawSource;
@@ -215,7 +224,6 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 
 //        tagsoup.setProperty(Parser.scannerProperty, new HTMLScanner());
 //        tagsoup.setProperty(Parser.schemaProperty, new HTMLSchema());
-
 
 
         tagsoup.setProperty(Parser.schemaProperty, new XmlSoupSchema());
@@ -257,7 +265,6 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //
 
 
-
         final Builder parser = new Builder(tagsoup);
 
 //        final Builder parser = new Builder();
@@ -285,7 +292,6 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
             closer.close();
         }
     }
-
 
     private List<T> parseDocuments(final Element root) throws IOException, ParsingException {
         final ImmutableList.Builder<T> listBuilder = ImmutableList.builder();

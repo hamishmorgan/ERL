@@ -7,9 +7,6 @@ import com.google.common.io.Resources;
 import nu.xom.ParsingException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
-import org.joda.time.MutableDateTime;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 import uk.ac.susx.mlcl.erl.lib.IOUtils;
@@ -110,26 +107,26 @@ public class Tac2013SourceIOTest extends AbstractTest {
                 "bolt-eng-DF-170-181103-8881756",
                 Optional.of("The next president of the United States - Newt Gingrich"),
                 ImmutableList.<ForumDocument.Post>of(
-                        new ForumDocument.Post("p1", "Amelia", new DateTime("2012-03-13T20:58:00"),
+                        new ForumDocument.Post("p1", "Amelia", new DateTime(2012, 3, 13, 20, 58, 0, DateTimeZone.UTC),
                                 ImmutableList.<ForumDocument.Block>of(
                                         new ForumDocument.Block("No really! That's how they announced him just now " +
                                                 "at his concession speech for his defeats in MS & AL!"))),
-                        new ForumDocument.Post("p2", "Avatar4321", new DateTime("2012-03-13T20:59:00"),
+                        new ForumDocument.Post("p2", "Avatar4321",  new DateTime(2012, 3, 13, 20, 59, 0, DateTimeZone.UTC),
                                 ImmutableList.<ForumDocument.Block>of(
                                         new ForumDocument.Block("Okay. That's funny lol"))),
-                        new ForumDocument.Post("p3", "syrenn", new DateTime("2012-03-13T21:01:00"),
+                        new ForumDocument.Post("p3", "syrenn", new DateTime(2012, 3, 13, 21, 1, 0, DateTimeZone.UTC),
                                 ImmutableList.<ForumDocument.Block>of(
                                         new ForumDocument.Block("gggrrr.... they got rid of the puke smilie!"))),
-                        new ForumDocument.Post("p4", "Charles_Main", new DateTime("2012-03-13T21:02:00"),
+                        new ForumDocument.Post("p4", "Charles_Main", new DateTime(2012, 3, 13, 21, 2, 0, DateTimeZone.UTC),
                                 ImmutableList.<ForumDocument.Block>of(
                                         new ForumDocument.Quote("Amelia", "No really! That's how they announced him " +
                                                 "just now at his concession speech for his defeats in MS & AL!"),
                                         new ForumDocument.Block("LOL - It's not completely Impossible, but it just became Extremely Unlikely. A slight change from Very Unlikely which it was before tonight.\n\nlol"))),
-                        new ForumDocument.Post("p5", "Avatar4321", new DateTime("2012-03-13T21:02:00"),
+                        new ForumDocument.Post("p5", "Avatar4321", new DateTime(2012, 3, 13, 21, 2, 0, DateTimeZone.UTC),
                                 ImmutableList.<ForumDocument.Block>of(
                                         new ForumDocument.Quote("syrenn", "gggrrr.... they got rid of the puke smilie!"),
                                         new ForumDocument.Block("Then laugh instead"))),
-                        new ForumDocument.Post("p6", "Amelia", new DateTime("2012-03-13T22:03:00"),
+                        new ForumDocument.Post("p6", "Amelia", new DateTime(2012, 3, 13, 22, 3, 0, DateTimeZone.UTC),
                                 ImmutableList.<ForumDocument.Block>of(
                                         new ForumDocument.Block("Gotta laugh. What else is there to do?")))
                 ));
@@ -542,25 +539,19 @@ public class Tac2013SourceIOTest extends AbstractTest {
         assertEquals(1, doc.size());
     }
 
+    /**
+     * Test that dates are parsed in the UTC timezone. This test attempts to parse a date that would be invalid
+     * if the timezone is assumed to be Europe/London. It throws an exception with the following message:
+     * Cannot parse "2009-03-29T01:00:51": Illegal instant due to time zone offset transition (Europe/London)
+     */
     @Test
-    public void testPaseBadDate() {
-        //  Cannot parse "2009-03-29T01:00:51": Illegal instant due to time zone offset transition (Europe/London)
-        String dateString = "2009-03-29T01:00:51";
-
-
-        DateTime expected =  new DateTime(2009,3,29,1,0,51, DateTimeZone.UTC);
-
-        DateTime actual = ISODateTimeFormat.dateTimeParser().parseLocalDateTime(dateString).toDateTime(DateTimeZone.UTC);
-
-
-
-//        DateTime actual =  DateTime.parse(dateString);
+    public void testParseBadDate() {
+        final String dateString = "2009-03-29T01:00:51";
+        final DateTime expected = new DateTime(2009, 3, 29, 1, 0, 51, DateTimeZone.UTC);
+        final DateTime actual = AbstractTac2013SourceIO.parseDateString(dateString);
+        assertNotNull(actual);
         assertEquals(expected, actual);
-
     }
-
-
-
 
 
 }

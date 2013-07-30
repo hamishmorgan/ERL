@@ -79,7 +79,7 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
         assert post.getAttributeCount() == 3;
         final String author = post.getAttribute(POST_AUTHOR_ATTRIBUTE_NAME).getValue();
         final String id = post.getAttribute(POST_ID_ATTRIBUTE_NAME).getValue();
-        final DateTime date = new DateTime(post.getAttribute(POST_DATE_ATTRIBUTE_NAME).getValue());
+        final DateTime date = parseDateString(post.getAttribute(POST_DATE_ATTRIBUTE_NAME).getValue());
 
         final ImmutableList.Builder<ForumDocument.Block> blocksBuilder = ImmutableList.builder();
         final StringBuilder textBuilder = new StringBuilder();
