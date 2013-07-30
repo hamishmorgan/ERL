@@ -9,6 +9,7 @@ import nu.xom.ParsingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
+import org.xml.sax.SAXException;
 import uk.ac.susx.mlcl.erl.tac.source.WebDocument;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
@@ -38,19 +39,19 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
     private static final String POST_DATE_ELEMENT_NAME = "POSTDATE";
 
     @Override
-    public List<WebDocument> readAll(final ByteSource rawSource) throws IOException, ParsingException {
+    public List<WebDocument> readAll(final ByteSource rawSource) throws IOException, ParsingException, SAXException {
         final ByteSource entityFixingByteSource = new ByteSource() {
 
             @Override
             public InputStream openStream() throws IOException {
                 InputStream in = rawSource.openStream();
 
-                in =  new ReplacingInputStream(in, "& ".getBytes("UTF-8"), "&amp; ".getBytes("UTF-8"));
-                in =  new ReplacingInputStream(in, " < ".getBytes("UTF-8"), " &lt; ".getBytes("UTF-8"));
-                in =  new ReplacingInputStream(in, " > ".getBytes("UTF-8"), " &gt; ".getBytes("UTF-8"));
-                in =  new ReplacingInputStream(in, "&&".getBytes("UTF-8"), "&amp;&amp;".getBytes("UTF-8"));
-                in =  new ReplacingInputStream(in, ">>".getBytes("UTF-8"), "&gt;&gt;".getBytes("UTF-8"));
-                in =  new ReplacingInputStream(in, "\n&\n".getBytes("UTF-8"), "\n&amp;\n".getBytes("UTF-8"));
+//                in =  new ReplacingInputStream(in, "& ".getBytes("UTF-8"), "&amp; ".getBytes("UTF-8"));
+//                in =  new ReplacingInputStream(in, " < ".getBytes("UTF-8"), " &lt; ".getBytes("UTF-8"));
+//                in =  new ReplacingInputStream(in, " > ".getBytes("UTF-8"), " &gt; ".getBytes("UTF-8"));
+//                in =  new ReplacingInputStream(in, "&&".getBytes("UTF-8"), "&amp;&amp;".getBytes("UTF-8"));
+//                in =  new ReplacingInputStream(in, ">>".getBytes("UTF-8"), "&gt;&gt;".getBytes("UTF-8"));
+//                in =  new ReplacingInputStream(in, "\n&\n".getBytes("UTF-8"), "\n&amp;\n".getBytes("UTF-8"));
                 return in;
             }
         };
@@ -72,7 +73,10 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
 
         final Element doctypeElement = getFirstChildElementsWhere(docElement, nameEqualsIgnoreCase(TYPE_ELEMENT_NAME));
         final String type = doctypeElement.getValue().trim();
-        final WebDocument.Source source = WebDocument.Source.valueOf(doctypeElement.getAttribute(SOURCE_ATTRIBUTE_NAME).getValue().trim());
+
+
+        final WebDocument.Source source = WebDocument.Source.valueOf(doctypeElement.getAttribute(SOURCE_ATTRIBUTE_NAME.toLowerCase()).getValue().trim());
+
         final DateTime date = DateTime.parse(
                 getFirstChildElementsWhere(docElement, nameEqualsIgnoreCase(DATE_ELEMENT_NAME)).getValue().trim());
 

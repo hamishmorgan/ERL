@@ -9,6 +9,10 @@ import com.google.common.io.Closer;
 import nu.xom.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ccil.cowan.tagsoup.Parser;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 import uk.ac.susx.mlcl.erl.lib.IOUtils;
 import uk.ac.susx.mlcl.erl.tac.source.SourceDocument;
 
@@ -195,18 +199,77 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //        };
 //    }
 
-    public List<T> readAll(final ByteSource rawSource) throws IOException, ParsingException {
+    public List<T> readAll(final ByteSource rawSource) throws IOException, ParsingException, SAXException {
+
+//        final ByteSource joinedSource = rawSource;
+//
         final ByteSource joinedSource = IOUtils.join(
                 ByteStreams.asByteSource(INPUT_PREFIX.getBytes()),
                 rawSource,
                 ByteStreams.asByteSource(INPUT_SUFFIX.getBytes()));
-        final Builder parser = new Builder();
+
+        XMLReader tagsoup = XMLReaderFactory.createXMLReader("org.ccil.cowan.tagsoup.Parser");
+
+//        tagsoup.setFeature(Parser.defaultAttributesFeature, false);
+//        tagsoup.setFeature(Parser.ignoreBogonsFeature, false);
+
+//        tagsoup.setProperty(Parser.scannerProperty, new HTMLScanner());
+//        tagsoup.setProperty(Parser.schemaProperty, new HTMLSchema());
+
+
+
+        tagsoup.setProperty(Parser.schemaProperty, new XmlSoupSchema());
+        tagsoup.setProperty(Parser.scannerProperty, new XmlSoupScanner());
+//
+//
+//        LOG.debug(Objects.toStringHelper(tagsoup)
+//                .add(Parser.bogonsEmptyFeature, tagsoup.getFeature(Parser.bogonsEmptyFeature))
+//                .add(Parser.CDATAElementsFeature, tagsoup.getFeature(Parser.CDATAElementsFeature))
+//                .add(Parser.defaultAttributesFeature, tagsoup.getFeature(Parser.defaultAttributesFeature))
+//                .add(Parser.externalGeneralEntitiesFeature, tagsoup.getFeature(Parser.externalGeneralEntitiesFeature))
+//                .add(Parser.externalParameterEntitiesFeature, tagsoup.getFeature(Parser.externalParameterEntitiesFeature))
+//                .add(Parser.ignorableWhitespaceFeature, tagsoup.getFeature(Parser.ignorableWhitespaceFeature))
+//                .add(Parser.ignoreBogonsFeature, tagsoup.getFeature(Parser.ignoreBogonsFeature))
+//                .add(Parser.isStandaloneFeature, tagsoup.getFeature(Parser.isStandaloneFeature))
+//                .add(Parser.lexicalHandlerParameterEntitiesFeature, tagsoup.getFeature(Parser.lexicalHandlerParameterEntitiesFeature))
+//                .add(Parser.namespacePrefixesFeature, tagsoup.getFeature(Parser.namespacePrefixesFeature))
+//                .add(Parser.namespacesFeature, tagsoup.getFeature(Parser.namespacesFeature))
+//                .add(Parser.resolveDTDURIsFeature, tagsoup.getFeature(Parser.resolveDTDURIsFeature))
+//                .add(Parser.restartElementsFeature, tagsoup.getFeature(Parser.restartElementsFeature))
+//                .add(Parser.rootBogonsFeature, tagsoup.getFeature(Parser.rootBogonsFeature))
+//                .add(Parser.stringInterningFeature, tagsoup.getFeature(Parser.stringInterningFeature))
+//                .add(Parser.translateColonsFeature, tagsoup.getFeature(Parser.translateColonsFeature))
+////                .add(Parser.unicodeNormalizationCheckingFeature, tagsoup.getFeature(Parser.unicodeNormalizationCheckingFeature))
+//                .add(Parser.useAttributes2Feature, tagsoup.getFeature(Parser.useAttributes2Feature))
+//                .add(Parser.useEntityResolver2Feature, tagsoup.getFeature(Parser.useEntityResolver2Feature))
+//                .add(Parser.useLocator2Feature, tagsoup.getFeature(Parser.useLocator2Feature))
+//                .add(Parser.validationFeature, tagsoup.getFeature(Parser.validationFeature))
+//                .add(Parser.XML11Feature, tagsoup.getFeature(Parser.XML11Feature))
+//                .add(Parser.xmlnsURIsFeature, tagsoup.getFeature(Parser.xmlnsURIsFeature))
+//        );
+//
+//        LOG.debug(Objects.toStringHelper(tagsoup)
+//                .add(Parser.autoDetectorProperty, tagsoup.getProperty(Parser.autoDetectorProperty))
+//                .add(Parser.lexicalHandlerProperty, tagsoup.getProperty(Parser.lexicalHandlerProperty))
+//                .add(Parser.scannerProperty, tagsoup.getProperty(Parser.scannerProperty))
+//                .add(Parser.schemaProperty, tagsoup.getProperty(Parser.schemaProperty))
+//        );
+//
+
+
+
+        final Builder parser = new Builder(tagsoup);
+
+//        final Builder parser = new Builder();
         final Closer closer = Closer.create();
         try {
             LOG.debug("Opening source data xml resource.");
             final InputStream s = closer.register(joinedSource.openBufferedStream());
             LOG.debug("Starting document parse.");
             final Document document = parser.build(s);
+
+//            new Serializer(System.out).write(document);
+
             LOG.debug("Document parse available for processing.");
             final Element root = document.getRootElement();
             assert root.getLocalName().equalsIgnoreCase(ROOT_ELEMENT_NAME);
@@ -222,6 +285,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
             closer.close();
         }
     }
+
 
     private List<T> parseDocuments(final Element root) throws IOException, ParsingException {
         final ImmutableList.Builder<T> listBuilder = ImmutableList.builder();
