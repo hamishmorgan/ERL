@@ -43,8 +43,10 @@ public class Tac2013SourceIOFullTest extends AbstractTest {
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
         ImmutableList.Builder<Object[]> data = ImmutableList.builder();
-        for(File in : DATA_PATH.listFiles())
-            data.add(new Object[]{in});
+        for(File in : DATA_PATH.listFiles())   {
+            if(in.getName().contains("1263.gz"))
+                data.add(new Object[]{in});
+        }
         return data.build();
     }
 

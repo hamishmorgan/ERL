@@ -9,6 +9,7 @@ import com.google.common.io.Closer;
 import nu.xom.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ccil.cowan.tagsoup.AutoDetector;
 import org.ccil.cowan.tagsoup.Parser;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -22,6 +23,10 @@ import uk.ac.susx.mlcl.erl.tac.source.SourceDocument;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -37,6 +42,7 @@ import static com.google.common.collect.Iterators.*;
  */
 public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 
+    protected static final Charset charset = Charset.forName("UTF-8");
     protected static final String ROOT_ELEMENT_NAME = "root";
     protected static final String DOC_ELEMENT_NAME = "doc";
     private static final Log LOG = LogFactory.getLog(AbstractTac2013SourceIO.class);
@@ -222,12 +228,14 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //        tagsoup.setFeature(Parser.defaultAttributesFeature, false);
 //        tagsoup.setFeature(Parser.ignoreBogonsFeature, false);
 
-//        tagsoup.setProperty(Parser.scannerProperty, new HTMLScanner());
-//        tagsoup.setProperty(Parser.schemaProperty, new HTMLSchema());
-
-
         tagsoup.setProperty(Parser.schemaProperty, new XmlSoupSchema());
         tagsoup.setProperty(Parser.scannerProperty, new XmlSoupScanner());
+        tagsoup.setProperty(Parser.autoDetectorProperty, new AutoDetector() {
+            @Override
+            public Reader autoDetectingReader(InputStream i) {
+                return new InputStreamReader(i, charset);
+            }
+        });
 //
 //
 //        LOG.debug(Objects.toStringHelper(tagsoup)
@@ -274,7 +282,6 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
             final InputStream s = closer.register(joinedSource.openBufferedStream());
             LOG.debug("Starting document parse.");
             final Document document = parser.build(s);
-
 //            new Serializer(System.out).write(document);
 
             LOG.debug("Document parse available for processing.");
@@ -282,7 +289,8 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
             assert root.getLocalName().equalsIgnoreCase(ROOT_ELEMENT_NAME);
             return parseDocuments(root);
         } catch (ParsingException e) {
-            LOG.error(e);
+            LOG.error(MessageFormat.format("Parsing excaption at line {0}, column {1}: ",
+                    e.getLineNumber(), e.getColumnNumber()), e);
             throw closer.rethrow(e, ParsingException.class);
         } catch (Throwable t) {
             LOG.error(t);

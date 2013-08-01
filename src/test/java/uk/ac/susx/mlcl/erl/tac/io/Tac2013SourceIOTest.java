@@ -111,7 +111,7 @@ public class Tac2013SourceIOTest extends AbstractTest {
                                 ImmutableList.<ForumDocument.Block>of(
                                         new ForumDocument.Block("No really! That's how they announced him just now " +
                                                 "at his concession speech for his defeats in MS & AL!"))),
-                        new ForumDocument.Post("p2", "Avatar4321",  new DateTime(2012, 3, 13, 20, 59, 0, DateTimeZone.UTC),
+                        new ForumDocument.Post("p2", "Avatar4321", new DateTime(2012, 3, 13, 20, 59, 0, DateTimeZone.UTC),
                                 ImmutableList.<ForumDocument.Block>of(
                                         new ForumDocument.Block("Okay. That's funny lol"))),
                         new ForumDocument.Post("p3", "syrenn", new DateTime(2012, 3, 13, 21, 1, 0, DateTimeZone.UTC),
@@ -553,5 +553,42 @@ public class Tac2013SourceIOTest extends AbstractTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * One document contains the string "2 ÔøøÔøøÔøøWatch" (that garbled bit in hex is EF BF BF EF BF BF EF BF BF). I'm
+     * guessing it's Unicode 0xffff (0xefbfbf in utf8) the non-character character. By definition it should not be
+     * present in any data interchange, so it's a broken file format, sadly we still need to parse the damn thing.
+     *
+     * @throws ParsingException
+     * @throws SAXException
+     * @throws IOException
+     */
+    @Test
+    public void testInvalidCharacterData() throws ParsingException, SAXException, IOException {
+        String xmlData = "<DOC>\n" +
+                "<DOCID> eng-NG-31-126399-8203922 </DOCID>\n" +
+                "<DOCTYPE SOURCE=\"usenet\"> USENET TEXT </DOCTYPE>\n" +
+                "<DATETIME> 2007-08-11T20:50:00 </DATETIME>\n" +
+                "<BODY>\n" +
+                "<HEADLINE>Ligmail bug?</HEADLINE>\n" +
+                "<TEXT>\n" +
+                "<POST>\n" +
+                "<POSTER> &quot;No.23&quot; &lt;no.0...@gmail.com&gt; </POSTER>\n" +
+                "<POSTDATE> 2007-08-11T20:50:00 </POSTDATE>\n" +
+                // ....
+                "Thread: 332/1244 Msg: 2 ￿￿￿Watch Satellite Channels on your PC - FREE!￿￿￿\n" +
+                // ....
+                "</POST>\n" +
+                "</TEXT>\n" +
+                "</BODY>\n" +
+                "</DOC>\n";
+        final Tac2013WebIO instance = new Tac2013WebIO();
 
+        final List<WebDocument> doc = instance.readAll(ByteStreams.asByteSource(xmlData.getBytes()));
+
+        System.out.println(doc.get(0));
+
+        assertNotNull(doc);
+//        assertEquals(1, doc.size());
+//        assertEquals(expected, doc.get(0));
+    }
 }

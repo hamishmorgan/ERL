@@ -46,6 +46,9 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
             public InputStream openStream() throws IOException {
                 InputStream in = rawSource.openStream();
 
+                // replace uncode 0xffff (non-character) with question marks.
+                in = new ReplacingInputStream(in, "\uffff".getBytes(charset), "\uFFFD".getBytes(charset));
+
 //                in =  new ReplacingInputStream(in, "& ".getBytes("UTF-8"), "&amp; ".getBytes("UTF-8"));
 //                in =  new ReplacingInputStream(in, " < ".getBytes("UTF-8"), " &lt; ".getBytes("UTF-8"));
 //                in =  new ReplacingInputStream(in, " > ".getBytes("UTF-8"), " &gt; ".getBytes("UTF-8"));
@@ -55,13 +58,6 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
                 return in;
             }
         };
-//        final ByteSource entityFixingByteSource = new ByteSource() {
-//
-//            @Override
-//            public InputStream openStream() throws IOException {
-//                return rawSource.openStream();
-//            }
-//        };
 
         return super.readAll(entityFixingByteSource);
     }
