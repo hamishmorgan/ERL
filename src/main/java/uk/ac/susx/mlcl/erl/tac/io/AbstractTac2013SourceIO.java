@@ -168,15 +168,6 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
                         cast(Node.class, Element.class)),
                 condition), null);
     }
-
-    static Predicate<Node> isElement() {
-        return new Predicate<Node>() {
-            @Override
-            public boolean apply(@Nullable Node input) {
-                return input instanceof Element;
-            }
-        };
-    }
 //
 //    static Predicate<Node> elementNameEqualsIgnoreCase(final String string) {
 //        return new Predicate<Node>() {
@@ -188,12 +179,11 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //        };
 //    }
 
-    static Predicate<Element> nameEqualsIgnoreCase(final String string) {
-        checkNotNull(string, "string");
-        return new Predicate<Element>() {
+    static Predicate<Node> isElement() {
+        return new Predicate<Node>() {
             @Override
-            public boolean apply(@Nullable Element input) {
-                return input.getLocalName().equalsIgnoreCase(string);
+            public boolean apply(@Nullable Node input) {
+                return input instanceof Element;
             }
         };
     }
@@ -208,10 +198,41 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //        };
 //    }
 
-    protected static DateTime parseDateString(final String dateString) {
-        return ISODateTimeFormat.dateTimeParser()
-                .parseLocalDateTime(dateString.trim())
-                .toDateTime(DateTimeZone.UTC);
+    static Predicate<Element> nameEqualsIgnoreCase(final String string) {
+        checkNotNull(string, "string");
+        return new Predicate<Element>() {
+            @Override
+            public boolean apply(@Nullable Element input) {
+                return input.getLocalName().equalsIgnoreCase(string);
+            }
+        };
+    }
+
+    /**
+     *
+     * @param dateString
+     * @param resolve
+     * @return
+     */
+    protected static DateTime parseDateString(String dateString, DateTime resolve) {
+        dateString = dateString.trim();
+        if (dateString.startsWith("????-??-??T")) {
+                DateTime result = ISODateTimeFormat
+                        .timeParser()
+                        .parseLocalTime(dateString.substring(11))
+                        .toDateTime(resolve);
+                while(result.isBefore(resolve)) {
+                    result = result.plusDays(1);
+                }
+            LOG.warn(MessageFormat.format("Parsing partial date-time {0}; resolving after {1} to produce: {2}",
+                    dateString, resolve, result));
+            return result;
+        } else {
+            return ISODateTimeFormat
+                    .dateTimeParser()
+                    .parseLocalDateTime(dateString.trim())
+                    .toDateTime(resolve);
+        }
     }
 
     public List<T> readAll(final ByteSource rawSource) throws IOException, ParsingException, SAXException {

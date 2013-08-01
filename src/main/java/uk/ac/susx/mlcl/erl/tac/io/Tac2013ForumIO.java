@@ -8,6 +8,7 @@ import nu.xom.Node;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import uk.ac.susx.mlcl.erl.tac.source.ForumDocument;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
@@ -79,7 +80,8 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
         assert post.getAttributeCount() == 3;
         final String author = post.getAttribute(POST_AUTHOR_ATTRIBUTE_NAME).getValue();
         final String id = post.getAttribute(POST_ID_ATTRIBUTE_NAME).getValue();
-        final DateTime date = parseDateString(post.getAttribute(POST_DATE_ATTRIBUTE_NAME).getValue());
+        final DateTime date = parseDateString(post.getAttribute(POST_DATE_ATTRIBUTE_NAME).getValue(),
+                new DateTime(0, DateTimeZone.UTC));
 
         final ImmutableList.Builder<ForumDocument.Block> blocksBuilder = ImmutableList.builder();
         final StringBuilder textBuilder = new StringBuilder();

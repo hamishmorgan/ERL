@@ -548,7 +548,7 @@ public class Tac2013SourceIOTest extends AbstractTest {
     public void testParseBadDate() {
         final String dateString = "2009-03-29T01:00:51";
         final DateTime expected = new DateTime(2009, 3, 29, 1, 0, 51, DateTimeZone.UTC);
-        final DateTime actual = AbstractTac2013SourceIO.parseDateString(dateString);
+        final DateTime actual = AbstractTac2013SourceIO.parseDateString(dateString, new DateTime(0, DateTimeZone.UTC));
         assertNotNull(actual);
         assertEquals(expected, actual);
     }
@@ -591,4 +591,89 @@ public class Tac2013SourceIOTest extends AbstractTest {
 //        assertEquals(1, doc.size());
 //        assertEquals(expected, doc.get(0));
     }
+
+    /**
+     * One of the the web documents contains a partial date "????-??-??T15:55:00", which of course causes
+     * problems.
+     *
+     * @throws ParsingException
+     * @throws SAXException
+     * @throws IOException
+     */
+    @Test
+    public void testPartialDate() throws ParsingException, SAXException, IOException {
+        String xmlData = "<DOC>\n" +
+                "    <DOCID> eng-WL-11-99227-9830534 </DOCID>\n" +
+                "    <DOCTYPE SOURCE=\"blog\"> BLOG TEXT </DOCTYPE>\n" +
+                "    <DATETIME> 2007-10-16T10:15:00 </DATETIME>\n" +
+                "    <BODY>\n" +
+                "    <HEADLINE>\n" +
+                "    Rollin' on the Juice\n" +
+                "    </HEADLINE>\n" +
+                "    <TEXT>\n" +
+                "    <POST>\n" +
+                "    <POSTER> Roger Fraley </POSTER>\n" +
+                "    <POSTDATE> 2007-10-16T10:15:00 </POSTDATE>\n" +
+                "    One of the worst things about committing a crime with other criminals is that they are criminals, not stand-up guys, and often the endgame of a crime caught is the race to the plea bargain. Orenthal James Simpson is learning that lesson in a big way.\n" +
+                "\n" +
+                "            Couldn't happen to a nicer guy. He did better, in one sense, to be the lone, knife wielding double murderer, in there was no one there to snitch on the Juice.\n" +
+                "\n" +
+                "    You have to wonder about the 'no snitchin'' campaign being waged in the black community? What, actually, is that about?\n" +
+                "\n" +
+                "    Labels: Justice Delayed\n" +
+                "    </POST>\n" +
+                "    <POST>\n" +
+                "    <POSTER> Praguetwin </POSTER>\n" +
+                "    <POSTDATE> ????-??-??T15:55:00 </POSTDATE>\n" +
+                "    Well, just another unhappy result for the (idiotic) war on drugs.\n" +
+                "\n" +
+                "    I've responded over at PT btw.\n" +
+                "    </POST>\n" +
+                "    <POST>\n" +
+                "    <POSTER> Roger Fraley </POSTER>\n" +
+                "    <POSTDATE> ????-??-??T17:26:00 </POSTDATE>\n" +
+                "    Oh, they don't want you to snitch about drug dealers. OK, that makes slightly more sense.\n" +
+                "    </POST>\n" +
+                "    <POST>\n" +
+                "    <POSTER> Praguetwin </POSTER>\n" +
+                "    <POSTDATE> ????-??-??T15:04:00 </POSTDATE>\n" +
+                "    It is a necessary element of the black market drug trade. Unfortunately, the culture spills over to real crimes like rape and murder.\n" +
+                "    </POST>\n" +
+                "    <POST>\n" +
+                "    <POSTER> Roger Fraley </POSTER>\n" +
+                "    <POSTDATE> ????-??-??T17:34:00 </POSTDATE>\n" +
+                "    Yeah, apparently there were about 50 witnesses to some big rapper's bodyguard's murder and no one will say a word to the cops. How's that help?\n" +
+                "    </POST>\n" +
+                "    </TEXT>\n" +
+                "    </BODY>\n" +
+                "    </DOC>";
+        final Tac2013WebIO instance = new Tac2013WebIO();
+
+        final List<WebDocument> documents = instance.readAll(ByteStreams.asByteSource(xmlData.getBytes()));
+
+        assertNotNull(documents);
+        assertEquals(1, documents.size());
+
+        WebDocument doc = documents.get(0);
+        assertEquals(5, doc.getPosts().size());
+
+        System.out.println(doc);
+
+        // 2007-10-16T10:15:00
+        assertEquals(new DateTime(2007, 10, 16, 10, 15, 00, DateTimeZone.UTC), doc.getDatetime());
+        assertEquals(doc.getDatetime(), doc.getPosts().get(0).getDate());
+
+        // ????-??-??T15:55:00
+        assertEquals(new DateTime(2007, 10, 16, 15, 55, 00, DateTimeZone.UTC), doc.getPosts().get(1).getDate());
+        // ????-??-??T17:26:00
+        assertEquals(new DateTime(2007, 10, 16, 17, 26, 00, DateTimeZone.UTC), doc.getPosts().get(2).getDate());
+        // ????-??-??T15:04:00
+        assertEquals(new DateTime(2007, 10, 17, 15, 04, 00, DateTimeZone.UTC), doc.getPosts().get(3).getDate());
+        // ????-??-??T17:34:00
+        assertEquals(new DateTime(2007, 10, 17, 17, 34, 00, DateTimeZone.UTC), doc.getPosts().get(4).getDate());
+
+//        assertEquals(expected, doc.get(0));
+    }
+
+
 }

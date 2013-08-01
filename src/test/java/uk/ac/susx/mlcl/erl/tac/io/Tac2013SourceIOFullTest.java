@@ -46,6 +46,7 @@ public class Tac2013SourceIOFullTest extends AbstractTest {
         for(File in : DATA_PATH.listFiles())   {
 //            if(in.getName().contains("1263.gz"))
 //            if(in.getName().contains("eng-NG-31-1000.gz"))
+//            if(in.getName().equals("eng-WL-11-9922.gz"))
 
                 data.add(new Object[]{in});
         }

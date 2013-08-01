@@ -9,6 +9,7 @@ import nu.xom.ParsingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.xml.sax.SAXException;
 import uk.ac.susx.mlcl.erl.tac.source.WebDocument;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
@@ -76,7 +77,8 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
         final WebDocument.Source source = WebDocument.Source.valueOf(doctypeElement.getAttribute(SOURCE_ATTRIBUTE_NAME.toLowerCase()).getValue().trim());
 
         final DateTime date = parseDateString(
-                getFirstChildElementsWhere(docElement, nameEqualsIgnoreCase(DATE_ELEMENT_NAME)).getValue());
+                getFirstChildElementsWhere(docElement, nameEqualsIgnoreCase(DATE_ELEMENT_NAME)).getValue(),
+                new DateTime(0, DateTimeZone.UTC));
 
         LOG.debug("Processing document id = " + id + ", source = " + source);
 
@@ -94,14 +96,24 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
                     TEXT_ELEMENT_NAME, getChildrenOf(bodyElement)));
 
         ImmutableList.Builder postsBuilder = ImmutableList.builder();
+        DateTime resolveDate = date;
         for (final Element postElement : childElementsWhere(textElement, nameEqualsIgnoreCase(POST_ELEMENT_NAME))) {
-            postsBuilder.add(parsePost(postElement));
+            final WebDocument.Post post = parsePost(postElement, resolveDate);
+            postsBuilder.add(post);
+            if(post.isDateSet())
+                resolveDate = post.getDate();
         }
 
         return new WebDocument(id, headline, type, source, date, postsBuilder.build());
     }
 
-    private WebDocument.Post parsePost(Element postElement) {
+    /**
+     *
+     * @param postElement XML POST Element to parse
+     * @param resolveDate partial post dates (e.g with time only) will be resolved to first valid datetime after this instance
+     * @return
+     */
+    private WebDocument.Post parsePost(final  Element postElement, final DateTime resolveDate) {
         final String poster = getFirstChildElementsWhere(postElement, nameEqualsIgnoreCase(POSTER_ELEMENT_NAME)).getValue().trim();
 
         final Element dateElement = getFirstChildElementsWhere(postElement, nameEqualsIgnoreCase(POST_DATE_ELEMENT_NAME));
@@ -111,7 +123,7 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
 
         final Optional<DateTime> date = dateElement == null
                 ? Optional.<DateTime>absent()
-                : Optional.of(parseDateString(dateElement.getValue()));
+                : Optional.of(parseDateString(dateElement.getValue(), resolveDate));
 
         final StringBuilder textBuilder = new StringBuilder();
         for (final Node node : childrenOf(postElement)) {
