@@ -26,8 +26,8 @@ public class ReplacingInputStream extends FilterInputStream {
         super(checkNotNull(delegate, "delegate"));
         this.search = checkNotNull(search, "search");
         this.replacement = checkNotNull(replacement, "replacement");
-        inBuffer = new CircularByteBuffer(search.length);
-        outBuffer = new CircularByteBuffer(replacement.length);
+        inBuffer = new CircularByteBuffer(Math.max(search.length, 1));
+        outBuffer = new CircularByteBuffer(Math.max(replacement.length, 1));
     }
 
     @Override
