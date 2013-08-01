@@ -13,6 +13,7 @@ import org.xml.sax.SAXException;
 import uk.ac.susx.mlcl.erl.tac.source.WebDocument;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -44,7 +45,7 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
 
             @Override
             public InputStream openStream() throws IOException {
-                InputStream in = rawSource.openStream();
+                InputStream in = rawSource.openBufferedStream();
 
                 // replace uncode 0xffff (non-character) with question marks.
                 in = new ReplacingInputStream(in, "\uffff".getBytes(charset), "\uFFFD".getBytes(charset));
@@ -57,6 +58,7 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
 //                in =  new ReplacingInputStream(in, "\n&\n".getBytes("UTF-8"), "\n&amp;\n".getBytes("UTF-8"));
                 return in;
             }
+
         };
 
         return super.readAll(entityFixingByteSource);
