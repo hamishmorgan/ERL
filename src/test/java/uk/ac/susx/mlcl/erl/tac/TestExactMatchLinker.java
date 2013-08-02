@@ -15,6 +15,7 @@ import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 import uk.ac.susx.mlcl.erl.tac.kb.TacKnowledgeBase;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
+import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +34,7 @@ import static uk.ac.susx.mlcl.erl.test.IsEmptyIterator.emptyIteratorOf;
 
 
 @RunWith(Parameterized.class)
-public class TestExactMatchLinker {
+public class TestExactMatchLinker extends AbstractTest {
 
     private final URL srcQueries;
 
@@ -53,13 +54,24 @@ public class TestExactMatchLinker {
     }
 
     @Test
-    public void simpleTest() throws IOException, ParsingException, URISyntaxException {
+    public void simpleTest_SampleKB() throws IOException, ParsingException, URISyntaxException {
+        final File kbFile = new File(Resources.getResource(TacKnowledgeBase.class, "tac09-kb-sample.mapdb").toURI());
+        final TacKnowledgeBase kb = TacKnowledgeBase.open(kbFile);
+        simpleTest(kb);
+    }
+
+    @Test
+    public void simpleTest_FullKB() throws IOException, ParsingException, URISyntaxException {
+        final File kbFile = new File("/Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/Data/LDC2009E58.kb");
+        final TacKnowledgeBase kb = TacKnowledgeBase.open(kbFile);
+        simpleTest(kb);
+    }
+
+    public void simpleTest(TacKnowledgeBase kb) throws IOException, ParsingException, URISyntaxException {
         final File dstLinks = File.createTempFile(this.getClass().getName(), "tmp");
 
         final List<Query> queries;
         {
-            File kbFile = new File(Resources.getResource(TacKnowledgeBase.class, "tac09-kb-sample.mapdb").toURI());
-            TacKnowledgeBase kb = TacKnowledgeBase.open(kbFile);
             Linker instance = new ExactMatchLinker(kb);
 
             final QueryIO qio = QueryIO.detectFormat(srcQueries);
@@ -103,8 +115,6 @@ public class TestExactMatchLinker {
                     maxNilId = Math.max(maxNilId, nilId);
 
                     assertThat("entity type", link.getEntityType(), is(equalTo(EntityType.UKN)));
-                } else {
-                    assertThat("entity type", link.getEntityType(), is(not(equalTo(EntityType.UKN))));
                 }
 
 
@@ -128,4 +138,7 @@ public class TestExactMatchLinker {
             assertThat("maxNilId", maxNilId, is(equalTo(uniqueNodeIds.size())));
         }
     }
+
+
+//    /Volumes/LocalScratchHD/LocalHome/Projects/NamedEntityLinking/Data
 }
