@@ -9,6 +9,7 @@ import uk.ac.susx.mlcl.erl.tac.queries.Link;
 
 import java.io.*;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -85,7 +86,12 @@ public abstract class LinkIO implements BaseIO<Link> {
                     format = new Tac2011LinkIO();
                 else if (TAC2012_QID_PATTERN.matcher(values[0]).matches())
                     format = new Tac2012LinkIO();
-                else throw new AssertionError("Unknown query ID format. Expected 2011/2 but found: " + values[0]);
+                else {
+                    LOG.warn(MessageFormat.format(
+                            "Query ID did not expected formats for 2011 ({0}) or 2012 ({1}); guessing 2012 anyway.",
+                            TAC2011_QID_PATTERN, TAC2012_QID_PATTERN));
+                    format = new Tac2012LinkIO();
+                }
             } else if (values[3].equals("YES") || values[3].equals("NO")) {
                 assert TAC2010_QID_PATTERN.matcher(values[0]).matches()
                         : "Expected query id to be 2010 format, but found: " + values[0];
