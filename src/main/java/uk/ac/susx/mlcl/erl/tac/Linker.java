@@ -3,6 +3,8 @@ package uk.ac.susx.mlcl.erl.tac;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
 
+import java.io.IOException;
+
 /**
 * Created with IntelliJ IDEA.
 * User: hiam20
@@ -12,6 +14,6 @@ import uk.ac.susx.mlcl.erl.tac.queries.Query;
 */
 public interface Linker {
 
-    Link link(Query query);
+    Link link(Query query) throws IOException;
 
 }

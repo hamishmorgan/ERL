@@ -50,7 +50,7 @@ public class TacKnowledgeBase extends AbstractCollection<Entity> implements Clos
         final HTreeMap<String, Entity> idIndex = db.getHashMap("entity-id-index");
         final HTreeMap<String, String> nameIndex = db.getHashMap("entity-name-index");
         final TacKnowledgeBase kb = new TacKnowledgeBase(db, idIndex, nameIndex);
-        LOG.debug(format("Database opened: {0}", kb));
+        LOG.trace(format("Database opened: {0}", kb));
         return kb;
     }
 
