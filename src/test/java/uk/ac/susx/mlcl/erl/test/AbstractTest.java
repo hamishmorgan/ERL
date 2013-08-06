@@ -6,6 +6,7 @@ package uk.ac.susx.mlcl.erl.test;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,6 +36,12 @@ public class AbstractTest {
     public static final File TEST_DATA_PATH = new File("src/test/data");
     @Rule()
     public final TestName testName = new TestName();
+
+    @After
+    public void flushOutput() throws InterruptedException {
+        System.out.flush();
+        System.err.flush();
+    }
 
     /**
      * TODO: Probably useful enough to move to a general purpose library
