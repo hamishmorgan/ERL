@@ -218,6 +218,11 @@
             <artifactId>tagsoup</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.efficient-java-matrix-library</groupId>
+            <artifactId>ejml</artifactId>
+            <version>0.21</version>
+        </dependency>
 
     </dependencies>
 
