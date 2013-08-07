@@ -683,7 +683,6 @@ public class Freebase2 extends Freebase {
         /**
          * Builds a new instance of {@link Freebase}.
          */
-        @SuppressWarnings("deprecation")
         @Override
         public Freebase2 build() {
             return new Freebase2(

@@ -393,8 +393,7 @@ public class XomB {
          */
         @SuppressWarnings("unchecked")
         protected B _addChild(final Node node) {
-            checkArgument(node.getParent() == null,
-                    "node argument already has a parent");
+            checkArgument(node.getParent() == null, "node argument already has a parent");
             children.add(node);
             return (B) this;
         }
@@ -580,7 +579,7 @@ public class XomB {
         /**
          * Constructor should not be called directly. Instead use {@link XomB }
          * factory methods: {@link XomB#element(java.lang.String) }
-         * {@link XomB#element(java.lang.String, java.net.URI) },
+         * {@link XomB#element(String)},
          * {@link XomB#root(java.lang.String) }, and
          * {@link XomB#root(java.lang.String, java.net.URI) }.
          *

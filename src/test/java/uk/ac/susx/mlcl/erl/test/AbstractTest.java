@@ -52,7 +52,6 @@ public class AbstractTest {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    @SuppressWarnings("unchecked")
     protected static <T> T cloneWithSerialization(final T obj) {
 
         ObjectOutputStream objectsOut = null;
@@ -69,7 +68,9 @@ public class AbstractTest {
 
                 ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
 
-                return (T) ois.readObject();
+                @SuppressWarnings("unchecked")
+                final T result = (T) ois.readObject();
+                return result;
             } finally {
                 if (objectsOut != null) {
                     objectsOut.close();

@@ -137,6 +137,7 @@ public class AnnotationServiceIntegrationTest extends AbstractTest {
 
                 // Doesn't like creating an annotation without text, but then
                 // we don't really have any choice.
+                @SuppressWarnings("deprecation")
                 Annotation snlpDocument = new Annotation();
                 snlpDocument.set(CoreAnnotations.DocIDAnnotation.class, doc.getDocId());
                 snlpDocument.set(DocTypeAnnotation.class, doc.getType());

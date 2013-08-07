@@ -53,6 +53,7 @@ import java.util.regex.Pattern;
 @Immutable
 public class AnnotationToXML {
 
+    private static final Morphology morph = new Morphology();
     /**
      * Namespace URI (which may be null or the empty string)
      */
@@ -100,7 +101,7 @@ public class AnnotationToXML {
             String stylesheetName,
             Map<Class<? extends CoreAnnotation<?>>, String> simpleNames,
             InstancePool<Class<? extends CoreAnnotation<?>>, ? extends CustomGenerator<?>> customSerializers,
-            //                    
+            //
             //            Map<Class<? extends CoreAnnotation<?>>, Class<? extends CustomGenerator<?>>> customSerializers,
             Filter<Class<? extends CoreAnnotation<?>>> annotationFilter,
             Set<String> nodeFilters) {
@@ -123,6 +124,15 @@ public class AnnotationToXML {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    static void filterDocument(Document doc, String xpathFilter) {
+
+        final Nodes nodes = doc.query(xpathFilter);
+        if (nodes != null) {
+            XomUtil.detachChildren(nodes);
+        }
+
     }
 
     /**
@@ -211,15 +221,6 @@ public class AnnotationToXML {
         return doc;
     }
 
-    static void filterDocument(Document doc, String xpathFilter) {
-
-        final Nodes nodes = doc.query(xpathFilter);
-        if (nodes != null) {
-            XomUtil.detachChildren(nodes);
-        }
-
-    }
-
     /**
      * @param parent
      * @param value
@@ -258,8 +259,6 @@ public class AnnotationToXML {
                             @Nonnull Boolean value) {
         addString(parent, Boolean.toString(value));
     }
-
-    private static final Morphology morph = new Morphology();
 
     private void addListElements(@Nonnull ElementBuilder parent,
                                  @Nonnull List<?> childValues) throws InstantiationException {
@@ -323,9 +322,12 @@ public class AnnotationToXML {
                 Class<? extends CoreAnnotation<?>> k = it.next();
                 if (k.isAssignableFrom(key)) {
 
-                    CustomGenerator serializer = customSerializerPool.getInstance(k);
+                    @SuppressWarnings({"rawtypes", "unchecked"})
+                    CustomGenerator<Object> serializer = (CustomGenerator<Object>)customSerializerPool.getInstance(k);
 
+                    @SuppressWarnings({"rawtypes", "unchecked"})
                     final Object value = map.get((Class<? extends CoreAnnotation>) castKey);
+
                     serializer.generate(x, element, value);
                     found = true;
                     break;
@@ -333,8 +335,8 @@ public class AnnotationToXML {
             }
             if (!found) {
 
-                final Object value = map.get(
-                        (Class<? extends CoreAnnotation>) castKey);
+                @SuppressWarnings({"rawtypes", "unchecked"})
+                final Object value = map.get((Class<? extends CoreAnnotation>) castKey);
                 if (value != null) {
                     addElementByValueType(element, value);
                 }
@@ -546,11 +548,11 @@ public class AnnotationToXML {
         private final Set<String> stripSuffixes = Sets.newHashSet();
         private final InstancePool.Builder<Class<? extends CoreAnnotation<?>>, CustomGenerator<?>> customSerializerPool;
         private final BiMap<Class<? extends CoreAnnotation<?>>, String> simpleNames;
+        private final ImmutableSet.Builder<Class<? extends CoreAnnotation<?>>> annoBlacklist;
+        private final ImmutableSet.Builder<String> xpathNodeFilters;
         private String namespaceURI = null;
         private String stylesheetName = NO_STYLESHEET;
         private NodeFactory nodeFactory = null;
-        private final ImmutableSet.Builder<Class<? extends CoreAnnotation<?>>> annoBlacklist;
-        private final ImmutableSet.Builder<String> xpathNodeFilters;
 
         public Builder() {
             xpathNodeFilters = ImmutableSet.builder();
@@ -558,79 +560,6 @@ public class AnnotationToXML {
             simpleNames = HashBiMap.create();
             customSerializerPool = InstancePool.builder();
             nodeFactory = new NodeFactory();
-        }
-
-        public AnnotationToXML build() {
-
-            if (!annotationRoots.isEmpty()) {
-
-                final Set<Class<? extends CoreAnnotation>> candidates =
-                        findMembersOfType(annotationRoots, CoreAnnotation.class);
-                for (Class<? extends CoreAnnotation> candidate : candidates) {
-                    if (!simpleNames.containsKey(candidate)) {
-                        String name = simplifiedName(candidate,
-                                stripSuffixes, simpleNames
-                                .values());
-                        simpleNames.put(
-                                (Class<? extends CoreAnnotation<?>>) candidate,
-                                name);
-                    }
-                }
-
-            }
-
-            final Filter<Class<? extends CoreAnnotation<?>>> annotationBlacklistFilter =
-                    Filters.collectionRejectFilter(annoBlacklist.build());
-
-
-            return new AnnotationToXML(
-                    nodeFactory,
-                    namespaceURI,
-                    stylesheetName,
-                    simpleNames,
-                    customSerializerPool.build(),
-                    annotationBlacklistFilter,
-                    xpathNodeFilters.build());
-        }
-
-        public Builder addAnnotationRoot(Class<?> annotationRoot) {
-            annotationRoots.add(annotationRoot);
-            return this;
-        }
-
-        public Builder addXPathNodeFilter(String xpathFilter) {
-            xpathNodeFilters.add(xpathFilter);
-            return this;
-        }
-
-        public Builder addAnnotationToIgnore(
-                Class<? extends CoreAnnotation<?>> annotationClass) {
-            annoBlacklist.add(annotationClass);
-            return this;
-        }
-
-        public Builder addStripSuffix(String suffix) {
-            stripSuffixes.add(suffix);
-            return this;
-        }
-
-        public Builder addSimplifiedName(
-                Class<? extends CoreAnnotation<?>> annotationType,
-                String name) {
-            simpleNames.put(annotationType, name);
-            return this;
-        }
-
-        public void setNamespaceURI(String namespaceURI) {
-            this.namespaceURI = namespaceURI;
-        }
-
-        public void setStylesheetName(String stylesheetName) {
-            this.stylesheetName = stylesheetName;
-        }
-
-        public void setNodeFactory(NodeFactory nodeFactory) {
-            this.nodeFactory = nodeFactory;
         }
 
         /**
@@ -645,7 +574,6 @@ public class AnnotationToXML {
          * @throws SecurityException    caused by {@link Class#getClasses() }
          * @throws NullPointerException if any parameter is null, or contains null
          */
-        @SuppressWarnings("unchecked")
         private static <T> Set<Class<? extends T>> findMembersOfType(
                 Set<Class<?>> searchRoots, Class<T> targetType)
                 throws SecurityException, NullPointerException {
@@ -670,7 +598,9 @@ public class AnnotationToXML {
                 final Class<?> clazz = todo.poll();
 
                 if (targetType.isAssignableFrom(clazz)) {
-                    found.add((Class<? extends T>) clazz);
+                    @SuppressWarnings("unchecked")
+                    final Class<? extends T> castClass = (Class<? extends T>) clazz;
+                    found.add(castClass);
                 }
 
                 done.add(clazz);
@@ -752,6 +682,80 @@ public class AnnotationToXML {
             return name.toString();
         }
 
+        public AnnotationToXML build() {
+
+            if (!annotationRoots.isEmpty()) {
+
+                @SuppressWarnings({"rawtypes"})
+                final Set<Class<? extends CoreAnnotation>> candidates = findMembersOfType(annotationRoots, CoreAnnotation.class);
+
+                for (@SuppressWarnings({"rawtypes"}) Class<? extends CoreAnnotation> candidate : candidates) {
+                    if (!simpleNames.containsKey(candidate)) {
+                        String name = simplifiedName(candidate,
+                                stripSuffixes, simpleNames
+                                .values());
+                        @SuppressWarnings({"unchecked"})
+                        final Class<? extends CoreAnnotation<?>> castCandidate = (Class<? extends CoreAnnotation<?>>) candidate;
+                        simpleNames.put(castCandidate, name);
+                    }
+                }
+
+            }
+
+            final Filter<Class<? extends CoreAnnotation<?>>> annotationBlacklistFilter =
+                    Filters.collectionRejectFilter(annoBlacklist.build());
+
+
+            return new AnnotationToXML(
+                    nodeFactory,
+                    namespaceURI,
+                    stylesheetName,
+                    simpleNames,
+                    customSerializerPool.build(),
+                    annotationBlacklistFilter,
+                    xpathNodeFilters.build());
+        }
+
+        public Builder addAnnotationRoot(Class<?> annotationRoot) {
+            annotationRoots.add(annotationRoot);
+            return this;
+        }
+
+        public Builder addXPathNodeFilter(String xpathFilter) {
+            xpathNodeFilters.add(xpathFilter);
+            return this;
+        }
+
+        public Builder addAnnotationToIgnore(
+                Class<? extends CoreAnnotation<?>> annotationClass) {
+            annoBlacklist.add(annotationClass);
+            return this;
+        }
+
+        public Builder addStripSuffix(String suffix) {
+            stripSuffixes.add(suffix);
+            return this;
+        }
+
+        public Builder addSimplifiedName(
+                Class<? extends CoreAnnotation<?>> annotationType,
+                String name) {
+            simpleNames.put(annotationType, name);
+            return this;
+        }
+
+        public void setNamespaceURI(String namespaceURI) {
+            this.namespaceURI = namespaceURI;
+        }
+
+        public void setStylesheetName(String stylesheetName) {
+            this.stylesheetName = stylesheetName;
+        }
+
+        public void setNodeFactory(NodeFactory nodeFactory) {
+            this.nodeFactory = nodeFactory;
+        }
+
         public void configure(Configuration config)
                 throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
@@ -779,9 +783,8 @@ public class AnnotationToXML {
                     String className = item.substring(0, i).trim();
                     String simpleName = item.substring(i + 1).trim();
                     try {
-                        Class<? extends CoreAnnotation<?>> clazz =
-                                (Class<? extends CoreAnnotation<?>>) Class
-                                        .forName(className);
+                        @SuppressWarnings({"unchecked"})
+                        Class<? extends CoreAnnotation<?>> clazz = (Class<? extends CoreAnnotation<?>>) Class.forName(className);
                         addSimplifiedName(clazz, simpleName);
                     } catch (ClassCastException ex) {
                         LOG.warn("Class does not extend CoreAnnotation: "
@@ -813,6 +816,7 @@ public class AnnotationToXML {
                 String[] classNames = config.getStringArray("annoBlacklist");
                 for (String className : classNames) {
                     try {
+                        @SuppressWarnings({"unchecked"})
                         Class<? extends CoreAnnotation<?>> clazz =
                                 (Class<? extends CoreAnnotation<?>>) Class
                                         .forName(className);
@@ -850,18 +854,17 @@ public class AnnotationToXML {
                     String serializerFactoryClassName = parts[2].trim();
                     try {
 
-                        Class annotationClass = Class.forName(
-                                annotationClassName);
-                        Class serializerClass = Class.forName(
-                                serializerClassName);
-                        Factory factory = (Factory) Class.forName(
-                                serializerFactoryClassName)
-                                .newInstance();
+                        @SuppressWarnings({"unchecked", "rawtypes"})
+                        final Class<? extends CoreAnnotation<?>> annotationClass =
+                                (Class<? extends CoreAnnotation<?>>) Class.forName(annotationClassName);
+                        @SuppressWarnings({"unchecked", "rawtypes"})
+                        final Class<CustomGenerator<?>> serializerClass =
+                                (Class<CustomGenerator<?>>)Class.forName(serializerClassName);
+                        @SuppressWarnings({"unchecked", "rawtypes"})
+                        final Factory<CustomGenerator<?>> factory
+                                = (Factory<CustomGenerator<?>>)Class.forName(serializerFactoryClassName).newInstance();
 
-                        customSerializerPool.addFactory(
-                                annotationClass,
-                                serializerClass,
-                                factory);
+                        customSerializerPool.addFactory(annotationClass, serializerClass, factory);
 
                     } catch (ClassCastException ex) {
                         LOG.warn("Class does not extend CoreAnnotation: "
