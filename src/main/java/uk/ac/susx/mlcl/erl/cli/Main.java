@@ -17,12 +17,12 @@ import org.apache.commons.configuration.*;
 import org.apache.commons.configuration.plist.PropertyListConfiguration;
 import org.apache.commons.configuration.tree.OverrideCombiner;
 import org.eclipse.jetty.http.MimeTypes;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.AnnotationService;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;

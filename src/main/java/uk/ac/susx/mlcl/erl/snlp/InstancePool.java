@@ -10,7 +10,7 @@ import com.google.common.reflect.MutableTypeToInstanceMap;
 import com.google.common.reflect.TypeToInstanceMap;
 import com.google.common.reflect.TypeToken;
 import edu.stanford.nlp.util.Factory;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Map;

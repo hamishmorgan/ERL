@@ -1,7 +1,7 @@
 package uk.ac.susx.mlcl.erl.webapp;
 
 import com.google.api.client.json.GenericJson;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Created with IntelliJ IDEA.

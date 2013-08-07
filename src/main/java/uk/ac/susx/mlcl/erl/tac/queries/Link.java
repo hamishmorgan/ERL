@@ -1,6 +1,6 @@
 package uk.ac.susx.mlcl.erl.tac.queries;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 

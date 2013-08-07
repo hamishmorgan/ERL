@@ -1,7 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
 import com.google.common.base.Objects;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 import java.io.FilterInputStream;

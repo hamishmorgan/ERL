@@ -5,7 +5,7 @@
 package uk.ac.susx.mlcl.erl.tac.kb;
 
 import com.google.common.base.Optional;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;

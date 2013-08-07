@@ -557,10 +557,10 @@ public class AnnotationToXML {
         private final BiMap<Class<? extends CoreAnnotation<?>>, String> simpleNames;
         private final ImmutableSet.Builder<Class<? extends CoreAnnotation<?>>> annoBlacklist;
         private final ImmutableSet.Builder<String> xpathNodeFilters;
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         private String namespaceURI = null;
         private String stylesheetName = NO_STYLESHEET;
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         private NodeFactory nodeFactory = null;
 
         public Builder() {

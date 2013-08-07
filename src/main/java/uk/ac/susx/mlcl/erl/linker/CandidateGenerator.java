@@ -4,7 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.linker;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.Map;

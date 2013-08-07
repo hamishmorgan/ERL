@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closer;
-import com.sun.istack.internal.NotNull;
 import nu.xom.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -130,7 +129,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         return ImmutableList.copyOf(childrenWhere(parent, condition));
     }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     public static Node getFirstChildWhere(@Nonnull Node parent, Predicate<Node> condition) {
         checkNotNull(parent, "parent");
         checkNotNull(condition, "condition");
@@ -188,7 +187,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //        };
 //    }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     static Predicate<Node> isElement() {
         return new Predicate<Node>() {
             @Override
@@ -209,7 +208,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //    }
 
     @Nonnull
-    static Predicate<Element> nameEqualsIgnoreCase(@NotNull final String string) {
+    static Predicate<Element> nameEqualsIgnoreCase(@Nonnull final String string) {
         checkNotNull(string, "string");
         return new Predicate<Element>() {
             @Override

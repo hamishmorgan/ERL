@@ -31,7 +31,7 @@
 package uk.ac.susx.mlcl.erl.lib;
 
 import com.google.common.base.Preconditions;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;

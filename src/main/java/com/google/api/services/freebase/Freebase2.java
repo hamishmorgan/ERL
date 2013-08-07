@@ -276,7 +276,7 @@ public class Freebase2 extends Freebase {
         };
     }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     public static String loadGoogleApiKey(@Nonnull File path) throws IOException {
         final String googleApiKey;
         if (path.exists()) {
@@ -411,7 +411,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public String getCallback() {
             return callback;
         }
@@ -429,7 +429,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public List<String> getDomain() {
             return domain;
         }
@@ -447,7 +447,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public Boolean getExact() {
             return exact;
         }
@@ -465,7 +465,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return complex rules and constraints to apply to the query.
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public List<String> getFilter() {
             return filter;
         }
@@ -492,7 +492,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public SearchFormat getFormat() {
             return format;
         }
@@ -510,7 +510,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public Boolean getEncode() {
             return encode;
         }
@@ -532,7 +532,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public Boolean getIndent() {
             return indent;
         }
@@ -550,7 +550,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return return up to this number of results.
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public Long getLimit() {
             return limit;
         }
@@ -575,7 +575,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public String getMqlOutput() {
             return mqlOutput;
         }
@@ -598,7 +598,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public Boolean getPrefixed() {
             return prefixed;
         }
@@ -616,7 +616,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public Long getStart() {
             return start;
         }
@@ -641,7 +641,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public List<String> getType() {
             return type;
         }
@@ -659,7 +659,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public List<String> getLang() {
             return lang;
         }

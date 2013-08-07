@@ -36,7 +36,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.Nullable;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,6 +46,7 @@ import uk.ac.susx.mlcl.erl.webapp.RequestLogger;
 import uk.ac.susx.mlcl.erl.webapp.ResponseLogger;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  *

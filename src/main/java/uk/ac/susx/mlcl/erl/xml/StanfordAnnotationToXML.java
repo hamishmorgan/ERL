@@ -24,7 +24,7 @@ import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedDep
 import edu.stanford.nlp.trees.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.util.CoreMap;
 import nu.xom.*;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
 
 import javax.annotation.Nonnull;

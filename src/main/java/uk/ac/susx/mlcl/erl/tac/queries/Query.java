@@ -2,7 +2,7 @@ package uk.ac.susx.mlcl.erl.tac.queries;
 
 import com.google.common.base.Optional;
 import edu.stanford.nlp.ie.machinereading.structure.Span;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 

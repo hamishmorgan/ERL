@@ -2,7 +2,7 @@ package uk.ac.susx.mlcl.erl.tac.source;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nonnull;

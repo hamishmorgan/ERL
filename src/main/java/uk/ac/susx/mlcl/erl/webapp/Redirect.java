@@ -4,7 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.webapp;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;

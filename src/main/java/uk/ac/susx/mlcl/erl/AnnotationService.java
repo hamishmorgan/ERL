@@ -29,7 +29,6 @@ import nu.xom.xslt.XSLException;
 import nu.xom.xslt.XSLTransform;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
@@ -40,6 +39,7 @@ import uk.ac.susx.mlcl.erl.xml.XMLToStringSerializer;
 import uk.ac.susx.mlcl.erl.xml.XomB;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;

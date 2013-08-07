@@ -6,7 +6,7 @@ package uk.ac.susx.mlcl.erl.tac.kb;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import org.mapdb.DB;
 import org.mapdb.HTreeMap;
 import uk.ac.susx.mlcl.erl.tac.io.Tac2009KnowledgeBaseIO;
