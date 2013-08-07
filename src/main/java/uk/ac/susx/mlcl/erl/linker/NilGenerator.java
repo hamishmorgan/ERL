@@ -3,6 +3,7 @@ package uk.ac.susx.mlcl.erl.linker;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class NilGenerator implements CandidateGenerator {
     }
 
     @Override
-    public Map<String, Set<String>> batchFindCandidates(Set<String> queries)
+    public Map<String, Set<String>> batchFindCandidates(@Nonnull Set<String> queries)
             throws IOException, ExecutionException {
         ImmutableMap.Builder<String, Set<String>>  mapBuilder = ImmutableMap.builder();
         for (String query : queries)

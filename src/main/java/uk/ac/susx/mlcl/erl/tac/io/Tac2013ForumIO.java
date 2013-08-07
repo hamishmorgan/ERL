@@ -12,6 +12,8 @@ import org.joda.time.DateTimeZone;
 import uk.ac.susx.mlcl.erl.tac.source.ForumDocument;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
+import javax.annotation.Nonnull;
+
 /**
  *
  */
@@ -28,8 +30,8 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
     private static final String QUOTE_ORIGINAL_AUTHOR_ATTRIBUTE_NAME = "orig_author";
 
     private static void flushTextToBlocks(
-            final StringBuilder srcTextBuilder,
-            final ImmutableCollection.Builder<? super ForumDocument.Block> dstBlocksBuilder) {
+            @Nonnull final StringBuilder srcTextBuilder,
+            @Nonnull final ImmutableCollection.Builder<? super ForumDocument.Block> dstBlocksBuilder) {
         if (srcTextBuilder.length() > 0) {
             final String text = srcTextBuilder.toString().trim();
             if (!text.isEmpty())
@@ -38,8 +40,9 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
         }
     }
 
+    @Nonnull
     @Override
-    protected ForumDocument parseDocElement(Element doc) {
+    protected ForumDocument parseDocElement(@Nonnull Element doc) {
         assert doc.getLocalName().equalsIgnoreCase(DOC_ELEMENT_NAME);
 
         // read the id attribute
@@ -74,7 +77,8 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
         return new ForumDocument(id, headline, posts.build());
     }
 
-    private ForumDocument.Post parsePost(Element post) {
+    @Nonnull
+    private ForumDocument.Post parsePost(@Nonnull Element post) {
         assert post.getLocalName().equalsIgnoreCase(POST_ELEMENT_NAME);
 
         assert post.getAttributeCount() == 3;
@@ -101,7 +105,8 @@ public class Tac2013ForumIO extends AbstractTac2013SourceIO<ForumDocument> {
         return new ForumDocument.Post(id, author, date, blocksBuilder.build());
     }
 
-    private ForumDocument.Quote parseQuote(Element quote) {
+    @Nonnull
+    private ForumDocument.Quote parseQuote(@Nonnull Element quote) {
         assert quote.getLocalName().equalsIgnoreCase(QUOTE_ELEMENT_NAME);
 
         assert quote.getAttributeCount() == 1;

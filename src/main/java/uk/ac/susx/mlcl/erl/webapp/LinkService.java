@@ -19,6 +19,7 @@ import spark.Response;
 import spark.Route;
 import uk.ac.susx.mlcl.erl.AnnotationService;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.Charset;
@@ -31,7 +32,7 @@ public class LinkService extends Route {
     private static final Logger LOG = LoggerFactory.getLogger(LinkService.class);
     private static final boolean DEBUG = true;
     private final JsonFactory jsonFactory = new JacksonFactory();
-    private AnnotationService anno;
+    private final AnnotationService anno;
     private Charset charset = Charset.forName("UTF-8");
 
     public LinkService(AnnotationService anno, String path) {
@@ -39,8 +40,9 @@ public class LinkService extends Route {
         this.anno = anno;
     }
 
+    @Nonnull
     @Override
-    public Object handle(final Request request, final Response response) {
+    public Object handle(@Nonnull final Request request, @Nonnull final Response response) {
 
         final MediaType mediaType = MediaType.parse(request.contentType());
 
@@ -91,7 +93,9 @@ public class LinkService extends Route {
 
     }
 
-    private String doError(Response response, HttpStatus status, String message) {
+    @Nonnull
+    @SuppressWarnings("SameReturnValue")
+    private String doError(@Nonnull Response response, @Nonnull HttpStatus status, String message) {
         response.type(MediaType.JSON_UTF_8.withoutParameters().toString());
         LinkError error = new LinkError(status.code(), status.message(), message);
         error.setFactory(jsonFactory);
@@ -119,7 +123,8 @@ public class LinkService extends Route {
         }
     }
 
-    private String doLink(SimpleLinkRequest data, Response response) {
+    @Nonnull
+    private String doLink(@Nonnull SimpleLinkRequest data, @Nonnull Response response) {
         if (data.getText() == null) {
             return doError(response, HttpStatus.Bad_Request,
                     "The \"text\" query parameter was not provided.");
@@ -139,7 +144,8 @@ public class LinkService extends Route {
 
     }
 
-    private String doLink(LinkRequest data, Response response) {
+    @Nonnull
+    private String doLink(@Nonnull LinkRequest data, @Nonnull Response response) {
         if (data.getDocuments() == null) {
             return doError(response, HttpStatus.Bad_Request,
                     "The \"documents\" key was not provided.");

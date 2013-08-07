@@ -6,6 +6,7 @@ import com.google.common.collect.*;
 import org.ejml.simple.SimpleMatrix;
 import uk.ac.susx.mlcl.erl.reduce.Reducer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,6 +34,7 @@ public abstract class AbstractConfusionMatrix<T> {
 //    }
 
 
+    @Nonnull
     public abstract Collection<T> getLabels();
 
     public abstract int size();

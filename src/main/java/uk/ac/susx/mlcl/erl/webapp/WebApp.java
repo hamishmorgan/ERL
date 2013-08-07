@@ -52,7 +52,7 @@ public class WebApp {
     }
 
     void init(Properties props)
-            throws ParsingException, IOException, XSLException, ClassNotFoundException,
+            throws IOException, ClassNotFoundException,
             InstantiationException, ConfigurationException, IllegalAccessException,
             InterruptedException, InvocationTargetException, NoSuchMethodException {
 

@@ -23,6 +23,7 @@ public class XMLToStringSerializer extends nu.xom.Serializer {
         super(out, encoding);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isXmlDeclarationSkipped() {
         return xmlDeclarationSkipped;
     }

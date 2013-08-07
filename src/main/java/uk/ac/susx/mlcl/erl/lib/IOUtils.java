@@ -5,6 +5,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
@@ -32,7 +33,8 @@ public class IOUtils {
      * @param sources the sources to concatenate
      * @return a source that will return a stream containing the concatenated stream data
      */
-    public static ByteSource join(final ByteSource... sources) {
+    @Nonnull
+    public static ByteSource join(@Nonnull final ByteSource... sources) {
         checkNotNull(sources, "sources");
         return new ByteSource() {
             @Override
@@ -59,7 +61,8 @@ public class IOUtils {
      * @param source sources to be converted
      * @return input supplier
      */
-    public static InputSupplier<InputStream> asInputSupplier(final ByteSource source) {
+    @Nonnull
+    public static InputSupplier<InputStream> asInputSupplier(@Nonnull final ByteSource source) {
         checkNotNull(source, "source");
         return new InputSupplier<InputStream>() {
             @Override
@@ -76,8 +79,10 @@ public class IOUtils {
      * @param gzipByteSource
      * @return
      */
-    public static ByteSource asGzipByteSource(final ByteSource gzipByteSource) {
+    @Nonnull
+    public static ByteSource asGzipByteSource(@Nonnull final ByteSource gzipByteSource) {
         return new ByteSource() {
+            @Nonnull
             @Override
             public InputStream openStream() throws IOException {
                 return new GZIPInputStream(gzipByteSource.openStream());

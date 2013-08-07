@@ -37,6 +37,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
+
 /**
  * Unit tests for ExitTrapper utility.
  *
@@ -60,7 +62,7 @@ public class ExitTrapperTest extends AbstractTest {
         try {
             System.setSecurityManager(new SecurityManager() {
                 @Override
-                public void checkPermission(Permission perm) {
+                public void checkPermission(@Nonnull Permission perm) {
                     if (block.get() && perm.getName().equals("setSecurityManager")) {
                         throw new SecurityException();
                     }
@@ -87,7 +89,7 @@ public class ExitTrapperTest extends AbstractTest {
         try {
             System.setSecurityManager(new SecurityManager() {
                 @Override
-                public void checkPermission(Permission perm) {
+                public void checkPermission(@Nonnull Permission perm) {
                     if (block.get() && perm.getName().equals("setSecurityManager")) {
                         throw new SecurityException();
                     }
@@ -106,6 +108,7 @@ public class ExitTrapperTest extends AbstractTest {
     /**
      * Test of enableExistTrapping method, of class ExitTrapper.
      */
+    @SuppressWarnings("CallToSystemExit")
     @Test(expected = ExitTrapper.ExitException.class)
     public void testEnableExistTrapping() {
         ExitTrapper.enable();
@@ -141,6 +144,7 @@ public class ExitTrapperTest extends AbstractTest {
     /**
      * Test of toggleExitTrapping method, of class ExitTrapper.
      */
+    @SuppressWarnings("CallToSystemExit")
     @Test(expected = ExitTrapper.ExitException.class)
     public void testToggleExitTrapping() {
         ExitTrapper.toggle();
@@ -150,6 +154,7 @@ public class ExitTrapperTest extends AbstractTest {
     /**
      * Test of isExitTrappingEnabled method, of class ExitTrapper.
      */
+    @SuppressWarnings("CallToSystemExit")
     @Test
     public void testIsExitTrappingEnabled() {
         assertFalse("Exist trapping should be disabled.",
@@ -187,6 +192,7 @@ public class ExitTrapperTest extends AbstractTest {
     /**
      * Test of ExitException subclass of ExitTrapper.
      */
+    @SuppressWarnings("CallToSystemExit")
     @Test
     public void testExitException() {
         ExitTrapper.enable();

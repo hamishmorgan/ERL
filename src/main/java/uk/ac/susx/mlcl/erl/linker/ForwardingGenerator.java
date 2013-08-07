@@ -1,5 +1,7 @@
 package uk.ac.susx.mlcl.erl.linker;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +29,7 @@ public abstract class ForwardingGenerator implements CandidateGenerator {
         this.delegate = checkNotNull(delegate, "delegate");
     }
 
+    @Nullable
     @Override
     public Set<String> findCandidates(final String mention) throws IOException {
         return delegate.findCandidates(mention);

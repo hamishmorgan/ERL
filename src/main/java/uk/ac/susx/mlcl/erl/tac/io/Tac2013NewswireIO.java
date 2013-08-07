@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.susx.mlcl.erl.tac.source.NewswireDocument;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -55,8 +56,9 @@ public class Tac2013NewswireIO extends AbstractTac2013SourceIO<NewswireDocument>
     //    </TEXT>
     //    </DOC>
     //
+    @Nonnull
     @Override
-    NewswireDocument parseDocElement(Element doc) {
+    NewswireDocument parseDocElement(@Nonnull Element doc) {
 
         assert doc.getAttributeCount() == 2 : "Expected exactly 2 attributes but found " + doc.getAttributeCount();
         final String id = doc.getAttribute(ID_ATTRIBUTE_NAME).getValue();
@@ -73,7 +75,7 @@ public class Tac2013NewswireIO extends AbstractTac2013SourceIO<NewswireDocument>
         return new NewswireDocument(id, type, headline, date, paragraphs);
     }
 
-    private Optional<String> parseHeadlineElement(final Element doc) {
+    private Optional<String> parseHeadlineElement(@Nonnull final Element doc) {
         final Element headlineElement = getFirstChildElementsWhere(
                 doc, nameEqualsIgnoreCase(HEADLINE_ELEMENT_NAME));
         final Optional<String> headline = headlineElement != null
@@ -83,16 +85,15 @@ public class Tac2013NewswireIO extends AbstractTac2013SourceIO<NewswireDocument>
         return headline;
     }
 
-    private Optional<String> parseDatelineElement(final Element doc) {
+    private Optional<String> parseDatelineElement(@Nonnull final Element doc) {
         final Element datelineElement = getFirstChildElementsWhere(
                 doc, nameEqualsIgnoreCase(DATELINE_ELEMENT_NAME));
-        final Optional<String> dateline = datelineElement == null
+        return datelineElement == null
                 ? Optional.<String>absent()
                 : Optional.of(XomUtil.getPrintableText(datelineElement).trim());
-        return dateline;
     }
 
-    private List<String> parseText(final Element doc) {
+    private List<String> parseText(@Nonnull final Element doc) {
         final Element textElement = doc.getFirstChildElement(TEXT_ELEMENT_NAME);
         final ImmutableList.Builder<String> listBuilder = ImmutableList.builder();
         for (final Node child : childrenOf(textElement)) {

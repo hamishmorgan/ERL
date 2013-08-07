@@ -12,6 +12,7 @@ import edu.stanford.nlp.pipeline.NERCombinerAnnotator;
 import edu.stanford.nlp.util.Pair;
 import edu.stanford.nlp.util.PropertiesUtils;
 
+import javax.annotation.Nonnull;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class NERAnnotatorFactory extends AbstractAnnotatorFactory implements Ser
         super(props);
     }
 
+    @Nonnull
     public Annotator create() {
         List<String> models = new ArrayList<String>();
         List<Pair<String, String>> modelNames =

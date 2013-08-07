@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.MiscUtil;
 import uk.ac.susx.mlcl.erl.snlp.AbstractAnnotatorFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -62,6 +63,7 @@ public class EntityLinkingAnnotator implements Annotator {
      *
      * @return annotations produced by the annotator
      */
+    @Nonnull
     public Set<Class<? extends CoreAnnotation<?>>> getSuppliedAnnotations() {
         return Collections.<Class<? extends CoreAnnotation<?>>>singleton(
                 EntityKbIdAnnotation.class);
@@ -71,7 +73,7 @@ public class EntityLinkingAnnotator implements Annotator {
      * @param document
      */
     @Override
-    public void annotate(final Annotation document) {
+    public void annotate(@Nonnull final Annotation document) {
         checkNotNull(document, "annotation");
 
         // Find all the entity mentions in the document
@@ -139,7 +141,7 @@ public class EntityLinkingAnnotator implements Annotator {
      * @param document Annotated document to find mentions in
      * @return mentions
      */
-    private List<List<CoreLabel>> findMentions(final Annotation document) {
+    private List<List<CoreLabel>> findMentions(@Nonnull final Annotation document) {
 
         final List<List<CoreLabel>> mentions = Lists.newArrayList();
         for (final CoreMap sentence : document.get(SentencesAnnotation.class)) {
@@ -174,7 +176,7 @@ public class EntityLinkingAnnotator implements Annotator {
      * @param mention
      * @return
      */
-    private String getSurfaceForm(Annotation document, List<CoreLabel> mention) {
+    private String getSurfaceForm(@Nonnull Annotation document, @Nonnull List<CoreLabel> mention) {
         checkNotNull(mention, "mention");
 
         final String documentText = document.get(CoreAnnotations.TextAnnotation.class);
@@ -205,6 +207,7 @@ public class EntityLinkingAnnotator implements Annotator {
 
     public static final class EntityKbIdAnnotation implements CoreAnnotation<String> {
 
+        @Nonnull
         @Override
         public Class<String> getType() {
             return String.class;
@@ -236,6 +239,7 @@ public class EntityLinkingAnnotator implements Annotator {
             super(new Properties());
         }
 
+        @Nonnull
         @Override
         public Annotator create() {
 

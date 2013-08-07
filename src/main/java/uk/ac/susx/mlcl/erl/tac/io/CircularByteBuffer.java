@@ -1,5 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
+import javax.annotation.Nonnull;
+
 import static com.google.common.base.Preconditions.*;
 
 import java.nio.BufferOverflowException;
@@ -14,6 +16,7 @@ import java.nio.BufferUnderflowException;
 */
 class CircularByteBuffer  {
     private final int size;
+    @Nonnull
     private final byte[] buf;
     private int length;
     private int nextGet;
@@ -39,7 +42,7 @@ class CircularByteBuffer  {
         nextPut = 0;
     }
 
-    public boolean equals(byte[] arr) {
+    public boolean equals(@Nonnull byte[] arr) {
         if(arr.length != length())
             return false;
         for (int i = 0; i < length(); i++) {
@@ -74,7 +77,7 @@ class CircularByteBuffer  {
             nextPut = 0;
     }
 
-    public void put(byte[] bytes) {
+    public void put(@Nonnull byte[] bytes) {
         for (byte b : bytes)
             put(b);
     }

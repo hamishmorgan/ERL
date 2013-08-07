@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import uk.ac.susx.mlcl.erl.tac.source.WebDocument;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +42,7 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
     private static final String POST_DATE_ELEMENT_NAME = "POSTDATE";
 
     @Override
-    public List<WebDocument> readAll(final ByteSource rawSource) throws IOException, ParsingException, SAXException {
+    public List<WebDocument> readAll(@Nonnull final ByteSource rawSource) throws IOException, ParsingException, SAXException {
         final ByteSource entityFixingByteSource = new ByteSource() {
 
             @Override
@@ -65,8 +66,9 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
         return super.readAll(entityFixingByteSource);
     }
 
+    @Nonnull
     @Override
-    WebDocument parseDocElement(Element docElement) {
+    WebDocument parseDocElement(@Nonnull Element docElement) {
 
         final String id = getFirstChildElementsWhere(docElement, nameEqualsIgnoreCase(ID_ELEMENT_NAME)).getValue().trim();
 
@@ -113,7 +115,8 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
      * @param resolveDate partial post dates (e.g with time only) will be resolved to first valid datetime after this instance
      * @return
      */
-    private WebDocument.Post parsePost(final  Element postElement, final DateTime resolveDate) {
+    @Nonnull
+    private WebDocument.Post parsePost(@Nonnull final  Element postElement, final DateTime resolveDate) {
         final String poster = getFirstChildElementsWhere(postElement, nameEqualsIgnoreCase(POSTER_ELEMENT_NAME)).getValue().trim();
 
         final Element dateElement = getFirstChildElementsWhere(postElement, nameEqualsIgnoreCase(POST_DATE_ELEMENT_NAME));

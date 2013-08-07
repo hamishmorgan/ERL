@@ -5,6 +5,7 @@ import uk.ac.susx.mlcl.erl.tac.kb.TacKnowledgeBase;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -20,7 +21,7 @@ public class ExactMatchLinker implements Linker {
     }
 
     @Override
-    public Link link(Query query) throws IOException {
+    public Link link(@Nonnull Query query) throws IOException {
         final Entity entity = kb.getEntityByName(query.getName());
         if (entity != null)
             return new Link(query.getId(),

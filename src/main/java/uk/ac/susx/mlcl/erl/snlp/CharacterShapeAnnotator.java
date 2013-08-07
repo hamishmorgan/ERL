@@ -85,7 +85,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      *
      * @param props configuration to load
      */
-    public CharacterShapeAnnotator(Properties props) {
+    public CharacterShapeAnnotator(@Nonnull Properties props) {
         this();
         configure(props);
     }
@@ -96,7 +96,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      *
      * @param props configuration to load
      */
-    public final void configure(Properties props) {
+    public final void configure(@Nonnull Properties props) {
         Preconditions.checkNotNull(props, "props");
 
         if (props.containsKey(LEMMA_USED_KEY)) {
@@ -114,6 +114,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      *
      * @return annotations that must be produced before this annotator is used.
      */
+    @Nonnull
     public Set<Class<? extends CoreAnnotation<?>>> getRequiredAnnotations() {
         if (!isLemmaUsed()) {
             return Collections.<Class<? extends CoreAnnotation<?>>>singleton(
@@ -132,6 +133,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      *
      * @return annotations produced by the annotator
      */
+    @Nonnull
     public Set<Class<? extends CoreAnnotation<?>>> getSuppliedAnnotations() {
         return Collections.<Class<? extends CoreAnnotation<?>>>singleton(Annotation.class);
     }
@@ -165,7 +167,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      * @param annotation document to annotate
      * @throws IllegalArgumentException when annotation is null or does not contain required keys
      */
-    public void annotate(final edu.stanford.nlp.pipeline.Annotation annotation)
+    public void annotate(@Nonnull final edu.stanford.nlp.pipeline.Annotation annotation)
             throws IllegalArgumentException {
         Preconditions.checkNotNull(annotation, "annotation");
 
@@ -267,6 +269,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
             this.props = props;
         }
 
+        @Nonnull
         public CharacterShapeAnnotator create() {
             final CharacterShapeAnnotator csa = new CharacterShapeAnnotator();
             csa.configure(props);
@@ -281,6 +284,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      */
     public static final class Annotation implements CoreAnnotation<String> {
 
+        @Nonnull
         public Class<String> getType() {
             return String.class;
         }

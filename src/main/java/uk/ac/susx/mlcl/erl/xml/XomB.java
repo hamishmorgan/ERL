@@ -141,27 +141,33 @@ public class XomB {
         return factory;
     }
 
+    @Nonnull
     public DocumentBuilder document() {
         return new DocumentBuilder();
     }
 
-    public DocTypeBuilder doctype(final String rootElementName) {
+    @Nonnull
+    public DocTypeBuilder doctype(@Nonnull final String rootElementName) {
         return new DocTypeBuilder(rootElementName);
     }
 
-    public ElementBuilder root(final String name, final URI namespace) {
+    @Nonnull
+    public ElementBuilder root(@Nonnull final String name, final URI namespace) {
         return root(name).setNamespace(namespace);
     }
 
-    public ElementBuilder root(final String name) {
+    @Nonnull
+    public ElementBuilder root(@Nonnull final String name) {
         return new ElementBuilder(name, true);
     }
 
-    public ElementBuilder buildElement(final String name, final URI namespace) {
+    @Nonnull
+    public ElementBuilder buildElement(@Nonnull final String name, final URI namespace) {
         return element(name).setNamespace(namespace);
     }
 
-    public ElementBuilder element(final String name) {
+    @Nonnull
+    public ElementBuilder element(@Nonnull final String name) {
         return new ElementBuilder(name, false);
     }
 
@@ -183,6 +189,7 @@ public class XomB {
     @ThreadSafe
     public class DocTypeBuilder implements NodeBuilder<Nodes, DocTypeBuilder> {
 
+        @Nonnull
         private final String rootElementName;
 
         private Optional<String> publicID;
@@ -191,7 +198,7 @@ public class XomB {
 
         private Optional<String> internalDTDSubset;
 
-        protected DocTypeBuilder(final String rootElementName) {
+        protected DocTypeBuilder(@Nonnull final String rootElementName) {
             checkArgument(!rootElementName.isEmpty(),
                     "argument rootElementName is empty");
             this.rootElementName = rootElementName;
@@ -200,36 +207,42 @@ public class XomB {
             internalDTDSubset = Optional.absent();
         }
 
+        @Nonnull
         public DocTypeBuilder setSystemID(final URI systemID) {
             this.systemID = Optional.of(systemID);
             return this;
         }
 
+        @Nonnull
         public DocTypeBuilder clearSystemID() {
             this.systemID = Optional.absent();
             return this;
         }
 
-        public DocTypeBuilder setPublicID(final String publicID) {
+        @Nonnull
+        public DocTypeBuilder setPublicID(@Nonnull final String publicID) {
             checkArgument(!publicID.isEmpty(),
                     "argument publicID is empty");
             this.publicID = Optional.of(publicID);
             return this;
         }
 
+        @Nonnull
         public DocTypeBuilder clearPublicID() {
             this.publicID = Optional.absent();
             return this;
         }
 
+        @Nonnull
         public DocTypeBuilder setInternalDTDSubset(
-                final String internalDTDSubset) {
+                @Nonnull final String internalDTDSubset) {
             checkArgument(!internalDTDSubset.isEmpty(),
                     "argument internalDTDSubset is empty");
             this.internalDTDSubset = Optional.of(internalDTDSubset);
             return this;
         }
 
+        @Nonnull
         public DocTypeBuilder clearInternalDTDSubset() {
             this.internalDTDSubset = Optional.absent();
             return this;
@@ -305,6 +318,7 @@ public class XomB {
          * @return
          * @throws NullPointerException if baseURI is null
          */
+        @Nonnull
         @SuppressWarnings("unchecked")
         public B setBaseURI(final URI baseURI) {
             this.baseURI = Optional.of(baseURI);
@@ -314,6 +328,7 @@ public class XomB {
         /**
          * @return
          */
+        @Nonnull
         @SuppressWarnings("unchecked")
         public B clearBaseURI() {
             this.baseURI = Optional.absent();
@@ -326,7 +341,8 @@ public class XomB {
          * @return
          * @throws NullPointerException if target or data is null
          */
-        public B addPI(final String target, final String data) {
+        @Nonnull
+        public B addPI(@Nonnull final String target, final String data) {
             checkArgument(!target.isEmpty(), "argument target is empty");
             return _addChildren(factory.makeProcessingInstruction(
                     checkNotNull(target, "target"),
@@ -338,7 +354,8 @@ public class XomB {
          * @return
          * @throws NullPointerException if pi is null
          */
-        public B addPI(final ProcessingInstruction pi) {
+        @Nonnull
+        public B addPI(@Nonnull final ProcessingInstruction pi) {
             return _addChild(pi);
         }
 
@@ -351,6 +368,7 @@ public class XomB {
          * @throws IllegalCharacterDataException if data contains corrupt or
          *                                       unsupported characters.
          */
+        @Nonnull
         public B addComment(final String data) {
             return _addChildren(factory.makeComment(checkNotNull(data, "data")));
         }
@@ -360,7 +378,8 @@ public class XomB {
          * @return
          * @throws NullPointerException if data is null
          */
-        public B addComment(final Comment comment) {
+        @Nonnull
+        public B addComment(@Nonnull final Comment comment) {
             return _addChild(comment);
         }
 
@@ -378,8 +397,9 @@ public class XomB {
          *                                  nodes is null.
          * @throws IllegalArgumentException if any node already has a parent
          */
+        @Nonnull
         @SuppressWarnings("unchecked")
-        protected B _addChildren(final Nodes nodes) {
+        protected B _addChildren(@Nonnull final Nodes nodes) {
             for (int i = 0; i < nodes.size(); i++)
                 _addChild(nodes.get(i));
             return (B) this;
@@ -391,8 +411,9 @@ public class XomB {
          * @throws NullPointerException     if node is null
          * @throws IllegalArgumentException if node already has a parent
          */
+        @Nonnull
         @SuppressWarnings("unchecked")
-        protected B _addChild(final Node node) {
+        protected B _addChild(@Nonnull final Node node) {
             checkArgument(node.getParent() == null, "node argument already has a parent");
             children.add(node);
             return (B) this;
@@ -435,25 +456,29 @@ public class XomB {
             rootElementSet = false;
         }
 
-        public DocumentBuilder setDocType(final String rootElementName,
-                                          final String publicID,
+        @Nonnull
+        public DocumentBuilder setDocType(@Nonnull final String rootElementName,
+                                          @Nonnull final String publicID,
                                           final URI systemID) {
             return setDocType(doctype(rootElementName)
                     .setPublicID(publicID)
                     .setSystemID(systemID));
         }
 
-        public DocumentBuilder setDocType(String rootElementName) {
+        @Nonnull
+        public DocumentBuilder setDocType(@Nonnull String rootElementName) {
             return setDocType(doctype(rootElementName));
         }
 
-        public DocumentBuilder setDocType(DocType docType) {
+        @Nonnull
+        public DocumentBuilder setDocType(@Nonnull DocType docType) {
             checkState(!docTypeSet, "DocType has already been set.");
             docTypeSet = true;
             return _addChild(docType);
         }
 
-        public DocumentBuilder setDocType(DocTypeBuilder docTypeBuilder) {
+        @Nonnull
+        public DocumentBuilder setDocType(@Nonnull DocTypeBuilder docTypeBuilder) {
             checkState(!docTypeSet, "DocType has already been set.");
             docTypeSet = true;
             return _addChildren(docTypeBuilder.build());
@@ -463,7 +488,8 @@ public class XomB {
          * @param rootElement
          * @return
          */
-        public DocumentBuilder setRoot(ElementBuilder rootElement) {
+        @Nonnull
+        public DocumentBuilder setRoot(@Nonnull ElementBuilder rootElement) {
             checkNotNull(rootElement, "rootElement");
 
             //   Can contain any number of PIs and comments, but exactly 1 root node
@@ -486,7 +512,8 @@ public class XomB {
             return this;
         }
 
-        public DocumentBuilder setRoot(Element rootElement) {
+        @Nonnull
+        public DocumentBuilder setRoot(@Nonnull Element rootElement) {
             checkNotNull(rootElement, "rootElement");
             checkState(!rootElementSet, "Root element has already been set.");
 
@@ -589,7 +616,7 @@ public class XomB {
          * @throws NullPointerException     if name is null
          * @throws IllegalArgumentException if name is empty
          */
-        ElementBuilder(final String name, final boolean rootElement) {
+        ElementBuilder(@Nonnull final String name, final boolean rootElement) {
             checkNotNull(name, "name");
             checkArgument(!name.isEmpty(), "argument name is empty");
 
@@ -622,6 +649,7 @@ public class XomB {
          * @return ElementBuilder instance of method chaining
          * @throws NullPointerException if namespace is null
          */
+        @Nonnull
         public ElementBuilder setNamespace(final URI namespace) {
             this.namespace = Optional.of(namespace);
             return this;
@@ -630,6 +658,7 @@ public class XomB {
         /**
          * @return ElementBuilder instance of method chaining
          */
+        @Nonnull
         public ElementBuilder clearNamespace() {
             this.namespace = Optional.absent();
             return this;
@@ -641,13 +670,15 @@ public class XomB {
          * @throws NullPointerException     if prefix is null
          * @throws IllegalArgumentException if prefix is empty
          */
-        public final ElementBuilder setPrefix(String prefix) {
+        @Nonnull
+        public final ElementBuilder setPrefix(@Nonnull String prefix) {
             checkArgument(!prefix.isEmpty(), "prefix is empty");
 
             this.prefix = Optional.of(prefix);
             return this;
         }
 
+        @Nonnull
         public final ElementBuilder clearPrefix() {
             this.prefix = Optional.absent();
             return this;
@@ -659,7 +690,8 @@ public class XomB {
          * @throws NullPointerException     if localName is null
          * @throws IllegalArgumentException if localName is empty
          */
-        public final ElementBuilder setLocalName(String localName) {
+        @Nonnull
+        public final ElementBuilder setLocalName(@Nonnull String localName) {
             checkArgument(!localName.isEmpty(), "argument localName is empty");
 
             this.localName = localName;
@@ -670,6 +702,7 @@ public class XomB {
          * @param data
          * @return ElementBuilder instance of method chaining
          */
+        @Nonnull
         public ElementBuilder add(final String data) {
             checkNotNull(data, "data");
 //	    checkArgument(!data.isEmpty(), "argument data is empty");
@@ -682,7 +715,8 @@ public class XomB {
          * @param elBuilder
          * @return ElementBuilder instance of method chaining
          */
-        public ElementBuilder add(final ElementBuilder elBuilder) {
+        @Nonnull
+        public ElementBuilder add(@Nonnull final ElementBuilder elBuilder) {
             checkNotNull(elBuilder, "elBuilder");
 
             _addChildren(elBuilder.build());
@@ -693,7 +727,8 @@ public class XomB {
          * @param element
          * @return ElementBuilder instance of method chaining
          */
-        public ElementBuilder add(final Element element) {
+        @Nonnull
+        public ElementBuilder add(@Nonnull final Element element) {
             checkNotNull(element, "element");
 
             _addChild(element);
@@ -704,7 +739,8 @@ public class XomB {
          * @param attribute
          * @return ElementBuilder instance of method chaining
          */
-        public ElementBuilder addAttribute(Attribute attribute) {
+        @Nonnull
+        public ElementBuilder addAttribute(@Nonnull Attribute attribute) {
             checkNotNull(attribute, "attribute");
             checkArgument(attribute.getParent() == null,
                     "Argument attribute already has a parent node.");
@@ -718,7 +754,8 @@ public class XomB {
          * @param value
          * @return ElementBuilder instance of method chaining
          */
-        public ElementBuilder addAttribute(final String name,
+        @Nonnull
+        public ElementBuilder addAttribute(@Nonnull final String name,
                                            final String value) {
             return addAttribute(name, NULL_URI, value, Attribute.Type.CDATA);
         }
@@ -730,8 +767,9 @@ public class XomB {
          * @param type
          * @return ElementBuilder instance of method chaining
          */
+        @Nonnull
         public ElementBuilder addAttribute(
-                final String name, final URI namespace,
+                @Nonnull final String name, @Nonnull final URI namespace,
                 final String value, final Attribute.Type type) {
             checkNotNull(name, "name");
             checkArgument(!name.isEmpty(), "argument name is empty");
@@ -754,6 +792,7 @@ public class XomB {
          * @throws IllegalArgumentException if node is a Namespace, DocType or
          *                                  Document, or node already has a parent.
          */
+        @Nonnull
         public ElementBuilder add(final Node node) {
             checkNotNull(node, "node");
             if (node instanceof Namespace || node instanceof DocType

@@ -33,25 +33,6 @@ import uk.ac.susx.mlcl.erl.test.AbstractTest;
  */
 public class EntityLinkingAnnotatorTest extends AbstractTest {
 
-    public EntityLinkingAnnotatorTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of annotate method, of class EntityLinkingAnnotator.
      */
@@ -134,7 +115,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
      * Test of annotate method, of class EntityLinkingAnnotator.
      */
     @Test
-    public void foo() throws IOException, ClassNotFoundException, InstantiationException, Exception {
+    public void foo() throws IOException, ClassNotFoundException, InstantiationException {
 
 
         Annotation document = StanfordNLPTest.loadAnnotation(
@@ -147,7 +128,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
     }
 
     @Test
-    public void foo2() throws IOException, ClassNotFoundException, InstantiationException, Exception {
+    public void foo2() throws IOException, ClassNotFoundException, InstantiationException {
 
 
         Annotation document = StanfordNLPTest.loadAnnotation(
@@ -160,7 +141,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
     }
 
     @Test
-    public void foo3() throws IOException, ClassNotFoundException, InstantiationException, Exception {
+    public void foo3() throws IOException, ClassNotFoundException, InstantiationException {
 
 
         Annotation document = StanfordNLPTest.loadAnnotation(

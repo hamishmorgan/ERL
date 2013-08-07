@@ -38,19 +38,6 @@ public class AnnotationServiceIntegrationTest extends AbstractTest {
     public static void setUpClass() throws IOException, ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InterruptedException, InvocationTargetException, NoSuchMethodException {
         final Properties props = new Properties();
         instance = AnnotationService.newInstance(props);
-//        instance.preloadLinker(false);
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -176,7 +163,7 @@ public class AnnotationServiceIntegrationTest extends AbstractTest {
                         snlpToken.setSentIndex(sentenceCount);
 
                         snlpSentenceTokens.add(snlpToken);
-                        snlpSentenceText.append(agigaToken.getWord() + " ");
+                        snlpSentenceText.append(agigaToken.getWord()).append(" ");
                     }
 
                     snlpSent.set(CoreAnnotations.TokensAnnotation.class, snlpSentenceTokens);

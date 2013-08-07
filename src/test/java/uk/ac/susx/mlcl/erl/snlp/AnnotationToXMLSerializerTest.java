@@ -28,25 +28,6 @@ import uk.ac.susx.mlcl.erl.test.AbstractTest;
  */
 public class AnnotationToXMLSerializerTest extends AbstractTest {
 
-    public AnnotationToXMLSerializerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Run just the English tokeniser, on some wikipedia description of "Brighton" topic.
      * <p/>

@@ -2,7 +2,9 @@ package uk.ac.susx.mlcl.erl.tac.source;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class NewswireDocument extends SourceDocument {
     private final Optional<String> dateline;
     private final List<String> paragraphs;
 
-    public NewswireDocument(String id, Type type, Optional<String> headline, Optional<String> dateline, List<String> paragraphs) {
+    public NewswireDocument(@Nonnull String id, Type type, @Nonnull Optional<String> headline, Optional<String> dateline, List<String> paragraphs) {
         super(id, headline);
         this.dateline = dateline;
         this.paragraphs = paragraphs;
@@ -71,7 +73,7 @@ public class NewswireDocument extends SourceDocument {
 
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;

@@ -36,6 +36,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.Nullable;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,6 +45,8 @@ import org.junit.Test;
 import uk.ac.susx.mlcl.erl.webapp.LogLevel;
 import uk.ac.susx.mlcl.erl.webapp.RequestLogger;
 import uk.ac.susx.mlcl.erl.webapp.ResponseLogger;
+
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -82,6 +85,7 @@ public class SparkExamples {
         Spark.after(new ResponseLogger(LogLevel.DEBUG));
 
         Spark.trace(new Route("/") {
+            @Nullable
             @Override
             public Object handle(Request request, Response response) {
                 halt();
@@ -92,18 +96,22 @@ public class SparkExamples {
 
         Spark.get(new Route("/favicon.ico") {
             @Override
-            public Object handle(Request request, Response response) {
+            public Object handle(Request request, @Nonnull Response response) {
 
-                InputStream in = null;
-                OutputStream out = null;
                 try {
-                    in = new BufferedInputStream(new FileInputStream(FAVICON_PATH));
-                    out = new BufferedOutputStream(response.raw().getOutputStream());
-                    response.raw().setContentType(MediaType.ICO.toString());
-                    response.status(200);
-                    ByteStreams.copy(in, out);
-                    out.flush();
-                    return "";
+                    InputStream in = null;
+                    OutputStream out = null;
+                    try {
+                        in = new BufferedInputStream(new FileInputStream(FAVICON_PATH));
+                        out = new BufferedOutputStream(response.raw().getOutputStream());
+                        response.raw().setContentType(MediaType.ICO.toString());
+                        response.status(200);
+                        ByteStreams.copy(in, out);
+                        out.flush();
+                        return "";
+                    } finally {
+                        Closeables.close(in, true);
+                    }
                 } catch (FileNotFoundException ex) {
                     LOG.warn(ex);
                     response.status(404);
@@ -112,12 +120,6 @@ public class SparkExamples {
                     LOG.warn(ex);
                     response.status(500);
                     return ex.getMessage();
-                } finally {
-                    try {
-                        Closeables.close(in, true);
-                    } catch (IOException e) {
-                        throw new AssertionError(e);
-                    }
                 }
             }
         });
@@ -132,13 +134,14 @@ public class SparkExamples {
     }
 
     @Test
-    public void helloWorldExample() throws InterruptedException, MalformedURLException, IOException, TimeoutException {
+    public void helloWorldExample() throws InterruptedException, IOException, TimeoutException {
 
         final String expected = "Hello World!";
         final String path = "/hello";
         final URL url = new URL(ROOT_URL, path);
 
         Spark.get(new Route(path) {
+            @Nonnull
             @Override
             public Object handle(Request request, Response response) {
                 return expected;
@@ -150,14 +153,15 @@ public class SparkExamples {
     }
 
     @Test
-    public void simplePostExample() throws InterruptedException, MalformedURLException, IOException, TimeoutException {
+    public void simplePostExample() throws InterruptedException, IOException, TimeoutException {
 
         final String path = "/hello";
         final URL url = new URL(ROOT_URL, path);
 
         Spark.post(new Route(path) {
+            @Nonnull
             @Override
-            public Object handle(Request request, Response response) {
+            public Object handle(@Nonnull Request request, Response response) {
                 return "Hello World: " + request.body();
             }
         });
@@ -172,8 +176,9 @@ public class SparkExamples {
         final URL url = new URL(ROOT_URL, "/private");
 
         Spark.get(new Route(url.getPath()) {
+            @Nonnull
             @Override
-            public Object handle(Request request, Response response) {
+            public Object handle(Request request, @Nonnull Response response) {
                 response.status(401);
                 return "Go Away!!!";
             }
@@ -184,12 +189,13 @@ public class SparkExamples {
     }
 
     @Test
-    public void simpleParamsExample() throws InterruptedException, MalformedURLException, IOException, TimeoutException {
+    public void simpleParamsExample() throws InterruptedException, IOException, TimeoutException {
 
 
         Spark.get(new Route("/users/:name") {
+            @Nonnull
             @Override
-            public Object handle(Request request, Response response) {
+            public Object handle(@Nonnull Request request, Response response) {
                 return "Selected user: " + request.params(":name");
             }
         });
@@ -202,8 +208,9 @@ public class SparkExamples {
     public void simpleParamsExample2() throws InterruptedException, MalformedURLException, IOException, TimeoutException {
 
         Spark.get(new Route("/news/:section") {
+            @Nonnull
             @Override
-            public Object handle(Request request, Response response) {
+            public Object handle(@Nonnull Request request, @Nonnull Response response) {
                 response.type("text/xml");
                 return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>" + request
                         .params("section") + "</news>";
@@ -215,10 +222,11 @@ public class SparkExamples {
     }
 
     @Test
-    public void simple403ErrorCodeExample() throws InterruptedException, MalformedURLException, IOException, TimeoutException {
+    public void simple403ErrorCodeExample() throws InterruptedException, IOException, TimeoutException {
 
         final URL url = new URL(ROOT_URL, "/protected");
         Spark.get(new Route(url.getPath()) {
+            @Nullable
             @Override
             public Object handle(Request request, Response response) {
                 halt(403, "I don't think so!!!");
@@ -240,6 +248,7 @@ public class SparkExamples {
 
 
         Spark.get(new Route(path) {
+            @Nonnull
             @Override
             public Object handle(Request request, Response response) {
                 return expected;
@@ -247,8 +256,9 @@ public class SparkExamples {
         });
 
         Spark.get(new Route(redirectPath) {
+            @Nullable
             @Override
-            public Object handle(Request request, Response response) {
+            public Object handle(Request request, @Nonnull Response response) {
                 response.redirect(path);
                 return null;
             }
@@ -303,6 +313,7 @@ public class SparkExamples {
             this.title = title;
         }
 
+        @Nonnull
         @Override
         public String toString() {
             return "Book{" + "author=" + author + ", title=" + title + '}';
@@ -323,7 +334,7 @@ public class SparkExamples {
             // author and title are sent as query parameters e.g. /books?author=Foo&title=Bar
             Spark.post(new Route("/books") {
                 @Override
-                public Object handle(Request request, Response response) {
+                public Object handle(@Nonnull Request request, @Nonnull Response response) {
                     String title = request.queryParams("title");
                     String author = request.queryParams("author");
                     Book book = new Book(author, title);
@@ -339,8 +350,9 @@ public class SparkExamples {
 
             // Gets the book resource for the provided id
             Spark.get(new Route("/books/:id") {
+                @Nonnull
                 @Override
-                public Object handle(Request request, Response response) {
+                public Object handle(@Nonnull Request request, @Nonnull Response response) {
                     Book book = books.get(request.params(":id"));
                     if (book != null) {
                         return "Title: " + book.getTitle() + ", Author: " + book.getAuthor();
@@ -354,8 +366,9 @@ public class SparkExamples {
             // Updates the book resource for the provided id with new information
             // author and title are sent as query parameters e.g. /books/<id>?author=Foo&title=Bar
             Spark.put(new Route("/books/:id") {
+                @Nonnull
                 @Override
-                public Object handle(Request request, Response response) {
+                public Object handle(@Nonnull Request request, @Nonnull Response response) {
                     String id = request.params(":id");
                     Book book = books.get(id);
                     if (book != null) {
@@ -377,8 +390,9 @@ public class SparkExamples {
 
             // Deletes the book resource for the provided id
             Spark.delete(new Route("/books/:id") {
+                @Nonnull
                 @Override
-                public Object handle(Request request, Response response) {
+                public Object handle(@Nonnull Request request, @Nonnull Response response) {
                     String id = request.params(":id");
                     Book book = books.remove(id);
                     if (book != null) {
@@ -392,6 +406,7 @@ public class SparkExamples {
 
             // Gets all available book resources (id's)
             Spark.get(new Route("/books") {
+                @Nonnull
                 @Override
                 public Object handle(Request request, Response response) {
                     String ids = "";
@@ -454,7 +469,7 @@ public class SparkExamples {
 
         Spark.before(new Filter() {
             @Override
-            public void handle(Request request, Response response) {
+            public void handle(@Nonnull Request request, Response response) {
                 String user = request.queryParams("user");
                 String password = request.queryParams("password");
 
@@ -467,12 +482,13 @@ public class SparkExamples {
 
         Spark.before(new Filter("/hello") {
             @Override
-            public void handle(Request request, Response response) {
+            public void handle(Request request, @Nonnull Response response) {
                 response.header("Foo", "Set by second before filter");
             }
         });
 
         Spark.get(new Route("/hello") {
+            @Nonnull
             @Override
             public Object handle(Request request, Response response) {
                 return "Hello World!";
@@ -481,7 +497,7 @@ public class SparkExamples {
 
         Spark.after(new Filter("/hello") {
             @Override
-            public void handle(Request request, Response response) {
+            public void handle(Request request, @Nonnull Response response) {
                 response.header("spark", "added by after-filter");
             }
         });
@@ -490,8 +506,9 @@ public class SparkExamples {
     @Test
     public void FilterExampleAttributes() throws IOException, TimeoutException {
         Spark.get(new Route("/hi") {
+            @Nullable
             @Override
-            public Object handle(Request request, Response response) {
+            public Object handle(@Nonnull Request request, Response response) {
                 request.attribute("foo", "bar");
                 return null;
             }
@@ -499,7 +516,7 @@ public class SparkExamples {
 
         Spark.after(new Filter("/hi") {
             @Override
-            public void handle(Request request, Response response) {
+            public void handle(@Nonnull Request request, Response response) {
                 for (String attr : request.attributes()) {
                     System.out.println("attr: " + attr);
                 }
@@ -508,7 +525,7 @@ public class SparkExamples {
 
         Spark.after(new Filter("/hi") {
             @Override
-            public void handle(Request request, Response response) {
+            public void handle(@Nonnull Request request, @Nonnull Response response) {
                 Object foo = request.attribute("foo");
                 if ("xml".equals(request.queryParams("format"))) {
                     response.body(asXml("foo", foo));
@@ -525,17 +542,19 @@ public class SparkExamples {
 //        waitForConnectionStatus(ROOT_URL, 1, TimeUnit.DAYS, ConnectionStatus.UNAVAILABLE);
     }
 
+    @Nonnull
     private static String asXml(String name, Object value) {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><" + name + ">" + value + "</" + name
                 + ">";
     }
 
+    @Nonnull
     private static String asJson(String name, Object value) {
         return "{" + name + ": " + value + "}";
     }
 
     @Test
-    public void testGetFavicon() throws InterruptedException, MalformedURLException, IOException, TimeoutException {
+    public void testGetFavicon() throws InterruptedException, IOException, TimeoutException {
 
         final URL url = new URL(ROOT_URL, "/favicon.ico");
 
@@ -583,7 +602,8 @@ public class SparkExamples {
      *
      *
      */
-    static String runHttpGetString(URL url) throws IOException {
+    @Nonnull
+    static String runHttpGetString(@Nonnull URL url) throws IOException {
         InputStream in = null;
         try {
             in = url.openStream();
@@ -594,7 +614,7 @@ public class SparkExamples {
 
     }
 
-    static byte[] runHttpGetBytes(URL url) throws IOException {
+    static byte[] runHttpGetBytes(@Nonnull URL url) throws IOException {
 
         HttpURLConnection connection = null;
         try {
@@ -621,7 +641,7 @@ public class SparkExamples {
         }
     }
 
-    static int getResponseCode(URL url) throws UnsupportedEncodingException, IOException {
+    static int getResponseCode(@Nonnull URL url) throws UnsupportedEncodingException, IOException {
 
         HttpURLConnection connection = null;
         try {
@@ -637,7 +657,8 @@ public class SparkExamples {
         }
     }
 
-    static String runHttpPostInput(URL url, String body) throws UnsupportedEncodingException, IOException {
+    @Nonnull
+    static String runHttpPostInput(@Nonnull URL url, @Nullable String body) throws IOException {
 
         HttpURLConnection connection = null;
         try {
@@ -679,6 +700,7 @@ public class SparkExamples {
         }
     }
 
+    @Nonnull
     static String readAll(InputStream in) throws IOException {
 
         if (in instanceof BufferedInputStream) {
@@ -707,7 +729,7 @@ public class SparkExamples {
         UNAVAILABLE,
     }
 
-    static void waitForConnectionStatus(URL url,
+    static void waitForConnectionStatus(@Nonnull URL url,
                                         long timeoutDuration, TimeUnit timeoutUnits,
                                         ConnectionStatus desiredStatus)
             throws IOException, TimeoutException {

@@ -17,6 +17,7 @@ import org.apache.commons.configuration.*;
 import org.apache.commons.configuration.plist.PropertyListConfiguration;
 import org.apache.commons.configuration.tree.OverrideCombiner;
 import org.eclipse.jetty.http.MimeTypes;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.AnnotationService;
@@ -65,7 +66,7 @@ public class Main {
         instance.run();
     }
 
-    private boolean run() throws InterruptedException, ClassNotFoundException,
+    private void run() throws InterruptedException, ClassNotFoundException,
             InstantiationException, ConfigurationException, IllegalAccessException,
             IOException, XSLException, ParsingException, InvocationTargetException, NoSuchMethodException {
         LOG.info("running");
@@ -158,7 +159,6 @@ public class Main {
 
         }
         LOG.info("all done");
-        return false;
     }
 
     public enum InputFormat {
@@ -201,6 +201,7 @@ public class Main {
         private static final String INPUT_FORMAT_DEFAULT_VALUE = InputFormat.TEXT_PLAIN.name();
         private static final String OUTPUT_FORMAT_KEY = PREFIX + "outputFormat";
         private static final String OUTPUT_FORMAT_DEFAULT_VALUE = OutputFormat.JSON.name();
+        @Nullable
         private String[] rawArgs = null;
 
         /**
@@ -211,7 +212,8 @@ public class Main {
          * @param url
          * @return file name extension, or the empty-string if no extension exists.
          */
-        private static String getFileExtension(URL url) {
+        @Nonnull
+        private static String getFileExtension(@Nonnull URL url) {
             checkNotNull(url, "url");
             final int dotIndex = url.getFile().lastIndexOf('.');
             return (dotIndex >= 0)
@@ -219,6 +221,7 @@ public class Main {
                     : "";
         }
 
+        @Nonnull
         public static AbstractConfiguration loadConfiguration(String resource)
                 throws ConfigurationException {
             final URL url = ConfigurationUtils.locate(resource);
@@ -244,6 +247,8 @@ public class Main {
             this.rawArgs = rawArgs;
         }
 
+        @Nonnull
+        @SuppressWarnings("CallToSystemExit")
         public Main build() throws ConfigurationException {
 
             // XXX Move to resource.
@@ -352,6 +357,7 @@ public class Main {
         }
     }
 
+    @SuppressWarnings("CanBeFinal")
     @Parameters(commandDescription = "")
     public static class CommandLineArgs {
 
@@ -365,6 +371,7 @@ public class Main {
         /**
          *
          */
+        @Nullable
         @Parameter(names = {"-o", "--outputDir"},
                 description = "The destination directory for annotated documents. Default is the same "
                         + "as the input file. If set to \"-\" the output is sent to stdout.")
@@ -372,6 +379,7 @@ public class Main {
         /**
          *
          */
+        @Nullable
         @Parameter(names = {"-c", "--charset"},
                 description = "Character encoding for reading and writing files.")
         private Charset charset = null;

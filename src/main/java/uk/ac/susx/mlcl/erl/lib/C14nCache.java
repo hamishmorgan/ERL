@@ -31,7 +31,9 @@
 package uk.ac.susx.mlcl.erl.lib;
 
 import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.AbstractSet;
 import java.util.Iterator;
@@ -65,6 +67,7 @@ public class C14nCache<T> extends AbstractSet<T> {
      * The storage where a WeakReference to objects are held for both the key and value. This allows
      * retrieval functionality as well as searching.
      */
+    @Nonnull
     private final Map<T, WeakReference<T>> inner;
     /**
      * The number of times an object has been requested and an identical copy was found to already
@@ -95,6 +98,7 @@ public class C14nCache<T> extends AbstractSet<T> {
      * @return an equal but not necessarily identical instance of obj
      * @throws NullPointerException if argument obj is null
      */
+    @Nullable
     public <X extends T> X cached(X obj) throws NullPointerException {
         Preconditions.checkNotNull(obj, "obj");
 
@@ -105,7 +109,7 @@ public class C14nCache<T> extends AbstractSet<T> {
             return obj;
         } else {
             ++cacheHitCount;
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
             final X result = (X) cached.get();
             return result;
         }
@@ -134,9 +138,10 @@ public class C14nCache<T> extends AbstractSet<T> {
     @Override
     @SuppressWarnings("unchecked")
     public boolean contains(Object o) {
-        return inner.containsKey((T) o);
+        return inner.containsKey(o);
     }
 
+    @Nonnull
     @Override
     public Iterator<T> iterator() {
         return inner.keySet().iterator();

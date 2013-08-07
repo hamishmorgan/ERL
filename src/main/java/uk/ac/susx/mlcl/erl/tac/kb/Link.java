@@ -5,7 +5,9 @@
 package uk.ac.susx.mlcl.erl.tac.kb;
 
 import com.google.common.base.Optional;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 
@@ -51,7 +53,7 @@ public class Link implements CharSequence, Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
@@ -65,9 +67,10 @@ public class Link implements CharSequence, Serializable {
         return true;
     }
 
+    @Nonnull
     @Override
     public String toString() {
-        return data.toString();
+        return data;
     }
 
     @Override
@@ -89,6 +92,7 @@ public class Link implements CharSequence, Serializable {
 
         private Optional<String> entity_id; // IMPLIED
         // IMPLIED
+        @Nonnull
         private final StringBuilder data;
 
         public Builder() {
@@ -96,21 +100,25 @@ public class Link implements CharSequence, Serializable {
             data = new StringBuilder();
         }
 
+        @Nonnull
         public Builder setEntityId(String entity_id) {
             this.entity_id = Optional.of(entity_id);
             return this;
         }
 
+        @Nonnull
         public Builder appendData(char[] ch, int start, int length) {
             data.append(ch, start, length);
             return this;
         }
 
+        @Nonnull
         public Builder appendData(String str) {
             data.append(str);
             return this;
         }
 
+        @Nonnull
         public Link build() {
             return new Link(entity_id, data.toString());
         }

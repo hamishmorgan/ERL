@@ -23,32 +23,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
+
 /**
  *
  * @author hamish
  */
 public class CleanXmlAnnotator2Test  extends AbstractTest {
     
-    public CleanXmlAnnotator2Test() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
-    
+    @Nonnull
     public static AnnotationToXML newAnnotationToXML() {
 	try {
 	    AnnotationToXML.Builder builder = AnnotationToXML.builder();
@@ -81,7 +64,7 @@ public class CleanXmlAnnotator2Test  extends AbstractTest {
 
 	
 	AnnotationPipeline pipeline = new AnnotationPipeline();
-	pipeline.addAnnotator(new TokenizerAnnotatorFactory(props).create());;
+	pipeline.addAnnotator(new TokenizerAnnotatorFactory(props).create());
 	pipeline.addAnnotator(new CleanXmlAnnotator2.Factory(props).create());
 
 	String text = readTestData("bbc.html");

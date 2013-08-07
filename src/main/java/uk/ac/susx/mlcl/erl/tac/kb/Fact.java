@@ -5,7 +5,9 @@
 package uk.ac.susx.mlcl.erl.tac.kb;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Collection;
@@ -34,9 +36,10 @@ public class Fact implements Serializable {
         this.name = checkNotNull(name, "name");
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static class Builder {
 
-        String name;
+        final String name;
         private List<CharSequence> links;
 
         public Builder(String name) {
@@ -44,29 +47,35 @@ public class Fact implements Serializable {
             links = Lists.newArrayList();
         }
 
+        @Nonnull
         public Builder addLink(String entity_id, String data) {
             return addLink(new Link.Builder().setEntityId(entity_id).appendData(data).build());
         }
 
+        @Nonnull
         public Builder addLink(String data) {
             return addLink(new Link.Builder().appendData(data).build());
         }
 
+        @Nonnull
         public Builder addLink(Link link) {
             links.add(link);
             return this;
         }
 
+        @Nonnull
         public Builder appendData(char[] ch, int start, int length) {
             links.add(String.valueOf(ch, start, length));
             return this;
         }
 
+        @Nonnull
         public Builder appendData(String str) {
             links.add(str);
             return this;
         }
 
+        @Nonnull
         public Fact build() {
             return new Fact(links, name);
         }
@@ -81,7 +90,7 @@ public class Fact implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == null) {
             return false;
         }
@@ -98,6 +107,7 @@ public class Fact implements Serializable {
         return true;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Fact{" + "links=" + links + ", name=" + name + '}';

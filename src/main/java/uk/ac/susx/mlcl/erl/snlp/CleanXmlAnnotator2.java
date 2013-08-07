@@ -5,7 +5,9 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.util.XMLUtils;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -22,6 +24,7 @@ public class CleanXmlAnnotator2 implements Annotator {
     /**
      * A regular expression telling us where to look for tokens we care about
      */
+    @Nullable
     private final Pattern xmlTagMatcher;
 
     public static final String DEFAULT_XML_TAGS = ".*";
@@ -30,6 +33,7 @@ public class CleanXmlAnnotator2 implements Annotator {
      * This regular expression tells us which tags end a sentence... for
      * example, &lt;p&gt; would be a great candidate
      */
+    @Nullable
     private final Pattern sentenceEndingTagMatcher;
 
     public static final String DEFAULT_SENTENCE_ENDERS = "";
@@ -37,6 +41,7 @@ public class CleanXmlAnnotator2 implements Annotator {
     /**
      * This tells us which XML tags wrap document date
      */
+    @Nullable
     private final Pattern dateTagMatcher;
 
     public static final String DEFAULT_DATE_TAGS = "datetime|date";
@@ -58,9 +63,9 @@ public class CleanXmlAnnotator2 implements Annotator {
                 DEFAULT_ALLOW_FLAWS);
     }
 
-    public CleanXmlAnnotator2(String xmlTagsToRemove,
-                              String sentenceEndingTags,
-                              String dateTags,
+    public CleanXmlAnnotator2(@Nullable String xmlTagsToRemove,
+                              @Nullable String sentenceEndingTags,
+                              @Nullable String dateTags,
                               boolean allowFlawedXml) {
 
         this.stripContents = Pattern.compile("^(applet|audio|canvas|embed|head|iframe|object|source|script|style|track|var|video)$");
@@ -86,7 +91,7 @@ public class CleanXmlAnnotator2 implements Annotator {
         }
     }
 
-    public void annotate(Annotation annotation) {
+    public void annotate(@Nonnull Annotation annotation) {
         if (annotation.has(TokensAnnotation.class)) {
             List<CoreLabel> tokens = annotation.get(TokensAnnotation.class);
             List<CoreLabel> dateTokens = new ArrayList<CoreLabel>();
@@ -97,7 +102,7 @@ public class CleanXmlAnnotator2 implements Annotator {
 
             // if the doc date was found, save it. it is used by SUTime (inside the "ner" annotator)
             if (dateTokens.size() > 0) {
-                StringBuffer os = new StringBuffer();
+                StringBuilder os = new StringBuilder();
                 boolean first = true;
                 for (CoreLabel t : dateTokens) {
                     if (!first) {
@@ -112,12 +117,14 @@ public class CleanXmlAnnotator2 implements Annotator {
         }
     }
 
-    public List<CoreLabel> process(List<CoreLabel> tokens) {
+    @Nonnull
+    public List<CoreLabel> process(@Nonnull List<CoreLabel> tokens) {
         return process(tokens, null);
     }
 
-    public List<CoreLabel> process(List<CoreLabel> tokens,
-                                   List<CoreLabel> dateTokens) {
+    @Nonnull
+    public List<CoreLabel> process(@Nonnull List<CoreLabel> tokens,
+                                   @Nonnull List<CoreLabel> dateTokens) {
         // As we are processing, this stack keeps track of which tags we
         // are currently inside
         Stack<String> enclosingTags = new Stack<String>();
@@ -321,6 +328,7 @@ public class CleanXmlAnnotator2 implements Annotator {
 
         private static final long serialVersionUID = 1L;
 
+        @Nonnull
         public Annotator create() {
             String xmlTags =
                     props.getProperty("clean.xmltags",

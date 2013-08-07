@@ -6,6 +6,7 @@ import com.google.common.collect.*;
 import org.ejml.simple.SimpleMatrix;
 import uk.ac.susx.mlcl.erl.reduce.Reducer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,7 +28,7 @@ public class ConfusionMatrix<T> {
     protected final Function<T, String> labelFormatter;
     protected final SimpleMatrix mat;
 
-    ConfusionMatrix(BiMap<T, Integer> labelIndexMap, SimpleMatrix mat, Comparator<T> labelOrder, Function<T, String> labelFormatter) {
+    ConfusionMatrix(BiMap<T, Integer> labelIndexMap, @Nonnull SimpleMatrix mat, Comparator<T> labelOrder, Function<T, String> labelFormatter) {
         this.labelIndexMap = checkNotNull(labelIndexMap, "labelIndexMap");
         this.mat = checkNotNull(mat, "mat");
         checkArgument(mat.numRows() == mat.numCols());
@@ -35,6 +36,7 @@ public class ConfusionMatrix<T> {
         this.labelFormatter = checkNotNull(labelFormatter, "labelFormatter");
     }
 
+    @Nonnull
     public Collection<T> getLabels() {
         return labelIndexMap.keySet();
     }
@@ -142,14 +144,15 @@ public class ConfusionMatrix<T> {
         return (1.0 + beta * beta) * precision * recall / (beta * beta * precision + recall);
     }
 
-    public <D> BinaryConfusionMatrix<D> mapAllVersus(final Predicate<T> positive,
-                                                     final D positiveLabel,
-                                                     final D negativeLabel,
+    @Nonnull
+    public <D> BinaryConfusionMatrix<D> mapAllVersus(@Nonnull final Predicate<T> positive,
+                                                     @Nonnull final D positiveLabel,
+                                                     @Nonnull final D negativeLabel,
                                                      final Function<D, String> labelFormatter,
-                                                     final Reducer<Double, Double> reducer) {
+                                                     @Nonnull final Reducer<Double, Double> reducer) {
         final Comparator<D> labelOrder = new Comparator<D>() {
             @Override
-            public int compare(final D o1, final D o2) {
+            public int compare(@Nonnull final D o1, @Nonnull final D o2) {
                 return Integer.compare(
                         o1.equals(positiveLabel) ? 0 : 1,
                         o2.equals(positiveLabel) ? 0 : 1);
@@ -170,10 +173,11 @@ public class ConfusionMatrix<T> {
         return new BinaryConfusionMatrix<D>(dstLabelIndexMap, dstMatrix.mat, labelOrder, labelFormatter);
     }
 
-    public BinaryConfusionMatrix<String> mapAllVersus(final Predicate<T> positive,
-                                                      final String positiveLabel,
-                                                      final String negativeLabel,
-                                                      final Reducer<Double, Double> reducer) {
+    @Nonnull
+    public BinaryConfusionMatrix<String> mapAllVersus(@Nonnull final Predicate<T> positive,
+                                                      @Nonnull final String positiveLabel,
+                                                      @Nonnull final String negativeLabel,
+                                                      @Nonnull final Reducer<Double, Double> reducer) {
         return mapAllVersus(positive, positiveLabel, negativeLabel, new
 
                 Function<String, String>() {
@@ -192,9 +196,10 @@ public class ConfusionMatrix<T> {
      * @param mapping
      * @return
      */
+    @Nonnull
     public <D> ConfusionMatrix<D> mapLabels(
-            Function<T, D> mapping,
-            Reducer<Double, Double> reducer,
+            @Nonnull Function<T, D> mapping,
+            @Nonnull Reducer<Double, Double> reducer,
             Comparator<D> dstLabelOrder,
             Function<D, String> targetLabelFormatter) {
 
@@ -212,11 +217,13 @@ public class ConfusionMatrix<T> {
         return new ConfusionMatrix<D>(dstLabelIndexMap, targetMat, dstLabelOrder, targetLabelFormatter);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return getTableString() + "\n" + getStatsString();
     }
 
+    @Nonnull
     public String getStatsString() {
         final StringBuilder statsBuilder = new StringBuilder();
         statsBuilder.append(String.format("Accuracy: %.0f/%.0f = %.2f%% correct",
@@ -224,6 +231,7 @@ public class ConfusionMatrix<T> {
         return statsBuilder.toString();
     }
 
+    @Nonnull
     public String getTableString() {
         final String elementFormat = "%.0f ";
 
@@ -241,9 +249,9 @@ public class ConfusionMatrix<T> {
 
         // Calculate the max widths for each column
         final int[] widths = new int[cells[0].length];
-        for (int y = 0; y < cells.length; y++)
-            for (int x = 0; x < cells[0].length; x++)
-                widths[x] = Math.max(widths[x], cells[y][x].length());
+        for (String[] row : cells)
+            for (int x = 0; x < row.length; x++)
+                widths[x] = Math.max(widths[x], row[x].length());
 
         // Build a formatter for the whole row
         final StringBuilder rowFormatBuilder = new StringBuilder();
@@ -254,13 +262,13 @@ public class ConfusionMatrix<T> {
 
         // Write each row
         final StringBuilder tableBuilder = new StringBuilder();
-        for (int y = 0; y < cells.length; y++)   {
-            tableBuilder.append(String.format(rowFormat, (Object[])cells[y]));
-        }
+        for (String[] row : cells)
+            tableBuilder.append(String.format(rowFormat, (Object[]) row));
 
         return tableBuilder.toString();
     }
 
+    @Nonnull
     protected int[] indexOrder() {
         // Build a label order mapping so we print everything in the correct order
 
@@ -268,7 +276,7 @@ public class ConfusionMatrix<T> {
 
         Collections.sort(labelEntries, new Comparator<Map.Entry<T, Integer>>() {
             @Override
-            public int compare(Map.Entry<T, Integer> o1, Map.Entry<T, Integer> o2) {
+            public int compare(@Nonnull Map.Entry<T, Integer> o1, @Nonnull Map.Entry<T, Integer> o2) {
                 return labelOrder.compare(o1.getKey(), o2.getKey());
             }
         });

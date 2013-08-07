@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.Nullable;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -16,6 +17,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import uk.ac.susx.mlcl.erl.lib.C14nCache;
 import uk.ac.susx.mlcl.erl.tac.kb.*;
 
+import javax.annotation.Nonnull;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -56,7 +58,8 @@ public class Tac2009KnowledgeBaseIO {
      * @throws org.xml.sax.SAXException
      * @throws java.io.IOException
      */
-    public static TacKnowledgeBase create(File dbFile, File dataPath) throws ParserConfigurationException, SAXException, IOException {
+    @Nonnull
+    public static TacKnowledgeBase create(File dbFile, @Nonnull File dataPath) throws ParserConfigurationException, SAXException, IOException {
 
         LOG.info(format("Creating knowledge-base DB, from XML resource {0}, to {1}", dataPath, dbFile));
         LOG.debug("Initializing database.");
@@ -67,14 +70,14 @@ public class Tac2009KnowledgeBaseIO {
         final SAXParser saxParser = saxFactory.newSAXParser();
         final DefaultHandler handler = new Tac2009SaxHandler(new TacEntryHandler() {
             private int count = 0;
-            private StopWatch tic = new StopWatch();
+            private final StopWatch tic = new StopWatch();
 
             {
                 tic.start();
             }
 
             @Override
-            public void entry(Entity entry) {
+            public void entry(@Nonnull Entity entry) {
                 Preconditions.checkNotNull(entry, "entry");
 
                 final String id = entry.getId();
@@ -120,7 +123,7 @@ public class Tac2009KnowledgeBaseIO {
             LOG.info("Parsing all files in directory: " + dataPath);
             parts = dataPath.listFiles(new FilenameFilter() {
                 @Override
-                public boolean accept(File dir, String name) {
+                public boolean accept(File dir, @Nonnull String name) {
                     return name.matches("kb_part-\\d+\\.xml");
                 }
             });
@@ -145,7 +148,7 @@ public class Tac2009KnowledgeBaseIO {
         return TacKnowledgeBase.open(dbFile);
     }
 
-    public static DB openDB(URL url) throws URISyntaxException {
+    public static DB openDB(@Nonnull URL url) throws URISyntaxException {
         if (url.getProtocol().equalsIgnoreCase("file"))
             return openDB(new File(url.toURI()));
         else
@@ -190,7 +193,7 @@ public class Tac2009KnowledgeBaseIO {
         //
         private final ContentHandler rootState = new RootHandler();
         private Stack<ContentHandler> states;
-        private TacEntryHandler inner;
+        private final TacEntryHandler inner;
 
         Tac2009SaxHandler(TacEntryHandler inner) {
             this.inner = inner;
@@ -198,8 +201,8 @@ public class Tac2009KnowledgeBaseIO {
             states.push(rootState);
         }
 
-        private static void checkAttributes(Attributes attributes, Set<String> required,
-                                            Set<String> optional) throws SAXException {
+        private static void checkAttributes(@Nonnull Attributes attributes, @Nonnull Set<String> required,
+                                            @Nonnull Set<String> optional) throws SAXException {
             if (attributes.getLength() == 0 && required.isEmpty() && optional.isEmpty()) {
                 return;
             }
@@ -223,7 +226,7 @@ public class Tac2009KnowledgeBaseIO {
             }
         }
 
-        private static void checkQname(String actual, String... expected) throws SAXException {
+        private static void checkQname(@Nonnull String actual, @Nonnull String... expected) throws SAXException {
             for (String e : expected) {
                 if (actual.equalsIgnoreCase(e)) {
                     return;
@@ -292,7 +295,7 @@ public class Tac2009KnowledgeBaseIO {
         private class RootHandler extends DefaultHandler {
 
             @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            public void startElement(String uri, String localName, @Nonnull String qName, @Nonnull Attributes attributes) throws SAXException {
                 checkQname(qName, "knowledge_base");
                 // we can allow knowledge base building to already be open
                 checkAttributes(attributes, Collections.<String>emptySet(), Collections.<String>emptySet());
@@ -306,15 +309,13 @@ public class Tac2009KnowledgeBaseIO {
             }
         }
 
-        ;
-
         private class KnowledgeBaseHandler extends DefaultHandler {
 
             public KnowledgeBaseHandler() {
             }
 
             @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            public void startElement(String uri, String localName, @Nonnull String qName, @Nonnull Attributes attributes) throws SAXException {
                 checkQname(qName, "entity");
                 checkAttributes(attributes, Sets.newHashSet("name", "id", "type"), Sets.newHashSet("wiki_title"));
 
@@ -327,17 +328,16 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void endElement(String uri, String localName, String qName) throws SAXException {
+            public void endElement(String uri, String localName, @Nonnull String qName) throws SAXException {
                 checkQname(qName, "knowledge_base");
 
                 states.pop();
             }
         }
 
-        ;
-
         private class EntryHandler extends DefaultHandler {
 
+            @Nonnull
             private final Entity.Builder entityBuilder;
 
             public EntryHandler(String id, String name, EntityType type, String wikiTitle) {
@@ -346,7 +346,7 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            public void startElement(String uri, String localName, @Nonnull String qName, @Nonnull Attributes attributes) throws SAXException {
                 checkQname(qName, "facts", "wiki_text");
                 if (qName.equalsIgnoreCase("facts")) {
                     final String factsClass = attributes.getValue("class");
@@ -363,7 +363,7 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void endElement(String uri, String localName, String qName) throws SAXException {
+            public void endElement(String uri, String localName, @Nonnull String qName) throws SAXException {
                 checkQname(qName, "entity");
 
                 inner.entry(entityBuilder.build());
@@ -371,8 +371,6 @@ public class Tac2009KnowledgeBaseIO {
                 states.pop();
             }
         }
-
-        ;
 
         private class FactsHandler extends DefaultHandler {
 
@@ -383,7 +381,7 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            public void startElement(String uri, String localName, @Nonnull String qName, @Nonnull Attributes attributes) throws SAXException {
                 checkQname(qName, "fact");
                 checkAttributes(attributes, Sets.newHashSet("name"), Collections.<String>emptySet());
                 final String name = attributes.getValue("name");
@@ -391,17 +389,16 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void endElement(String uri, String localName, String qName) throws SAXException {
+            public void endElement(String uri, String localName, @Nonnull String qName) throws SAXException {
                 checkQname(qName, "facts");
                 states.pop();
             }
         }
 
-        ;
-
         private class FactHandler extends DefaultHandler {
 
             private final Entity.Builder entityBuilder;
+            @Nonnull
             private final Fact.Builder factBuilder;
 
             public FactHandler(Entity.Builder entityBuilder, String name) {
@@ -410,7 +407,7 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            public void startElement(String uri, String localName, @Nonnull String qName, @Nonnull Attributes attributes) throws SAXException {
                 checkQname(qName, "link");
                 checkAttributes(attributes, Collections.<String>emptySet(), Sets.newHashSet("entity_id"));
 
@@ -419,7 +416,7 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void endElement(String uri, String localName, String qName) throws SAXException {
+            public void endElement(String uri, String localName, @Nonnull String qName) throws SAXException {
                 checkQname(qName, "fact");
                 entityBuilder.addFact(factBuilder.build());
                 stats.incrementFactCount();
@@ -435,9 +432,10 @@ public class Tac2009KnowledgeBaseIO {
         private class LinkHandler extends DefaultHandler {
 
             private final Fact.Builder factBuilder;
+            @Nonnull
             private final Link.Builder linkBuilder;
 
-            public LinkHandler(String linkEntityId, Fact.Builder factBuilder) {
+            public LinkHandler(@Nullable String linkEntityId, Fact.Builder factBuilder) {
                 this.factBuilder = factBuilder;
                 linkBuilder = new Link.Builder();
                 if (linkEntityId != null) {
@@ -451,7 +449,7 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void endElement(String uri, String localName, String qName) throws SAXException {
+            public void endElement(String uri, String localName, @Nonnull String qName) throws SAXException {
                 //link is a leaf node so we shouldn't find any elements inside
                 checkQname(qName, "link");
                 factBuilder.addLink(linkBuilder.build());
@@ -467,6 +465,7 @@ public class Tac2009KnowledgeBaseIO {
         private class WikiTextHandler extends DefaultHandler {
 
             private Entity.Builder entityBuilder;
+            @Nullable
             private StringBuilder text = new StringBuilder();
 
             public WikiTextHandler(Entity.Builder entityBuilder) {
@@ -481,7 +480,7 @@ public class Tac2009KnowledgeBaseIO {
             }
 
             @Override
-            public void endElement(String uri, String localName, String qName) throws SAXException {
+            public void endElement(String uri, String localName, @Nonnull String qName) throws SAXException {
                 checkQname(qName, "wiki_text");
                 entityBuilder.setWikiText(INTERNER.cached(text.toString()));
                 text = null;

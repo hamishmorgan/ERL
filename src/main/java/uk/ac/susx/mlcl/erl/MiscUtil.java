@@ -13,6 +13,7 @@ import com.google.api.services.freebase.Freebase2;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 
@@ -27,6 +28,7 @@ public class MiscUtil {
     private static final String APPLICATION_NAME = "ERL/1.0";
     private static final String API_KEY_FILE = ".google_api_key.txt";
 
+    @Nonnull
     public static Freebase2 newFreebaseInstance() throws IOException {
         final String googleApiKey =
                 Freebase2.loadGoogleApiKey(new File(API_KEY_FILE));
@@ -37,13 +39,11 @@ public class MiscUtil {
 
         JsonFactory jsonFactory = new JacksonFactory();
 
-        Freebase2 freebase = new Freebase2.Builder(
+        return new Freebase2.Builder(
                 new NetHttpTransport(), jsonFactory, null)
                 .setApplicationName(APPLICATION_NAME)
                 .setJsonHttpRequestInitializer(credential)
                 .build();
-
-        return freebase;
     }
 
 

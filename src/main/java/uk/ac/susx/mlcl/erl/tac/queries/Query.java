@@ -2,6 +2,7 @@ package uk.ac.susx.mlcl.erl.tac.queries;
 
 import com.google.common.base.Optional;
 import edu.stanford.nlp.ie.machinereading.structure.Span;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
@@ -55,16 +56,16 @@ public class Query {
     }
 
 
-    public Query(final String id, final String name, final String docId, final int beg, final int end) {
+    public Query(@Nonnull final String id, @Nonnull final String name, @Nonnull final String docId, final int beg, final int end) {
         this(id, name, docId, Optional.of(new Span(beg, end)), Optional.<String>absent());
         checkElementIndex(beg, end);
     }
 
-    public Query(final String id, final String name, final String docId, final String entityNodeId) {
+    public Query(@Nonnull final String id, @Nonnull final String name, @Nonnull final String docId, final String entityNodeId) {
         this(id, name, docId, Optional.<Span>absent(), Optional.of(entityNodeId));
     }
 
-    public Query(final String id, final String name, final String docId) {
+    public Query(@Nonnull final String id, @Nonnull final String name, @Nonnull final String docId) {
         this(id, name, docId, Optional.<Span>absent(), Optional.<String>absent());
     }
 
@@ -119,7 +120,7 @@ public class Query {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

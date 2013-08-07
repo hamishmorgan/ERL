@@ -749,7 +749,7 @@ public enum HttpStatus {
                 max >= 0, "Expecting positive argument max, but found %s.", max);
         Preconditions.checkArgument(
                 min <= max, "Expecting arguments min < max, but found %s > %s.", min, max);
-        EnumSet<HttpStatus> result = EnumSet.<HttpStatus>noneOf(HttpStatus.class);
+        EnumSet<HttpStatus> result = EnumSet.noneOf(HttpStatus.class);
         for (HttpStatus status : HttpStatus.values())
             if (min <= status.code() && max >= status.code())
                 result.add(status);
@@ -963,6 +963,7 @@ public enum HttpStatus {
      * @return status object for given code, or NullStatus if no status is defined for that code
      * @throws IllegalArgumentException if code is negative
      */
+    @Nonnull
     public HttpStatus valueOf(int code) {
         Preconditions.checkArgument(
                 code >= 0, "Expecting positive argument code, but found %s.", code);

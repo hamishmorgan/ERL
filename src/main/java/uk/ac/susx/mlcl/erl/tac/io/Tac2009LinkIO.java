@@ -11,6 +11,7 @@ import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -65,7 +66,7 @@ public class Tac2009LinkIO extends LinkIO {
     }
 
     @Override
-    public List<Link> readAll(URL linksUrl) throws ParsingException, IOException {
+    public List<Link> readAll(@Nonnull URL linksUrl) throws ParsingException, IOException {
         LOG.debug("Reading links url: {}", linksUrl);
 
         final Closer closer = Closer.create();
@@ -85,7 +86,7 @@ public class Tac2009LinkIO extends LinkIO {
     }
 
     @Override
-    public void writeAll(Writer linksWriter, List<Link> links) throws IOException {
+    public void writeAll(Writer linksWriter, @Nonnull List<Link> links) throws IOException {
         final CSVWriter writer = new CSVWriter(linksWriter,
                 CSV_SEPARATOR, CSV_QUOTE_CHAR, CSV_ESCAPE_CHAR, CSV_LINE_END);
         try {
@@ -99,7 +100,7 @@ public class Tac2009LinkIO extends LinkIO {
     }
 
     @Override
-    public void writeAll(File linksFile, List<Link> links) throws IOException {
+    public void writeAll(File linksFile, @Nonnull List<Link> links) throws IOException {
         LOG.debug("Writing links to file: {}", linksFile);
         final Closer closer = Closer.create();
         try {
@@ -115,7 +116,7 @@ public class Tac2009LinkIO extends LinkIO {
     }
 
     @Override
-    public void writeAll(URL linksUrl, List<Link> links) throws IOException, URISyntaxException {
+    public void writeAll(@Nonnull URL linksUrl, @Nonnull List<Link> links) throws IOException, URISyntaxException {
         LOG.debug("Writing links to file: {}", linksUrl);
         if (linksUrl.getProtocol().equalsIgnoreCase("file")) {
             writeAll(new File(linksUrl.toURI()), links);
@@ -145,7 +146,7 @@ public class Tac2009LinkIO extends LinkIO {
         return Genre.NW;
     }
 
-    String[] formatLink(Link link) {
+    String[] formatLink(@Nonnull Link link) {
         return new String[]{
                 link.getQueryId(),
                 link.getEntityNodeId(),

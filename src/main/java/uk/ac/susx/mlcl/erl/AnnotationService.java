@@ -29,6 +29,7 @@ import nu.xom.xslt.XSLException;
 import nu.xom.xslt.XSLTransform;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
@@ -38,6 +39,7 @@ import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import uk.ac.susx.mlcl.erl.xml.XMLToStringSerializer;
 import uk.ac.susx.mlcl.erl.xml.XomB;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
@@ -53,7 +55,7 @@ public class AnnotationService {
 
     private final XomB xomb;
     private final AnnotationToXML xmler;
-    private AnnotatorPool pool;
+    private final AnnotatorPool pool;
     private JsonFactory jsonFactory;
 
     public AnnotationService(AnnotatorPool pool, AnnotationToXML xmler, XomB xomb,
@@ -64,6 +66,7 @@ public class AnnotationService {
         this.jsonFactory = jsonFactory;
     }
 
+    @Nonnull
     public static AnnotationService newInstance(Properties props)
             throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -127,7 +130,8 @@ public class AnnotationService {
      * @param document
      * @return
      */
-    public Annotation link(Annotation document) {
+    @Nonnull
+    public Annotation link(@Nonnull Annotation document) {
         checkNotNull(document, "document");
 
         final EnumSet<Anno> requiredAnnotators = EnumSet.noneOf(Anno.class);
@@ -198,6 +202,7 @@ public class AnnotationService {
     }
 
 
+    @Nonnull
     public Annotation link(String text) {
         checkNotNull(text, "text");
         final Annotation document = new Annotation(text);
@@ -233,21 +238,21 @@ public class AnnotationService {
         annotationToJson(document, writer);
     }
 
-    public String annotationToJson(Annotation document) throws IOException {
+    public String annotationToJson(@Nonnull Annotation document) throws IOException {
         final StringWriter writer = new StringWriter();
         annotationToJson(document, writer);
         return writer.toString();
     }
 
 
-    void printAnnotationAsJson(Annotation document) throws IOException {
+    void printAnnotationAsJson(@Nonnull Annotation document) throws IOException {
         final PrintWriter writer = new PrintWriter(System.out);
         annotationToJson(document, writer);
         writer.flush();
     }
 
 
-    private List<List<CoreLabel>> getEntityChunks(Annotation document) {
+    private List<List<CoreLabel>> getEntityChunks(@Nonnull Annotation document) {
         final List<List<CoreLabel>> chunks = Lists.newArrayList();
         final List<CoreLabel> tokens = document.get(TokensAnnotation.class);
         final Iterator<CoreLabel> it = tokens.iterator();
@@ -280,7 +285,7 @@ public class AnnotationService {
         return chunks;
     }
 
-    private void writeEntityChunks(JsonGenerator generator, Annotation document, List<List<CoreLabel>> chunks) throws IOException {
+    private void writeEntityChunks(@Nonnull JsonGenerator generator, @Nonnull Annotation document, @Nonnull List<List<CoreLabel>> chunks) throws IOException {
         final String documentText = document.get(TextAnnotation.class);
 
         int prevEnd = 0;  // The index of the last character in the sequence
@@ -307,7 +312,7 @@ public class AnnotationService {
         }
     }
 
-    void annotationToJson(Annotation document, Writer writer) throws IOException {
+    void annotationToJson(@Nonnull Annotation document, Writer writer) throws IOException {
         final JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
         generator.enablePrettyPrint();
         generator.writeStartArray();
@@ -319,8 +324,8 @@ public class AnnotationService {
         generator.flush();
     }
 
-    private void writeJsonObj(JsonGenerator generator, String text,
-                              String entityId, String entityType)
+    private void writeJsonObj(@Nonnull JsonGenerator generator, @Nonnull String text,
+                              @Nullable String entityId, @Nullable String entityType)
             throws IOException {
 
         generator.writeStartObject();
@@ -347,7 +352,7 @@ public class AnnotationService {
         return xmler.toDocument(document);
     }
 
-    public void linkAsXml(String text, OutputStream out, Charset charset)
+    public void linkAsXml(String text, OutputStream out, @Nonnull Charset charset)
             throws InstantiationException, IOException {
         final Document xml = linkAsXml(text);
         writeXml(xml, out, charset, false);
@@ -361,20 +366,18 @@ public class AnnotationService {
                         "src/main/resources/CoreNLP-to-HTML_2.xsl")));
 
         Nodes nodes = transform.transform(xml);
-        Document htmlDoc = xomb.document().setDocType("html")
+        return xomb.document().setDocType("html")
                 .setRoot((Element) nodes.get(0)).build();
-
-        return htmlDoc;
     }
 
-    public void linkAsHtml(String text, OutputStream out, Charset charset)
+    public void linkAsHtml(String text, OutputStream out, @Nonnull Charset charset)
             throws InstantiationException, IOException, XSLException, ParsingException {
         final Document xml = linkAHtml(text);
         writeXml(xml, out, charset, true);
     }
 
     private static void writeXml(Document document,
-                                 OutputStream out, Charset charset,
+                                 OutputStream out, @Nonnull Charset charset,
                                  boolean decSkip)
             throws IOException {
         XMLToStringSerializer sr = new XMLToStringSerializer(
@@ -385,7 +388,8 @@ public class AnnotationService {
         sr.flush();
     }
 
-    private static String xmlEncode(String input) {
+    @Nonnull
+    private static String xmlEncode(@Nonnull String input) {
         checkNotNull(input, "input");
 
         // Search through the string for the first character the requires encoding
@@ -449,7 +453,7 @@ public class AnnotationService {
          */
         public static final Comparator<Anno> ORDER = new Comparator<Anno>() {
             @Override
-            public int compare(Anno o1, Anno o2) {
+            public int compare(@Nonnull Anno o1, @Nonnull Anno o2) {
                 return o1.order - o2.order;
             }
         };
@@ -468,6 +472,7 @@ public class AnnotationService {
 
         }
 
+        @Nonnull
         static AnnotatorPool createPool(final Properties props) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
             final AnnotatorPool pool = new AnnotatorPool();
             for (Anno annotator : Anno.values())

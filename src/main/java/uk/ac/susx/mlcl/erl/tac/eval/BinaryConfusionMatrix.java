@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
 import org.ejml.simple.SimpleMatrix;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -20,7 +21,7 @@ public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
     protected static final int POSITIVE_INDEX = 0;
     protected static final int NEGATIVE_INDEX = 1;
 
-    BinaryConfusionMatrix(BiMap<T, Integer> labelIndexMap, SimpleMatrix mat, Comparator<T> labelOrder, Function<T, String> labelFormatter) {
+    BinaryConfusionMatrix(@Nonnull BiMap<T, Integer> labelIndexMap, @Nonnull SimpleMatrix mat, Comparator<T> labelOrder, Function<T, String> labelFormatter) {
         super(labelIndexMap, mat, labelOrder, labelFormatter);
         checkArgument(labelIndexMap.size() == 2);
     }
@@ -131,6 +132,7 @@ public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
         return getFScoreFor(getNegativeLabel(), beta);
     }
 
+    @Nonnull
     public String getStatsString() {
         final StringBuilder statsBuilder = new StringBuilder();
         statsBuilder.append(String.format("Accuracy: %.0f/%.0f = %.2f%% correct%n",

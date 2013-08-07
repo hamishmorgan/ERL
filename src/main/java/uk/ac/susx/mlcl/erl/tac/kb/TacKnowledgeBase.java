@@ -6,10 +6,12 @@ package uk.ac.susx.mlcl.erl.tac.kb;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.Nullable;
 import org.mapdb.DB;
 import org.mapdb.HTreeMap;
 import uk.ac.susx.mlcl.erl.tac.io.Tac2009KnowledgeBaseIO;
 
+import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -44,14 +46,13 @@ public class TacKnowledgeBase extends AbstractCollection<Entity> implements Clos
         this.nameIndex = nameIndex;
     }
 
+    @Nonnull
     public static TacKnowledgeBase open(File dbFile) {
         LOG.info(format("Opening database: {0}", dbFile));
         final DB db = Tac2009KnowledgeBaseIO.openDB(dbFile);
         final HTreeMap<String, Entity> idIndex = db.getHashMap("entity-id-index");
         final HTreeMap<String, String> nameIndex = db.getHashMap("entity-name-index");
-        final TacKnowledgeBase kb = new TacKnowledgeBase(db, idIndex, nameIndex);
-//        LOG.trace(format("Database opened: {0}", kb));
-        return kb;
+        return new TacKnowledgeBase(db, idIndex, nameIndex);
     }
 
     private void checkState() throws IOException {
@@ -75,6 +76,7 @@ public class TacKnowledgeBase extends AbstractCollection<Entity> implements Clos
         return nameIndex.get(name);
     }
 
+    @Nullable
     public String getTextForId(String id) throws IOException {
         return getEntityById(id).getWikiText().orNull();
     }
@@ -97,6 +99,7 @@ public class TacKnowledgeBase extends AbstractCollection<Entity> implements Clos
         return idIndex.size() == 0;
     }
 
+    @Nonnull
     @Override
     public Iterator<Entity> iterator() {
         return idIndex.values().iterator();
@@ -108,12 +111,14 @@ public class TacKnowledgeBase extends AbstractCollection<Entity> implements Clos
                 + " slow, and has been disabled for your own good!");
     }
 
+    @Nonnull
     @Override
     public Object[] toArray() {
         throw new UnsupportedOperationException("Operation \"toArray()\" is unfeasably"
                 + " slow, and has been disabled for your own good!");
     }
 
+    @Nonnull
     @Override
     public <T> T[] toArray(T[] a) {
         throw new UnsupportedOperationException("Operation \"toArray(T[] a)\" is unfeasably"

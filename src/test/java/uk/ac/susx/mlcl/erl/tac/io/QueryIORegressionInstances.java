@@ -8,6 +8,7 @@ import org.junit.runners.Parameterized;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -36,6 +37,7 @@ public class QueryIORegressionInstances extends AbstractTest {
         this.query = query;
     }
 
+    @Nonnull
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
         // noinspection HardcodedLineSeparator

@@ -1,6 +1,7 @@
 package uk.ac.susx.mlcl.erl.webapp;
 
 import com.google.api.client.json.GenericJson;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,8 +14,10 @@ public class LinkError extends GenericJson {
 
     @com.google.api.client.util.Key
     private int code;
+    @Nullable
     @com.google.api.client.util.Key
     private String name;
+    @Nullable
     @com.google.api.client.util.Key
     private String message;
 
@@ -27,9 +30,7 @@ public class LinkError extends GenericJson {
     public LinkError() {
         this.code = 0;
         this.name = null;
-        ;
         this.message = null;
-        ;
     }
 
     public final int getCode() {
@@ -40,6 +41,7 @@ public class LinkError extends GenericJson {
         this.code = code;
     }
 
+    @Nullable
     public final String getName() {
         return name;
     }
@@ -48,6 +50,7 @@ public class LinkError extends GenericJson {
         this.name = name;
     }
 
+    @Nullable
     public final String getMessage() {
         return message;
     }

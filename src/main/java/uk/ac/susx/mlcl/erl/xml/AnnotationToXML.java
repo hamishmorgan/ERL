@@ -31,6 +31,7 @@ import uk.ac.susx.mlcl.erl.snlp.InstancePool;
 import uk.ac.susx.mlcl.erl.xml.XomB.DocumentBuilder;
 import uk.ac.susx.mlcl.erl.xml.XomB.ElementBuilder;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -78,6 +79,7 @@ public class AnnotationToXML {
     //        private final TypeToInstanceMap<?> customSerializerPool;
     private final Filter<Class<? extends CoreAnnotation<?>>> annotationFilter;
     private final Set<String> nodeFilters;
+    @Nonnull
     private final XomB x;
 
     /**
@@ -122,11 +124,12 @@ public class AnnotationToXML {
     /**
      * @return
      */
+    @Nonnull
     public static Builder builder() {
         return new Builder();
     }
 
-    static void filterDocument(Document doc, String xpathFilter) {
+    static void filterDocument(@Nonnull Document doc, String xpathFilter) {
 
         final Nodes nodes = doc.query(xpathFilter);
         if (nodes != null) {
@@ -143,7 +146,7 @@ public class AnnotationToXML {
      * @param writer     The Writer to send the output to
      * @throws IOException
      */
-    public void xmlPrint(Annotation annotation, Writer writer) throws IOException, InstantiationException {
+    public void xmlPrint(@Nonnull Annotation annotation, @Nonnull Writer writer) throws IOException, InstantiationException {
         Preconditions.checkNotNull(annotation, "annotation");
         Preconditions.checkNotNull(writer, "writer");
 
@@ -161,7 +164,7 @@ public class AnnotationToXML {
      * @param outputStream The output stream
      * @throws IOException
      */
-    public void xmlPrint(Annotation annotation, OutputStream outputStream)
+    public void xmlPrint(@Nonnull Annotation annotation, OutputStream outputStream)
             throws IOException, InstantiationException {
         Preconditions.checkNotNull(annotation, "annotation");
         Preconditions.checkNotNull(outputStream, "outputStream");
@@ -188,7 +191,7 @@ public class AnnotationToXML {
      * @return
      * @throws InstantiationException
      */
-    public Document toDocument(Annotation annotation)
+    public Document toDocument(@Nonnull Annotation annotation)
             throws InstantiationException {
         Preconditions.checkNotNull(annotation, "annotation");
 
@@ -225,7 +228,7 @@ public class AnnotationToXML {
      * @param parent
      * @param value
      */
-    private void addElementByValueType(ElementBuilder parent, Object value)
+    private void addElementByValueType(@Nonnull ElementBuilder parent, Object value)
             throws InstantiationException {
         Preconditions.checkNotNull(parent, "parent");
         Preconditions.checkNotNull(value, "value");
@@ -315,15 +318,12 @@ public class AnnotationToXML {
             final ElementBuilder element = x.element(name);
 
             boolean found = false;
-            for (Iterator<Class<? extends CoreAnnotation<?>>> it =
-                         customSerializerPool.keySet().iterator();
-                 it.hasNext(); ) {
+            for (Class<? extends CoreAnnotation<?>> k : customSerializerPool.keySet()) {
 
-                Class<? extends CoreAnnotation<?>> k = it.next();
                 if (k.isAssignableFrom(key)) {
 
                     @SuppressWarnings({"rawtypes", "unchecked"})
-                    CustomGenerator<Object> serializer = (CustomGenerator<Object>)customSerializerPool.getInstance(k);
+                    CustomGenerator<Object> serializer = (CustomGenerator<Object>) customSerializerPool.getInstance(k);
 
                     @SuppressWarnings({"rawtypes", "unchecked"})
                     final Object value = map.get((Class<? extends CoreAnnotation>) castKey);
@@ -346,7 +346,7 @@ public class AnnotationToXML {
         }
     }
 
-    private void addMap(ElementBuilder parent, Map<String, ?> map) throws InstantiationException {
+    private void addMap(@Nonnull ElementBuilder parent, @Nonnull Map<String, ?> map) throws InstantiationException {
         for (String key : map.keySet()) {
 
             final ElementBuilder element = x.element(key);
@@ -368,10 +368,10 @@ public class AnnotationToXML {
 
     public static class TimexGenerator implements CustomGenerator<Timex> {
 
-        private boolean useTimexXml = false;
+        private final boolean useTimexXml = false;
 
         public void generate(XomB x, @Nonnull ElementBuilder parent,
-                             Timex value) {
+                             @Nonnull Timex value) {
 
             if (useTimexXml) {
                 Element timexXml = value.toXmlElement();
@@ -399,6 +399,7 @@ public class AnnotationToXML {
 
             private static final long serialVersionUID = 1L;
 
+            @Nonnull
             public TimexGenerator create() {
                 return new TimexGenerator();
             }
@@ -407,6 +408,7 @@ public class AnnotationToXML {
 
     public static class TreeGenerator implements CustomGenerator<Tree> {
 
+        @Nonnull
         private static TreePrint constituentTreePrinter = new TreePrint("penn");
 
         public void generate(XomB x, @Nonnull ElementBuilder parent,
@@ -422,6 +424,7 @@ public class AnnotationToXML {
 
             private static final long serialVersionUID = 1L;
 
+            @Nonnull
             public TreeGenerator create() {
                 return new TreeGenerator();
             }
@@ -430,7 +433,7 @@ public class AnnotationToXML {
 
     public static class SemanticGraphGenerator implements CustomGenerator<SemanticGraph> {
 
-        public void generate(XomB x, @Nonnull ElementBuilder parent,
+        public void generate(@Nonnull XomB x, @Nonnull ElementBuilder parent,
                              @Nonnull SemanticGraph graph) {
 
 
@@ -459,6 +462,7 @@ public class AnnotationToXML {
 
             private static final long serialVersionUID = 1L;
 
+            @Nonnull
             public SemanticGraphGenerator create() {
                 return new SemanticGraphGenerator();
             }
@@ -475,7 +479,7 @@ public class AnnotationToXML {
          * @param parent
          * @param corefChains
          */
-        public void generate(XomB x, @Nonnull ElementBuilder parent,
+        public void generate(@Nonnull XomB x, @Nonnull ElementBuilder parent,
                              @Nonnull Map<Integer, CorefChain> corefChains) {
 //            String curNS = corefInfo.getNamespaceURI();
             boolean foundCoref = false;
@@ -505,7 +509,7 @@ public class AnnotationToXML {
 //            return foundCoref;
         }
 
-        private void addCorefMention(XomB x, @Nonnull ElementBuilder chainElem,
+        private void addCorefMention(@Nonnull XomB x, @Nonnull ElementBuilder chainElem,
                                      @Nonnull CorefChain.CorefMention mention,
                                      boolean representative) {
 
@@ -531,6 +535,7 @@ public class AnnotationToXML {
 
             private static final long serialVersionUID = 1L;
 
+            @Nonnull
             public CorefGenerator create() {
                 return new CorefGenerator();
             }
@@ -540,18 +545,22 @@ public class AnnotationToXML {
     /**
      *
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static class Builder {
 
         public static final String NO_STYLESHEET = "";
         private static final Log LOG = LogFactory.getLog(Builder.class);
         private final Set<Class<?>> annotationRoots = Sets.newHashSet();
         private final Set<String> stripSuffixes = Sets.newHashSet();
+        @Nonnull
         private final InstancePool.Builder<Class<? extends CoreAnnotation<?>>, CustomGenerator<?>> customSerializerPool;
         private final BiMap<Class<? extends CoreAnnotation<?>>, String> simpleNames;
         private final ImmutableSet.Builder<Class<? extends CoreAnnotation<?>>> annoBlacklist;
         private final ImmutableSet.Builder<String> xpathNodeFilters;
+        @org.jetbrains.annotations.Nullable
         private String namespaceURI = null;
         private String stylesheetName = NO_STYLESHEET;
+        @org.jetbrains.annotations.Nullable
         private NodeFactory nodeFactory = null;
 
         public Builder() {
@@ -574,8 +583,9 @@ public class AnnotationToXML {
          * @throws SecurityException    caused by {@link Class#getClasses() }
          * @throws NullPointerException if any parameter is null, or contains null
          */
+        @Nonnull
         private static <T> Set<Class<? extends T>> findMembersOfType(
-                Set<Class<?>> searchRoots, Class<T> targetType)
+                Set<Class<?>> searchRoots, @Nonnull Class<T> targetType)
                 throws SecurityException, NullPointerException {
             Preconditions.checkNotNull(searchRoots, "searchRoots");
             Preconditions.checkNotNull(targetType, "targetType");
@@ -614,9 +624,10 @@ public class AnnotationToXML {
             return found;
         }
 
-        private static String simplifiedName(Class<?> clazz,
-                                             Set<String> stripSuffixes,
-                                             Set<String> existingNames) {
+        @Nonnull
+        private static String simplifiedName(@Nonnull Class<?> clazz,
+                                             @Nonnull Set<String> stripSuffixes,
+                                             @Nonnull Set<String> existingNames) {
             Preconditions.checkNotNull(clazz, "clazz");
             Preconditions.checkNotNull(stripSuffixes, "stripSuffixes");
             Preconditions.checkNotNull(existingNames, "existingNames");
@@ -682,6 +693,7 @@ public class AnnotationToXML {
             return name.toString();
         }
 
+        @Nonnull
         public AnnotationToXML build() {
 
             if (!annotationRoots.isEmpty()) {
@@ -716,27 +728,32 @@ public class AnnotationToXML {
                     xpathNodeFilters.build());
         }
 
+        @Nonnull
         public Builder addAnnotationRoot(Class<?> annotationRoot) {
             annotationRoots.add(annotationRoot);
             return this;
         }
 
+        @Nonnull
         public Builder addXPathNodeFilter(String xpathFilter) {
             xpathNodeFilters.add(xpathFilter);
             return this;
         }
 
+        @Nonnull
         public Builder addAnnotationToIgnore(
                 Class<? extends CoreAnnotation<?>> annotationClass) {
             annoBlacklist.add(annotationClass);
             return this;
         }
 
+        @Nonnull
         public Builder addStripSuffix(String suffix) {
             stripSuffixes.add(suffix);
             return this;
         }
 
+        @Nonnull
         public Builder addSimplifiedName(
                 Class<? extends CoreAnnotation<?>> annotationType,
                 String name) {
@@ -756,9 +773,7 @@ public class AnnotationToXML {
             this.nodeFactory = nodeFactory;
         }
 
-        public void configure(Configuration config)
-                throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-
+        public void configure(@Nonnull Configuration config) throws InstantiationException, IllegalAccessException {
 
             if (config.containsKey("annotationRoots")) {
                 String[] roots = config.getStringArray("annotationRoots");

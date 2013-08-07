@@ -8,6 +8,7 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.CharniakParserAnnotator;
 import edu.stanford.nlp.pipeline.ParserAnnotator;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -22,12 +23,12 @@ public class ParserAnnotatorFactory extends AbstractAnnotatorFactory implements 
         super(props);
     }
 
+    @Nonnull
     public Annotator create() {
         String parserType = props.getProperty("parser.type", "stanford");
         String maxLenStr = props.getProperty("parser.maxlen");
         if (parserType.equalsIgnoreCase("stanford")) {
-            ParserAnnotator anno = new ParserAnnotator("parser", props);
-            return anno;
+            return new ParserAnnotator("parser", props);
         } else if (parserType.equalsIgnoreCase("charniak")) {
             String model = props.getProperty("parser.model");
             String parserExecutable = props.getProperty("parser.executable");
@@ -38,10 +39,7 @@ public class ParserAnnotatorFactory extends AbstractAnnotatorFactory implements 
             if (maxLenStr != null) {
                 maxLen = Integer.parseInt(maxLenStr);
             }
-            CharniakParserAnnotator anno =
-                    new CharniakParserAnnotator(model, parserExecutable, false,
-                            maxLen);
-            return anno;
+            return new CharniakParserAnnotator(model, parserExecutable, false, maxLen);
         } else {
             throw new RuntimeException("Unknown parser type: " + parserType +
                     " (currently supported: stanford and charniak)");

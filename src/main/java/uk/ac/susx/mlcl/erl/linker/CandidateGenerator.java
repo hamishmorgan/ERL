@@ -4,6 +4,8 @@
  */
 package uk.ac.susx.mlcl.erl.linker;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,7 @@ public interface CandidateGenerator {
      * @return List of candidate entity id's matching the given mention
      * @throws IOException
      */
+    @Nullable
     Set<String> findCandidates(String mention) throws IOException;
 
     /**

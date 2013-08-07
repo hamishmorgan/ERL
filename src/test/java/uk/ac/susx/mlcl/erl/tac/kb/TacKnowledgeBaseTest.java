@@ -10,6 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 
@@ -40,6 +41,7 @@ public class TacKnowledgeBaseTest extends AbstractTest {
         }
     }
 
+    @Nonnull
     TacKnowledgeBase getInstance() {
         final File dbFile = getResourceAsFile(dbResourceName);
         TacKnowledgeBase instance = TacKnowledgeBase.open(dbFile);

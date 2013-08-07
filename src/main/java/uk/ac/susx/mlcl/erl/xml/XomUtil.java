@@ -19,12 +19,12 @@ import java.nio.charset.Charset;
 @Nonnull
 public class XomUtil {
 
-    public static String toString(Element element) {
+    public static String toString(@Nonnull Element element) {
         detachChildren(element);
         return toString(new XomB().document().setRoot(element).build());
     }
 
-    public static String toString(Element element, Charset charset) {
+    public static String toString(@Nonnull Element element, @Nonnull Charset charset) {
         detachChildren(element);
         return toString(new XomB().document().setRoot(element).build(), charset);
     }
@@ -33,7 +33,7 @@ public class XomUtil {
         return toString(document, Charset.defaultCharset());
     }
 
-    public static String toString(Document document, Charset charset) {
+    public static String toString(Document document, @Nonnull Charset charset) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             writeDocument(document, out, charset);
@@ -44,7 +44,7 @@ public class XomUtil {
     }
 
     public static void writeDocument(
-            Document document, OutputStream outputStream, Charset encoding)
+            Document document, OutputStream outputStream, @Nonnull Charset encoding)
             throws IOException {
 
         Preconditions.checkNotNull(document, "xmlDoc");
@@ -64,9 +64,9 @@ public class XomUtil {
     }
 
     public static void appendChildren(
-            final ParentNode parent,
-            final Nodes first,
-            final Nodes... remainder) {
+            @Nonnull final ParentNode parent,
+            @Nonnull final Nodes first,
+            @Nonnull final Nodes... remainder) {
 
         Preconditions.checkNotNull(parent, "parent");
         Preconditions.checkNotNull(first, "first");
@@ -80,9 +80,9 @@ public class XomUtil {
     }
 
     public static void appendAttributes(
-            final Element parent,
-            final Nodes first,
-            final Nodes... remainder) {
+            @Nonnull final Element parent,
+            @Nonnull final Nodes first,
+            @Nonnull final Nodes... remainder) {
 
         Preconditions.checkNotNull(parent, "parent");
         Preconditions.checkNotNull(first, "first");
@@ -98,7 +98,7 @@ public class XomUtil {
 
     }
 
-    public static void moveAttributes(Element from, Element to) {
+    public static void moveAttributes(@Nonnull Element from, @Nonnull Element to) {
         Preconditions.checkNotNull(from, "form");
         Preconditions.checkNotNull(to, "to");
         Preconditions.checkArgument(from != to, "form == to");
@@ -111,7 +111,7 @@ public class XomUtil {
         }
     }
 
-    public static void moveChildren(ParentNode from, ParentNode to) {
+    public static void moveChildren(@Nonnull ParentNode from, @Nonnull ParentNode to) {
         Preconditions.checkNotNull(from, "form");
         Preconditions.checkNotNull(to, "to");
         Preconditions.checkArgument(from != to, "form == to");
@@ -120,7 +120,7 @@ public class XomUtil {
             to.appendChild(from.removeChild(i));
     }
 
-    public static void move(Nodes from, Nodes to) {
+    public static void move(@Nonnull Nodes from, @Nonnull Nodes to) {
         Preconditions.checkNotNull(from, "form");
         Preconditions.checkNotNull(to, "to");
         Preconditions.checkArgument(from != to, "form == to");
@@ -130,8 +130,8 @@ public class XomUtil {
         }
     }
 
-    public static void detachChildren(final Nodes first,
-                                      final Nodes... remainder) {
+    public static void detachChildren(@Nonnull final Nodes first,
+                                      @Nonnull final Nodes... remainder) {
         Preconditions.checkNotNull(first, "first");
         Preconditions.checkNotNull(remainder, "remainder");
 
@@ -147,15 +147,14 @@ public class XomUtil {
         }
     }
 
-    public static void detachChildren(final Node first,
-                                      final Node... remainder) {
-        Preconditions.checkNotNull(first, "first");
+    public static void detachChildren(@Nonnull final Node firstChild,
+                                      @Nonnull final Node... remainder) {
+        Preconditions.checkNotNull(firstChild, "first");
         Preconditions.checkNotNull(remainder, "remainder");
 
-        Node child = first;
-        ParentNode parent = child.getParent();
+        ParentNode parent = firstChild.getParent();
         if (parent != null)
-            parent.removeChild(child);
+            parent.removeChild(firstChild);
 
         if (remainder.length > 0)
             for (Node node : remainder) {
@@ -163,13 +162,14 @@ public class XomUtil {
             }
     }
 
-    public static String getPrintableText(Node node) {
+    @Nonnull
+    public static String getPrintableText(@Nonnull Node node) {
         final StringBuilder builder = new StringBuilder();
         getPrintableText(node, builder);
         return builder.toString();
     }
 
-    public static void getPrintableText(Node node, StringBuilder builder) {
+    public static void getPrintableText(@Nonnull Node node, @Nonnull StringBuilder builder) {
         if (node.getClass().equals(Text.class)) {
             builder.append(((Text) node).getValue());
         } else if (node.getClass().equals(Element.class)) {

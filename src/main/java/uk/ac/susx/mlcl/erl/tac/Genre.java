@@ -1,5 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac;
 
+import javax.annotation.Nonnull;
+
 /**
  * Enum that indicates the genre of a particular document; i.e the type of resource is was taken from.
  *
@@ -44,7 +46,8 @@ public enum Genre {
      * @param docId Document id to get the genre from
      * @return the genre of the given document
      */
-    public static Genre forDocumentId(final String docId) {
+    @Nonnull
+    public static Genre forDocumentId(@Nonnull final String docId) {
         if (docId.startsWith("APW_") || docId.startsWith("AFP_") || docId.startsWith("NYT_")
                 || docId.startsWith("XIN_") || docId.startsWith("CNA_")
                 || docId.startsWith("LTW_") || docId.startsWith("WPB_")) {

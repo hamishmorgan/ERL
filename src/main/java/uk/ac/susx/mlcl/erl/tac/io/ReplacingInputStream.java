@@ -1,7 +1,9 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
 import com.google.common.base.Objects;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,12 +19,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ReplacingInputStream extends FilterInputStream {
 
+    @Nonnull
     private final CircularByteBuffer inBuffer;
+    @Nonnull
     private final CircularByteBuffer outBuffer;
     private final byte[] search;
     private final byte[] replacement;
 
-    public ReplacingInputStream(InputStream delegate, byte[] search, byte[] replacement) {
+    public ReplacingInputStream(InputStream delegate, @Nonnull byte[] search, @Nonnull byte[] replacement) {
         super(checkNotNull(delegate, "delegate"));
         this.search = checkNotNull(search, "search");
         this.replacement = checkNotNull(replacement, "replacement");
@@ -55,7 +59,7 @@ public class ReplacingInputStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte[] b) throws IOException {
+    public int read(@Nonnull byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
@@ -73,8 +77,8 @@ public class ReplacingInputStream extends FilterInputStream {
 
     @Override
     public long skip(long n) throws IOException {
-        int i = 0, b;
-        while (i < n && -1 != (b = read()))
+        int i = 0;
+        while (i < n && -1 != read())
             ++i;
         return i;
     }
@@ -82,11 +86,6 @@ public class ReplacingInputStream extends FilterInputStream {
     @Override
     public int available() throws IOException {
         return inBuffer.length() + outBuffer.length() + super.available();
-    }
-
-    @Override
-    public void close() throws IOException {
-        super.close();
     }
 
     @Override
@@ -116,7 +115,7 @@ public class ReplacingInputStream extends FilterInputStream {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

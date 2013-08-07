@@ -10,6 +10,7 @@ import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -38,6 +39,7 @@ public class LinkIORegressionInstances extends AbstractTest {
         this.link = link;
     }
 
+    @Nonnull
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{

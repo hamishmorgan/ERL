@@ -10,6 +10,7 @@ import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -45,6 +46,7 @@ public class TacIODataFileTests extends AbstractTest {
         this.expectedSize = expectedSize;
     }
 
+    @Nonnull
     @Parameterized.Parameters(name = "{index}: {2}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
@@ -86,7 +88,7 @@ public class TacIODataFileTests extends AbstractTest {
         });
     }
 
-    private static List<Link> doReadLinks(LinkIO instance, URL linksURL) throws ParsingException, IOException {
+    private static List<Link> doReadLinks(@Nonnull LinkIO instance, URL linksURL) throws ParsingException, IOException {
         final List<Link> links = instance.readAll(linksURL);
         assertNotNull(links);
         assertFalse(links.isEmpty());
@@ -94,7 +96,7 @@ public class TacIODataFileTests extends AbstractTest {
         return links;
     }
 
-    private static List<Link> doReadLinks(LinkIO instance, File linksFile) throws ParsingException, IOException {
+    private static List<Link> doReadLinks(@Nonnull LinkIO instance, File linksFile) throws ParsingException, IOException {
         final List<Link> links = instance.readAll(linksFile);
         assertNotNull(links);
         assertFalse(links.isEmpty());
@@ -102,7 +104,7 @@ public class TacIODataFileTests extends AbstractTest {
         return links;
     }
 
-    private static List<Query> doReadQueries(QueryIO instance, URL queriesUrl) throws ParsingException, IOException {
+    private static List<Query> doReadQueries(@Nonnull QueryIO instance, URL queriesUrl) throws ParsingException, IOException {
         final List<Query> queries = instance.readAll(queriesUrl);
         assertNotNull(queries);
         assertFalse(queries.isEmpty());
@@ -110,7 +112,7 @@ public class TacIODataFileTests extends AbstractTest {
         return queries;
     }
 
-    private static List<Query> doReadQueries(QueryIO instance, File queriesFile) throws ParsingException, IOException {
+    private static List<Query> doReadQueries(@Nonnull QueryIO instance, File queriesFile) throws ParsingException, IOException {
         final List<Query> queries = instance.readAll(queriesFile);
         assertNotNull(queries);
         assertFalse(queries.isEmpty());
@@ -118,6 +120,7 @@ public class TacIODataFileTests extends AbstractTest {
         return queries;
     }
 
+    @Nonnull
     public File getQueryFile() throws URISyntaxException {
         return new File(getQueryUrl().toURI());
     }
@@ -126,6 +129,7 @@ public class TacIODataFileTests extends AbstractTest {
         return Resources.getResource(this.getClass(), queriesFileName);
     }
 
+    @Nonnull
     public File getLinksFile() throws URISyntaxException {
         return new File(getLinksUrl().toURI());
     }

@@ -12,6 +12,7 @@ import uk.ac.susx.mlcl.erl.tac.io.LinkIO;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URL;
@@ -51,7 +52,7 @@ public class EvaluationTest extends AbstractTest {
         final Comparator<Link> linkComparator = new Comparator<Link>() {
 
             @Override
-            public int compare(Link o1, Link o2) {
+            public int compare(@Nonnull Link o1, @Nonnull Link o2) {
                 return o1.getEntityNodeId().compareTo(o2.getEntityNodeId());
             }
         };
@@ -85,7 +86,7 @@ public class EvaluationTest extends AbstractTest {
         final Comparator<Link> linkComparator = new Comparator<Link>() {
 
             @Override
-            public int compare(Link o1, Link o2) {
+            public int compare(@Nonnull Link o1, @Nonnull Link o2) {
                 return o1.getEntityNodeId().compareTo(o2.getEntityNodeId());
             }
         };
@@ -135,7 +136,7 @@ public class EvaluationTest extends AbstractTest {
         final Comparator<Link> linkComparator = new Comparator<Link>() {
 
             @Override
-            public int compare(Link o1, Link o2) {
+            public int compare(@Nonnull Link o1, @Nonnull Link o2) {
                 return Integer.compare(
                         o1.getEntityNodeId().startsWith("NIL") ? 1 : 0,
                         o2.getEntityNodeId().startsWith("NIL") ? 1 : 0);
@@ -174,7 +175,7 @@ public class EvaluationTest extends AbstractTest {
         final Comparator<Link> linkComparator = new Comparator<Link>() {
 
             @Override
-            public int compare(Link o1, Link o2) {
+            public int compare(@Nonnull Link o1, @Nonnull Link o2) {
                 return o1.getEntityType().compareTo(o2.getEntityType());
             }
         };

@@ -6,7 +6,9 @@ package uk.ac.susx.mlcl.erl.tac.kb;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -110,50 +112,36 @@ public class Entity implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         final Entity other = (Entity) obj;
-        if (this.factsClass != other.factsClass && (this.factsClass == null || !this.factsClass.equals(other.factsClass))) {
-            return false;
-        }
-        if (this.facts != other.facts && (this.facts == null || !this.facts.equals(other.facts))) {
-            return false;
-        }
-        if (this.wikiText != other.wikiText && (this.wikiText == null || !this.wikiText.equals(other.wikiText))) {
-            return false;
-        }
-        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
-            return false;
-        }
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        if (this.type != other.type) {
-            return false;
-        }
-        if (this.wikiTitle != other.wikiTitle && (this.wikiTitle == null || !this.wikiTitle.equals(other.wikiTitle))) {
-            return false;
-        }
-        return true;
+        return !(this.factsClass != other.factsClass
+                && (this.factsClass == null || !this.factsClass.equals(other.factsClass)))
+                && !(this.facts != other.facts && (this.facts == null || !this.facts.equals(other.facts)))
+                && !(this.wikiText != other.wikiText
+                && (this.wikiText == null || !this.wikiText.equals(other.wikiText)))
+                && !((this.id == null) ? (other.id != null) : !this.id.equals(other.id))
+                && !((this.name == null) ? (other.name != null) : !this.name.equals(other.name))
+                && this.type == other.type && !(this.wikiTitle != other.wikiTitle
+                && (this.wikiTitle == null || !this.wikiTitle.equals(other.wikiTitle)));
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Entity{" + "factsClass=" + factsClass + ", facts=" + facts + ", wikiText=" + wikiText + ", id=" + id + ", name=" + name + ", type=" + type + ", wikiTitle=" + wikiTitle + '}';
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static class Builder {
 
-        String id; // #REQUIRED
+        final String id; // #REQUIRED
         // #REQUIRED
-        String name; // #REQUIRED
+        final String name; // #REQUIRED
         // #REQUIRED
-        EntityType type; // #REQUIRED
+        final EntityType type; // #REQUIRED
         // #REQUIRED
         Optional<String> factsClass;
         Optional<String> wikiText; // 0-or-1
@@ -173,25 +161,30 @@ public class Entity implements Serializable {
             facts = Lists.newArrayList();
         }
 
+        @Nonnull
         public Entity build() {
             return new Entity(factsClass, facts, wikiText, id, name, type, wikiTitle);
         }
 
+        @Nonnull
         public Builder setFactsClass(String factsClass) {
             this.factsClass = Optional.of(factsClass);
             return this;
         }
 
+        @Nonnull
         public Builder setWikiText(String wiki_text) {
             this.wikiText = Optional.of(wiki_text);
             return this;
         }
 
+        @Nonnull
         public Builder setWikiTitle(String wiki_title) {
             this.wikiTitle = Optional.of(wiki_title);
             return this;
         }
 
+        @Nonnull
         public Builder addFact(Fact fact) {
             facts.add(fact);
             return this;

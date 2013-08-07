@@ -1,6 +1,7 @@
 package uk.ac.susx.mlcl.erl.webapp;
 
 import com.google.api.client.json.GenericJson;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,6 +12,7 @@ import com.google.api.client.json.GenericJson;
  */
 public class SimpleLinkRequest extends GenericJson {
 
+    @Nullable
     @com.google.api.client.util.Key
     public String text = null;
 
@@ -21,6 +23,7 @@ public class SimpleLinkRequest extends GenericJson {
         this.text = text;
     }
 
+    @Nullable
     public final String getText() {
         return text;
     }

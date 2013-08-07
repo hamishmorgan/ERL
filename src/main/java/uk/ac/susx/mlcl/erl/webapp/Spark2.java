@@ -7,6 +7,7 @@ package uk.ac.susx.mlcl.erl.webapp;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.io.Closer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import spark.Filter;
@@ -14,6 +15,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -31,17 +33,22 @@ public class Spark2 {
 
     public static void staticRoute(final String remotePath, final String localPath) {
         spark.Spark.get(new Route(remotePath) {
+            @Nonnull
             @Override
-            public Object handle(Request request, Response response) {
+            public Object handle(Request request, @Nonnull Response response) {
 
-                File file = new File(localPath);
-                InputStream in = null;
-                OutputStream out = null;
                 try {
-                    in = new BufferedInputStream(new FileInputStream(file));
-                    out = new BufferedOutputStream(response.raw().getOutputStream());
-                    ByteStreams.copy(in, out);
-                    out.flush();
+                    InputStream in = null;
+                    OutputStream out = null;
+                    try {
+                        File file = new File(localPath);
+                        in = new BufferedInputStream(new FileInputStream(file));
+                        out = new BufferedOutputStream(response.raw().getOutputStream());
+                        ByteStreams.copy(in, out);
+                        out.flush();
+                    } finally {
+                        Closeables.close(in, true);
+                    }
                 } catch (SecurityException ex) {
                     LOG.error(ex + "\n" + Throwables.getStackTraceAsString(ex));
                     response.status(HttpStatus.Forbidden.code());
@@ -51,12 +58,6 @@ public class Spark2 {
                 } catch (IOException ex) {
                     LOG.error(ex + "\n" + Throwables.getStackTraceAsString(ex));
                     response.status(HttpStatus.Internal_Server_Error.code());
-                } finally {
-                    try {
-                        Closeables.close(in, true);
-                    } catch (IOException e) {
-                        throw new AssertionError(e);
-                    }
                 }
                 return "";
             }
@@ -110,7 +111,7 @@ public class Spark2 {
     }
 
     static void waitForConnectionStatus(
-            URL url, long timeoutDuration, TimeUnit timeoutUnits, ConnectionStatus desiredStatus)
+            @Nonnull URL url, long timeoutDuration, TimeUnit timeoutUnits, ConnectionStatus desiredStatus)
             throws IOException, TimeoutException {
 
         // Time in millis that this method should stop trying the connection
@@ -171,7 +172,7 @@ public class Spark2 {
 
     }
 
-    static boolean canConnect(URL url) throws IOException {
+    static boolean canConnect(@Nonnull URL url) throws IOException {
 
         try {
             // Configure the connection
@@ -198,7 +199,7 @@ public class Spark2 {
 
         UNKNOWN,
         AVAILABLE,
-        UNAVAILABLE;
+        UNAVAILABLE
 
     }
 }

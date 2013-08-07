@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +26,15 @@ public abstract class QueryIO implements BaseIO<Query> {
     private static final Logger LOG = LoggerFactory.getLogger(QueryIO.class);
 //    private static final Pattern TAC2010_ID_PATTERN = Pattern.compile("^EL[\\d]{5,6}$");
 
+    @Nonnull
     public static QueryIO detectFormat(File queriesFile) throws ParsingException, IOException {
         LOG.debug("Detecting format from queries file: {}", queriesFile);
         Builder parser = new Builder();
         return detectFormat(parser.build(queriesFile));
     }
 
-    public static QueryIO detectFormat(URL queriesUrl) throws ParsingException, IOException {
+    @Nonnull
+    public static QueryIO detectFormat(@Nonnull URL queriesUrl) throws ParsingException, IOException {
         LOG.debug("Detecting format from queries url: {}", queriesUrl);
         final Builder parser = new Builder();
         final Closer closer = Closer.create();
@@ -48,12 +51,14 @@ public abstract class QueryIO implements BaseIO<Query> {
         }
     }
 
+    @Nonnull
     public static QueryIO detectFormat(Reader queriesReader) throws ParsingException, IOException {
         final Builder parser = new Builder();
         return detectFormat(parser.build(queriesReader));
     }
 
-    private static QueryIO detectFormat(Document doc) {
+    @Nonnull
+    private static QueryIO detectFormat(@Nonnull Document doc) {
         LOG.debug("Detecting format from document: {}", doc);
         final Element child = doc.getRootElement().getFirstChildElement(Tac2009QueryIO.QUERY_ELEM_NAME);
         final String qid = child.getAttribute(Tac2009QueryIO.ID_ATTR_NAME).getValue();

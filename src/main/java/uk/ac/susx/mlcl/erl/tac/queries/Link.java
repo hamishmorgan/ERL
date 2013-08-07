@@ -1,5 +1,6 @@
 package uk.ac.susx.mlcl.erl.tac.queries;
 
+import org.jetbrains.annotations.Nullable;
 import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 
@@ -94,7 +95,7 @@ public class Link {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

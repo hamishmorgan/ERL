@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ public class TestReplacingInputStream extends AbstractTest {
             this.expectedResourceName = expectedResourceName;
         }
 
+        @Nonnull
         @Parameterized.Parameters(name = "{index}: {0}/{1}/{2}")
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
@@ -80,6 +82,7 @@ public class TestReplacingInputStream extends AbstractTest {
             this.replace = replace;
         }
 
+        @Nonnull
         @Parameterized.Parameters(name = "{index}: {0}/{1}/{2}")
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
@@ -127,6 +130,7 @@ public class TestReplacingInputStream extends AbstractTest {
             this.expected = expected;
         }
 
+        @Nonnull
         @Parameterized.Parameters(name = "{index}: {0}/{1}/{2} -> {3}")
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{

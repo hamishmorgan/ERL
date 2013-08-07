@@ -46,6 +46,7 @@ public class Evaluation<T> {
     }
 
 
+    @Nonnull
     public ConfusionMatrix<T> getConfusionMatrix() {
 
 
@@ -68,6 +69,7 @@ public class Evaluation<T> {
 
 
 
+    @Nonnull
     public String getResultsTable() {
         StringBuilder builder = new StringBuilder();
         builder.append("Actual");
@@ -88,6 +90,7 @@ public class Evaluation<T> {
         return builder.toString();
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return getResultsTable();

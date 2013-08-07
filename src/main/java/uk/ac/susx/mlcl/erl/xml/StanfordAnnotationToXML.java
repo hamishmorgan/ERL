@@ -24,8 +24,10 @@ import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedDep
 import edu.stanford.nlp.trees.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.util.CoreMap;
 import nu.xom.*;
+import org.jetbrains.annotations.Nullable;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.util.Collection;
 import java.util.List;
@@ -42,16 +44,18 @@ import java.util.Map;
  */
 public class StanfordAnnotationToXML {
 
+    @Nullable
     private static final String NAMESPACE_URI = null;
 
     private static final String STYLESHEET_NAME = "CoreNLP-to-HTML.xsl";
 
-    private GrammaticalStructureFactory gsf;
+    private final GrammaticalStructureFactory gsf;
 
     private TreePrint constituentTreePrinter;
 
     // property: printable.relation.beam
-    private String printableSelationBeam = null;
+    @Nullable
+    private final String printableSelationBeam = null;
 
     public StanfordAnnotationToXML() {
         this.gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
@@ -66,7 +70,7 @@ public class StanfordAnnotationToXML {
      * @param w          The Writer to send the output to
      * @throws IOException
      */
-    public void xmlPrint(Annotation annotation, Writer w) throws IOException, InstantiationException, IllegalAccessException, Exception {
+    public void xmlPrint(@Nonnull Annotation annotation, @Nonnull Writer w) throws IOException, InstantiationException, IllegalAccessException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         xmlPrint(annotation, os); // this builds it as UTF-8, always
         w.write(new String(os.toByteArray(), "UTF-8")); // This will convert it to something else
@@ -81,7 +85,7 @@ public class StanfordAnnotationToXML {
      * @param os         The output stream
      * @throws IOException
      */
-    public void xmlPrint(Annotation annotation, OutputStream os) throws IOException, InstantiationException, InstantiationException, IllegalAccessException, Exception {
+    public void xmlPrint(@Nonnull Annotation annotation, OutputStream os) throws IOException {
         Document xmlDoc = annotationToDoc(annotation);
         Serializer ser = new Serializer(os, "UTF-8");
         ser.setIndent(2);
@@ -93,7 +97,8 @@ public class StanfordAnnotationToXML {
     /**
      * Converts the given annotation to an XML document
      */
-    public Document annotationToDoc(Annotation annotation) {
+    @Nullable
+    public Document annotationToDoc(@Nonnull Annotation annotation) {
         //
         // create the XML document with the root node pointing to the namespace URL
         //
@@ -214,7 +219,7 @@ public class StanfordAnnotationToXML {
     /**
      * Generates the XML content for a constituent tree
      */
-    private void addConstituentTreeInfo(Element treeInfo, Tree tree) {
+    private void addConstituentTreeInfo(@Nonnull Element treeInfo, Tree tree) {
         StringWriter treeStrWriter = new StringWriter();
         constituentTreePrinter.printTree(tree, new PrintWriter(treeStrWriter, true));
         String temp = treeStrWriter.toString();
@@ -222,8 +227,8 @@ public class StanfordAnnotationToXML {
         treeInfo.appendChild(temp);
     }
 
-    private static void addDependencyTreeInfo(Element depInfo, SemanticGraph graph,
-                                              List<CoreLabel> tokens, String curNS) {
+    private static void addDependencyTreeInfo(@Nonnull Element depInfo, @Nullable SemanticGraph graph,
+                                              @Nonnull List<CoreLabel> tokens, String curNS) {
         if (graph != null) {
             for (SemanticGraphEdge edge : graph.edgeListSorted()) {
                 String rel = edge.getRelation().toString();
@@ -253,7 +258,7 @@ public class StanfordAnnotationToXML {
      * Generates the XML content for a dependency tree
      */
     @SuppressWarnings("unused")
-    private void addDependencyTreeInfo(Element depInfo, Tree tree, String curNS) {
+    private void addDependencyTreeInfo(@Nonnull Element depInfo, @Nullable Tree tree, String curNS) {
         if (tree != null) {
             GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
             Collection<TypedDependency> deps = gs.typedDependencies();
@@ -279,7 +284,7 @@ public class StanfordAnnotationToXML {
     /**
      * Generates the XML content for MachineReading entities
      */
-    private static void addEntities(List<EntityMention> entities, Element top, String curNS) {
+    private static void addEntities(@Nonnull List<EntityMention> entities, @Nonnull Element top, String curNS) {
         for (EntityMention e : entities) {
             Element ee = e.toXML(curNS);
             top.appendChild(ee);
@@ -289,8 +294,8 @@ public class StanfordAnnotationToXML {
     /**
      * Generates the XML content for MachineReading relations
      */
-    private static void addRelations(List<RelationMention> relations, Element top, String curNS,
-                                     String beamAsString) {
+    private static void addRelations(@Nonnull List<RelationMention> relations, @Nonnull Element top, String curNS,
+                                     @Nullable String beamAsString) {
         double beam = 0;
         if (beamAsString != null)
             beam = Double.parseDouble(beamAsString);
@@ -305,7 +310,7 @@ public class StanfordAnnotationToXML {
     /**
      * Generates the XML content for the coreference chain object
      */
-    private static boolean addCorefGraphInfo(Element corefInfo, Map<Integer, CorefChain> corefChains,
+    private static boolean addCorefGraphInfo(@Nonnull Element corefInfo, @Nonnull Map<Integer, CorefChain> corefChains,
                                              String curNS) {
         boolean foundCoref = false;
         for (CorefChain chain : corefChains.values()) {
@@ -325,8 +330,8 @@ public class StanfordAnnotationToXML {
         return foundCoref;
     }
 
-    private static void addCorefMention(Element chainElem, String curNS,
-                                        CorefChain.CorefMention mention,
+    private static void addCorefMention(@Nonnull Element chainElem, String curNS,
+                                        @Nonnull CorefChain.CorefMention mention,
                                         boolean representative) {
         Element mentionElem = new Element("mention", curNS);
         if (representative) {
@@ -345,7 +350,7 @@ public class StanfordAnnotationToXML {
         chainElem.appendChild(mentionElem);
     }
 
-    private static void addWordInfo(Element wordInfo, CoreMap token, int id, String curNS) {
+    private static void addWordInfo(@Nonnull Element wordInfo, @Nonnull CoreMap token, int id, String curNS) {
         // store the position of this word in the sentence
         wordInfo.addAttribute(new Attribute("id", Integer.toString(id)));
 
@@ -419,8 +424,8 @@ public class StanfordAnnotationToXML {
      * @param curNS        The current namespace
      * @param value        This is its value
      */
-    private static void setSingleElement(Element tokenElement, String elemName, String curNS,
-                                         String value) {
+    private static void setSingleElement(@Nonnull Element tokenElement, String elemName, String curNS,
+                                         @Nullable String value) {
         Element cur = new Element(elemName, curNS);
         if (value != null) {
             cur.appendChild(value);

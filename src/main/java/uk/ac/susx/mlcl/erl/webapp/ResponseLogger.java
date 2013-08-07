@@ -62,7 +62,7 @@ public class ResponseLogger extends Filter {
         this(DEFAULT_PATH);
     }
 
-    private static void writeResponse(Response response, JsonGenerator g)
+    private static void writeResponse(@Nonnull Response response, @Nonnull JsonGenerator g)
             throws IOException {
 
         g.writeStartObject();
@@ -74,8 +74,8 @@ public class ResponseLogger extends Filter {
         g.writeEndObject();
     }
 
-    private static void writeHttpServletResponse(HttpServletResponse raw,
-                                                 JsonGenerator g)
+    private static void writeHttpServletResponse(@Nonnull HttpServletResponse raw,
+                                                 @Nonnull JsonGenerator g)
             throws IOException {
 
         g.writeStartObject();
@@ -91,7 +91,7 @@ public class ResponseLogger extends Filter {
     }
 
     private static <T> void writeArray(@Nullable Iterable<T> items,
-                                       JsonGenerator generator)
+                                       @Nonnull JsonGenerator generator)
             throws IOException {
         if (items == null) {
             generator.writeNull();
@@ -105,7 +105,7 @@ public class ResponseLogger extends Filter {
     }
 
     private static void writeKeyValue(String key, @Nullable String value,
-                                      JsonGenerator generator)
+                                      @Nonnull JsonGenerator generator)
             throws IOException {
         generator.writeFieldName(checkNotNull(key));
         if (value == null) {
@@ -116,13 +116,13 @@ public class ResponseLogger extends Filter {
     }
 
     private static void writeKeyValue(String key, boolean value,
-                                      JsonGenerator generator)
+                                      @Nonnull JsonGenerator generator)
             throws IOException {
         generator.writeFieldName(checkNotNull(key));
         generator.writeBoolean(value);
     }
 
-    private static boolean isFormData(final Request request) {
+    private static boolean isFormData(@Nonnull final Request request) {
         if (request.contentType() == null) {
             return false;
         }
@@ -146,7 +146,7 @@ public class ResponseLogger extends Filter {
     }
 
     @Override
-    public void handle(Request ignore, Response response) {
+    public void handle(Request ignore, @Nonnull Response response) {
         checkNotNull(response, "response");
 
         if (!level.isEnabled(LOG)) {

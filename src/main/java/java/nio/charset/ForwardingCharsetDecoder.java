@@ -1,5 +1,6 @@
 package java.nio.charset;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
@@ -12,9 +13,10 @@ import java.nio.CharBuffer;
 */
 public abstract class ForwardingCharsetDecoder extends CharsetDecoder {
 
+    @Nonnull
     private final CharsetDecoder delegate;
 
-    public ForwardingCharsetDecoder(CharsetDecoder delegate) {
+    public ForwardingCharsetDecoder(@Nonnull CharsetDecoder delegate) {
         super(delegate.charset(), delegate.averageCharsPerByte(), delegate.maxCharsPerByte());
         this.delegate = delegate;
     }
