@@ -150,6 +150,7 @@ public class Tac2009QueryIO extends QueryIO {
         }
     }
 
+    @Nonnull
     XomB.ElementBuilder formatQuery(@Nonnull XomB x, @Nonnull Query query) {
         return x.element(QUERY_ELEM_NAME)
                 .addAttribute(ID_ATTR_NAME, query.getId())
