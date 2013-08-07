@@ -84,7 +84,7 @@ public class SparkExamples {
         Spark.trace(new Route("/") {
             @Override
             public Object handle(Request request, Response response) {
-                this.halt();
+                halt();
                 return null;
 
             }
@@ -113,7 +113,11 @@ public class SparkExamples {
                     response.status(500);
                     return ex.getMessage();
                 } finally {
-                    Closeables.closeQuietly(in);
+                    try {
+                        Closeables.close(in, true);
+                    } catch (IOException e) {
+                        throw new AssertionError(e);
+                    }
                 }
             }
         });
@@ -585,7 +589,7 @@ public class SparkExamples {
             in = url.openStream();
             return readAll(in);
         } finally {
-            Closeables.closeQuietly(in);
+            Closeables.close(in, true);
         }
 
     }
@@ -609,7 +613,7 @@ public class SparkExamples {
                 in = connection.getInputStream();
                 return ByteStreams.toByteArray(in);
             } finally {
-                Closeables.closeQuietly(in);
+                Closeables.close(in, true);
             }
 
         } finally {
@@ -657,7 +661,7 @@ public class SparkExamples {
                     out.append(body);
                     out.flush();
                 } finally {
-                    Closeables.closeQuietly(out);
+                    Closeables.close(out, true);
                 }
             }
 
@@ -667,7 +671,7 @@ public class SparkExamples {
                 in = connection.getInputStream();
                 return readAll(in);
             } finally {
-                Closeables.closeQuietly(in);
+                Closeables.close(in, true);
             }
 
         } finally {

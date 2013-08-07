@@ -66,7 +66,8 @@ public class InstancePool<K, T> {
         }
         if (attemptDefaultConstuctor) {
             try {
-                T instance = (T) t.getRawType().newInstance();
+                @SuppressWarnings("unchecked") // T should be a class type
+                final T instance = (T) t.getRawType().newInstance();
                 return instance;
             } catch (IllegalAccessException ex) {
                 throw new InstantiationException();

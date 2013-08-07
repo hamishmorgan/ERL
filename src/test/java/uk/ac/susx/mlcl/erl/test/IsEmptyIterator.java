@@ -44,7 +44,7 @@ public class IsEmptyIterator<E> extends TypeSafeMatcher<Iterator<? extends E>> {
 
     @Override
     public void describeMismatchSafely(Iterator<? extends E> iterator, Description mismatchDescription) {
-        mismatchDescription.appendValueList("[", ",", "]", iterator);
+        mismatchDescription.appendValueList("[", ",", "]", new Object[]{iterator});
     }
 
     @Override

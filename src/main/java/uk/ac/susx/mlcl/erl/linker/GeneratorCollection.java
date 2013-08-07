@@ -2,6 +2,7 @@ package uk.ac.susx.mlcl.erl.linker;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import javax.annotation.concurrent.Immutable;
@@ -39,7 +40,7 @@ public class GeneratorCollection
                     if (!result.isEmpty())
                         return result;
                 }
-                return Collections.EMPTY_SET;
+                return ImmutableSet.of();
             }
         },
         /**
@@ -55,10 +56,10 @@ public class GeneratorCollection
                     else
                         result = Sets.intersection(result, generator.findCandidates(mention));
                     if (result.isEmpty())
-                        return Collections.EMPTY_SET;
+                        return ImmutableSet.of();
                 }
                 if (result == null)
-                    result = Collections.EMPTY_SET;
+                    result = ImmutableSet.of();
                 return result;
             }
         },
@@ -68,7 +69,7 @@ public class GeneratorCollection
         UNION {
             Set<String> findCandidates(final List<CandidateGenerator> generators, final String mention)
                     throws IOException {
-                Set<String> result = Collections.EMPTY_SET;
+                Set<String> result = ImmutableSet.of();
                 for (CandidateGenerator generator : generators)
                     result = Sets.union(result, generator.findCandidates(mention));
                 return result;
@@ -114,7 +115,7 @@ public class GeneratorCollection
     @Override
     public Map<String, Set<String>> batchFindCandidates(final Set<String> queries)
             throws IOException, ExecutionException {
-        ImmutableMap.Builder mapBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, Set<String>>  mapBuilder = ImmutableMap.builder();
         for (String query : queries)
             mapBuilder.put(query, findCandidates(query));
         return mapBuilder.build();

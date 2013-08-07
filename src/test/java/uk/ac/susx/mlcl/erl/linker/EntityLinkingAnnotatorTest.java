@@ -118,7 +118,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
             s.xmlPrint(document, os);
             os.flush();
         } finally {
-            Closeables.closeQuietly(os);
+            Closeables.close(os, true);
         }
 
 //        

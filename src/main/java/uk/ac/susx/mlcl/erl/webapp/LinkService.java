@@ -175,6 +175,8 @@ public class LinkService extends Route {
 
     static class JsonObjectParseException extends Exception {
 
+        private static final long serialVersionUID = 0;
+
         JsonObjectParseException() {
         }
 

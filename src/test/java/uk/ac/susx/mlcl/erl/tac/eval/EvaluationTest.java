@@ -67,7 +67,7 @@ public class EvaluationTest extends AbstractTest {
                     }
                 };
 
-        final Evaluation evaluation = new Evaluation(actual, predicted, linkComparator, labelFormatter);
+        final Evaluation<Link> evaluation = new Evaluation<Link>(actual, predicted, linkComparator, labelFormatter);
         Assert.assertNotNull("evaluation", evaluation);
 //        System.out.println(evaluation);
 
@@ -99,15 +99,15 @@ public class EvaluationTest extends AbstractTest {
                     }
                 };
 
-        final Evaluation evaluation = new Evaluation(actual, predicted, linkComparator, labelFormatter);
+        final Evaluation<Link> evaluation = new Evaluation<Link>(actual, predicted, linkComparator, labelFormatter);
         Assert.assertNotNull("evaluation", evaluation);
 //        System.out.println(evaluation);
 
-        final ConfusionMatrix fullMatrix = evaluation.getConfusionMatrix();
+        final ConfusionMatrix<Link> fullMatrix = evaluation.getConfusionMatrix();
 
         System.out.println(fullMatrix.getAccuracy());
 
-        BinaryConfusionMatrix binMatrix = fullMatrix.mapAllVersus(new Predicate<Link>() {
+        BinaryConfusionMatrix<String> binMatrix = fullMatrix.mapAllVersus(new Predicate<Link>() {
             @Override
             public boolean apply(@Nullable Link input) {
                 return !input.getEntityNodeId().startsWith("NIL");
@@ -152,11 +152,11 @@ public class EvaluationTest extends AbstractTest {
                     }
                 };
 
-        Evaluation evaluation = new Evaluation(actual, predicted, linkComparator, labelFormatter);
+        Evaluation<Link> evaluation = new Evaluation<Link>(actual, predicted, linkComparator, labelFormatter);
         Assert.assertNotNull("evaluation", evaluation);
 //        System.out.println(evaluation);
 
-        ConfusionMatrix mat = evaluation.getConfusionMatrix();
+        ConfusionMatrix<Link> mat = evaluation.getConfusionMatrix();
         Assert.assertNotNull("mat", mat);
         Assert.assertEquals(BinaryConfusionMatrix.class, mat.getClass());
         System.out.println(mat);
@@ -189,7 +189,7 @@ public class EvaluationTest extends AbstractTest {
                     }
                 };
 
-        final Evaluation<Link> evaluation = new Evaluation(actual, predicted, linkComparator, labelFormatter);
+        final Evaluation<Link> evaluation = new Evaluation<Link>(actual, predicted, linkComparator, labelFormatter);
 
         ConfusionMatrix<Link> fourWayMatrix = evaluation.getConfusionMatrix();
         Assert.assertEquals(4, fourWayMatrix.getLabels().size());
@@ -200,7 +200,7 @@ public class EvaluationTest extends AbstractTest {
 
         // For each entity type we can also create a binary confusion matrix show the all-vs-one scores.
         for (final Link label : fourWayMatrix.getLabels()) {
-            ConfusionMatrix twoWayMatrix = fourWayMatrix.mapAllVersus(new Predicate<Link>() {
+            ConfusionMatrix<String> twoWayMatrix = fourWayMatrix.mapAllVersus(new Predicate<Link>() {
                 @Override
                 public boolean apply(@Nullable Link input) {
                     return input.getEntityType().equals(label.getEntityType());

@@ -104,7 +104,7 @@ public class Freebase2Test extends AbstractTest {
 
         String result = CharStreams.toString(
                 new InputStreamReader(is, DEFAULT_CHARSET));
-        Closeables.closeQuietly(is);
+        Closeables.close(is, true);
 
 
         System.out.println(result);
@@ -138,7 +138,7 @@ public class Freebase2Test extends AbstractTest {
 
             String result = CharStreams.toString(
                     new InputStreamReader(is, DEFAULT_CHARSET));
-            Closeables.closeQuietly(is);
+            Closeables.close(is, true);
 
             System.out.println(result);
         }
@@ -210,7 +210,7 @@ public class Freebase2Test extends AbstractTest {
 
         String result = CharStreams.toString(
                 new InputStreamReader(is, DEFAULT_CHARSET));
-        Closeables.closeQuietly(is);
+        Closeables.close(is, true);
 
         System.out.println(result);
     }
@@ -246,7 +246,7 @@ public class Freebase2Test extends AbstractTest {
 
             String result = CharStreams.toString(
                     new InputStreamReader(is, DEFAULT_CHARSET));
-            Closeables.closeQuietly(is);
+            Closeables.close(is, true);
 
             System.out.println("Result = " + result);
 
@@ -298,7 +298,7 @@ public class Freebase2Test extends AbstractTest {
             im.download(out);
             out.flush();
         } finally {
-            Closeables.closeQuietly(out);
+            Closeables.close(out, true);
         }
 
 
@@ -871,10 +871,10 @@ public class Freebase2Test extends AbstractTest {
 
             String result = CharStreams.toString(
                     new InputStreamReader(is, DEFAULT_CHARSET));
-            Closeables.closeQuietly(is);
+            Closeables.close(is, true);
 
-            junit.framework.Assert.assertTrue(result != null);
-            junit.framework.Assert.assertTrue(!result.isEmpty());
+            Assert.assertTrue(result != null);
+            Assert.assertTrue(!result.isEmpty());
 
             System.out.println("Result: " + result);
             return result;

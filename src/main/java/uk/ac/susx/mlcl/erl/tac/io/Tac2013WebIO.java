@@ -95,7 +95,7 @@ public class Tac2013WebIO extends AbstractTac2013SourceIO<WebDocument> {
             throw new AssertionError(MessageFormat.format("Failed to find element {0} in web document children: {1}",
                     TEXT_ELEMENT_NAME, getChildrenOf(bodyElement)));
 
-        ImmutableList.Builder postsBuilder = ImmutableList.builder();
+        ImmutableList.Builder<WebDocument.Post> postsBuilder = ImmutableList.builder();
         DateTime resolveDate = date;
         for (final Element postElement : childElementsWhere(textElement, nameEqualsIgnoreCase(POST_ELEMENT_NAME))) {
             final WebDocument.Post post = parsePost(postElement, resolveDate);

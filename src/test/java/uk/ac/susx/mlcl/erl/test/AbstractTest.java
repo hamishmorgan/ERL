@@ -101,7 +101,10 @@ public class AbstractTest {
             assertEquals("cloned instance class different", result.getClass(), obj.getClass());
             assertEquals("cloned object not equal to original", obj, result);
 
-            return (T) result;
+            @SuppressWarnings("unchecked")
+            final T castResult = (T) result;
+
+            return castResult;
 
         } catch (NoSuchMethodException e) {
             throw new AssertionError(e);

@@ -1,6 +1,7 @@
 package uk.ac.susx.mlcl.erl.linker;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class AliasMappingGenerator extends ForwardingGenerator {
             }
 
             // Pop elements of the stack until the terminating query is discovered
-            Set<String> result = Collections.EMPTY_SET;
+            Set<String> result = ImmutableSet.of();
             while (!seen.isEmpty() && !seen.peek().equals(query))
                 result = Sets.union(result, super.findCandidates(seen.pop()));
             result = Sets.union(result, super.findCandidates(query));
@@ -68,7 +69,7 @@ public class AliasMappingGenerator extends ForwardingGenerator {
     @Override
     public Map<String, Set<String>> batchFindCandidates(Set<String> queries)
             throws IOException, ExecutionException {
-        ImmutableMap.Builder mapBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, Set<String>> mapBuilder = ImmutableMap.builder();
         for (String query : queries)
             mapBuilder.put(query, findCandidates(query));
         return mapBuilder.build();

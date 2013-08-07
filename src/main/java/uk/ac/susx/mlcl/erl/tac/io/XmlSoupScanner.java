@@ -544,7 +544,10 @@ public class XmlSoupScanner implements Scanner, Locator {
                 case A_MINUS2:
                     save('-', h);
                     save(' ', h);
-                    // fall through into A_MINUS
+                    // used to fall through but changed it for error resistance
+                    save('-', h);
+                    save(ch, h);
+                    break;
                 case A_MINUS:
                     save('-', h);
                     save(ch, h);

@@ -77,7 +77,7 @@ public class StanfordNLPTest extends AbstractTest {
             ser.save(document, os);
             os.flush();
         } finally {
-            Closeables.closeQuietly(os);
+            Closeables.close(os, true);
         }
     }
 
@@ -92,7 +92,7 @@ public class StanfordNLPTest extends AbstractTest {
             Annotation document = ser.load(is);
             return document;
         } finally {
-            Closeables.closeQuietly(is);
+            Closeables.close(is, true);
         }
     }
 //

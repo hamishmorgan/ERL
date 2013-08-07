@@ -52,7 +52,11 @@ public class Spark2 {
                     LOG.error(ex + "\n" + Throwables.getStackTraceAsString(ex));
                     response.status(HttpStatus.Internal_Server_Error.code());
                 } finally {
-                    Closeables.closeQuietly(in);
+                    try {
+                        Closeables.close(in, true);
+                    } catch (IOException e) {
+                        throw new AssertionError(e);
+                    }
                 }
                 return "";
             }

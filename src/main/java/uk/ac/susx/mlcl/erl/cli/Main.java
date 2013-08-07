@@ -152,7 +152,7 @@ public class Main {
             } finally {
                 if (out != null && isOutCloseable) {
                     Flushables.flushQuietly(out);
-                    Closeables.closeQuietly(out);
+                    Closeables.close(out, true);
                 }
             }
 

@@ -159,6 +159,8 @@ public class Freebase2 extends Freebase {
 
                 // Need to pre-define and type the arguments or jdk6 gets confused.
                 final HttpRequest httpRequest = search.buildHttpRequest();
+
+                @SuppressWarnings("unchecked")
                 final Class<AbstractResult> dataClass = (Class<AbstractResult>) format.getDataClass();
 
                 final Class<GoogleJsonError> errorClass = GoogleJsonError.class;

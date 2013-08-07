@@ -86,7 +86,7 @@ public class StaticResource extends Route {
                 ByteStreams.copy(in, out);
                 out.flush();
             } finally {
-                Closeables.closeQuietly(in);
+                Closeables.close(in, true);
             }
             return "";
         } catch (Exception ex) {

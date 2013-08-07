@@ -181,7 +181,7 @@ public class Tac2009KnowledgeBaseIO {
          * Produces only unique instances of CharSequence. Note that this probably isn't entirely safe
          * since CharSequence makes no guarantee of immutability.
          */
-        private static final C14nCache<CharSequence> INTERNER = new C14nCache();
+        private static final C14nCache<CharSequence> INTERNER = new C14nCache<CharSequence>();
         /**
          *
          */

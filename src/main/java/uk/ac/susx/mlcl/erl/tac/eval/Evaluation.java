@@ -61,9 +61,9 @@ public class Evaluation<T> {
             mat.set(i, mat.get(i) + 1.0);
         }
         if(labels.size() == 2)
-            return new BinaryConfusionMatrix(labelIndex, mat, comparator, labelFormatter);
+            return new BinaryConfusionMatrix<T>(labelIndex, mat, comparator, labelFormatter);
         else
-            return new ConfusionMatrix(labelIndex, mat, comparator, labelFormatter);
+            return new ConfusionMatrix<T>(labelIndex, mat, comparator, labelFormatter);
     }
 
 

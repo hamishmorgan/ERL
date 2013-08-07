@@ -254,8 +254,9 @@ public class ConfusionMatrix<T> {
 
         // Write each row
         final StringBuilder tableBuilder = new StringBuilder();
-        for (int y = 0; y < cells.length; y++)
-            tableBuilder.append(String.format(rowFormat, cells[y]));
+        for (int y = 0; y < cells.length; y++)   {
+            tableBuilder.append(String.format(rowFormat, (Object[])cells[y]));
+        }
 
         return tableBuilder.toString();
     }

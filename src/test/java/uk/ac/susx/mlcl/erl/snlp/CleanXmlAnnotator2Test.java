@@ -98,7 +98,7 @@ public class CleanXmlAnnotator2Test  extends AbstractTest {
 	Writer writer = new FileWriter(new File(
 		"target/testout/bbc.html.annotations.xml"));
 	xmler.xmlPrint(document, writer);
-	Closeables.closeQuietly(writer);
+	Closeables.close(writer, true);
 	
     }
 

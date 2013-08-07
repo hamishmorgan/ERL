@@ -299,6 +299,7 @@ public class AnnotationToXML {
                         "Key is not an instance of CoreAnnotation.");
             }
 
+            @SuppressWarnings("unchecked")
             final Class<? extends CoreAnnotation<?>> castKey =
                     (Class<? extends CoreAnnotation<?>>) key;
 
@@ -322,11 +323,9 @@ public class AnnotationToXML {
                 Class<? extends CoreAnnotation<?>> k = it.next();
                 if (k.isAssignableFrom(key)) {
 
-                    CustomGenerator serializer = customSerializerPool
-                            .getInstance(k);
+                    CustomGenerator serializer = customSerializerPool.getInstance(k);
 
-                    final Object value = map
-                            .get((Class<? extends CoreAnnotation>) castKey);
+                    final Object value = map.get((Class<? extends CoreAnnotation>) castKey);
                     serializer.generate(x, element, value);
                     found = true;
                     break;
@@ -470,8 +469,8 @@ public class AnnotationToXML {
          * Generates the XML content for the coreference chain object
          * <p/>
          *
-         * @param factory
-         * @param corefInfo
+         * @param x
+         * @param parent
          * @param corefChains
          */
         public void generate(XomB x, @Nonnull ElementBuilder parent,
