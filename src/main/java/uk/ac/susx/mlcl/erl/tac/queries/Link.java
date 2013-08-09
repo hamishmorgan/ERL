@@ -1,9 +1,11 @@
 package uk.ac.susx.mlcl.erl.tac.queries;
 
+import com.google.common.base.Function;
 import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -116,5 +118,54 @@ public class Link {
         result = 31 * result + webSearch.hashCode();
         result = 31 * result + sourceGenre.hashCode();
         return result;
+    }
+
+
+    // enum singleton pattern
+    public enum GetEntityNodeId implements Function<Link, String> {
+
+        INSTANCE;
+
+        @Nullable
+        @Override
+        public String apply(@Nullable Link input) {
+            return input.getEntityNodeId();
+        }
+    }
+
+    // enum singleton pattern
+    public enum GetEntityTypeString implements Function<Link, String> {
+        INSTANCE;
+
+        @Nullable
+        @Override
+        public String apply(@Nullable Link input) {
+            return input.getEntityType().name();
+        }
+    }
+
+    // enum singleton pattern
+    public enum GetEntityType implements Function<Link, EntityType> {
+        INSTANCE;
+
+        @Nullable
+        @Override
+        public EntityType apply(@Nullable Link input) {
+            return input.getEntityType();
+        }
+    }
+
+    // enum singleton pattern
+    public enum GetEntityIdPrefix implements Function<Link, String> {
+        INSTANCE;
+        public static final String NIL_PREFIX_RESULT = "Nil";
+        public static final String ENTITY_PREFIX_RESULT = "Entity";
+
+        @Nullable
+        @Override
+        public String apply(@Nullable Link input) {
+            return input.getEntityNodeId().toLowerCase().startsWith("nil")
+                    ? NIL_PREFIX_RESULT : ENTITY_PREFIX_RESULT;
+        }
     }
 }

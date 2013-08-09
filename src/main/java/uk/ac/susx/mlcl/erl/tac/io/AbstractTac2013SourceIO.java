@@ -17,6 +17,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+import uk.ac.susx.mlcl.erl.lib.Functions2;
 import uk.ac.susx.mlcl.erl.lib.IOUtils;
 import uk.ac.susx.mlcl.erl.tac.source.SourceDocument;
 
@@ -99,7 +100,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
             public Iterator<Element> iterator() {
                 return transform(
                         childrenWhere(parent, isElement()).iterator(),
-                        cast(Node.class, Element.class)
+                        Functions2.cast(Node.class, Element.class)
                 );
             }
         };
@@ -137,17 +138,6 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         return ImmutableList.copyOf(childElementsOf(parent));
     }
 
-    public static <F, T extends F> Function<F, T> cast(final Class<F> fromCls, final Class<T> toClass) {
-        checkNotNull(fromCls, "fromCls");
-        checkNotNull(toClass, "toClass");
-        return new Function<F, T>() {
-            @Nullable
-            @Override
-            public T apply(@Nullable F input) {
-                return toClass.cast(input);
-            }
-        };
-    }
 
     public static List<Element> getChildElementsWhere(Node parent, Predicate<Node> condition) {
         checkNotNull(parent, "parent");
@@ -155,7 +145,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         return ImmutableList.copyOf(
                 transform(
                         childrenWhere(parent, and(isElement(), condition)).iterator(),
-                        cast(Node.class, Element.class)));
+                        Functions2.cast(Node.class, Element.class)));
     }
 
     public static
@@ -165,7 +155,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         checkNotNull(condition, "condition");
         return getNext(filter(
                 transform(childrenWhere(parent, isElement()).iterator(),
-                        cast(Node.class, Element.class)),
+                        Functions2.cast(Node.class, Element.class)),
                 condition), null);
     }
 //
