@@ -6,6 +6,8 @@ package uk.ac.susx.mlcl.erl.test;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -31,6 +33,8 @@ import static org.junit.Assert.*;
  * @author hamish
  */
 public class AbstractTest {
+
+    private static final Log LOG = LogFactory.getLog(AbstractTest.class);
 
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
     public static final File TEST_DATA_PATH = new File("src/test/data");
@@ -149,9 +153,10 @@ public class AbstractTest {
 
     @Before()
     public final void _printTestMethod() throws SecurityException, NoSuchMethodException {
-        System.out.println(MessageFormat.format(
-                "Running test: {0}#{1}",
-                this.getClass().getName(), testName.getMethodName()));
+        if (LOG.isInfoEnabled())
+            LOG.info(MessageFormat.format(
+                    "Running test: {0}#{1}",
+                    this.getClass().getName(), testName.getMethodName()));
     }
 
     /**
