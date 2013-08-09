@@ -32,6 +32,7 @@ import org.junit.experimental.categories.Category;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
@@ -104,7 +105,7 @@ public class Freebase2Test extends AbstractTest {
 
         String result = CharStreams.toString(
                 new InputStreamReader(is, DEFAULT_CHARSET));
-        Closeables.closeQuietly(is);
+        Closeables.close(is, true);
 
 
         System.out.println(result);
@@ -138,7 +139,7 @@ public class Freebase2Test extends AbstractTest {
 
             String result = CharStreams.toString(
                     new InputStreamReader(is, DEFAULT_CHARSET));
-            Closeables.closeQuietly(is);
+            Closeables.close(is, true);
 
             System.out.println(result);
         }
@@ -210,7 +211,7 @@ public class Freebase2Test extends AbstractTest {
 
         String result = CharStreams.toString(
                 new InputStreamReader(is, DEFAULT_CHARSET));
-        Closeables.closeQuietly(is);
+        Closeables.close(is, true);
 
         System.out.println(result);
     }
@@ -246,7 +247,7 @@ public class Freebase2Test extends AbstractTest {
 
             String result = CharStreams.toString(
                     new InputStreamReader(is, DEFAULT_CHARSET));
-            Closeables.closeQuietly(is);
+            Closeables.close(is, true);
 
             System.out.println("Result = " + result);
 
@@ -298,7 +299,7 @@ public class Freebase2Test extends AbstractTest {
             im.download(out);
             out.flush();
         } finally {
-            Closeables.closeQuietly(out);
+            Closeables.close(out, true);
         }
 
 
@@ -687,7 +688,7 @@ public class Freebase2Test extends AbstractTest {
         BatchCallback<SearchFormat.EntityResult, Void> callback =
                 new BatchCallback<EntityResult, Void>() {
                     @Override
-                    public void onSuccess(SearchFormat.EntityResult t, GoogleHeaders responseHeaders) {
+                    public void onSuccess(@Nonnull SearchFormat.EntityResult t, GoogleHeaders responseHeaders) {
                         System.out.println(t.toPrettyString());
                     }
 
@@ -711,10 +712,11 @@ public class Freebase2Test extends AbstractTest {
         batch.execute();
     }
 
+    @Nonnull
     static <K, S, F> BatchCallback<S, F> mapPutCallback(
             final K key,
-            final Map<K, S> successDestination,
-            final Map<K, F> failureDestination) {
+            @Nonnull final Map<K, S> successDestination,
+            @Nonnull final Map<K, F> failureDestination) {
         return new BatchCallback<S, F>() {
             @Override
             public void onSuccess(S t, GoogleHeaders responseHeaders) {
@@ -838,7 +840,7 @@ public class Freebase2Test extends AbstractTest {
             implements BatchCallback<ContentserviceGet, Void> {
 
         @Override
-        public void onSuccess(ContentserviceGet t, GoogleHeaders responseHeaders) {
+        public void onSuccess(@Nonnull ContentserviceGet t, GoogleHeaders responseHeaders) {
             System.out.println(t.getResult() + "\n\n");
         }
 
@@ -871,10 +873,10 @@ public class Freebase2Test extends AbstractTest {
 
             String result = CharStreams.toString(
                     new InputStreamReader(is, DEFAULT_CHARSET));
-            Closeables.closeQuietly(is);
+            Closeables.close(is, true);
 
-            junit.framework.Assert.assertTrue(result != null);
-            junit.framework.Assert.assertTrue(!result.isEmpty());
+            Assert.assertTrue(result != null);
+            Assert.assertTrue(!result.isEmpty());
 
             System.out.println("Result: " + result);
             return result;

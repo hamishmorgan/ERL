@@ -10,6 +10,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
 import com.google.common.collect.Sets;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,18 +67,19 @@ public class CachedCandidateGenerator implements CandidateGenerator {
         return searchCache.getAll(queries);
     }
 
-    protected static <K, V> V get(final LoadingCache<K, V> cache, final K key)
+    protected static <K, V> V get(@Nonnull final LoadingCache<K, V> cache, final K key)
             throws IOException {
         try {
             return cache.get(checkNotNull(key, "key"));
-        } catch (final ExecutionException ex) {
+        } catch (@Nonnull final ExecutionException ex) {
             Throwables.propagateIfInstanceOf(ex.getCause(), IOException.class);
             Throwables.propagateIfPossible(ex.getCause());
             throw new RuntimeException("unexpected: ", ex);
         }
     }
 
-    public static CandidateGenerator wrap(final CandidateGenerator inner) {
+    @Nonnull
+    public static CandidateGenerator wrap(@Nonnull final CandidateGenerator inner) {
         if (checkNotNull(inner, "inner") instanceof CachedCandidateGenerator) {
             LOG.warn("Ignoring attempt to cache wrap a KnowledgeBase that was already cached.");
             return inner;
@@ -87,7 +89,7 @@ public class CachedCandidateGenerator implements CandidateGenerator {
         {
             final Weigher<String, Set<String>> searchWeighter =
                     new Weigher<String, Set<String>>() {
-                        public int weigh(String key, Set<String> values) {
+                        public int weigh(@Nonnull String key, @Nonnull Set<String> values) {
                             int sum = (4 * 2) + (2 * key.length());
                             for (String value : values) {
                                 sum += 4 + 2 * value.length();
@@ -98,6 +100,7 @@ public class CachedCandidateGenerator implements CandidateGenerator {
                     };
             final CacheLoader<String, Set<String>> searchLoader =
                     new CacheLoader<String, Set<String>>() {
+                        @Nullable
                         @Override
                         public Set<String> load(String key) throws Exception {
                             return inner.findCandidates(key);

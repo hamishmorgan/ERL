@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public abstract class AbstractAnnotatorFactory implements Factory<Annotator> {
 
-    protected Properties props;
+    protected final Properties props;
 
     public AbstractAnnotatorFactory(Properties props) {
         this.props = props;

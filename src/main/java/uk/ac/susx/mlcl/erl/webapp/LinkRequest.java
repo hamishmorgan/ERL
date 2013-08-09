@@ -1,6 +1,7 @@
 package uk.ac.susx.mlcl.erl.webapp;
 
 import com.google.api.client.json.GenericJson;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -13,9 +14,11 @@ import java.util.List;
  */
 public class LinkRequest extends GenericJson {
 
+    @Nullable
     @com.google.api.client.util.Key
     private List<Document> documents = null;
 
+    @Nullable
     public List<Document> getDocuments() {
         return documents;
     }
@@ -25,6 +28,7 @@ public class LinkRequest extends GenericJson {
     }
 
     interface SentenceSequence extends ChunkSequence {
+        @Nullable
         List<Sentence> getSentences();
 
         void setSentences(List<Sentence> chunks);
@@ -32,6 +36,7 @@ public class LinkRequest extends GenericJson {
     }
 
     interface ChunkSequence extends TokenSequence {
+        @Nullable
         List<Chunk> getChunks();
 
         void setChunks(List<Chunk> chunks);
@@ -40,10 +45,12 @@ public class LinkRequest extends GenericJson {
 
 
     interface TokenSequence {
+        @Nullable
         String getText();
 
         void setText(String text);
 
+        @Nullable
         List<Token> getTokens();
 
         void setTokens(List<Token> text);
@@ -52,14 +59,17 @@ public class LinkRequest extends GenericJson {
 
 
     interface Entity {
+        @Nullable
         String getEntityType();
 
         void setEntityType(String text);
 
+        @Nullable
         String getEntityId();
 
         void setEntityId(String id);
 
+        @Nullable
         String getEntityUrl();
 
         void setEntityUrl(String url);
@@ -67,15 +77,20 @@ public class LinkRequest extends GenericJson {
 
     public static class Document extends GenericJson implements SentenceSequence {
 
+        @Nullable
         @com.google.api.client.util.Key
         private List<Sentence> sentences = null;
+        @Nullable
         @com.google.api.client.util.Key
         private List<Token> tokens = null;
+        @Nullable
         @com.google.api.client.util.Key
         private List<Chunk> chunks = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String text = null;
 
+        @Nullable
         public List<Sentence> getSentences() {
             return sentences;
         }
@@ -84,6 +99,7 @@ public class LinkRequest extends GenericJson {
             this.sentences = sentences;
         }
 
+        @Nullable
         public List<Chunk> getChunks() {
             return chunks;
         }
@@ -92,6 +108,7 @@ public class LinkRequest extends GenericJson {
             this.chunks = chunks;
         }
 
+        @Nullable
         public List<Token> getTokens() {
             return tokens;
         }
@@ -100,6 +117,7 @@ public class LinkRequest extends GenericJson {
             this.tokens = tokens;
         }
 
+        @Nullable
         public String getText() {
             return text;
         }
@@ -111,13 +129,17 @@ public class LinkRequest extends GenericJson {
 
     public static class Sentence extends GenericJson implements ChunkSequence {
 
+        @Nullable
         @com.google.api.client.util.Key
         private List<Token> tokens = null;
+        @Nullable
         @com.google.api.client.util.Key
         private List<Chunk> chunks = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String text = null;
 
+        @Nullable
         public List<Token> getTokens() {
             return tokens;
         }
@@ -126,6 +148,7 @@ public class LinkRequest extends GenericJson {
             this.tokens = tokens;
         }
 
+        @Nullable
         public List<Chunk> getChunks() {
             return chunks;
         }
@@ -134,6 +157,7 @@ public class LinkRequest extends GenericJson {
             this.chunks = chunks;
         }
 
+        @Nullable
         public String getText() {
             return text;
         }
@@ -145,17 +169,23 @@ public class LinkRequest extends GenericJson {
 
     public static class Chunk extends GenericJson implements Entity, TokenSequence {
 
+        @Nullable
         @com.google.api.client.util.Key
         private List<Token> tokens = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String text = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String entityType = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String entityId = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String entityUrl = null;
 
+        @Nullable
         public List<Token> getTokens() {
             return tokens;
         }
@@ -164,6 +194,7 @@ public class LinkRequest extends GenericJson {
             this.tokens = tokens;
         }
 
+        @Nullable
         public String getText() {
             return text;
         }
@@ -172,6 +203,7 @@ public class LinkRequest extends GenericJson {
             this.text = text;
         }
 
+        @Nullable
         public String getEntityType() {
             return entityType;
         }
@@ -180,6 +212,7 @@ public class LinkRequest extends GenericJson {
             this.entityType = entityType;
         }
 
+        @Nullable
         public String getEntityId() {
             return entityId;
         }
@@ -188,6 +221,7 @@ public class LinkRequest extends GenericJson {
             this.entityId = entityId;
         }
 
+        @Nullable
         public String getEntityUrl() {
             return entityUrl;
         }
@@ -199,17 +233,23 @@ public class LinkRequest extends GenericJson {
 
     public static class Token extends GenericJson implements Entity {
 
+        @Nullable
         @com.google.api.client.util.Key
         private String text = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String pos = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String entityType = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String entityId = null;
+        @Nullable
         @com.google.api.client.util.Key
         private String entityUrl = null;
 
+        @Nullable
         public String getText() {
             return text;
         }
@@ -218,6 +258,7 @@ public class LinkRequest extends GenericJson {
             this.text = text;
         }
 
+        @Nullable
         public String getPos() {
             return pos;
         }
@@ -226,6 +267,7 @@ public class LinkRequest extends GenericJson {
             this.pos = pos;
         }
 
+        @Nullable
         public String getEntityType() {
             return entityType;
         }
@@ -234,6 +276,7 @@ public class LinkRequest extends GenericJson {
             this.entityType = entityType;
         }
 
+        @Nullable
         public String getEntityId() {
             return entityId;
         }
@@ -242,6 +285,7 @@ public class LinkRequest extends GenericJson {
             this.entityId = entityId;
         }
 
+        @Nullable
         public String getEntityUrl() {
             return entityUrl;
         }

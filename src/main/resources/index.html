@@ -106,6 +106,7 @@
 
 
 <script lang="javascript">
+//<![CDATA[
 
     function setLoading() {
         $("fieldset").attr("disabled", true);
@@ -127,14 +128,14 @@
     }
     function mentionElement(mention) {
         var text = mention.text;
-        text = text.replace(/\n+/g, "<p/>\n");
+        text = text.replace(/\n+/g, "<"+"p/>\n");
 
         if (mention.url) {
 
             var classes = "mention " + mention.type.toLocaleLowerCase();
 
-            text = "<a class=\"" + classes + "\" href=\"" + mention.url
-                    + "\">" + text + "</a>";
+            text = "<"+"a class=\"" + classes + "\" href=\"" + mention.url
+                    + "\">" + text + "<"+"/a>";
 
         }
         return text;
@@ -176,7 +177,7 @@
 
                 success: function (data, textStatus, jqXHR) {
                     __success_jqXHR = jqXHR;
-                    $("#output").html("&nbsp;");
+                    $("#output").html("&"+"nbsp;");
                     for (i = 0; i < data.length; i++) {
                         $("#output").append(mentionElement(data[i]));
                     }
@@ -211,6 +212,7 @@
         });
 
     });
+//]]>
 </script>
 
 <div class="footer">

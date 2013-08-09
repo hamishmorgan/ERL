@@ -4,6 +4,7 @@ import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,8 +18,9 @@ public class NilLinker implements Linker {
 
     private final AtomicInteger nextNilId = new AtomicInteger(1);
 
+    @Nonnull
     @Override
-    public Link link(Query query) {
+    public Link link(@Nonnull Query query) {
         final String linkId = String.format("NIL%d", nextNilId.getAndIncrement());
         return new Link(query.getId(), linkId, EntityType.UKN, false,
                 Genre.forDocumentId(query.getDocId()));

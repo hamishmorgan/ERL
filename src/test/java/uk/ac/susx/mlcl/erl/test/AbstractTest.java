@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,7 +43,7 @@ public class AbstractTest {
     public final TestName testName = new TestName();
 
     @After
-    public void flushOutput() throws InterruptedException {
+    public void flushOutput() {
         System.out.flush();
         System.err.flush();
     }
@@ -56,7 +57,7 @@ public class AbstractTest {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    @SuppressWarnings("unchecked")
+    @Nonnull
     protected static <T> T cloneWithSerialization(final T obj) {
 
         ObjectOutputStream objectsOut = null;
@@ -73,7 +74,9 @@ public class AbstractTest {
 
                 ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
 
-                return (T) ois.readObject();
+                @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
+                final T result = (T) ois.readObject();
+                return result;
             } finally {
                 if (objectsOut != null) {
                     objectsOut.close();
@@ -89,6 +92,7 @@ public class AbstractTest {
         }
     }
 
+    @Nonnull
     protected static <T> T clone(T obj) {
         try {
 
@@ -105,7 +109,10 @@ public class AbstractTest {
             assertEquals("cloned instance class different", result.getClass(), obj.getClass());
             assertEquals("cloned object not equal to original", obj, result);
 
-            return (T) result;
+            @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
+            final T castResult = (T) result;
+
+            return castResult;
 
         } catch (NoSuchMethodException e) {
             throw new AssertionError(e);
@@ -117,7 +124,7 @@ public class AbstractTest {
 
     }
 
-    protected static void assertExhaustedIterator(Iterator<?> it) {
+    protected static void assertExhaustedIterator(@Nonnull Iterator<?> it) {
         try {
             it.next();
             fail("Expected iterator to be exhausted by next() succeeded.");
@@ -127,6 +134,7 @@ public class AbstractTest {
         }
     }
 
+    @Nonnull
     protected static Random newRandom() {
         Random rand = new Random();
         final int seed = rand.nextInt();
@@ -152,7 +160,7 @@ public class AbstractTest {
     }
 
     @Before()
-    public final void _printTestMethod() throws SecurityException, NoSuchMethodException {
+    public final void _printTestMethod() throws SecurityException {
         if (LOG.isInfoEnabled())
             LOG.info(MessageFormat.format(
                     "Running test: {0}#{1}",
@@ -166,6 +174,7 @@ public class AbstractTest {
      * @return the resource File
      * @throws IllegalArgumentException if resource is not found or cannot be accessed as a file.
      */
+    @Nonnull
     protected File getResourceAsFile(String name) {
         final URL resource = getResource(name);
         if (resource.getProtocol().equalsIgnoreCase("file"))

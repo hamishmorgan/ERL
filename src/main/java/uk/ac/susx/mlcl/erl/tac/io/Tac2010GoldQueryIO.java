@@ -4,6 +4,8 @@ import nu.xom.Element;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
 import uk.ac.susx.mlcl.erl.xml.XomB;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for reading and writing to Query XML files following TAC 2010 Gold-standard specification.
  *
@@ -15,8 +17,9 @@ public class Tac2010GoldQueryIO extends Tac2009QueryIO {
 
     static final String ENTITY_ELEM_NAME = "entity";
 
+    @Nonnull
     @Override
-    Query parseQuery(Element queryElement) {
+    Query parseQuery(@Nonnull Element queryElement) {
         final String id = queryElement.getAttribute(ID_ATTR_NAME).getValue();
         final String name = queryElement.getFirstChildElement(NAME_ELEM_NAME).getValue();
         final String docId = queryElement.getFirstChildElement(DOC_ID_ELEM_NAME).getValue();
@@ -24,8 +27,9 @@ public class Tac2010GoldQueryIO extends Tac2009QueryIO {
         return new Query(id, name, docId, entityNodeId);
     }
 
+    @Nonnull
     @Override
-    XomB.ElementBuilder formatQuery(XomB x, Query query) {
+    XomB.ElementBuilder formatQuery(@Nonnull XomB x, @Nonnull Query query) {
         return x.element(QUERY_ELEM_NAME)
                 .addAttribute(ID_ATTR_NAME, query.getId())
                 .add(x.element(NAME_ELEM_NAME).add(query.getName()))

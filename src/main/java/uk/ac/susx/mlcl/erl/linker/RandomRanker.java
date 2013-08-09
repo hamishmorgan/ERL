@@ -80,7 +80,7 @@ public final class RandomRanker implements CandidateRanker {
      * @throws IndexOutOfBoundsException if either index is out of range
      *                                   (<tt>index &lt; 0 || index &gt;= list.size()</tt>)
      */
-    private static <T> void swap(final List<T> list, final int i, final int j) {
+    private static <T> void swap(@Nonnull final List<T> list, final int i, final int j) {
         if (i != j) {
             final T temp = list.get(i);
             list.set(i, list.get(j));

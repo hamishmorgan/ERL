@@ -8,6 +8,7 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.PTBTokenizerAnnotator;
 import edu.stanford.nlp.pipeline.WhitespaceTokenizerAnnotator;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -24,6 +25,7 @@ public class TokenizerAnnotatorFactory extends AbstractAnnotatorFactory implemen
 
     private static final long serialVersionUID = 1L;
 
+    @Nonnull
     public Annotator create() {
         if (Boolean.valueOf(props.getProperty("tokenize.whitespace", "false"))) {
             return new WhitespaceTokenizerAnnotator(props);

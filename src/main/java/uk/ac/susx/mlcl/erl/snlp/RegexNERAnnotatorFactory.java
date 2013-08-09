@@ -9,6 +9,7 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.DefaultPaths;
 import edu.stanford.nlp.pipeline.RegexNERAnnotator;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -23,6 +24,7 @@ public class RegexNERAnnotatorFactory extends AbstractAnnotatorFactory implement
         super(props);
     }
 
+    @Nonnull
     public Annotator create() {
         String mapping =
                 props.getProperty("regexner.mapping",

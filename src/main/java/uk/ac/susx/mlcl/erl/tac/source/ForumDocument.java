@@ -2,6 +2,7 @@ package uk.ac.susx.mlcl.erl.tac.source;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import javax.annotation.Nullable;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nonnull;
@@ -76,7 +77,7 @@ public class ForumDocument extends SourceDocument {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
@@ -131,7 +132,7 @@ public class ForumDocument extends SourceDocument {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             final Post post = (Post) o;
@@ -176,7 +177,7 @@ public class ForumDocument extends SourceDocument {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             final Block block = (Block) o;
@@ -214,7 +215,7 @@ public class ForumDocument extends SourceDocument {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             if (!super.equals(o)) return false;

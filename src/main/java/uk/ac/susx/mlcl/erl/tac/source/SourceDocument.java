@@ -2,6 +2,7 @@ package uk.ac.susx.mlcl.erl.tac.source;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -57,7 +58,7 @@ public abstract class SourceDocument {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SourceDocument that = (SourceDocument) o;

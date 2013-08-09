@@ -15,6 +15,7 @@ import spark.Response;
 import spark.Route;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.text.MessageFormat;
 
@@ -50,8 +51,9 @@ public class StaticResource extends Route {
         mimeMap = new MimetypesFileTypeMap("src/main/resources/mime.types");
     }
 
+    @Nonnull
     @Override
-    public String handle(Request request, Response response) {
+    public String handle(@Nonnull Request request, @Nonnull Response response) {
         try {
             String resourcePath = request.pathInfo().substring(remoteRoot.length());
             final File requestedFile = new File(localRoot, resourcePath).getCanonicalFile();
@@ -86,7 +88,7 @@ public class StaticResource extends Route {
                 ByteStreams.copy(in, out);
                 out.flush();
             } finally {
-                Closeables.closeQuietly(in);
+                Closeables.close(in, true);
             }
             return "";
         } catch (Exception ex) {
@@ -97,7 +99,8 @@ public class StaticResource extends Route {
         }
     }
 
-    boolean isParentOf(final File ancestor, final File descendence) throws IOException {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    boolean isParentOf(@Nonnull final File ancestor, @Nonnull final File descendence) throws IOException {
         Preconditions.checkNotNull(ancestor, "ancestor");
         Preconditions.checkNotNull(descendence, "descendence");
         final File cAncestor = ancestor.getCanonicalFile();
@@ -108,7 +111,7 @@ public class StaticResource extends Route {
         return file != null;
     }
 
-    protected void handleException(Throwable ex, Response response) {
+    protected void handleException(@Nonnull Throwable ex, @Nonnull Response response) {
         LOG.error(ex.toString() + System.getProperty("line.separator") + Throwables.getStackTraceAsString(ex));
         MessageFormat frmt = new MessageFormat("<strong>{0}</strong><br/><pre>{1}</pre>");
         final String message = DEBUG ? frmt.format(new Object[]{ex.toString(), Throwables.getStackTraceAsString(ex)}) : "";

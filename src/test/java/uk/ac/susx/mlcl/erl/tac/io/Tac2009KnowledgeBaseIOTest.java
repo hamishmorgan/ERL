@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import uk.ac.susx.mlcl.erl.tac.kb.TacKnowledgeBase;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertFalse;
 public class Tac2009KnowledgeBaseIOTest extends AbstractTest {
 
 
-    private void deleteMapDBIfExists(File path) throws IOException {
+    private void deleteMapDBIfExists(@Nonnull File path) throws IOException {
 
         File path_p = new File(path.getParentFile(), path.getName() + ".p");
         File path_t = new File(path.getParentFile(), path.getName() + ".t");

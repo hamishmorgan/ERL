@@ -65,7 +65,7 @@ public class RequestLogger extends Filter {
         this(DEFAULT_PATH);
     }
 
-    private static void writeRequest(Request request, JsonGenerator g)
+    private static void writeRequest(@Nonnull Request request, @Nonnull JsonGenerator g)
             throws IOException {
 
         // XXX: Work-around to Spark bug: During POST method requests, if the body
@@ -117,8 +117,8 @@ public class RequestLogger extends Filter {
         g.writeEndObject();
     }
 
-    private static void writeHttpServletRequest(HttpServletRequest raw,
-                                                JsonGenerator g)
+    private static void writeHttpServletRequest(@Nonnull HttpServletRequest raw,
+                                                @Nonnull JsonGenerator g)
             throws IOException {
 
         g.writeStartObject();
@@ -154,7 +154,7 @@ public class RequestLogger extends Filter {
     }
 
     private static <T> void writeArray(@Nullable Iterable<T> items,
-                                       JsonGenerator generator)
+                                       @Nonnull JsonGenerator generator)
             throws IOException {
         if (items == null) {
             generator.writeNull();
@@ -168,7 +168,7 @@ public class RequestLogger extends Filter {
     }
 
     private static void writeKeyValue(String key, @Nullable String value,
-                                      JsonGenerator generator)
+                                      @Nonnull JsonGenerator generator)
             throws IOException {
         generator.writeFieldName(checkNotNull(key));
         if (value == null) {
@@ -179,13 +179,13 @@ public class RequestLogger extends Filter {
     }
 
     private static void writeKeyValue(String key, boolean value,
-                                      JsonGenerator generator)
+                                      @Nonnull JsonGenerator generator)
             throws IOException {
         generator.writeFieldName(checkNotNull(key));
         generator.writeBoolean(value);
     }
 
-    private static boolean isFormData(final Request request) {
+    private static boolean isFormData(@Nonnull final Request request) {
         if (request.contentType() == null) {
             return false;
         }
@@ -210,7 +210,7 @@ public class RequestLogger extends Filter {
     }
 
     @Override
-    public void handle(Request request, Response IGNORED) {
+    public void handle(@Nonnull Request request, Response IGNORED) {
         checkNotNull(request, "request");
 
         if (!level.isEnabled(LOG)) {

@@ -38,19 +38,6 @@ public class AnnotationServiceIntegrationTest extends AbstractTest {
     public static void setUpClass() throws IOException, ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InterruptedException, InvocationTargetException, NoSuchMethodException {
         final Properties props = new Properties();
         instance = AnnotationService.newInstance(props);
-//        instance.preloadLinker(false);
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -137,6 +124,7 @@ public class AnnotationServiceIntegrationTest extends AbstractTest {
 
                 // Doesn't like creating an annotation without text, but then
                 // we don't really have any choice.
+                @SuppressWarnings("deprecation")
                 Annotation snlpDocument = new Annotation();
                 snlpDocument.set(CoreAnnotations.DocIDAnnotation.class, doc.getDocId());
                 snlpDocument.set(DocTypeAnnotation.class, doc.getType());
@@ -175,7 +163,7 @@ public class AnnotationServiceIntegrationTest extends AbstractTest {
                         snlpToken.setSentIndex(sentenceCount);
 
                         snlpSentenceTokens.add(snlpToken);
-                        snlpSentenceText.append(agigaToken.getWord() + " ");
+                        snlpSentenceText.append(agigaToken.getWord()).append(" ");
                     }
 
                     snlpSent.set(CoreAnnotations.TokensAnnotation.class, snlpSentenceTokens);

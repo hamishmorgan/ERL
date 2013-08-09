@@ -14,6 +14,7 @@ import org.ccil.cowan.tagsoup.Scanner;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 
 /**
@@ -95,7 +96,7 @@ public class XmlSoupScanner implements Scanner, Locator {
     private static final int A_UNSAVE_PCDATA = 32;
     private static final String[] debug_actionnames = {"", "A_ADUP", "A_ADUP_SAVE", "A_ADUP_STAGC", "A_ANAME", "A_ANAME_ADUP", "A_ANAME_ADUP_STAGC", "A_AVAL", "A_AVAL_STAGC", "A_CDATA", "A_CMNT", "A_DECL", "A_EMPTYTAG", "A_ENTITY", "A_ENTITY_START", "A_ETAG", "A_GI", "A_GI_STAGC", "A_LT", "A_LT_PCDATA", "A_MINUS", "A_MINUS2", "A_MINUS3", "A_PCDATA", "A_PI", "A_PITARGET", "A_PITARGET_PI", "A_SAVE", "A_SKIP", "A_SP", "A_STAGC", "A_UNGET", "A_UNSAVE_PCDATA"};
     private static final String[] debug_statenames = {"", "S_ANAME", "S_APOS", "S_AVAL", "S_BB", "S_BBC", "S_BBCD", "S_BBCDA", "S_BBCDAT", "S_BBCDATA", "S_CDATA", "S_CDATA2", "S_CDSECT", "S_CDSECT1", "S_CDSECT2", "S_COM", "S_COM2", "S_COM3", "S_COM4", "S_DECL", "S_DECL2", "S_DONE", "S_EMPTYTAG", "S_ENT", "S_EQ", "S_ETAG", "S_GI", "S_NCR", "S_PCDATA", "S_PI", "S_PITARGET", "S_QUOT", "S_STAGC", "S_TAG", "S_TAGWS", "S_XNCR"};
-    private static int[] statetable = {
+    private static final int[] statetable = {
             S_ANAME, '/', A_ANAME_ADUP, S_EMPTYTAG,
             S_ANAME, '=', A_ANAME, S_AVAL,
             S_ANAME, '>', A_ANAME_ADUP_STAGC, S_PCDATA,
@@ -251,8 +252,10 @@ public class XmlSoupScanner implements Scanner, Locator {
     // End of state table
     int theState;                                   // Current state
     int theNextState;                               // Next state
+    @Nonnull
     char[] theOutputBuffer = new char[200]; // Output buffer
     int theSize;                                    // Current buffer size
+    @Nonnull
     int[] theWinMap = {                             // Windows chars map
             0x20AC, 0xFFFD, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
             0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0xFFFD, 0x017D, 0xFFFD,
@@ -281,6 +284,7 @@ public class XmlSoupScanner implements Scanner, Locator {
 
     // Locator implementation
 
+    @Nonnull
     private static String nicechar(int in) {
         if (in == '\n') return "\\n";
         if (in < 32) return "0x" + Integer.toHexString(in);
@@ -289,7 +293,7 @@ public class XmlSoupScanner implements Scanner, Locator {
 
     // Compensate for bug in PushbackReader that allows
     // pushing back EOF.
-    private void unread(PushbackReader r, int c) throws IOException {
+    private void unread(@Nonnull PushbackReader r, int c) throws IOException {
         if (c != -1) r.unread(c);
     }
 
@@ -332,7 +336,7 @@ public class XmlSoupScanner implements Scanner, Locator {
      * @param h  ScanHandler that accepts lexical events.
      */
 
-    public void scan(Reader r0, ScanHandler h) throws IOException, SAXException {
+    public void scan(Reader r0, @Nonnull ScanHandler h) throws IOException, SAXException {
         theState = S_PCDATA;
         PushbackReader r;
         if (r0 instanceof PushbackReader) {
@@ -544,7 +548,10 @@ public class XmlSoupScanner implements Scanner, Locator {
                 case A_MINUS2:
                     save('-', h);
                     save(' ', h);
-                    // fall through into A_MINUS
+                    // used to fall through but changed it for error resistance
+                    save('-', h);
+                    save(ch, h);
+                    break;
                 case A_MINUS:
                     save('-', h);
                     save(ch, h);
@@ -619,7 +626,7 @@ public class XmlSoupScanner implements Scanner, Locator {
         theNextState = S_CDATA;
     }
 
-    private void save(int ch, ScanHandler h) throws IOException, SAXException {
+    private void save(int ch, @Nonnull ScanHandler h) throws SAXException {
         if (theSize >= theOutputBuffer.length - 20) {
             if (theState == S_PCDATA || theState == S_CDATA) {
                 // Return a buffer-sized chunk of PCDATA

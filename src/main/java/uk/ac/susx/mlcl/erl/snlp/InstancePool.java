@@ -10,7 +10,9 @@ import com.google.common.reflect.MutableTypeToInstanceMap;
 import com.google.common.reflect.TypeToInstanceMap;
 import com.google.common.reflect.TypeToken;
 import edu.stanford.nlp.util.Factory;
+import javax.annotation.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ public class InstancePool<K, T> {
 
     private final Map<K, TypeToken<T>> names;
 
+    @Nonnull
     private final TypeToInstanceMap<T> instances;
 
     private final Map<TypeToken<T>, Factory<T>> factories;
@@ -38,14 +41,17 @@ public class InstancePool<K, T> {
         this.attemptDefaultConstuctor = attemptDefaultConstuctor;
     }
 
+    @Nonnull
     public static <K, T> Builder<K, T> builder() {
         return new Builder<K, T>();
     }
 
+    @Nonnull
     public Set<K> keySet() {
         return names.keySet();
     }
 
+    @Nullable
     public T getInstance(K name) throws InstantiationException {
 
         final TypeToken<T> type = names.get(name);
@@ -59,14 +65,14 @@ public class InstancePool<K, T> {
         return instances.getInstance(type);
     }
 
-    private T newInstance(TypeToken<T> t) throws InstantiationException {
+    private T newInstance(@Nonnull TypeToken<T> t) throws InstantiationException {
         if (factories.containsKey(t)) {
-            T instance = factories.get(t).create();
-            return instance;
+            return factories.get(t).create();
         }
         if (attemptDefaultConstuctor) {
             try {
-                T instance = (T) t.getRawType().newInstance();
+                @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"}) // T should be a class type
+                final T instance = (T) t.getRawType().newInstance();
                 return instance;
             } catch (IllegalAccessException ex) {
                 throw new InstantiationException();
@@ -89,22 +95,26 @@ public class InstancePool<K, T> {
             defaultConstructionAttempted = true;
         }
 
+        @Nonnull
         private Builder<K, T> addFactory(K name, TypeToken<T> type, Factory<T> factory) {
             names.put(name, type);
             factories.put(type, factory);
             return this;
         }
 
+        @Nonnull
         public Builder<K, T> addFactory(K name, Class<T> type, Factory<T> factory) {
             return addFactory(name, TypeToken.of(type), factory);
         }
 
+        @Nonnull
         public Builder<K, T> setDefaultConstructionAttempted(
                 boolean defaultConstructionAttempted) {
             this.defaultConstructionAttempted = defaultConstructionAttempted;
             return this;
         }
 
+        @Nonnull
         public InstancePool<K, T> build() {
             final ImmutableMap<K, TypeToken<T>> namesMap = names.build();
 

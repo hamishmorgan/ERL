@@ -3,6 +3,8 @@ package uk.ac.susx.mlcl.erl.tac.io;
 import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 
+import javax.annotation.Nonnull;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.text.MessageFormat.format;
 
@@ -14,7 +16,7 @@ import static java.text.MessageFormat.format;
 
 public class Tac2010LinkIO extends Tac2009LinkIO {
 
-    static boolean parseBoolean(final String string) {
+    static boolean parseBoolean(@Nonnull final String string) {
         checkNotNull(string, "s");
         final String s = string.trim().toLowerCase();
         if (s.equals("true") || s.equals("yes") || s.equals("1"))
@@ -37,7 +39,7 @@ public class Tac2010LinkIO extends Tac2009LinkIO {
     }
 
     @Override
-    String[] formatLink(final Link link) {
+    String[] formatLink(@Nonnull final Link link) {
         return new String[]{
                 link.getQueryId(),
                 link.getEntityNodeId(),
@@ -47,7 +49,7 @@ public class Tac2010LinkIO extends Tac2009LinkIO {
         };
     }
 
-    String formatGenre(Genre genre) {
+    String formatGenre(@Nonnull Genre genre) {
         // 2010 used "WL" for web data instead of "WB"
         return genre == Genre.WB ? "WL" : genre.name();
     }

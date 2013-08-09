@@ -25,6 +25,7 @@ import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +66,7 @@ public class Freebase2 extends Freebase {
                 applicationName, suppressPatternChecks);
     }
 
+    @Nonnull
     public Freebase2.Search search(String query) throws IOException {
         LOG.debug("Performing search for query {}", query);
         Search search = new Search(query);
@@ -126,7 +128,7 @@ public class Freebase2 extends Freebase {
      * @throws IOException if something bad occurs with the lookup
      */
     public Map<String, AbstractResult> batchSearch(
-            Set<String> queries, SearchFormat format)
+            @Nonnull Set<String> queries, @Nonnull SearchFormat format)
             throws IOException {
         LOG.debug("Performing brach search for queries {}", queries);
         Preconditions.checkNotNull(queries, "queries");
@@ -149,7 +151,7 @@ public class Freebase2 extends Freebase {
             try {
                 Thread.sleep(100 * (long) Math.pow(2, retryCount));
             } catch (InterruptedException ex) {
-                Throwables.propagate(ex);
+                throw Throwables.propagate(ex);
             }
 
             for (String query : failures.keySet()) {
@@ -159,6 +161,8 @@ public class Freebase2 extends Freebase {
 
                 // Need to pre-define and type the arguments or jdk6 gets confused.
                 final HttpRequest httpRequest = search.buildHttpRequest();
+
+                @SuppressWarnings("unchecked")
                 final Class<AbstractResult> dataClass = (Class<AbstractResult>) format.getDataClass();
 
                 final Class<GoogleJsonError> errorClass = GoogleJsonError.class;
@@ -187,7 +191,7 @@ public class Freebase2 extends Freebase {
      * @return results mapped to each query string
      * @throws IOException if something bad occurs with the lookup
      */
-    Map<String, List<String>> batchSearchGetIds0(Set<String> queries, SearchFormat format) throws IOException {
+    Map<String, List<String>> batchSearchGetIds0(@Nonnull Set<String> queries, @Nonnull SearchFormat format) throws IOException {
         Preconditions.checkNotNull(queries, "queries");
         Preconditions.checkNotNull(format, "format");
         Preconditions.checkArgument(format.getDataClass().equals(IdsResult.class),
@@ -208,7 +212,7 @@ public class Freebase2 extends Freebase {
      * @return results mapped to each query string
      * @throws IOException if something bad occurs with the lookup
      */
-    public Map<String, List<String>> batchSearchGetIds(Set<String> queries) throws IOException {
+    public Map<String, List<String>> batchSearchGetIds(@Nonnull Set<String> queries) throws IOException {
         return batchSearchGetIds0(queries, SearchFormat.IDS);
     }
 
@@ -220,7 +224,7 @@ public class Freebase2 extends Freebase {
      * @return results mapped to each query string
      * @throws IOException if something bad occurs with the lookup
      */
-    public Map<String, List<String>> batchSearchGetMids(Set<String> queries) throws IOException {
+    public Map<String, List<String>> batchSearchGetMids(@Nonnull Set<String> queries) throws IOException {
         return batchSearchGetIds0(queries, SearchFormat.MIDS);
     }
 
@@ -232,7 +236,7 @@ public class Freebase2 extends Freebase {
      * @return results mapped to each query string
      * @throws IOException if something bad occurs with the lookup
      */
-    public Map<String, List<String>> batchSearchGetGuids(Set<String> queries) throws IOException {
+    public Map<String, List<String>> batchSearchGetGuids(@Nonnull Set<String> queries) throws IOException {
         return batchSearchGetIds0(queries, SearchFormat.GUIDS);
     }
 
@@ -248,10 +252,11 @@ public class Freebase2 extends Freebase {
      * @param failureDestination map of keys to error objects
      * @return a new callback instance
      */
+    @Nonnull
     static <K, S, F> BatchCallback<S, F> newMapPutCallback(
             final K key,
-            final Map<? super K, ? super S> successDestination,
-            final Map<? super K, ? super F> failureDestination) {
+            @Nonnull final Map<? super K, ? super S> successDestination,
+            @Nonnull final Map<? super K, ? super F> failureDestination) {
         return new BatchCallback<S, F>() {
             @Override
             public void onSuccess(S t, GoogleHeaders responseHeaders) {
@@ -271,7 +276,8 @@ public class Freebase2 extends Freebase {
         };
     }
 
-    public static String loadGoogleApiKey(File path) throws IOException {
+    @Nullable
+    public static String loadGoogleApiKey(@Nonnull File path) throws IOException {
         final String googleApiKey;
         if (path.exists()) {
             byte[] bytes = Files.toByteArray(path);
@@ -395,6 +401,7 @@ public class Freebase2 extends Freebase {
          * @param query The text you want to search for.
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setQuery(String query) {
             Preconditions.checkNotNull(query, "query");
             this.query = query;
@@ -404,6 +411,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public String getCallback() {
             return callback;
         }
@@ -412,6 +420,7 @@ public class Freebase2 extends Freebase {
          * @param callback JS method name for JSONP callbacks.
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setCallback(String callback) {
             this.callback = callback;
             return this;
@@ -420,6 +429,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public List<String> getDomain() {
             return domain;
         }
@@ -428,6 +438,7 @@ public class Freebase2 extends Freebase {
          * @param domain
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setDomain(List<String> domain) {
             this.domain = domain;
             return this;
@@ -436,6 +447,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public Boolean getExact() {
             return exact;
         }
@@ -444,6 +456,7 @@ public class Freebase2 extends Freebase {
          * @param exact
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setExact(Boolean exact) {
             this.exact = exact;
             return this;
@@ -452,6 +465,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return complex rules and constraints to apply to the query.
          */
+        @Nullable
         public List<String> getFilter() {
             return filter;
         }
@@ -469,6 +483,7 @@ public class Freebase2 extends Freebase {
          * @return self (allows method chaining)
          * @see "http://wiki.freebase.com/wiki/Search_Cookbook"
          */
+        @Nonnull
         public Search setFilter(List<String> filter) {
             this.filter = filter;
             return this;
@@ -477,6 +492,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public SearchFormat getFormat() {
             return format;
         }
@@ -485,6 +501,7 @@ public class Freebase2 extends Freebase {
          * @param format
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setFormat(SearchFormat format) {
             this.format = format;
             return this;
@@ -493,6 +510,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public Boolean getEncode() {
             return encode;
         }
@@ -505,6 +523,7 @@ public class Freebase2 extends Freebase {
          * @param encode
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setEncode(Boolean encode) {
             this.encode = encode;
             return this;
@@ -513,6 +532,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public Boolean getIndent() {
             return indent;
         }
@@ -521,6 +541,7 @@ public class Freebase2 extends Freebase {
          * @param indent
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setIndent(Boolean indent) {
             this.indent = indent;
             return this;
@@ -529,6 +550,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return return up to this number of results.
          */
+        @Nullable
         public Long getLimit() {
             return limit;
         }
@@ -543,6 +565,7 @@ public class Freebase2 extends Freebase {
          * @return self (allows method chaining)
          * @throws IllegalArgumentException if limit < 1
          */
+        @Nonnull
         public Search setLimit(Long limit) {
             Preconditions.checkArgument(limit >= 1, "limit < 1");
             this.limit = limit;
@@ -552,6 +575,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public String getMqlOutput() {
             return mqlOutput;
         }
@@ -565,6 +589,7 @@ public class Freebase2 extends Freebase {
          * @param mqlOutput
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setMqlOutput(String mqlOutput) {
             this.mqlOutput = mqlOutput;
             return this;
@@ -573,6 +598,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public Boolean getPrefixed() {
             return prefixed;
         }
@@ -581,6 +607,7 @@ public class Freebase2 extends Freebase {
          * @param prefixed
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setPrefixed(Boolean prefixed) {
             this.prefixed = prefixed;
             return this;
@@ -589,6 +616,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public Long getStart() {
             return start;
         }
@@ -603,6 +631,7 @@ public class Freebase2 extends Freebase {
          * @return self (allows method chaining)
          * @throws IllegalArgumentException if start < 0
          */
+        @Nonnull
         public Search setStart(Long start) {
             Preconditions.checkArgument(start >= 0, "start < 0");
             this.start = start;
@@ -612,6 +641,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public List<String> getType() {
             return type;
         }
@@ -620,6 +650,7 @@ public class Freebase2 extends Freebase {
          * @param type
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setType(List<String> type) {
             this.type = type;
             return this;
@@ -628,6 +659,7 @@ public class Freebase2 extends Freebase {
         /**
          * @return
          */
+        @Nullable
         public List<String> getLang() {
             return lang;
         }
@@ -636,6 +668,7 @@ public class Freebase2 extends Freebase {
          * @param lang The language you are searching in. Can pass multiple languages.
          * @return self (allows method chaining)
          */
+        @Nonnull
         public Search setLang(List<String> lang) {
             this.lang = lang;
             return this;
@@ -681,7 +714,7 @@ public class Freebase2 extends Freebase {
         /**
          * Builds a new instance of {@link Freebase}.
          */
-        @SuppressWarnings("deprecation")
+        @Nonnull
         @Override
         public Freebase2 build() {
             return new Freebase2(
@@ -696,18 +729,21 @@ public class Freebase2 extends Freebase {
                     getSuppressPatternChecks());
         }
 
+        @Nonnull
         @Override
         public Builder setRootUrl(String rootUrl) {
             super.setRootUrl(rootUrl);
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder setServicePath(String servicePath) {
             super.setServicePath(servicePath);
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder setJsonHttpRequestInitializer(
                 JsonHttpRequestInitializer jsonHttpRequestInitializer) {
@@ -715,6 +751,7 @@ public class Freebase2 extends Freebase {
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder setHttpRequestInitializer(
                 HttpRequestInitializer httpRequestInitializer) {
@@ -722,18 +759,21 @@ public class Freebase2 extends Freebase {
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder setApplicationName(String applicationName) {
             super.setApplicationName(applicationName);
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder setObjectParser(JsonObjectParser parser) {
             super.setObjectParser(parser);
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder setSuppressPatternChecks(boolean suppressPatternChecks) {
             super.setSuppressPatternChecks(suppressPatternChecks);

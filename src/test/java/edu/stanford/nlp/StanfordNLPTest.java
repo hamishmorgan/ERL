@@ -59,6 +59,8 @@ import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
+import javax.annotation.Nonnull;
+
 /**
  * A collection of "tests" that experiment with the Stanford Core NLP library, and generally check
  * that it works it as expected.
@@ -68,7 +70,7 @@ import uk.ac.susx.mlcl.erl.test.Categories;
 //@Ignore
 public class StanfordNLPTest extends AbstractTest {
 
-    public static void saveAnnotation(Annotation document, File file) throws IOException {
+    public static void saveAnnotation(Annotation document, @Nonnull File file) throws IOException {
         boolean compressed = file.getName().endsWith(".gz");
         CustomAnnotationSerializer ser = new CustomAnnotationSerializer(compressed, true);
         OutputStream os = null;
@@ -77,11 +79,11 @@ public class StanfordNLPTest extends AbstractTest {
             ser.save(document, os);
             os.flush();
         } finally {
-            Closeables.closeQuietly(os);
+            Closeables.close(os, true);
         }
     }
 
-    public static Annotation loadAnnotation(File file)
+    public static Annotation loadAnnotation(@Nonnull File file)
             throws IOException, ClassNotFoundException {
         final boolean compressed = file.getName().endsWith(".gz");
         final CustomAnnotationSerializer ser =
@@ -89,10 +91,9 @@ public class StanfordNLPTest extends AbstractTest {
         InputStream is = null;
         try {
             is = new BufferedInputStream(new FileInputStream(file));
-            Annotation document = ser.load(is);
-            return document;
+            return ser.load(is);
         } finally {
-            Closeables.closeQuietly(is);
+            Closeables.close(is, true);
         }
     }
 //
@@ -760,7 +761,7 @@ public class StanfordNLPTest extends AbstractTest {
     }
 
     @Test
-    public void testDCoref() throws IOException, Exception {
+    public void testDCoref() throws IOException, InstantiationException {
 
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit, parse, lemma, ner, dcoref");

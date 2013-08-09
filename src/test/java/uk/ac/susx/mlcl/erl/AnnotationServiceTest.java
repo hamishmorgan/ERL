@@ -11,6 +11,7 @@ import org.junit.Test;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -104,7 +105,7 @@ public class AnnotationServiceTest extends AbstractTest {
         doAnnotationToJsonTest(text, expected);
     }
 
-    private void doAnnotationToJsonTest(String input, String expectedOutput) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private void doAnnotationToJsonTest(@Nonnull String input, String expectedOutput) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         try {
             Properties props = new Properties();
             AnnotationService instance = AnnotationService.newInstance(props);
@@ -118,7 +119,8 @@ public class AnnotationServiceTest extends AbstractTest {
         }
     }
 
-    private Annotation fakeAnnotator(String text) {
+    @Nonnull
+    private Annotation fakeAnnotator(@Nonnull String text) {
         Annotation document = new Annotation(text);
 
         List<CoreLabel> tokens = Lists.newArrayList();

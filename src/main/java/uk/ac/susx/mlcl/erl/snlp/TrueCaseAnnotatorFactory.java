@@ -8,6 +8,7 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.DefaultPaths;
 import edu.stanford.nlp.pipeline.TrueCaseAnnotator;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -22,6 +23,7 @@ public class TrueCaseAnnotatorFactory extends AbstractAnnotatorFactory implement
         super(props);
     }
 
+    @Nonnull
     public Annotator create() {
         String model =
                 props.getProperty("truecase.model",

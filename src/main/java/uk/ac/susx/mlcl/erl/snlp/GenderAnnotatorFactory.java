@@ -8,6 +8,7 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.DefaultPaths;
 import edu.stanford.nlp.pipeline.GenderAnnotator;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -22,6 +23,7 @@ public class GenderAnnotatorFactory extends AbstractAnnotatorFactory implements 
         super(props);
     }
 
+    @Nonnull
     public Annotator create() {
         return new GenderAnnotator(false,
                 props.getProperty("gender.firstnames",

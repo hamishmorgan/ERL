@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -31,7 +32,8 @@ public abstract class LinkIO implements BaseIO<Link> {
     static final Pattern TAC2011_QID_PATTERN = Pattern.compile("^EL_\\d{5}$");
     static final Pattern TAC2012_QID_PATTERN = Pattern.compile("^EL_ENG_\\d{5}$");
 
-    public static LinkIO detectFormat(final URL linksUrl) throws IOException {
+    @Nonnull
+    public static LinkIO detectFormat(@Nonnull final URL linksUrl) throws IOException {
         LOG.debug("Detecting format from links url: {}", linksUrl);
 
         final Closer closer = Closer.create();
@@ -47,6 +49,7 @@ public abstract class LinkIO implements BaseIO<Link> {
         }
     }
 
+    @Nonnull
     public static LinkIO detectFormat(final File linksFile) throws IOException {
         LOG.debug("Detecting format from links file: {}", linksFile);
 
@@ -62,6 +65,7 @@ public abstract class LinkIO implements BaseIO<Link> {
         }
     }
 
+    @Nonnull
     public static LinkIO detectFormat(final Reader linksReader) throws IOException {
 
         final CSVReader reader = new CSVReader(linksReader,

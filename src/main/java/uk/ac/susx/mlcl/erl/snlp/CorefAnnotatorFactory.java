@@ -7,6 +7,7 @@ package uk.ac.susx.mlcl.erl.snlp;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.DeterministicCorefAnnotator;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -21,6 +22,7 @@ public class CorefAnnotatorFactory extends AbstractAnnotatorFactory implements S
         super(props);
     }
 
+    @Nonnull
     public Annotator create() {
         return new DeterministicCorefAnnotator(props);
     }

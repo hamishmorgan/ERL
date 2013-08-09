@@ -3,6 +3,8 @@ package uk.ac.susx.mlcl.erl.tac.io;
 import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 
+import javax.annotation.Nonnull;
+
 /**
  * Base class for reading and writing entity links tabular files, following the TAC 2011 specification.
  *
@@ -12,7 +14,7 @@ import uk.ac.susx.mlcl.erl.tac.queries.Link;
 public class Tac2011LinkIO extends Tac2010LinkIO {
 
     @Override
-    String[] formatLink(final Link link) {
+    String[] formatLink(@Nonnull final Link link) {
         final String[] values = super.formatLink(link);
 
         // swap webSearch (3) and genre (4)
@@ -24,7 +26,7 @@ public class Tac2011LinkIO extends Tac2010LinkIO {
     }
 
     @Override
-    String formatGenre(Genre genre) {
+    String formatGenre(@Nonnull Genre genre) {
         return genre.name();
     }
 

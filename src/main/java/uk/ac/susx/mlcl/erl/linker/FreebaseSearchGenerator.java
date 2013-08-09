@@ -42,7 +42,7 @@ public class FreebaseSearchGenerator implements CandidateGenerator {
     }
 
     @Override
-    public Map<String, Set<String>> batchFindCandidates(Set<String> mentions)
+    public Map<String, Set<String>> batchFindCandidates(@Nonnull Set<String> mentions)
             throws IOException, ExecutionException {
         checkNotNull(mentions, "mentions");
         final Map<String, List<String>> ids = freebase.batchSearchGetIds(mentions);

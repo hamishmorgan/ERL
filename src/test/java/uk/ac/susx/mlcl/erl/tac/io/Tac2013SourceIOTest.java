@@ -308,7 +308,7 @@ public class Tac2013SourceIOTest extends AbstractTest {
                         "\n" +
                         "Discover\n" +
                         "\n" +
-                        "our solution to enhance total wellness in almost every aspect of a\n" +
+                        "our solution to enhance getGrandTotal wellness in almost every aspect of a\n" +
                         "person's life.\n" +
                         "\n" +
                         "1/2 Price Memberships in April From April 1 until April 22nd!\n" +
@@ -359,7 +359,7 @@ public class Tac2013SourceIOTest extends AbstractTest {
                                         "\n" +
                                         "Discover\n" +
                                         "\n" +
-                                        "our solution to enhance total wellness in almost every aspect of a\n" +
+                                        "our solution to enhance getGrandTotal wellness in almost every aspect of a\n" +
                                         "person's life.\n" +
                                         "\n" +
                                         "1/2 Price Memberships in April From April 1 until April 22nd!\n" +
@@ -660,17 +660,17 @@ public class Tac2013SourceIOTest extends AbstractTest {
         System.out.println(doc);
 
         // 2007-10-16T10:15:00
-        assertEquals(new DateTime(2007, 10, 16, 10, 15, 00, DateTimeZone.UTC), doc.getDatetime());
+        assertEquals(new DateTime(2007, 10, 16, 10, 15, 0, DateTimeZone.UTC), doc.getDatetime());
         assertEquals(doc.getDatetime(), doc.getPosts().get(0).getDate());
 
         // ????-??-??T15:55:00
-        assertEquals(new DateTime(2007, 10, 16, 15, 55, 00, DateTimeZone.UTC), doc.getPosts().get(1).getDate());
+        assertEquals(new DateTime(2007, 10, 16, 15, 55, 0, DateTimeZone.UTC), doc.getPosts().get(1).getDate());
         // ????-??-??T17:26:00
-        assertEquals(new DateTime(2007, 10, 16, 17, 26, 00, DateTimeZone.UTC), doc.getPosts().get(2).getDate());
+        assertEquals(new DateTime(2007, 10, 16, 17, 26, 0, DateTimeZone.UTC), doc.getPosts().get(2).getDate());
         // ????-??-??T15:04:00
-        assertEquals(new DateTime(2007, 10, 17, 15, 04, 00, DateTimeZone.UTC), doc.getPosts().get(3).getDate());
+        assertEquals(new DateTime(2007, 10, 17, 15, 4, 0, DateTimeZone.UTC), doc.getPosts().get(3).getDate());
         // ????-??-??T17:34:00
-        assertEquals(new DateTime(2007, 10, 17, 17, 34, 00, DateTimeZone.UTC), doc.getPosts().get(4).getDate());
+        assertEquals(new DateTime(2007, 10, 17, 17, 34, 0, DateTimeZone.UTC), doc.getPosts().get(4).getDate());
 
 //        assertEquals(expected, doc.get(0));
     }

@@ -7,6 +7,7 @@ package uk.ac.susx.mlcl.erl.snlp;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.MorphaAnnotator;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -21,6 +22,7 @@ public class MorphaAnnotatorFactory extends AbstractAnnotatorFactory implements 
         super(props);
     }
 
+    @Nonnull
     public Annotator create() {
         return new MorphaAnnotator(false);
     }

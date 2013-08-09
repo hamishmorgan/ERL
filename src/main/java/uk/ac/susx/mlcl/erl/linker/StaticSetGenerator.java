@@ -2,6 +2,7 @@ package uk.ac.susx.mlcl.erl.linker;
 
 import com.google.common.collect.Sets;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
@@ -38,6 +39,7 @@ public class StaticSetGenerator extends NilGenerator {
     }
 
 
+    @Nonnull
     @Override
     public Set<String> findCandidates(String mention) throws IOException {
         return strings.contains(mention)

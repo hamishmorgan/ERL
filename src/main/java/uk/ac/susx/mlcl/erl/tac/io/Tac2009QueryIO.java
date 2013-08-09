@@ -10,6 +10,7 @@ import uk.ac.susx.mlcl.erl.tac.queries.Query;
 import uk.ac.susx.mlcl.erl.xml.XomB;
 import uk.ac.susx.mlcl.erl.xml.XomUtil;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -41,7 +42,7 @@ public class Tac2009QueryIO extends QueryIO {
     }
 
     @Override
-    public List<Query> readAll(URL url) throws ParsingException, IOException {
+    public List<Query> readAll(@Nonnull URL url) throws ParsingException, IOException {
         LOG.debug("Reading queries from url: {}", url);
         final Builder parser = new Builder();
         final Closer closer = Closer.create();
@@ -66,7 +67,7 @@ public class Tac2009QueryIO extends QueryIO {
         return readAll(doc);
     }
 
-    List<Query> readAll(Document doc) {
+    List<Query> readAll(@Nonnull Document doc) {
         LOG.debug("doc={0}, baseURI={1}, docType={2}, rootElement={0}",
                 doc, doc.getBaseURI(), doc.getDocType(), doc.getRootElement());
 
@@ -82,14 +83,15 @@ public class Tac2009QueryIO extends QueryIO {
         return queries.build();
     }
 
-    Query parseQuery(Element queryElement) {
+    @Nonnull
+    Query parseQuery(@Nonnull Element queryElement) {
         final String id = queryElement.getAttribute(ID_ATTR_NAME).getValue();
         final String name = queryElement.getFirstChildElement(NAME_ELEM_NAME).getValue();
         final String docId = queryElement.getFirstChildElement(DOC_ID_ELEM_NAME).getValue();
         return new Query(id, name, docId);
     }
 
-    Document toXmlDocument(List<Query> queries) {
+    Document toXmlDocument(@Nonnull List<Query> queries) {
         final XomB x = new XomB();
         final XomB.ElementBuilder root = x.element(ROOT_ELEM_NAME);
         for (Query query : queries) {
@@ -99,7 +101,7 @@ public class Tac2009QueryIO extends QueryIO {
     }
 
     @Override
-    public void writeAll(File file, List<Query> queries) throws IOException {
+    public void writeAll(File file, @Nonnull List<Query> queries) throws IOException {
         LOG.debug(MessageFormat.format("Writing queries to file: {0}", file));
         final Closer closer = Closer.create();
         try {
@@ -116,7 +118,7 @@ public class Tac2009QueryIO extends QueryIO {
     }
 
     @Override
-    public void writeAll(URL url, List<Query> queries) throws IOException, URISyntaxException {
+    public void writeAll(@Nonnull URL url, @Nonnull List<Query> queries) throws IOException, URISyntaxException {
         LOG.debug(MessageFormat.format("Writing queries to url: {0}", url));
         if (url.getProtocol().equalsIgnoreCase("file")) {
             writeAll(new File(url.toURI()), queries);
@@ -139,7 +141,7 @@ public class Tac2009QueryIO extends QueryIO {
     }
 
     @Override
-    public void writeAll(Writer queriesWriter, List<Query> queries) throws IOException {
+    public void writeAll(Writer queriesWriter, @Nonnull List<Query> queries) throws IOException {
         final OutputStream out = new WriterOutputStream(queriesWriter, "UTF-8");
         try {
             XomUtil.writeDocument(toXmlDocument(queries), out, Charset.forName("UTF-8"));
@@ -148,7 +150,8 @@ public class Tac2009QueryIO extends QueryIO {
         }
     }
 
-    XomB.ElementBuilder formatQuery(XomB x, Query query) {
+    @Nonnull
+    XomB.ElementBuilder formatQuery(@Nonnull XomB x, @Nonnull Query query) {
         return x.element(QUERY_ELEM_NAME)
                 .addAttribute(ID_ATTR_NAME, query.getId())
                 .add(x.element(NAME_ELEM_NAME).add(query.getName()))

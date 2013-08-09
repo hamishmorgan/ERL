@@ -1,8 +1,11 @@
 package uk.ac.susx.mlcl.erl.linker;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import javax.annotation.Nullable;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -33,6 +36,7 @@ public class AliasMappingGenerator extends ForwardingGenerator {
         this.recusiveMapping = recusiveMapping;
     }
 
+    @Nullable
     @Override
     public Set<String> findCandidates(final String mention) throws IOException {
         if (recusiveMapping) {
@@ -53,7 +57,7 @@ public class AliasMappingGenerator extends ForwardingGenerator {
             }
 
             // Pop elements of the stack until the terminating query is discovered
-            Set<String> result = Collections.EMPTY_SET;
+            Set<String> result = ImmutableSet.of();
             while (!seen.isEmpty() && !seen.peek().equals(query))
                 result = Sets.union(result, super.findCandidates(seen.pop()));
             result = Sets.union(result, super.findCandidates(query));
@@ -66,9 +70,9 @@ public class AliasMappingGenerator extends ForwardingGenerator {
     }
 
     @Override
-    public Map<String, Set<String>> batchFindCandidates(Set<String> queries)
+    public Map<String, Set<String>> batchFindCandidates(@Nonnull Set<String> queries)
             throws IOException, ExecutionException {
-        ImmutableMap.Builder mapBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, Set<String>> mapBuilder = ImmutableMap.builder();
         for (String query : queries)
             mapBuilder.put(query, findCandidates(query));
         return mapBuilder.build();

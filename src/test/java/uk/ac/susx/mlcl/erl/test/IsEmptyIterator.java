@@ -1,10 +1,12 @@
 package uk.ac.susx.mlcl.erl.test;
 
+import com.google.common.collect.Iterators;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 
 /**
@@ -17,6 +19,7 @@ public class IsEmptyIterator<E> extends TypeSafeMatcher<Iterator<? extends E>> {
      * For example:
      * <pre>assertThat(new ArrayList&lt;String&gt;().iterator(), is(emptyIterator()))</pre>
      */
+    @Nonnull
     @Factory
     public static <E> Matcher<Iterator<? extends E>> emptyIterator() {
         return new IsEmptyIterator<E>();
@@ -30,25 +33,26 @@ public class IsEmptyIterator<E> extends TypeSafeMatcher<Iterator<? extends E>> {
      *
      * @param type the type of the iterable's content
      */
+    @Nonnull
     @Factory
     public static <E> Matcher<Iterator<E>> emptyIteratorOf(Class<E> type) {
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        final Matcher<Iterator<E>> result = (Matcher) emptyIterator();
+        @SuppressWarnings({"rawtypes", "unchecked", "UnnecessaryLocalVariable"})
+        final Matcher<Iterator<E>> result = (Matcher<Iterator<E>>) emptyIterator();
         return result;
     }
 
     @Override
-    public boolean matchesSafely(Iterator<? extends E> iterator) {
+    public boolean matchesSafely(@Nonnull Iterator<? extends E> iterator) {
         return !iterator.hasNext();
     }
 
     @Override
-    public void describeMismatchSafely(Iterator<? extends E> iterator, Description mismatchDescription) {
+    public void describeMismatchSafely(Iterator<? extends E> iterator, @Nonnull Description mismatchDescription) {
         mismatchDescription.appendValueList("[", ",", "]", iterator);
     }
 
     @Override
-    public void describeTo(Description description) {
+    public void describeTo(@Nonnull Description description) {
         description.appendText("an empty iterator");
     }
 }

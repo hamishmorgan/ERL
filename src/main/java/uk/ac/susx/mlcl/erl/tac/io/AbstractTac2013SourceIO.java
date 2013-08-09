@@ -21,6 +21,7 @@ import uk.ac.susx.mlcl.erl.lib.Functions2;
 import uk.ac.susx.mlcl.erl.lib.IOUtils;
 import uk.ac.susx.mlcl.erl.tac.source.SourceDocument;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,9 +51,11 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
     private static final String INPUT_PREFIX = String.format("<?xml version='1.0' encoding='utf8'?>%n<%s>%n", ROOT_ELEMENT_NAME);
     private static final String INPUT_SUFFIX = String.format("%n</%s>", ROOT_ELEMENT_NAME);
 
-    public static Iterable<Node> childrenOf(final Node parent) {
+    @Nonnull
+    public static Iterable<Node> childrenOf(@Nonnull final Node parent) {
         checkNotNull(parent, "parent");
         return new Iterable<Node>() {
+            @Nonnull
             @Override
             public Iterator<Node> iterator() {
                 return new Iterator<Node>() {
@@ -82,7 +85,8 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         };
     }
 
-    public static Iterable<Node> childrenWhere(final Node parent, final Predicate<Node> condition) {
+    @Nonnull
+    public static Iterable<Node> childrenWhere(@Nonnull final Node parent, final Predicate<Node> condition) {
         checkNotNull(parent, "parent");
         checkNotNull(condition, "condition");
         return new Iterable<Node>() {
@@ -93,7 +97,8 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         };
     }
 
-    public static Iterable<Element> childElementsOf(final Node parent) {
+    @Nonnull
+    public static Iterable<Element> childElementsOf(@Nonnull final Node parent) {
         checkNotNull(parent, "parent");
         return new Iterable<Element>() {
             @Override
@@ -107,7 +112,8 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 
     }
 
-    public static Iterable<Element> childElementsWhere(final Element parent, final Predicate<Element> condition) {
+    @Nonnull
+    public static Iterable<Element> childElementsWhere(@Nonnull final Element parent, final Predicate<Element> condition) {
         checkNotNull(parent, "parent");
         checkNotNull(condition, "condition");
         return new Iterable<Element>() {
@@ -118,28 +124,29 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         };
     }
 
-    public static List<Node> getChildrenWhere(Node parent, Predicate<Node> condition) {
+    public static List<Node> getChildrenWhere(@Nonnull Node parent, Predicate<Node> condition) {
         checkNotNull(parent, "parent");
         checkNotNull(condition, "condition");
         return ImmutableList.copyOf(childrenWhere(parent, condition));
     }
 
-    public static Node getFirstChildWhere(Node parent, Predicate<Node> condition) {
+    @Nullable
+    public static Node getFirstChildWhere(@Nonnull Node parent, Predicate<Node> condition) {
         checkNotNull(parent, "parent");
         checkNotNull(condition, "condition");
         return getNext(childrenWhere(parent, condition).iterator(), null);
     }
 
-    public static List<Node> getChildrenOf(Node parent) {
+    public static List<Node> getChildrenOf(@Nonnull Node parent) {
         return ImmutableList.copyOf(childrenOf(parent));
     }
 
-    public static List<Element> getChildElementsOf(Node parent) {
+    public static List<Element> getChildElementsOf(@Nonnull Node parent) {
         return ImmutableList.copyOf(childElementsOf(parent));
     }
 
 
-    public static List<Element> getChildElementsWhere(Node parent, Predicate<Node> condition) {
+    public static List<Element> getChildElementsWhere(@Nonnull Node parent, Predicate<Node> condition) {
         checkNotNull(parent, "parent");
         checkNotNull(condition, "condition");
         return ImmutableList.copyOf(
@@ -150,7 +157,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 
     public static
     @Nullable
-    Element getFirstChildElementsWhere(Element parent, Predicate<Element> condition) {
+    Element getFirstChildElementsWhere(@Nonnull Element parent, Predicate<Element> condition) {
         checkNotNull(parent, "parent");
         checkNotNull(condition, "condition");
         return getNext(filter(
@@ -169,6 +176,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //        };
 //    }
 
+    @Nullable
     static Predicate<Node> isElement() {
         return new Predicate<Node>() {
             @Override
@@ -188,12 +196,13 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
 //        };
 //    }
 
-    static Predicate<Element> nameEqualsIgnoreCase(final String string) {
+    @Nonnull
+    static Predicate<Element> nameEqualsIgnoreCase(@Nonnull final String string) {
         checkNotNull(string, "string");
         return new Predicate<Element>() {
             @Override
             public boolean apply(@Nullable Element input) {
-                return input.getLocalName().equalsIgnoreCase(string);
+                return input != null ? input.getLocalName().equalsIgnoreCase(string) : false;
             }
         };
     }
@@ -242,6 +251,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         tagsoup.setProperty(Parser.schemaProperty, new XmlSoupSchema());
         tagsoup.setProperty(Parser.scannerProperty, new XmlSoupScanner());
         tagsoup.setProperty(Parser.autoDetectorProperty, new AutoDetector() {
+            @Nonnull
             @Override
             public Reader autoDetectingReader(InputStream i) {
                 return new InputStreamReader(i, charset);
@@ -312,7 +322,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         }
     }
 
-    private List<T> parseDocuments(final Element root) throws IOException, ParsingException {
+    private List<T> parseDocuments(@Nonnull final Element root) {
         final ImmutableList.Builder<T> listBuilder = ImmutableList.builder();
         for (int i = 0; i < root.getChildCount(); i++) {
             final Node node = root.getChild(i);
@@ -328,6 +338,7 @@ public abstract class AbstractTac2013SourceIO<T extends SourceDocument> {
         return listBuilder.build();
     }
 
+    @Nonnull
     abstract T parseDocElement(Element element);
 
 
