@@ -21,8 +21,8 @@ public class IsEmptyIterator<E> extends TypeSafeMatcher<Iterator<? extends E>> {
      */
     @Nonnull
     @Factory
-    public static <E> Matcher<Iterator<? extends E>> emptyIterator() {
-        return new IsEmptyIterator<E>();
+    public static <E> Matcher<Iterator<E>> emptyIterator() {
+        return (Matcher<Iterator<E>>)new IsEmptyIterator<E>();
     }
 
     /**
@@ -36,9 +36,7 @@ public class IsEmptyIterator<E> extends TypeSafeMatcher<Iterator<? extends E>> {
     @Nonnull
     @Factory
     public static <E> Matcher<Iterator<E>> emptyIteratorOf(Class<E> type) {
-        @SuppressWarnings({"rawtypes", "unchecked", "UnnecessaryLocalVariable"})
-        final Matcher<Iterator<E>> result = (Matcher<Iterator<E>>) emptyIterator();
-        return result;
+        return emptyIterator();
     }
 
     @Override
