@@ -2,11 +2,13 @@ package uk.ac.susx.mlcl.erl.tac.eval;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import nu.xom.ParsingException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.susx.mlcl.erl.lib.Comparators;
 import uk.ac.susx.mlcl.erl.reduce.Reducers;
 import uk.ac.susx.mlcl.erl.tac.io.LinkIO;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created with IntelliJ IDEA.
@@ -48,28 +51,14 @@ public class EvaluationTest extends AbstractTest {
     public void testNodeId() {
 
         // define the notion of link equality, in this case node id
-        final Comparator<Link> linkComparator = new Comparator<Link>() {
-
-            @Override
-            public int compare(Link o1, Link o2) {
-                return o1.getEntityNodeId().compareTo(o2.getEntityNodeId());
-            }
-        };
+        final Comparator<Link> linkComparator = Comparators.mapped(Link.GetEntityNodeId.INSTANCE);
 
         // when displaying results print just the node id
-        final Function<Link, String> labelFormatter = new
-
-                Function<Link, String>() {
-                    @Nullable
-                    @Override
-                    public String apply(@Nullable Link input) {
-                        return input.getEntityNodeId();
-                    }
-                };
+        final Function<Link, String> labelFormatter = Link.GetEntityNodeId.INSTANCE;
 
         final Evaluation evaluation = new Evaluation(actual, predicted, linkComparator, labelFormatter);
         Assert.assertNotNull("evaluation", evaluation);
-//        System.out.println(evaluation);
+        evaluation.getConfusionMatrix().appendStats(System.out, Locale.getDefault());
 
 //        Assert.fail();
     }
@@ -82,22 +71,8 @@ public class EvaluationTest extends AbstractTest {
     @Test
     public void testEntityVsNil_Method1() throws NoSuchMethodException {
 
-        final Comparator<Link> linkComparator = new Comparator<Link>() {
-
-            @Override
-            public int compare(Link o1, Link o2) {
-                return o1.getEntityNodeId().compareTo(o2.getEntityNodeId());
-            }
-        };
-        final Function<Link, String> labelFormatter = new
-
-                Function<Link, String>() {
-                    @Nullable
-                    @Override
-                    public String apply(@Nullable Link input) {
-                        return input.getEntityNodeId();
-                    }
-                };
+        final Comparator<Link> linkComparator = Comparators.mapped(Link.GetEntityNodeId.INSTANCE);
+        final Function<Link, String> labelFormatter = Link.GetEntityNodeId.INSTANCE;
 
         final Evaluation evaluation = new Evaluation(actual, predicted, linkComparator, labelFormatter);
         Assert.assertNotNull("evaluation", evaluation);
@@ -105,7 +80,7 @@ public class EvaluationTest extends AbstractTest {
 
         final ConfusionMatrix fullMatrix = evaluation.getConfusionMatrix();
 
-        System.out.println(fullMatrix.getAccuracy());
+//        System.out.println(fullMatrix.getAccuracy());
 
         BinaryConfusionMatrix binMatrix = fullMatrix.mapAllVersus(new Predicate<Link>() {
             @Override
@@ -115,7 +90,9 @@ public class EvaluationTest extends AbstractTest {
         }, "Entity", "Nil", Reducers.sum());
 
         Assert.assertNotNull("binMatrix", binMatrix);
-        System.out.println(binMatrix);
+//        System.out.println(binMatrix.getStatsString());
+        binMatrix.appendStatsFor(binMatrix.getPositiveLabel(), System.out, Locale.getDefault());
+        binMatrix.appendStatsFor(binMatrix.getNegativeLabel(), System.out, Locale.getDefault());
 
 //        Assert.fail();
     }
@@ -132,25 +109,25 @@ public class EvaluationTest extends AbstractTest {
         // Note the link comparator here performs two functions. First it matches entities and nils by stripping
         // the numeric suffix. Secondly it insures that, when displaying results, Entity is the first (positive)
         // element, and that NIL is the second (negative) element.
-        final Comparator<Link> linkComparator = new Comparator<Link>() {
+        final Comparator<Link> linkComparator =
+                Comparators.mapped(Link.GetEntityIdPrefix.INSTANCE,
+                        Comparators.mapped(ImmutableMap.of(
+                                Link.GetEntityIdPrefix.NIL_PREFIX_RESULT, 1,
+                                Link.GetEntityIdPrefix.ENTITY_PREFIX_RESULT, 0)));
 
-            @Override
-            public int compare(Link o1, Link o2) {
-                return Integer.compare(
-                        o1.getEntityNodeId().startsWith("NIL") ? 1 : 0,
-                        o2.getEntityNodeId().startsWith("NIL") ? 1 : 0);
-            }
-        };
+//
+//        new Comparator<Link>() {
+//
+//            @Override
+//            public int compare(Link o1, Link o2) {
+//                return Integer.compare(
+//                        o1.getEntityNodeId().startsWith("NIL") ? 1 : 0,
+//                        o2.getEntityNodeId().startsWith("NIL") ? 1 : 0);
+//            }
+//        };
 
-        final Function<Link, String> labelFormatter = new
 
-                Function<Link, String>() {
-                    @Nullable
-                    @Override
-                    public String apply(@Nullable Link input) {
-                        return input.getEntityNodeId().startsWith("NIL") ? "Nil" : "Entity";
-                    }
-                };
+        final Function<Link, String> labelFormatter = Link.GetEntityIdPrefix.INSTANCE;
 
         Evaluation evaluation = new Evaluation(actual, predicted, linkComparator, labelFormatter);
         Assert.assertNotNull("evaluation", evaluation);
@@ -171,32 +148,16 @@ public class EvaluationTest extends AbstractTest {
     @Test
     public void testEntTypes() {
 
-        final Comparator<Link> linkComparator = new Comparator<Link>() {
-
-            @Override
-            public int compare(Link o1, Link o2) {
-                return o1.getEntityType().compareTo(o2.getEntityType());
-            }
-        };
-
-        final Function<Link, String> labelFormatter = new
-
-                Function<Link, String>() {
-                    @Nullable
-                    @Override
-                    public String apply(@Nullable Link input) {
-                        return input.getEntityType().name();
-                    }
-                };
+        final Comparator<Link> linkComparator = Comparators.mapped(Link.GetEntityType.INSTANCE);
+        final Function<Link, String> labelFormatter = Link.GetEntityTypeString.INSTANCE;
 
         final Evaluation<Link> evaluation = new Evaluation(actual, predicted, linkComparator, labelFormatter);
 
         ConfusionMatrix<Link> fourWayMatrix = evaluation.getConfusionMatrix();
         Assert.assertEquals(4, fourWayMatrix.getLabels().size());
 
-        System.out.println(fourWayMatrix.getTableString());
-        System.out.println(fourWayMatrix.getStatsString());
-
+        fourWayMatrix.appendTable(System.out, Locale.getDefault());
+        fourWayMatrix.appendStats(System.out, Locale.getDefault());
 
         // For each entity type we can also create a binary confusion matrix show the all-vs-one scores.
         for (final Link label : fourWayMatrix.getLabels()) {
@@ -208,13 +169,13 @@ public class EvaluationTest extends AbstractTest {
             }, label.getEntityType().name(), "Other", Reducers.sum());
 
             System.out.println(label.getEntityType().name());
-            System.out.println(twoWayMatrix.getTableString());
-            System.out.println(twoWayMatrix.getStatsString());
+            twoWayMatrix.appendTable(System.out, Locale.getDefault());
+            twoWayMatrix.appendStats(System.out, Locale.getDefault());
         }
-
 
 
 //        Assert.fail();
     }
+
 
 }

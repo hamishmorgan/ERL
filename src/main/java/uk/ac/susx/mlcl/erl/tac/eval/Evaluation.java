@@ -1,20 +1,20 @@
 package uk.ac.susx.mlcl.erl.tac.eval;
 
 import com.google.common.base.Function;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.base.Functions;
+import com.google.common.base.Optional;
+import com.google.common.collect.*;
 import org.ejml.simple.SimpleMatrix;
+import uk.ac.susx.mlcl.erl.lib.Comparators;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,28 +45,35 @@ public class Evaluation<T> {
         this.labelFormatter = checkNotNull(elementFormatter, "labelFormatter");
     }
 
-
     public ConfusionMatrix<T> getConfusionMatrix() {
 
+        ConfusionMatrixBuilder<T> builder = ConfusionMatrix.builder();
 
-        final List<T> labels = ImmutableList.copyOf(ImmutableSortedSet.orderedBy(comparator).addAll(actual).addAll(predicted).build());
-        final BiMap<T, Integer> labelIndex = ImmutableBiMap.copyOf(EvalUtil.indexMap(labels, comparator));
+        for (final Iterator<T> ait = actual.iterator(), pit = predicted.iterator(); ait.hasNext() || pit.hasNext(); )
+            builder.addResult(ait.next(), pit.next());
+        builder.setLabelOrder(comparator);
+        builder.setLabelFormat(labelFormatter);
 
-
-        final Map<T, Integer> index = EvalUtil.indexMap(labels, comparator);
-        final SimpleMatrix mat = new SimpleMatrix(labels.size(), labels.size());
-
-        for (final Iterator<T> ait = actual.iterator(), pit = predicted.iterator(); ait.hasNext() || pit.hasNext(); ) {
-            final int i = mat.getIndex(index.get(ait.next()), index.get(pit.next()));
-            mat.set(i, mat.get(i) + 1.0);
-        }
-        if(labels.size() == 2)
-            return new BinaryConfusionMatrix(labelIndex, mat, comparator, labelFormatter);
-        else
-            return new ConfusionMatrix(labelIndex, mat, comparator, labelFormatter);
+        return builder.build();
+//
+//
+//        final List<T> labels = ImmutableList.copyOf(ImmutableSortedSet.orderedBy(comparator).addAll(actual).addAll(predicted).build());
+//        final BiMap<T, Integer> labelIndex = ImmutableBiMap.copyOf(EvalUtil.indexMap(labels, comparator));
+//
+//
+//        final Map<T, Integer> index = EvalUtil.indexMap(labels, comparator);
+//        final SimpleMatrix mat = new SimpleMatrix(labels.size(), labels.size());
+//
+//        for (final Iterator<T> ait = actual.iterator(), pit = predicted.iterator(); ait.hasNext() || pit.hasNext(); ) {
+//            final int i = mat.getIndex(index.get(ait.next()), index.get(pit.next()));
+//            mat.set(i, mat.get(i) + 1.0);
+//        }
+//
+//        ConfusionMatrix<T> cmat = new ConcreteEJMLConfusionMatrix<T>(labelIndex, mat, comparator, labelFormatter);
+//        if (labels.size() == 2)
+//            cmat = new BinaryConfusionMatrix<T>(cmat);
+//        return cmat;
     }
-
-
 
     public String getResultsTable() {
         StringBuilder builder = new StringBuilder();
@@ -77,7 +84,7 @@ public class Evaluation<T> {
         builder.append("Correct");
         builder.append(System.getProperty("line.separator"));
         for (final Iterator<T> ait = actual.iterator(), pit = predicted.iterator(); ait.hasNext() || pit.hasNext(); ) {
-            final T a= ait.next(), p = pit.next();
+            final T a = ait.next(), p = pit.next();
             builder.append(labelFormatter.apply(a));
             builder.append('\t');
             builder.append(labelFormatter.apply(p));

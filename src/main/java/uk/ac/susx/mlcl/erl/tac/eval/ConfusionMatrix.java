@@ -1,100 +1,134 @@
 package uk.ac.susx.mlcl.erl.tac.eval;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
-import org.ejml.simple.SimpleMatrix;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import uk.ac.susx.mlcl.erl.lib.Functions2;
 import uk.ac.susx.mlcl.erl.reduce.Reducer;
 
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import java.util.Comparator;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created with IntelliJ IDEA.
- * User: hiam20
- * Date: 05/08/2013
- * Time: 14:39
- * To change this template use File | Settings | File Templates.
+ * ConfusionMatrix is an abstract superclass to various implementations of a contingency table between actual and
+ * predicted result sets. It provides generic functionality for measuring predictive performance based on a methods that
+ * must be implemented by subclasses.
+ *
+ * @author Hamish Morgan
  */
-public class ConfusionMatrix<T> {
+@Nonnull
+@Immutable
+@CheckReturnValue
+public abstract class ConfusionMatrix<T> {
 
-    protected final BiMap<T, Integer> labelIndexMap;
-    protected final Comparator<T> labelOrder;
-    protected final Function<T, String> labelFormatter;
-    protected final SimpleMatrix mat;
+    private static final String INFO_FORMAT = "%1$s: %2$d instances in %3$d classes%n";
+    private static final String RATE_FORMAT = "%1$s: %2$d / %3$d = %4$.2f%%%n";
+    private static final String LABEL_RATE_FORMAT = "%1$s %2$s: %3$d / %4$d = %5$.2f%%%n";
+    private static final String SCORE_FORMAT = "%1$s %2$s: %3$.2f%%%n";
+    private static final String ELEMENT_FORMAT = "%d ";
 
-    ConfusionMatrix(BiMap<T, Integer> labelIndexMap, SimpleMatrix mat, Comparator<T> labelOrder, Function<T, String> labelFormatter) {
-        this.labelIndexMap = checkNotNull(labelIndexMap, "labelIndexMap");
-        this.mat = checkNotNull(mat, "mat");
-        checkArgument(mat.numRows() == mat.numCols());
-        this.labelOrder = checkNotNull(labelOrder, "labelOrder");
-        this.labelFormatter = checkNotNull(labelFormatter, "labelFormatter");
+    public static <T> ConfusionMatrixBuilder<T> builder() {
+        return new ConfusionMatrixBuilder<T>();
     }
 
-    public Collection<T> getLabels() {
-        return labelIndexMap.keySet();
-    }
+    public abstract List<T> getLabels();
 
+    @Nonnegative
+    public abstract long getCount(T actual, T predicted);
+
+    protected abstract String formatLabel(T label);
+
+    @Nonnegative
     public int size() {
-        return labelIndexMap.size();
+        return getLabels().size();
     }
 
-    public double getPredictedCountFor(T label) {
-        final int x = labelIndexMap.get(label);
+    @Nonnegative
+    public long getPredictedCountFor(final T predictedLabel) {
         double sum = 0;
-        for (int y = 0; y < mat.numRows(); y++)
-            sum += mat.get(y, x);
-        return sum;
+        for (T actualLabel : getLabels())
+            sum += getCount(actualLabel, predictedLabel);
+        return (long) sum;
     }
 
-    public double getActualCountFor(T label) {
-        final int y = labelIndexMap.get(label);
+    @Nonnegative
+    public long getActualCountFor(final T actualLabel) {
         double sum = 0;
-        for (int x = 0; x < mat.numRows(); x++)
-            sum += mat.get(y, x);
-        return sum;
+        for (T predictedLabel : getLabels())
+            sum += getCount(actualLabel, predictedLabel);
+        return (long) sum;
     }
 
-    public double getTrueCount() {
-        return mat.extractDiag().elementSum();
+    @Nonnegative
+    public long getTrueCount() {
+        double sum = 0;
+        for (T label : getLabels())
+            sum += getTrueCountFor(label);
+        return (long) sum;
     }
 
-    public double getFalseCount() {
+    @Nonnegative
+    public long getFalseCount() {
         return getGrandTotal() - getTrueCount();
     }
 
-    public double getTrueCountFor(T label) {
-        final int i = labelIndexMap.get(label);
-        return mat.get(i, i);
+    @Nonnegative
+    public long getTrueCountFor(final T label) {
+        return getCount(label, label);
     }
 
-    public double getFalseCountFor(T label) {
+    @Nonnegative
+    public long getFalseCountFor(final T label) {
         return getPredictedCountFor(label) - getTrueCountFor(label);
     }
 
-    public double getGrandTotal() {
-        return mat.elementSum();
+    @Nonnegative
+    public long getGrandTotal() {
+        double sum = 0;
+        for (T actual : getLabels())
+            for (T predicted : getLabels())
+                sum += getCount(actual, predicted);
+        return (long) sum;
     }
 
+    @Nonnegative
     public double getAccuracy() {
-        return getTrueCount() / getGrandTotal();
+        final long trueCount = getTrueCount();
+        if (trueCount == 0)
+            return 0;
+        final long total = getGrandTotal();
+        assert total >= trueCount;
+        return getTrueCount() / (double) getGrandTotal();
     }
 
     /**
      * Get the proportion of instances with the given label that where correctly identified.
      * <p/>
+     * <p/>
      * In the case of the positive label in a binary confusion matrix, this statistic is often known as "recall". For
      * the negative label, this statistic is sometimes called "specificity".
+     * <p/>
+     * The probability an instance was predicted correctly given the ground truth label.
      *
      * @param label
      * @return
      */
-    public double getTrueRateFor(T label) {
-        return getTrueCountFor(label) / getActualCountFor(label);
+    @Nonnegative
+    public double getTrueRateFor(final T label) {
+        return getTrueCountFor(label) == 0 ? 0 :
+                getTrueCountFor(label) / (double) getActualCountFor(label);
     }
 
     /**
@@ -103,8 +137,10 @@ public class ConfusionMatrix<T> {
      * @param label
      * @return
      */
-    public double getFalseRateFor(T label) {
-        return getFalseCountFor(label) / getActualCountFor(label);
+    @Nonnegative
+    public double getFalseRateFor(final T label) {
+        return getFalseCountFor(label) == 0 ? 0 :
+                getFalseCountFor(label) / (double) getActualCountFor(label);
     }
 
     /**
@@ -115,8 +151,10 @@ public class ConfusionMatrix<T> {
      * @param label
      * @return
      */
-    public double getPredictiveValueFor(T label) {
-        return getTrueCountFor(label) / getPredictedCountFor(label);
+    @Nonnegative
+    public double getPredictiveValueFor(final T label) {
+        return getTrueCountFor(label) == 0 ? 0 :
+                getTrueCountFor(label) / (double) getPredictedCountFor(label);
     }
 
     /**
@@ -125,8 +163,10 @@ public class ConfusionMatrix<T> {
      * @param label
      * @return
      */
-    public double getFalseDiscoveryRate(T label) {
-        return getFalseCountFor(label) / getPredictedCountFor(label);
+    @Nonnegative
+    public double getFalseDiscoveryRate(final T label) {
+        return getFalseCountFor(label) == 0 ? 0 :
+                getFalseCountFor(label) / (double) getPredictedCountFor(label);
     }
 
     /**
@@ -136,53 +176,50 @@ public class ConfusionMatrix<T> {
      * @param beta
      * @return
      */
-    public double getFScoreFor(T label, double beta) {
-        final double precision = getPredictiveValueFor(label);
-        final double recall = getTrueRateFor(label);
-        return (1.0 + beta * beta) * precision * recall / (beta * beta * precision + recall);
+    @Nonnegative
+    public double getFScoreFor(final T label, double beta) {
+        checkArgument(beta >= 0, "beta < 0");
+        if (beta == Double.POSITIVE_INFINITY) {
+            return getTrueRateFor(label);
+        } else if (beta == 0) {
+            return getPredictiveValueFor(label);
+        } else {
+            final double precision = getPredictiveValueFor(label);
+            final double recall = getTrueRateFor(label);
+
+            if (precision == 0 && recall == 0) {
+                return 0;
+            } else {
+                return (1.0 + beta * beta) * precision * recall / (beta * beta * precision + recall);
+            }
+        }
     }
 
-    public <D> BinaryConfusionMatrix<D> mapAllVersus(final Predicate<T> positive,
-                                                     final D positiveLabel,
-                                                     final D negativeLabel,
-                                                     final Function<D, String> labelFormatter,
-                                                     final Reducer<Double, Double> reducer) {
-        final Comparator<D> labelOrder = new Comparator<D>() {
-            @Override
-            public int compare(final D o1, final D o2) {
-                return Integer.compare(
-                        o1.equals(positiveLabel) ? 0 : 1,
-                        o2.equals(positiveLabel) ? 0 : 1);
-            }
-        };
+    public BinaryConfusionMatrix<String> mapAllVersusOne(final T srcPositiveLabel, final Reducer<Double, Double> reducer) {
 
-        final ConfusionMatrix<D> dstMatrix = mapLabels(new Function<T, D>() {
-            @Nullable
-            @Override
-            public D apply(final @Nullable T input) {
-                return positive.apply(input) ? positiveLabel : negativeLabel;
-            }
-        }, reducer, labelOrder, labelFormatter);
 
-        final BiMap<D, Integer> dstLabelIndexMap = ImmutableBiMap.copyOf(
-                EvalUtil.indexMap(ImmutableList.of(positiveLabel, negativeLabel), labelOrder));
+        final String targetPositiveLabel = formatLabel(srcPositiveLabel);
+        final String targetNegativeLabl = "Other";
+        final Function<String, String> targetLabelFormatter = Functions.identity();
 
-        return new BinaryConfusionMatrix<D>(dstLabelIndexMap, dstMatrix.mat, labelOrder, labelFormatter);
+        final Function<T, String> labelMapping =
+                Functions2.forPredicate(Predicates.equalTo(srcPositiveLabel), targetPositiveLabel, targetNegativeLabl);
+        final Comparator<String> labelOrder = new BinaryMatrixLabelOrder<String>(targetPositiveLabel);
+        return (BinaryConfusionMatrix<String>) mapLabels(labelMapping, reducer, labelOrder, targetLabelFormatter);
     }
 
-    public BinaryConfusionMatrix<String> mapAllVersus(final Predicate<T> positive,
-                                                      final String positiveLabel,
-                                                      final String negativeLabel,
-                                                      final Reducer<Double, Double> reducer) {
-        return mapAllVersus(positive, positiveLabel, negativeLabel, new
+    public <D> BinaryConfusionMatrix<D> mapAllVersus(
+            final Predicate<T> positive, final D positiveLabel, final D negativeLabel,
+            final Function<D, String> labelFormatter, final Reducer<Double, Double> reducer) {
+        final Function<T, D> labelMapping = Functions2.forPredicate(positive, positiveLabel, negativeLabel);
+        final Comparator<D> labelOrder = new BinaryMatrixLabelOrder<D>(positiveLabel);
+        return (BinaryConfusionMatrix<D>) mapLabels(labelMapping, reducer, labelOrder, labelFormatter);
+    }
 
-                Function<String, String>() {
-                    @Nullable
-                    @Override
-                    public String apply(@Nullable String input) {
-                        return input;
-                    }
-                }, reducer);
+    public BinaryConfusionMatrix<String> mapAllVersus(
+            final Predicate<T> positive, final String positiveLabel, final String negativeLabel,
+            final Reducer<Double, Double> reducer) {
+        return mapAllVersus(positive, positiveLabel, negativeLabel, Functions.<String>identity(), reducer);
     }
 
     /**
@@ -193,51 +230,105 @@ public class ConfusionMatrix<T> {
      * @return
      */
     public <D> ConfusionMatrix<D> mapLabels(
-            Function<T, D> mapping,
-            Reducer<Double, Double> reducer,
-            Comparator<D> dstLabelOrder,
-            Function<D, String> targetLabelFormatter) {
+            final Function<T, D> mapping,
+            final Reducer<Double, Double> reducer,
+            final Comparator<D> dstLabelOrder,
+            final Function<D, String> targetLabelFormatter) {
 
-        List<D> dstLabels = Lists.newArrayList(Sets.newHashSet(Lists.transform(Lists.newArrayList(getLabels()), mapping)));
-        final BiMap<D, Integer> dstLabelIndexMap = ImmutableBiMap.copyOf(EvalUtil.indexMap(dstLabels, dstLabelOrder));
-        final SimpleMatrix targetMat = new SimpleMatrix(dstLabelIndexMap.size(), dstLabelIndexMap.size());
-
-        for (int srcY = 0; srcY < mat.numRows(); srcY++) {
-            final int dstY = dstLabelIndexMap.get(mapping.apply(labelIndexMap.inverse().get(srcY)));
-            for (int srcX = 0; srcX < mat.numCols(); srcX++) {
-                final int dstX = dstLabelIndexMap.get(mapping.apply(labelIndexMap.inverse().get(srcX)));
-                targetMat.set(dstY, dstX, reducer.foldIn(targetMat.get(dstY, dstX), mat.get(srcY, srcX)));
+        ConfusionMatrixBuilder<D> builder = ConfusionMatrix.builder();
+        builder.setLabelOrder(dstLabelOrder);
+        builder.setLabelFormat(targetLabelFormatter);
+        builder.addAllLabels(Sets.newHashSet(Lists.transform(Lists.newArrayList(getLabels()), mapping)));
+        for (T predicted : getLabels())
+            for (T actual : getLabels()) {
+                builder.addResults(
+                        mapping.apply(actual),
+                        mapping.apply(predicted),
+                        (int) getCount(actual, predicted));
             }
-        }
-        return new ConfusionMatrix<D>(dstLabelIndexMap, targetMat, dstLabelOrder, targetLabelFormatter);
+        return builder.build();
+//
+//
+//
+//
+//
+//        final List<D> dstLabels = ImmutableList.copyOf(Sets.newHashSet(Lists.transform(Lists.newArrayList(getLabels()), mapping)));
+//
+//
+//        final BiMap<D, Integer> dstLabelIndexMap = ImmutableBiMap.copyOf(EvalUtil.indexMap(dstLabels, dstLabelOrder));
+//        final SimpleMatrix targetMat = new SimpleMatrix(dstLabelIndexMap.size(), dstLabelIndexMap.size());
+//
+//        for (T srcXLabel : getLabels())
+//            for (T srcYLabel : getLabels()) {
+//                final int dstIndex = targetMat.getIndex(
+//                        dstLabelIndexMap.get(mapping.apply(srcYLabel)),
+//                        dstLabelIndexMap.get(mapping.apply(srcXLabel)));
+//                targetMat.set(dstIndex, reducer.foldIn(targetMat.get(dstIndex), (double) getCount(srcYLabel, srcXLabel)));
+//            }
+//        return new ConcreteEJMLConfusionMatrix<D>(dstLabelIndexMap, targetMat, dstLabelOrder, targetLabelFormatter);
     }
 
-    @Override
-    public String toString() {
-        return getTableString() + "\n" + getStatsString();
+    public final String getStatsString() {
+        return getStatsString(Locale.getDefault());
     }
 
-    public String getStatsString() {
-        final StringBuilder statsBuilder = new StringBuilder();
-        statsBuilder.append(String.format("Accuracy: %.0f/%.0f = %.2f%% correct",
-                getTrueCount(), getGrandTotal(), 100.0 * getAccuracy()));
-        return statsBuilder.toString();
+    public final String getStatsStringFor(final T label) {
+        return getStatsStringFor(label, Locale.getDefault());
     }
 
-    public String getTableString() {
-        final String elementFormat = "%.0f ";
+    public final String getTableString() {
+        return getTableString(Locale.getDefault());
+    }
 
-        // Build a 2d array of all the formatted values and labels
-        final int[] idx = indexOrder();
-        final String[][] cells = new String[mat.numRows() + 1][mat.numCols() + 1];
+    public final String getStatsString(final Locale locale) {
+        final StringBuilder builder = new StringBuilder();
+        appendStats(builder, locale);
+        return builder.toString();
+    }
+
+    public final String getStatsStringFor(final T label, final Locale locale) {
+        final StringBuilder builder = new StringBuilder();
+        appendStatsFor(label, builder, locale);
+        return builder.toString();
+    }
+
+    public final String getTableString(final Locale locale) {
+        final StringBuilder builder = new StringBuilder();
+        appendTable(builder, locale);
+        return builder.toString();
+    }
+
+    public void appendStats(Appendable dst, Locale locale) {
+        new Formatter(dst, locale)
+                .format(INFO_FORMAT, this.getClass().getSimpleName(), getGrandTotal(), size())
+                .format(RATE_FORMAT, "Accuracy", getTrueCount(), getGrandTotal(), 100d * getAccuracy());
+    }
+
+    public void appendStatsFor(T label, Appendable dst, Locale locale) {
+        new Formatter(dst, locale)
+                .format(LABEL_RATE_FORMAT, formatLabel(label), "Precision",
+                        getTrueCountFor(label), getPredictedCountFor(label), 100d * getPredictiveValueFor(label))
+                .format(LABEL_RATE_FORMAT, formatLabel(label), "Recall",
+                        getTrueCountFor(label), getActualCountFor(label), 100d * getTrueRateFor(label))
+                .format(SCORE_FORMAT, formatLabel(label), "F1-Score", 100d * getFScoreFor(label, 1.0));
+    }
+
+    public void appendTable(Appendable dst, Locale locale) {
+
+        final String[][] cells = new String[size() + 1][size() + 1];
         cells[0][0] = "";
-        for (int x = 0; x < mat.numCols(); x++)
-            cells[0][x + 1] = labelFormatter.apply(labelIndexMap.inverse().get(idx[x]));
-        for (int y = 0; y < mat.numCols(); y++)
-            cells[y + 1][0] = labelFormatter.apply(labelIndexMap.inverse().get(idx[y]));
-        for (int y = 0; y < mat.numRows(); y++)
-            for (int x = 0; x < mat.numCols(); x++)
-                cells[y + 1][x + 1] = String.format(elementFormat, mat.get(idx[y], idx[x]));
+
+        final List<T> labels = getLabels();
+        final int size = labels.size();
+
+        for (int x = 0; x < size; x++)
+            cells[0][x + 1] = formatLabel(labels.get(x));
+        for (int y = 0; y < size; y++)
+            cells[y + 1][0] = formatLabel(labels.get(y));
+
+        for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+                cells[y + 1][x + 1] = String.format(ELEMENT_FORMAT, getCount(labels.get(y), labels.get(x)));
 
         // Calculate the max widths for each column
         final int[] widths = new int[cells[0].length];
@@ -246,44 +337,32 @@ public class ConfusionMatrix<T> {
                 widths[x] = Math.max(widths[x], cells[y][x].length());
 
         // Build a formatter for the whole row
-        final StringBuilder rowFormatBuilder = new StringBuilder();
+        final Formatter rowFormatter = new Formatter(new StringBuilder(), locale);
         for (int x = 0; x < cells[0].length; x++)
-            rowFormatBuilder.append(String.format("%%%ds", widths[x] + 1));
-        rowFormatBuilder.append(String.format("%n"));
-        final String rowFormat = rowFormatBuilder.toString();
+            rowFormatter.format("%%%d$%ds", x + 1, widths[x] + 1);
+        rowFormatter.format("%n");
+
+        final String rowFormat = rowFormatter.toString();
 
         // Write each row
-        final StringBuilder tableBuilder = new StringBuilder();
+        final Formatter tableFormatter = new Formatter(dst, locale);
         for (int y = 0; y < cells.length; y++)
-            tableBuilder.append(String.format(rowFormat, cells[y]));
-
-        return tableBuilder.toString();
+            tableFormatter.format(rowFormat, cells[y]);
     }
 
-    protected int[] indexOrder() {
-        // Build a label order mapping so we print everything in the correct order
+    private static class BinaryMatrixLabelOrder<D> implements Comparator<D> {
+        private final D positiveLabel;
 
-        List<Map.Entry<T, Integer>> labelEntries = Lists.newArrayList(labelIndexMap.entrySet());
+        public BinaryMatrixLabelOrder(D positiveLabel) {
+            this.positiveLabel = checkNotNull(positiveLabel, "positiveLabel");
+        }
 
-        Collections.sort(labelEntries, new Comparator<Map.Entry<T, Integer>>() {
-            @Override
-            public int compare(Map.Entry<T, Integer> o1, Map.Entry<T, Integer> o2) {
-                return labelOrder.compare(o1.getKey(), o2.getKey());
-            }
-        });
-        List<Map.Entry<Integer, Integer>> indexEntries = Lists.transform(labelEntries, new Function<Map.Entry<T, Integer>, Map.Entry<Integer, Integer>>() {
-            final AtomicInteger sortedIndex = new AtomicInteger(0);
-
-            @Nullable
-            @Override
-            public Map.Entry<Integer, Integer> apply(@Nullable Map.Entry<T, Integer> input) {
-                return new AbstractMap.SimpleEntry<Integer, Integer>(sortedIndex.getAndIncrement(), input.getValue());
-            }
-        });
-        final int[] idx = new int[indexEntries.size()];
-        for (Map.Entry<Integer, Integer> entry : indexEntries)
-            idx[entry.getKey()] = entry.getValue();
-        return idx;
+        @Override
+        public int compare(final D o1, final D o2) {
+            return Integer.compare(
+                    o1.equals(positiveLabel) ? 0 : 1,
+                    o2.equals(positiveLabel) ? 0 : 1);
+        }
     }
 
 

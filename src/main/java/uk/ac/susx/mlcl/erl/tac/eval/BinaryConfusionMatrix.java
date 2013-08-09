@@ -1,43 +1,36 @@
 package uk.ac.susx.mlcl.erl.tac.eval;
 
-import com.google.common.base.Function;
-import com.google.common.collect.BiMap;
-import org.ejml.simple.SimpleMatrix;
+import java.util.Locale;
 
-import java.util.Comparator;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 05/08/2013
-* Time: 14:39
-* To change this template use File | Settings | File Templates.
-*/
-public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
+ * <code>BinaryConfusionMatrix</code> is an adaptor for confusion matrices, adding additional useful methods and
+ * functionality that apply to 2x2 matrices only.
+ */
+public class BinaryConfusionMatrix<T> extends ForwardingConfusionMatrix<T> {
 
     protected static final int POSITIVE_INDEX = 0;
     protected static final int NEGATIVE_INDEX = 1;
 
-    BinaryConfusionMatrix(BiMap<T, Integer> labelIndexMap, SimpleMatrix mat, Comparator<T> labelOrder, Function<T, String> labelFormatter) {
-        super(labelIndexMap, mat, labelOrder, labelFormatter);
-        checkArgument(labelIndexMap.size() == 2);
+    private final T positiveLabel;
+    private final T negativeLabel;
+
+    BinaryConfusionMatrix(final ConfusionMatrix<T> delegate) {
+        super(delegate);
+        positiveLabel = checkNotNull(delegate.getLabels().get(POSITIVE_INDEX));
+        negativeLabel = checkNotNull(delegate.getLabels().get(NEGATIVE_INDEX));
     }
 
-    public T getPositiveLabel() {
-        final int[] idx = indexOrder();
-        return labelIndexMap.inverse().get(idx[POSITIVE_INDEX]);
+    public final T getPositiveLabel() {
+        return positiveLabel;
     }
 
-    public T getNegativeLabel() {
-        final int[] idx = indexOrder();
-        return labelIndexMap.inverse().get(idx[NEGATIVE_INDEX]);
+    public final T getNegativeLabel() {
+        return negativeLabel;
     }
 
-
-
-    public double truePositives() {
+    public long getTruePositiveCount() {
         return getTrueCountFor(getPositiveLabel());
     }
 
@@ -46,11 +39,11 @@ public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
      *
      * @return
      */
-    public double falsePositives() {
+    public long getFalsePositiveCount() {
         return getFalseCountFor(getPositiveLabel());
     }
 
-    public double trueNegatives() {
+    public long getTrueNegativeCount() {
         return getTrueCountFor(getNegativeLabel());
     }
 
@@ -59,23 +52,23 @@ public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
      *
      * @return
      */
-    public double falseNegatives() {
+    public long getFalseNegativeCount() {
         return getFalseCountFor(getNegativeLabel());
     }
 
-    public double predictedPositives() {
+    public long getPredictedPositiveCount() {
         return getPredictedCountFor(getPositiveLabel());
     }
 
-    public double predictedNegatives() {
+    public long getPredictedNegativeCount() {
         return getPredictedCountFor(getNegativeLabel());
     }
 
-    public double actualPositives() {
+    public long getActualPositiveCount() {
         return getActualCountFor(getPositiveLabel());
     }
 
-    public double actualNegatives() {
+    public long getActualNegativeCount() {
         return getActualCountFor(getNegativeLabel());
     }
 
@@ -84,7 +77,7 @@ public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
      *
      * @return
      */
-    public double truePositiveRate() {
+    public double getTruePositiveRate() {
         return getTrueRateFor(getPositiveLabel());
     }
 
@@ -93,7 +86,7 @@ public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
      *
      * @return
      */
-    public double falsePositiveRate() {
+    public double getFalsePositiveRate() {
         return getFalseRateFor(getPositiveLabel());
     }
 
@@ -102,15 +95,15 @@ public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
      *
      * @return
      */
-    public double trueNegativeRate() {
+    public double getTrueNegativeRate() {
         return getTrueRateFor(getNegativeLabel());
     }
 
-    public double falseNegativeRate() {
+    public double getFalseNegativeRate() {
         return getFalseRateFor(getNegativeLabel());
     }
 
-    public double negativePredictiveValue() {
+    public double getNegativePredictiveValue() {
         return getPredictiveValueFor(getNegativeLabel());
     }
 
@@ -119,38 +112,24 @@ public class BinaryConfusionMatrix<T> extends ConfusionMatrix<T> {
      *
      * @return
      */
-    public double positivePredictiveValue() {
+    public double getPositivePredictiveValue() {
         return getPredictiveValueFor(getPositiveLabel());
     }
 
-    public double positiveFScore(double beta) {
+    public double getPositiveFScore(double beta) {
         return getFScoreFor(getPositiveLabel(), beta);
     }
 
-    public double negativeFScore(double beta) {
+    public double getNegativeFScore(double beta) {
         return getFScoreFor(getNegativeLabel(), beta);
     }
 
-    public String getStatsString() {
-        final StringBuilder statsBuilder = new StringBuilder();
-        statsBuilder.append(String.format("Accuracy: %.0f/%.0f = %.2f%% correct%n",
-                getTrueCount(), getGrandTotal(), 100.0 * getAccuracy()));
 
-        statsBuilder.append(String.format("%s Precision: %.0f/%.0f = %.2f%%%n",
-                labelFormatter.apply(getPositiveLabel()), truePositives(), predictedPositives(), 100.0 * positivePredictiveValue()));
-        statsBuilder.append(String.format("%s Recall: %.0f/%.0f = %.2f%%%n",
-                labelFormatter.apply(getPositiveLabel()), truePositives(), actualPositives(), 100.0 * truePositiveRate()));
-        statsBuilder.append(String.format("%s F1-Score: %.2f%%%n",
-                labelFormatter.apply(getPositiveLabel()), 100.0 * positiveFScore(1.0)));
-
-        statsBuilder.append(String.format("%s Precision: %.0f/%.0f = %.2f%%%n",
-                labelFormatter.apply(getNegativeLabel()), trueNegatives(), predictedNegatives(), 100.0 * negativePredictiveValue()));
-        statsBuilder.append(String.format("%s Recall: %.0f/%.0f = %.2f%%%n",
-                labelFormatter.apply(getNegativeLabel()), trueNegatives(), actualNegatives(), 100.0 * trueNegativeRate()));
-        statsBuilder.append(String.format("%s F1-Score: %.2f%%%n",
-                labelFormatter.apply(getNegativeLabel()), 100.0 * negativeFScore(1.0)));
-
-        return statsBuilder.toString();
+    @Override
+    public void appendStats(Appendable dst, Locale locale) {
+        super.appendStats(dst, locale);
+        appendStatsFor(getPositiveLabel(), dst, locale);
+        appendStatsFor(getNegativeLabel(), dst, locale);
     }
 
 }
