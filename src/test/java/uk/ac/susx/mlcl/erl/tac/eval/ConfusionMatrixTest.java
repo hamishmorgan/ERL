@@ -604,7 +604,7 @@ public class ConfusionMatrixTest extends AbstractTest implements Config {
             final String label = getLabels()[i];
             long[][] av1 = getAllVsOnes()[i];
 
-            final BinaryConfusionMatrix<String> binmat = mat.mapAllVersusOne(label, Reducers.sum());
+            final BinaryConfusionMatrix<String> binmat = mat.mapAllVersusOne(label, Reducers.Doubles.sum());
             LOG.debug(String.format("Stats for %s%n%s%s",
                     label,
                     binmat.getTableString(),

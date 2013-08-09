@@ -87,7 +87,7 @@ public class EvaluationTest extends AbstractTest {
             public boolean apply(@Nullable Link input) {
                 return !input.getEntityNodeId().startsWith("NIL");
             }
-        }, "Entity", "Nil", Reducers.sum());
+        }, "Entity", "Nil", Reducers.Doubles.sum());
 
         Assert.assertNotNull("binMatrix", binMatrix);
 //        System.out.println(binMatrix.getStatsString());
@@ -166,7 +166,7 @@ public class EvaluationTest extends AbstractTest {
                 public boolean apply(@Nullable Link input) {
                     return input.getEntityType().equals(label.getEntityType());
                 }
-            }, label.getEntityType().name(), "Other", Reducers.sum());
+            }, label.getEntityType().name(), "Other", Reducers.Doubles.sum());
 
             System.out.println(label.getEntityType().name());
             twoWayMatrix.appendTable(System.out, Locale.getDefault());
