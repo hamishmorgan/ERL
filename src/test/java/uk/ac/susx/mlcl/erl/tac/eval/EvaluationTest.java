@@ -2,12 +2,16 @@ package uk.ac.susx.mlcl.erl.tac.eval;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import nu.xom.ParsingException;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import uk.ac.susx.mlcl.erl.lib.Comparators;
 import uk.ac.susx.mlcl.erl.reduce.Reducers;
 import uk.ac.susx.mlcl.erl.tac.io.LinkIO;
@@ -17,6 +21,7 @@ import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -28,18 +33,44 @@ import java.util.Locale;
  * Time: 14:33
  * To change this template use File | Settings | File Templates.
  */
+@RunWith(Parameterized.class)
 public class EvaluationTest extends AbstractTest {
 
-    List<Link> actual;
-    List<Link> predicted;
+    private final List<Link> actual;
+    private final List<Link> predicted;
+
+    public EvaluationTest(List<Link> actual, List<Link> predicted) {
+        this.actual = actual;
+        this.predicted = predicted;
+    }
+
+    private static List<Link> TAC2012_ACTUAL;
+    private static List<Link> TAC2012_PREDICTED;
+
+    @BeforeClass
+    public static void loadData() throws IOException, ParsingException {
+        final URL actualUrl = Resources.getResource(LinkIO.class, "tac_2012_kbp_english_evaluation_entity_linking_query_types.tab");
+        final URL predictedUrl = Resources.getResource(EvaluationTest.class, "tac_2012_kbp_english_evaluation_entity_linking_predicted_exactmatch.tab");
+        TAC2012_ACTUAL = LinkIO.detectFormat(actualUrl).readAll(actualUrl);
+        TAC2012_PREDICTED = LinkIO.detectFormat(predictedUrl).readAll(predictedUrl);
+    }
+
+    @Parameterized.Parameters(name = "{index}: {0}")
+    public static Collection<Object[]> data() throws IOException, ParsingException {
+        ImmutableList.Builder<Object[]> data = ImmutableList.builder();
+
+        data.add(new Object[]{
+                TAC2012_ACTUAL,
+                TAC2012_PREDICTED
+        });
+
+
+        return data.build();
+    }
 
     @Before
     public void foo() throws IOException, ParsingException {
-        final URL actualUrl = Resources.getResource(LinkIO.class, "tac_2012_kbp_english_evaluation_entity_linking_query_types.tab");
-        final URL predictedUrl = Resources.getResource(this.getClass(), "tac_2012_kbp_english_evaluation_entity_linking_predicted_exactmatch.tab");
 
-        actual = LinkIO.detectFormat(actualUrl).readAll(actualUrl);
-        predicted = LinkIO.detectFormat(predictedUrl).readAll(predictedUrl);
     }
 
     /**

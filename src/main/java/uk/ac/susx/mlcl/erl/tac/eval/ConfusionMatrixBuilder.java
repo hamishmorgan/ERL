@@ -100,7 +100,7 @@ public class ConfusionMatrixBuilder<T> {
 
     public ConfusionMatrix<T> build() {
 
-        final BiMap<T, Integer> labelIndex = ImmutableBiMap.copyOf(labelIndexMap);
+        BiMap<T, Integer> labelIndex = ImmutableBiMap.copyOf(labelIndexMap);
         checkState(!labelIndex.isEmpty());
 
         final Function<T, String> labelFormatter;
@@ -143,6 +143,9 @@ public class ConfusionMatrixBuilder<T> {
             default:
                 throw new AssertionError("Unknown label order: " + labelOrder);
         }
+
+//        labelIndex = ImmutableBiMap.copyOf(ImmutableSortedMap.copyOf(labelIndexMap, labelComparator));
+
 
         final int size = labelIndex.size();
         long[][] array = new long[size][size];
