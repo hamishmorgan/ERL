@@ -3,19 +3,22 @@ package uk.ac.susx.mlcl.erl.reduce;
 import javax.annotation.Nonnull;
 import java.util.Iterator;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * Created with IntelliJ IDEA.
- * User: hiam20
- * Date: 05/08/2013
- * Time: 10:26
- * To change this template use File | Settings | File Templates.
+ * The <tt>Reductor</tt> class provides an adapter of {@link Reducer} operations to applied {@link Iterable} data types. Where
+ * the {@link Reducer} interface defines a single operation the <tt>Reductor</tt> applies that operation to a full
+ * sequence.
  */
 public class Reductor<A, T> {
 
     private final Reducer<A, T> worker;
 
-    public Reductor(Reducer<A, T> worker) {
-        this.worker = worker;
+    /**
+     * @param worker
+     */
+    public Reductor(@Nonnull final Reducer<A, T> worker) {
+        this.worker = checkNotNull(worker, "worker");
     }
 
     /**
@@ -46,12 +49,17 @@ public class Reductor<A, T> {
         return new Reductor<T, T>(reducer).fold(itr.next(), itr);
     }
 
+    /**
+     * @param rval
+     * @param itr
+     * @return
+     */
     public A fold(final A rval, @Nonnull final Iterator<T> itr) {
         A val = rval;
-        while (itr.hasNext()) {
+        while (itr.hasNext())
             val = worker.foldIn(val, itr.next());
-        }
         return val;
     }
+
 
 }

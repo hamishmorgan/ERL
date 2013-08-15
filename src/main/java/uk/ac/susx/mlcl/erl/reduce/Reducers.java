@@ -17,15 +17,16 @@ public class Reducers {
 
     @Nonnull
     public static <T> Reducer<Map<Integer, T>, T> enumerate() {
+
         return new Reducer<Map<Integer, T>, T>() {
 
             private final AtomicInteger nextIndex = new AtomicInteger(0);
 
             @Nonnull
             @Override
-            public Map<Integer, T> foldIn(Map<Integer, T> accum, T next) {
-                accum.put(nextIndex.getAndIncrement(), next);
-                return accum;
+            public Map<Integer, T> foldIn(Map<Integer, T> accumulator, T next) {
+                accumulator.put(nextIndex.getAndIncrement(), next);
+                return accumulator;
             }
         };
     }
@@ -36,8 +37,8 @@ public class Reducers {
             return new Reducer<String, CharSequence>() {
                 @Nonnull
                 @Override
-                public String foldIn(String accum, CharSequence next) {
-                    return accum + next;
+                public String foldIn(String accumulator, CharSequence next) {
+                    return accumulator + next;
                 }
             };
         }
@@ -47,8 +48,8 @@ public class Reducers {
             return new Reducer<StringBuilder, CharSequence>() {
                 @Nonnull
                 @Override
-                public StringBuilder foldIn(StringBuilder accum, CharSequence next) {
-                    return accum.append(next);
+                public StringBuilder foldIn(StringBuilder accumulator, CharSequence next) {
+                    return accumulator.append(next);
                 }
             };
         }
@@ -58,9 +59,9 @@ public class Reducers {
             return new Reducer<Appendable, CharSequence>() {
                 @Nonnull
                 @Override
-                public Appendable foldIn(Appendable accum, CharSequence next) {
+                public Appendable foldIn(Appendable accumulator, CharSequence next) {
                     try {
-                        return accum.append(next);
+                        return accumulator.append(next);
                     } catch (IOException e) {
                         // XXX: This obviously isn't good
                         throw new RuntimeException(e);
@@ -77,8 +78,8 @@ public class Reducers {
             return new Reducer<T, T>() {
                 @Nonnull
                 @Override
-                public T foldIn(T accum, T next) {
-                    return accum.compareTo(next) >= 0 ? accum : next;
+                public T foldIn(T accumulator, T next) {
+                    return accumulator.compareTo(next) >= 0 ? accumulator : next;
                 }
             };
         }
@@ -88,8 +89,8 @@ public class Reducers {
             return new Reducer<T, T>() {
                 @Nonnull
                 @Override
-                public T foldIn(T accum, T next) {
-                    return accum.compareTo(next) <= 0 ? accum : next;
+                public T foldIn(T accumulator, T next) {
+                    return accumulator.compareTo(next) <= 0 ? accumulator : next;
                 }
             };
         }
@@ -101,8 +102,8 @@ public class Reducers {
             return new Reducer<Long, Long>() {
                 @Nonnull
                 @Override
-                public Long foldIn(Long accum, Long next) {
-                    return accum + next;
+                public Long foldIn(Long accumulator, Long next) {
+                    return accumulator + next;
                 }
             };
         }
@@ -112,8 +113,8 @@ public class Reducers {
             return new Reducer<Long, Long>() {
                 @Nonnull
                 @Override
-                public Long foldIn(Long accum, Long next) {
-                    return accum * next / gcd(accum, next);
+                public Long foldIn(Long accumulator, Long next) {
+                    return accumulator * next / gcd(accumulator, next);
                 }
 
                 private long gcd(long a, long b) {
@@ -132,8 +133,8 @@ public class Reducers {
             return new Reducer<Long, Long>() {
                 @Nonnull
                 @Override
-                public Long foldIn(Long accum, Long next) {
-                    return accum ^ next;
+                public Long foldIn(Long accumulator, Long next) {
+                    return accumulator ^ next;
                 }
             };
         }
@@ -145,8 +146,8 @@ public class Reducers {
             return new Reducer<Boolean, Boolean>() {
                 @Nonnull
                 @Override
-                public Boolean foldIn(Boolean accum, Boolean next) {
-                    return accum && next;
+                public Boolean foldIn(Boolean accumulator, Boolean next) {
+                    return accumulator && next;
                 }
             };
         }
@@ -156,8 +157,8 @@ public class Reducers {
             return new Reducer<Boolean, Boolean>() {
                 @Nonnull
                 @Override
-                public Boolean foldIn(Boolean accum, Boolean next) {
-                    return accum || next;
+                public Boolean foldIn(Boolean accumulator, Boolean next) {
+                    return accumulator || next;
                 }
             };
         }
@@ -167,8 +168,8 @@ public class Reducers {
             return new Reducer<Boolean, Boolean>() {
                 @Nonnull
                 @Override
-                public Boolean foldIn(Boolean accum, Boolean next) {
-                    return accum ^ next;
+                public Boolean foldIn(Boolean accumulator, Boolean next) {
+                    return accumulator ^ next;
                 }
             };
         }
@@ -180,8 +181,8 @@ public class Reducers {
             return new Reducer<Double, Double>() {
                 @Nonnull
                 @Override
-                public Double foldIn(Double accum, Double next) {
-                    return accum + next;
+                public Double foldIn(Double accumulator, Double next) {
+                    return accumulator + next;
                 }
             };
         }
@@ -191,8 +192,8 @@ public class Reducers {
             return new Reducer<Double, Double>() {
                 @Nonnull
                 @Override
-                public Double foldIn(Double accum, Double next) {
-                    return accum * next;
+                public Double foldIn(Double accumulator, Double next) {
+                    return accumulator * next;
                 }
             };
         }
@@ -205,9 +206,9 @@ public class Reducers {
             return new Reducer<C, T>() {
                 @Nonnull
                 @Override
-                public C foldIn(C accum, T next) {
-                    accum.add(next);
-                    return accum;
+                public C foldIn(C accumulator, T next) {
+                    accumulator.add(next);
+                    return accumulator;
                 }
             };
         }
@@ -217,9 +218,9 @@ public class Reducers {
             return new Reducer<A, T>() {
                 @Nonnull
                 @Override
-                public A foldIn(A accum, T next) {
-                    accum.addAll(next);
-                    return accum;
+                public A foldIn(A accumulator, T next) {
+                    accumulator.addAll(next);
+                    return accumulator;
                 }
             };
         }
@@ -232,8 +233,8 @@ public class Reducers {
             return new Reducer<Set<T>, Set<T>>() {
                 @Nonnull
                 @Override
-                public Set<T> foldIn(Set<T> accum, Set<T> next) {
-                    return com.google.common.collect.Sets.union(accum, next);
+                public Set<T> foldIn(Set<T> accumulator, Set<T> next) {
+                    return com.google.common.collect.Sets.union(accumulator, next);
                 }
             };
         }
@@ -243,8 +244,8 @@ public class Reducers {
             return new Reducer<Set<T>, Set<T>>() {
                 @Nonnull
                 @Override
-                public Set<T> foldIn(Set<T> accum, Set<T> next) {
-                    return com.google.common.collect.Sets.intersection(accum, next);
+                public Set<T> foldIn(Set<T> accumulator, Set<T> next) {
+                    return com.google.common.collect.Sets.intersection(accumulator, next);
                 }
             };
         }
