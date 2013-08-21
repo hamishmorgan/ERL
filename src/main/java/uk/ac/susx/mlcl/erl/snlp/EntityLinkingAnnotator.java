@@ -2,7 +2,7 @@
  * Copyright (c) 2012-2013, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.linker;
+package uk.ac.susx.mlcl.erl.snlp;
 
 import com.google.api.services.freebase.Freebase2;
 import com.google.common.collect.Lists;
@@ -19,7 +19,7 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.MiscUtil;
-import uk.ac.susx.mlcl.erl.snlp.AbstractAnnotatorFactory;
+import uk.ac.susx.mlcl.erl.linker.*;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

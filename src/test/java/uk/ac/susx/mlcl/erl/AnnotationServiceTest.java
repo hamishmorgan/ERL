@@ -8,7 +8,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Assert;
 import org.junit.Test;
-import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
+import uk.ac.susx.mlcl.erl.snlp.EntityLinkingAnnotator;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import javax.annotation.Nonnull;

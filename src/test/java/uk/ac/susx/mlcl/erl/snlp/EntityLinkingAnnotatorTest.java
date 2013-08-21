@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.linker;
+package uk.ac.susx.mlcl.erl.snlp;
 
 import uk.ac.susx.mlcl.erl.snlp.AnnotationToXML;
 import com.google.common.io.Closeables;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.junit.Test;
+import uk.ac.susx.mlcl.erl.snlp.EntityLinkingAnnotator;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 /**
