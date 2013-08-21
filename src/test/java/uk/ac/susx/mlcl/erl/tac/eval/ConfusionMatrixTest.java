@@ -8,7 +8,7 @@ import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.susx.mlcl.erl.reduce.Reducers;
+import uk.ac.susx.mlcl.erl.lib.reduce.Reducers;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.util.Arrays;

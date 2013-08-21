@@ -1,4 +1,4 @@
-package uk.ac.susx.mlcl.erl.reduce;
+package uk.ac.susx.mlcl.erl.lib.reduce;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A factory for various reduce operations.
  * <p/>
  * Most of these are experiments to see what is possible. The only one actually in use, at time of writing, is the sum
- * operation over doubles: {@link uk.ac.susx.mlcl.erl.reduce.Reducers.Doubles#sum()}}.
+ * operation over doubles: {@link uk.ac.susx.mlcl.erl.lib.reduce.Reducers.Doubles#sum()}}.
  */
 public class Reducers {
 

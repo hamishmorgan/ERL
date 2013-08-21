@@ -7,7 +7,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import uk.ac.susx.mlcl.erl.lib.Functions2;
-import uk.ac.susx.mlcl.erl.reduce.Reducer;
+import uk.ac.susx.mlcl.erl.lib.reduce.Reducer;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;

@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.susx.mlcl.erl.lib.Comparators;
-import uk.ac.susx.mlcl.erl.reduce.Reducers;
+import uk.ac.susx.mlcl.erl.lib.reduce.Reducers;
 import uk.ac.susx.mlcl.erl.tac.io.LinkIO;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
