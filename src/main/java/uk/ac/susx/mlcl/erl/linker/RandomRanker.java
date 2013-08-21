@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Nonnull
 @Immutable
-public final class RandomRanker implements CandidateRanker {
+public final class RandomRanker<Q,L> implements CandidateRanker<Q,L> {
 
     /**
      * the pseudo-random number generator used for re-ranking
@@ -57,9 +57,9 @@ public final class RandomRanker implements CandidateRanker {
     }
 
     @Override
-    public List<String> ranked(final Collection<String> candidates) throws IOException {
+    public List<L> ranked(Q query, final Collection<L> candidates) throws IOException {
         // Shallow the input List
-        final List<String> result = Lists.newArrayList(checkNotNull(candidates, "candidates"));
+        final List<L> result = Lists.newArrayList(checkNotNull(candidates, "candidates"));
 
         // For every element in the list, swap it with a randomly selected element in the tail 
         // (i.e with an element at an index equal to or greater than the current element.)

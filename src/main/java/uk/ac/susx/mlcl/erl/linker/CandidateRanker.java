@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author hiam20
  */
-public interface CandidateRanker {
+public interface CandidateRanker<Q,L> {
 
-    List<String> ranked(Collection<String> candidates) throws IOException;
+    List<L> ranked(Q query, Collection<L> candidates) throws IOException;
 }

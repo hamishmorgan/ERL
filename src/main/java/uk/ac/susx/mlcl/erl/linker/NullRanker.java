@@ -15,10 +15,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author hiam20
  */
-public final class NullRanker implements CandidateRanker {
+public final class NullRanker<Q,L> implements CandidateRanker<Q,L> {
 
     @Override
-    public List<String> ranked(Collection<String> candidates) throws IOException {
+    public List<L> ranked(Q query, Collection<L> candidates) throws IOException {
         return Lists.newArrayList(checkNotNull(candidates, "candidates"));
     }
 }
