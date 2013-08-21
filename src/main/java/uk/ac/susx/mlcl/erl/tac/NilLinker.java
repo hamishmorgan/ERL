@@ -1,5 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac;
 
+import uk.ac.susx.mlcl.erl.linker.Linker;
+import uk.ac.susx.mlcl.erl.tac.Genre;
 import uk.ac.susx.mlcl.erl.tac.kb.EntityType;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
@@ -14,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 * Time: 16:52
 * To change this template use File | Settings | File Templates.
 */
-public class NilLinker implements Linker {
+public class NilLinker implements Linker<Query, Link> {
 
     private final AtomicInteger nextNilId = new AtomicInteger(1);
 
