@@ -1,37 +1,34 @@
 package uk.ac.susx.mlcl.erl.tac.eval;
 
-import uk.ac.susx.mlcl.erl.tac.queries.Output;
 import uk.ac.susx.mlcl.erl.tac.queries.OutputSet;
 
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 /**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 20/08/2013
-* Time: 16:37
-* To change this template use File | Settings | File Templates.
-*/
+ * Created with IntelliJ IDEA.
+ * User: hiam20
+ * Date: 20/08/2013
+ * Time: 16:37
+ * To change this template use File | Settings | File Templates.
+ */
 public class BCubedPlusEvaluation extends BCubedEvaluation {
 
 
-    public BCubedPlusEvaluation(OutputSet sys, OutputSet gold, OutputSet focus) {
+    public BCubedPlusEvaluation(@Nonnull final OutputSet sys, @Nonnull final OutputSet gold,
+                                @Nonnull final Collection<String> focus) {
         super(sys, gold, focus);
     }
 
+    public BCubedPlusEvaluation(@Nonnull final OutputSet systemOutput, @Nonnull final OutputSet goldStandard) {
+        super(systemOutput, goldStandard);
+    }
+
     private static final boolean sameLinking(String el_a, String el_b, OutputSet sys, OutputSet gold) {
-
-        Map<String, Output> system_el2kbid = sys.getMentionIndex();
-        Map<String, Output> gold_el2kbid = gold.getMentionIndex();
-        String sys_el_a_id = system_el2kbid.get(el_a).getKbId();
-        String sys_el_b_id = system_el2kbid.get(el_b).getKbId();
-        String gol_el_a_id = gold_el2kbid.get(el_a).getKbId();
-        String gol_el_b_id = gold_el2kbid.get(el_b).getKbId();
-
-        if (sys_el_a_id.startsWith(NIL_LINK_PREFIX)) sys_el_a_id = NIL_LINK_PREFIX;
-        if (sys_el_b_id.startsWith(NIL_LINK_PREFIX)) sys_el_b_id = NIL_LINK_PREFIX;
-        if (gol_el_a_id.startsWith(NIL_LINK_PREFIX)) gol_el_a_id = NIL_LINK_PREFIX;
-        if (gol_el_b_id.startsWith(NIL_LINK_PREFIX)) gol_el_b_id = NIL_LINK_PREFIX;
+        final String sys_el_a_id = normaliseNil(sys.getKbIdForMention(el_a));
+        final String sys_el_b_id = normaliseNil(sys.getKbIdForMention(el_b));
+        final String gol_el_a_id = normaliseNil(gold.getKbIdForMention(el_a));
+        final String gol_el_b_id = normaliseNil(gold.getKbIdForMention(el_b));
 
         return sys_el_a_id.equals(sys_el_b_id)
                 && sys_el_b_id.equals(gol_el_a_id)
@@ -39,9 +36,8 @@ public class BCubedPlusEvaluation extends BCubedEvaluation {
     }
 
     @Override
-    protected boolean correctness(String el_a, String el_b, OutputSet sys, OutputSet gold) {
-        return inSameSet(el_a, el_b, sys.getMentionIndex())
-                && inSameSet(el_a, el_b, gold.getMentionIndex())
+    protected boolean isCorrect(String el_a, String el_b, OutputSet sys, OutputSet gold) {
+        return sys.inSameCluster(el_a, el_b) && gold.inSameCluster(el_a, el_b)
                 && sameLinking(el_a, el_b, sys, gold);
     }
 }

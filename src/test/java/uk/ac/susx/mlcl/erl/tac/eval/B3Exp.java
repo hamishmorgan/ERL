@@ -26,7 +26,7 @@ public class B3Exp {
         final OutputSet gold = io.readAll(Resources.getResource(B3Exp.class, goldStandardFilename));
         final OutputSet focus = io.readAll(Resources.getResource(B3Exp.class, focusFilename));
 
-        System.out.printf("%d queries evaluated in focus subset: %s%n", focus.getMentionCount(), focus.getName());
+        System.out.printf("%d queries evaluated in focusMentions subset: %s%n", focus.getMentionCount(), focus.getName());
         System.out.printf("%d queries in gold standard environment: %s%n", gold.getMentionCount(), gold.getName());
 
         ImmutableList.Builder<OutputSet> systemOutputSets = ImmutableList.builder();

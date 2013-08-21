@@ -52,8 +52,16 @@ public class OutputSet extends AbstractList<Output> {
         return name;
     }
 
+    public boolean inSameCluster(String el_a, String el_b) {
+        return getKbIdForMention(el_a).equals(getKbIdForMention(el_b));
+    }
+
     public List<Output> getLinks() {
         return links;
+    }
+
+    public String getKbIdForMention(String mentionId) {
+        return mentionIndex.get(mentionId).getKbId();
     }
 
     public Map<String, Set<Output>> getKbIdClusters() {

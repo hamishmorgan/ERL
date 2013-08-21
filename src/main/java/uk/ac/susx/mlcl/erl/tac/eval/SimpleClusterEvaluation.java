@@ -2,44 +2,85 @@ package uk.ac.susx.mlcl.erl.tac.eval;
 
 import uk.ac.susx.mlcl.erl.tac.queries.OutputSet;
 
-/**
-* Created with IntelliJ IDEA.
-* User: hiam20
-* Date: 20/08/2013
-* Time: 16:37
-* To change this template use File | Settings | File Templates.
-*/
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import java.util.Collection;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+
 public class SimpleClusterEvaluation {
 
-    public static final String NIL_LINK_PREFIX = "NIL";
-    protected final OutputSet sys;
-    protected final OutputSet gold;
-    protected final OutputSet focus;
+    private static final String NIL_LINK_PREFIX = "NIL";
+    @Nonnull
+    private final OutputSet systemOutput;
+    @Nonnull
+    private final OutputSet goldStandard;
+    @Nonnull
+    private final Collection<String> focusMentions;
 
-    public SimpleClusterEvaluation(OutputSet sys, OutputSet gold, OutputSet focus) {
-        this.sys = sys;
-        this.gold = gold;
-        this.focus = focus;
+    public SimpleClusterEvaluation(
+            @Nonnull final OutputSet systemOutput, @Nonnull final OutputSet goldStandard, @Nonnull final Collection<String> focus) {
+        this.systemOutput = checkNotNull(systemOutput, "systemOutput");
+        this.goldStandard = checkNotNull(goldStandard, "goldStandard");
+        this.focusMentions = checkNotNull(focus, "focusMentions");
     }
 
-    public int getTrueCount() {
-        int num_correct_samples = 0;
-        for (String el : gold.getMentionIds()) {
-            String gold_kbid = gold.getMentionIndex().get(el).getKbId();
-            if (gold_kbid.startsWith(NIL_LINK_PREFIX))
-                gold_kbid = NIL_LINK_PREFIX;
-            String sys_kbid = sys.getMentionIndex().get(el).getKbId();
-            if (sys_kbid.startsWith(NIL_LINK_PREFIX))
-                sys_kbid = NIL_LINK_PREFIX;
+    /**
+     * Construct a new cluster evaluation where the focus mention ids are those in the gold standard output.
+     *
+     * @param systemOutput
+     * @param goldStandard
+     */
+    public SimpleClusterEvaluation(@Nonnull final OutputSet systemOutput, @Nonnull final OutputSet goldStandard) {
+        this(systemOutput, goldStandard, goldStandard.getMentionIds());
+    }
+
+    @Nonnull
+    protected static String normaliseNil(@Nonnull final String kbId) {
+        return kbId.startsWith(NIL_LINK_PREFIX) ? NIL_LINK_PREFIX : kbId;
+    }
+
+    @Nonnull
+    public OutputSet getSystemOutput() {
+        return systemOutput;
+    }
+
+    @Nonnull
+    public OutputSet getGoldStandard() {
+        return goldStandard;
+    }
+
+    @Nonnull
+    public Collection<String> getFocusMentions() {
+        return focusMentions;
+    }
+
+    @Nonnegative
+    public final int getTrueCount() {
+        int correctCount = 0;
+        for (final String mentionId : focusMentions) {
+            final String gold_kbid = normaliseNil(goldStandard.getKbIdForMention(mentionId));
+            final String sys_kbid = normaliseNil(systemOutput.getKbIdForMention(mentionId));
             if (gold_kbid.equals(sys_kbid))
-                ++num_correct_samples;
+                ++correctCount;
         }
-        return num_correct_samples;
+        return correctCount;
     }
 
-    // kbp2010_microaverage
-    public final double accuracy() {
-        return getTrueCount() / (double) gold.getMentionCount();
+    @Nonnegative
+    public final int getTotalCount() {
+        return focusMentions.size();
+    }
+
+    @Nonnegative
+    public final int getFalseCount() {
+        return getTotalCount() - getTrueCount();
+    }
+
+    @Nonnegative
+    public final double getAccuracy() {
+        return getTrueCount() / (double) getTotalCount();
     }
 
 }
