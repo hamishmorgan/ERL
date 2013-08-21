@@ -23,9 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
  */
 @Immutable
-public class GeneratorCollection
-        extends AbstractCollection<CandidateGenerator>
-        implements CandidateGenerator {
+public class GeneratorCollection<Q,L>
+        extends AbstractCollection<CandidateGenerator<Q,L>>
+        implements CandidateGenerator<Q,L> {
 
     /**
      * Control the way candidates are combined from the child generators.
@@ -35,10 +35,12 @@ public class GeneratorCollection
          * The child generators are queries in order. The first non-empty result is returned.
          */
         FIRST {
-            Set<String> findCandidates(@Nonnull final List<CandidateGenerator> generators, final String mention)
+            @Nonnull
+            @Override
+            <Q, L> Set<L> findCandidates(@Nonnull final List<CandidateGenerator<Q,L>> generators, @Nonnull final Q mention)
                     throws IOException {
-                for (CandidateGenerator generator : generators) {
-                    Set<String> result = generator.findCandidates(mention);
+                for (CandidateGenerator<Q,L> generator : generators) {
+                    Set<L> result = generator.findCandidates(mention);
                     if (!result.isEmpty())
                         return result;
                 }
@@ -49,11 +51,12 @@ public class GeneratorCollection
          * All child generators are queries, and those candidates common to all generators are returned.
          */
         INTERSECTION {
-            @Nullable
-            Set<String> findCandidates(@Nonnull final List<CandidateGenerator> generators, final String mention)
+            @Nonnull
+            @Override
+            <Q, L> Set<L> findCandidates(@Nonnull final List<CandidateGenerator<Q,L>> generators, @Nonnull final Q mention)
                     throws IOException {
-                Set<String> result = null;
-                for (CandidateGenerator generator : generators) {
+                Set<L> result = null;
+                for (CandidateGenerator<Q,L> generator : generators) {
                     if (result == null)
                         result = generator.findCandidates(mention);
                     else
@@ -70,21 +73,26 @@ public class GeneratorCollection
          * All child generators are queries, and all unique those candidates are returned.
          */
         UNION {
-            Set<String> findCandidates(@Nonnull final List<CandidateGenerator> generators, final String mention)
+            @Nonnull
+            @Override
+            <Q, L>  Set<L> findCandidates(@Nonnull final List<CandidateGenerator<Q,L>> generators, @Nonnull final Q mention)
                     throws IOException {
-                Set<String> result = ImmutableSet.of();
-                for (CandidateGenerator generator : generators)
+                Set<L> result = ImmutableSet.of();
+                for (CandidateGenerator<Q,L> generator : generators)
                     result = Sets.union(result, generator.findCandidates(mention));
                 return result;
             }
+
         };
 
-        @Nullable
-        abstract Set<String> findCandidates(List<CandidateGenerator> generators, final String mention)
+        @Nonnull
+        abstract <Q,L> Set<L> findCandidates(@Nonnull List<CandidateGenerator<Q,L>> generators, @Nonnull final Q mention)
                 throws IOException;
     }
 
-    private final List<CandidateGenerator> children;
+    @Nonnull
+    private final List<CandidateGenerator<Q,L>> children;
+    @Nonnull
     private final AggregationMethod aggregationMethod;
 
     /**
@@ -94,7 +102,8 @@ public class GeneratorCollection
      * @param children
      * @param aggregationMethod
      */
-    protected GeneratorCollection(final List<CandidateGenerator> children, final AggregationMethod aggregationMethod) {
+    protected GeneratorCollection(@Nonnull final List<CandidateGenerator<Q,L>> children,
+                                  @Nonnull final AggregationMethod aggregationMethod) {
         this.children = checkNotNull(children, "childrenOf");
         this.aggregationMethod = checkNotNull(aggregationMethod, "aggregationMethod");
     }
@@ -104,45 +113,47 @@ public class GeneratorCollection
         return new Builder();
     }
 
-    public List<CandidateGenerator> getChildren() {
+    @Nonnull
+    public final List<CandidateGenerator<Q,L>> getChildren() {
         return Collections.unmodifiableList(children);
     }
 
-    public AggregationMethod getAggregationMethod() {
+    @Nonnull
+    public final AggregationMethod getAggregationMethod() {
         return aggregationMethod;
     }
 
     @Nullable
     @Override
-    public Set<String> findCandidates(final String mention) throws IOException {
+    public Set<L> findCandidates(@Nonnull final Q mention) throws IOException {
         return aggregationMethod.findCandidates(children, mention);
     }
 
+    @Nonnull
     @Override
-    public Map<String, Set<String>> batchFindCandidates(@Nonnull final Set<String> queries)
+    public Map<Q, Set<L>> batchFindCandidates(@Nonnull final Set<Q> queries)
             throws IOException, ExecutionException {
-        ImmutableMap.Builder<String, Set<String>>  mapBuilder = ImmutableMap.builder();
-        for (String query : queries)
+        ImmutableMap.Builder<Q, Set<L>>  mapBuilder = ImmutableMap.builder();
+        for (Q query : queries)
             mapBuilder.put(query, findCandidates(query));
         return mapBuilder.build();
     }
 
-
     @Nonnull
     @Override
-    public Iterator<CandidateGenerator> iterator() {
+    public final Iterator<CandidateGenerator<Q,L>> iterator() {
         return children.iterator();
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return children.size();
     }
 
-    public static class Builder {
+    public static class Builder<Q,L> {
 
         public static final AggregationMethod DEFAULT_AGGREGATION_MODE = AggregationMethod.FIRST;
-        private final ImmutableList.Builder<CandidateGenerator> children;
+        private final ImmutableList.Builder<CandidateGenerator<Q,L>> children;
         private AggregationMethod aggregationMethod;
 
         public Builder() {
@@ -151,38 +162,38 @@ public class GeneratorCollection
         }
 
         @Nonnull
-        public Builder setAggregationMethod(AggregationMethod aggregationMethod) {
+        public Builder<Q,L> setAggregationMethod(AggregationMethod aggregationMethod) {
             this.aggregationMethod = checkNotNull(aggregationMethod, "aggregationMethod");
             return this;
         }
 
         @Nonnull
-        public Builder addChild(CandidateGenerator generator) {
+        public Builder<Q,L> addChild(CandidateGenerator<Q,L> generator) {
             children.add(generator);
             return this;
         }
 
         @Nonnull
-        public Builder addChildren(CandidateGenerator... generators) {
+        public Builder<Q,L> addChildren(CandidateGenerator<Q,L>... generators) {
             children.add(generators);
             return this;
         }
 
         @Nonnull
-        public Builder addChildren(Iterable<? extends CandidateGenerator> generators) {
+        public Builder<Q,L> addChildren(Iterable<? extends CandidateGenerator<Q,L>> generators) {
             children.addAll(generators);
             return this;
         }
 
         @Nonnull
-        public Builder addChildren(Iterator<? extends CandidateGenerator> generators) {
+        public Builder<Q,L> addChildren(Iterator<? extends CandidateGenerator<Q,L>> generators) {
             children.addAll(generators);
             return this;
         }
 
         @Nonnull
-        public GeneratorCollection build() {
-            return new GeneratorCollection(children.build(), aggregationMethod);
+        public GeneratorCollection<Q,L> build() {
+            return new GeneratorCollection<Q,L>(children.build(), aggregationMethod);
         }
 
     }

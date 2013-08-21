@@ -41,10 +41,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Nonnull
 @NotThreadSafe
-public class CachedCandidateGenerator implements CandidateGenerator {
+public class CachedCandidateGenerator<Q,L> implements CandidateGenerator<Q,L> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CachedCandidateGenerator.class);
-    private final LoadingCache<String, Set<String>> searchCache;
+    private final LoadingCache<Q, Set<L>> searchCache;
 
     /**
      * Protected dependency injection constructor. Use
@@ -52,17 +52,17 @@ public class CachedCandidateGenerator implements CandidateGenerator {
      *
      * @param searchCache
      */
-    protected CachedCandidateGenerator(final LoadingCache<String, Set<String>> searchCache) {
+    protected CachedCandidateGenerator(final LoadingCache<Q, Set<L>> searchCache) {
         this.searchCache = checkNotNull(searchCache, "searchCache");
     }
 
     @Override
-    public Set<String> findCandidates(final String query) throws IOException {
+    public Set<L> findCandidates(final Q query) throws IOException {
         return get(searchCache, query);
     }
 
     @Override
-    public Map<String, Set<String>> batchFindCandidates(Set<String> queries)
+    public Map<Q, Set<L>> batchFindCandidates(Set<Q> queries)
             throws IOException, ExecutionException {
         return searchCache.getAll(queries);
     }
@@ -79,48 +79,42 @@ public class CachedCandidateGenerator implements CandidateGenerator {
     }
 
     @Nonnull
-    public static CandidateGenerator wrap(@Nonnull final CandidateGenerator inner) {
+    public static <Q,L> CandidateGenerator<Q,L> wrap(@Nonnull final CandidateGenerator<Q,L> inner) {
         if (checkNotNull(inner, "inner") instanceof CachedCandidateGenerator) {
             LOG.warn("Ignoring attempt to cache wrap a KnowledgeBase that was already cached.");
             return inner;
         }
 
-        final LoadingCache<String, Set<String>> searchCache;
-        {
-            final Weigher<String, Set<String>> searchWeighter =
-                    new Weigher<String, Set<String>>() {
-                        public int weigh(@Nonnull String key, @Nonnull Set<String> values) {
-                            int sum = (4 * 2) + (2 * key.length());
-                            for (String value : values) {
-                                sum += 4 + 2 * value.length();
-                            }
-                            return sum;
+        final CacheLoader<Q, Set<L>> searchLoader =
+                new CacheLoader<Q, Set<L>>() {
+                    @Nullable
+                    @Override
+                    public Set<L> load(Q key) throws Exception {
+                        return inner.findCandidates(key);
+                    }
+
+                    @Override
+                    public Map<Q, Set<L>> loadAll(Iterable<? extends Q> keys)
+                            throws Exception {
+                        return inner.batchFindCandidates(Sets.newHashSet(keys));
+                    }
+                };
+
+        final Weigher<Q, Set<L>> searchWeighter =
+                    new Weigher<Q, Set<L>>() {
+                        public int weigh(@Nonnull Q key, @Nonnull Set<L> values) {
+                            return 1 + values.size();
 
                         }
                     };
-            final CacheLoader<String, Set<String>> searchLoader =
-                    new CacheLoader<String, Set<String>>() {
-                        @Nullable
-                        @Override
-                        public Set<String> load(String key) throws Exception {
-                            return inner.findCandidates(key);
-                        }
 
-                        @Override
-                        public Map<String, Set<String>> loadAll(Iterable<? extends String> keys)
-                                throws Exception {
-                            return inner.batchFindCandidates(Sets.newHashSet(keys));
-                        }
-                    };
+        final LoadingCache<Q, Set<L>> searchCache  = CacheBuilder
+                .newBuilder()
+                .weigher(searchWeighter)
+                .maximumWeight(1 << 16)
+                .build(searchLoader);
 
-            searchCache = CacheBuilder
-                    .newBuilder()
-                    .weigher(searchWeighter)
-                    .maximumWeight(1 << 20)
-                    .build(searchLoader);
-        }
-
-        return new CachedCandidateGenerator(searchCache);
+        return new CachedCandidateGenerator<Q,L>(searchCache);
 
     }
 }

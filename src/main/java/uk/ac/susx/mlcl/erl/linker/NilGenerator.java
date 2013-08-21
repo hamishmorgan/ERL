@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -16,24 +15,20 @@ import java.util.concurrent.ExecutionException;
  *
  * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
  */
-public class NilGenerator implements CandidateGenerator {
+public class NilGenerator<Q, L> extends AbstractGenerator<Q, L> {
 
-    public NilGenerator() {
+    protected NilGenerator() {
     }
 
+    @Nonnull
+    public static <Q, L> NilGenerator<Q, L> newInstance() {
+        return new NilGenerator<Q, L>();
+    }
+
+    @Nonnull
     @Override
-    public Set<String> findCandidates(String mention) throws IOException {
+    public Set<L> findCandidates(@Nonnull Q mention) throws IOException {
         return ImmutableSet.of();
     }
-
-    @Override
-    public Map<String, Set<String>> batchFindCandidates(@Nonnull Set<String> queries)
-            throws IOException, ExecutionException {
-        ImmutableMap.Builder<String, Set<String>>  mapBuilder = ImmutableMap.builder();
-        for (String query : queries)
-            mapBuilder.put(query, findCandidates(query));
-        return mapBuilder.build();
-    }
-
 
 }

@@ -4,6 +4,7 @@
  */
 package uk.ac.susx.mlcl.erl.linker;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.io.IOException;
@@ -12,9 +13,12 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
- * @author hiam20
+ *
+ * @author Hamish Morgan
+ * @param <Q> Query type
+ * @param <L> Candidate link type
  */
-public interface CandidateGenerator {
+public interface CandidateGenerator<Q,L> {
 
     /**
      * <p/>
@@ -23,8 +27,8 @@ public interface CandidateGenerator {
      * @return List of candidate entity id's matching the given mention
      * @throws IOException
      */
-    @Nullable
-    Set<String> findCandidates(String mention) throws IOException;
+    @Nonnull
+    Set<L> findCandidates(@Nonnull Q mention) throws IOException;
 
     /**
      * Query the knowledge base with the given list of plain text string, as a single batch
@@ -35,6 +39,7 @@ public interface CandidateGenerator {
      * @throws IOException
      * @throws ExecutionException
      */
-    Map<String, Set<String>> batchFindCandidates(Set<String> queries)
+    @Nonnull
+    Map<Q, Set<L>> batchFindCandidates(@Nonnull Set<Q> queries)
             throws IOException, ExecutionException;
 }

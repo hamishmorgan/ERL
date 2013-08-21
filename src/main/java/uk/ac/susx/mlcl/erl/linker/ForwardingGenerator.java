@@ -1,5 +1,6 @@
 package uk.ac.susx.mlcl.erl.linker;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.io.IOException;
@@ -16,8 +17,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
  */
-public abstract class ForwardingGenerator implements CandidateGenerator {
+public abstract class ForwardingGenerator<Q,L> extends AbstractGenerator<Q,L> {
 
+    @Nonnull
     private final CandidateGenerator delegate;
 
     /**
@@ -25,26 +27,21 @@ public abstract class ForwardingGenerator implements CandidateGenerator {
      *
      * @param delegate inner <tt>CandidateGenerator</tt> instance
      */
-    protected ForwardingGenerator(final CandidateGenerator delegate) {
+    protected ForwardingGenerator(@Nonnull final CandidateGenerator<Q,L> delegate) {
         this.delegate = checkNotNull(delegate, "delegate");
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Set<String> findCandidates(final String mention) throws IOException {
+    public Set<L> findCandidates(@Nonnull final Q mention) throws IOException {
         return delegate.findCandidates(mention);
-    }
-
-    @Override
-    public Map<String, Set<String>> batchFindCandidates(final Set<String> queries)
-            throws IOException, ExecutionException {
-        return delegate.batchFindCandidates(queries);
     }
 
     /**
      * @return inner <tt>CandidateGenerator</tt> instance
      */
-    public final CandidateGenerator getDelegate() {
+    @Nonnull
+    public final CandidateGenerator<Q,L> getDelegate() {
         return delegate;
     }
 }

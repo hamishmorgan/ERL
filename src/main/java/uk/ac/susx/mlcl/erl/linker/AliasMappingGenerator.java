@@ -25,12 +25,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
  */
-public class AliasMappingGenerator extends ForwardingGenerator {
+public class AliasMappingGenerator<Q,L> extends ForwardingGenerator<Q,L> {
 
-    private final Map<String, String> aliasMap;
+    private final Map<Q, Q> aliasMap;
     private final boolean recusiveMapping;
 
-    public AliasMappingGenerator(final CandidateGenerator delegate, final Map<String, String> aliasMap, boolean recusiveMapping) {
+    public AliasMappingGenerator(final CandidateGenerator<Q,L> delegate, final Map<Q, Q> aliasMap, boolean recusiveMapping) {
         super(delegate);
         this.aliasMap = checkNotNull(aliasMap, "aliasMap");
         this.recusiveMapping = recusiveMapping;
@@ -38,10 +38,10 @@ public class AliasMappingGenerator extends ForwardingGenerator {
 
     @Nullable
     @Override
-    public Set<String> findCandidates(final String mention) throws IOException {
+    public Set<L> findCandidates(final Q mention) throws IOException {
         if (recusiveMapping) {
-            final Deque<String> seen = new ArrayDeque<String>();
-            String query = mention;
+            final Deque<Q> seen = new ArrayDeque<Q>();
+            Q query = mention;
 
             // Repeatedly map the query to it's alias, until either it isn't found or a loop is detected.
             // All discovered aliases are stored in the seen stack, starting with the original mention
@@ -57,26 +57,16 @@ public class AliasMappingGenerator extends ForwardingGenerator {
             }
 
             // Pop elements of the stack until the terminating query is discovered
-            Set<String> result = ImmutableSet.of();
+            Set<L> result = ImmutableSet.of();
             while (!seen.isEmpty() && !seen.peek().equals(query))
                 result = Sets.union(result, super.findCandidates(seen.pop()));
             result = Sets.union(result, super.findCandidates(query));
             return result;
         } else {
             return aliasMap.containsKey(mention)
-                    ? Collections.singleton(aliasMap.get(mention))
+                    ? super.findCandidates(aliasMap.get(mention))
                     : super.findCandidates(mention);
         }
     }
-
-    @Override
-    public Map<String, Set<String>> batchFindCandidates(@Nonnull Set<String> queries)
-            throws IOException, ExecutionException {
-        ImmutableMap.Builder<String, Set<String>> mapBuilder = ImmutableMap.builder();
-        for (String query : queries)
-            mapBuilder.put(query, findCandidates(query));
-        return mapBuilder.build();
-    }
-
 
 }

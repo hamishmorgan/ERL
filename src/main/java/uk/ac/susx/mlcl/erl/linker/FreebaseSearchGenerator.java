@@ -24,23 +24,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Hamish Morgan
  */
 @Immutable
-@Nonnull
-public class FreebaseSearchGenerator implements CandidateGenerator {
+public class FreebaseSearchGenerator implements CandidateGenerator<String,String> {
 
+    @Nonnull
     private final Freebase2 freebase;
 
-    public FreebaseSearchGenerator(Freebase2 freebase) {
+    public FreebaseSearchGenerator(@Nonnull Freebase2 freebase) {
         checkNotNull(freebase, "freebase");
         this.freebase = freebase;
     }
 
+    @Nonnull
     @Override
-    public Set<String> findCandidates(String mention)
+    public Set<String> findCandidates(@Nonnull String mention)
             throws IOException {
         checkNotNull(mention, "mention");
         return ImmutableSet.copyOf(freebase.searchGetIds(mention));
     }
 
+    @Nonnull
     @Override
     public Map<String, Set<String>> batchFindCandidates(@Nonnull Set<String> mentions)
             throws IOException, ExecutionException {
