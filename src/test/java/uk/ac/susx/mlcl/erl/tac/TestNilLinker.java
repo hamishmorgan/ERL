@@ -57,7 +57,7 @@ public class TestNilLinker {
 
         final List<Query> queries;
         {
-            Linker instance = new NilLinker();
+            Linker<Query,Link> instance = new NilLinker();
 
             final QueryIO qio = QueryIO.detectFormat(srcQueries);
             final LinkIO lio = new Tac2012LinkIO();

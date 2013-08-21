@@ -28,7 +28,7 @@ public class LinkQueries implements Runnable {
     /**
      *
      */
-    private final Linker linker = new NilLinker();
+    private final Linker<Query,Link> linker = new NilLinker();
     /**
      *
      */

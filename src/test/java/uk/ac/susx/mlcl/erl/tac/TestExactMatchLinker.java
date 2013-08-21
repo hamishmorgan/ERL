@@ -73,7 +73,7 @@ public class TestExactMatchLinker extends AbstractTest {
 
         final List<Query> queries;
         {
-            Linker instance = new ExactMatchLinker(kb);
+            Linker<Query,Link> instance = new ExactMatchLinker(kb);
 
             final QueryIO qio = QueryIO.detectFormat(srcQueries);
             final LinkIO lio = new Tac2012LinkIO();

@@ -35,14 +35,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class EntityLinkingAnnotator implements Annotator {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Freebase2.class);
-    private final CandidateGenerator generator;
-    private final CandidateRanker ranker;
+    private final CandidateGenerator<String,String> generator;
+    private final CandidateRanker<String,String> ranker;
 
     /**
      * @param generator
      * @param ranker
      */
-    public EntityLinkingAnnotator(CandidateGenerator generator, CandidateRanker ranker) {
+    public EntityLinkingAnnotator(CandidateGenerator<String,String> generator, CandidateRanker<String,String> ranker) {
         this.generator = checkNotNull(generator, "generator");
         this.ranker = checkNotNull(ranker, "ranker");
     }
@@ -112,7 +112,7 @@ public class EntityLinkingAnnotator implements Annotator {
                 Set<String> unrankedCandidateIds = results.get(query);
 
 
-                List<String> candidateIds = ranker.ranked(unrankedCandidateIds);
+                List<String> candidateIds = ranker.ranked(query, unrankedCandidateIds);
 
 
                 // TODO: Implement a more sensible method of handling NILs
