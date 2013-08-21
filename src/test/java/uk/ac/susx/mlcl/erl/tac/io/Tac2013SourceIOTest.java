@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import uk.ac.susx.mlcl.erl.lib.IOUtils;
+import uk.ac.susx.mlcl.lib.IOUtils;
 import uk.ac.susx.mlcl.erl.tac.source.ForumDocument;
 import uk.ac.susx.mlcl.erl.tac.source.NewswireDocument;
 import uk.ac.susx.mlcl.erl.tac.source.WebDocument;

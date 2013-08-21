@@ -4,7 +4,6 @@
  */
 package uk.ac.susx.mlcl.erl.snlp;
 
-import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
 import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetBeginAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetEndAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -15,10 +14,6 @@ import java.util.Properties;
 import nu.xom.Document;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 

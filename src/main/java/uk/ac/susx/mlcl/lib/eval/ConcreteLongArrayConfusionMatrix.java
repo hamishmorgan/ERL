@@ -1,12 +1,11 @@
-package uk.ac.susx.mlcl.erl.tac.eval;
+package uk.ac.susx.mlcl.lib.eval;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
-import org.ejml.simple.SimpleMatrix;
-import uk.ac.susx.mlcl.erl.lib.Comparators;
+import uk.ac.susx.mlcl.lib.Comparators;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,7 +15,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * An implementation of {@link uk.ac.susx.mlcl.erl.tac.eval.ConfusionMatrix} backing off to a EJML matrix.
+ * An implementation of {@link ConfusionMatrix} backing off to a EJML matrix.
  */
 class ConcreteLongArrayConfusionMatrix<T> extends ConfusionMatrix<T> {
 

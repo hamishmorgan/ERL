@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator;
 import uk.ac.susx.mlcl.erl.linker.EntityLinkingAnnotator.EntityKbIdAnnotation;
 import uk.ac.susx.mlcl.erl.snlp.*;
-import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
-import uk.ac.susx.mlcl.erl.xml.XMLToStringSerializer;
-import uk.ac.susx.mlcl.erl.xml.XomB;
+import uk.ac.susx.mlcl.erl.snlp.AnnotationToXML;
+import uk.ac.susx.mlcl.lib.xml.XMLToStringSerializer;
+import uk.ac.susx.mlcl.lib.xml.XomB;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

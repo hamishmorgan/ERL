@@ -2,17 +2,13 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.xml;
+package uk.ac.susx.mlcl.lib.xml;
 
-import uk.ac.susx.mlcl.erl.xml.XomB.ElementBuilder;
+import uk.ac.susx.mlcl.lib.xml.XomB.ElementBuilder;
 import java.net.URI;
 import java.nio.charset.Charset;
 import nu.xom.Document;
 import nu.xom.NodeFactory;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**

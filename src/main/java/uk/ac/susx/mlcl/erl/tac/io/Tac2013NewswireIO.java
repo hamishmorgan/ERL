@@ -8,7 +8,7 @@ import nu.xom.Text;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.susx.mlcl.erl.tac.source.NewswireDocument;
-import uk.ac.susx.mlcl.erl.xml.XomUtil;
+import uk.ac.susx.mlcl.lib.xml.XomUtil;
 
 import javax.annotation.Nonnull;
 import java.util.List;

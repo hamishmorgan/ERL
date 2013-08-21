@@ -9,8 +9,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.susx.mlcl.erl.lib.Comparators;
+import uk.ac.susx.mlcl.lib.Comparators;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
+import uk.ac.susx.mlcl.lib.eval.Evaluation;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

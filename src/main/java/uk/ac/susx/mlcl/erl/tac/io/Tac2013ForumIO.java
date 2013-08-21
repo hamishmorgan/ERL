@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import uk.ac.susx.mlcl.erl.tac.source.ForumDocument;
-import uk.ac.susx.mlcl.erl.xml.XomUtil;
+import uk.ac.susx.mlcl.lib.xml.XomUtil;
 
 import javax.annotation.Nonnull;
 

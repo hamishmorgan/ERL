@@ -28,7 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.ac.susx.mlcl.erl.lib;
+package uk.ac.susx.mlcl.lib;
 
 import com.google.common.base.Preconditions;
 import javax.annotation.Nullable;

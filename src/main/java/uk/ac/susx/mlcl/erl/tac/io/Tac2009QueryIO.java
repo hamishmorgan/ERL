@@ -7,8 +7,8 @@ import org.eclipse.jetty.io.WriterOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
-import uk.ac.susx.mlcl.erl.xml.XomB;
-import uk.ac.susx.mlcl.erl.xml.XomUtil;
+import uk.ac.susx.mlcl.lib.xml.XomB;
+import uk.ac.susx.mlcl.lib.xml.XomUtil;
 
 import javax.annotation.Nonnull;
 import java.io.*;

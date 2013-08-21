@@ -1,6 +1,5 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
@@ -12,13 +11,12 @@ import org.apache.commons.logging.LogFactory;
 import org.ccil.cowan.tagsoup.AutoDetector;
 import org.ccil.cowan.tagsoup.Parser;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-import uk.ac.susx.mlcl.erl.lib.Functions2;
-import uk.ac.susx.mlcl.erl.lib.IOUtils;
+import uk.ac.susx.mlcl.lib.Functions2;
+import uk.ac.susx.mlcl.lib.IOUtils;
 import uk.ac.susx.mlcl.erl.tac.source.SourceDocument;
 
 import javax.annotation.Nonnull;

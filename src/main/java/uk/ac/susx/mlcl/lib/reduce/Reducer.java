@@ -1,4 +1,4 @@
-package uk.ac.susx.mlcl.erl.lib.reduce;
+package uk.ac.susx.mlcl.lib.reduce;
 
 import javax.annotation.Nullable;
 

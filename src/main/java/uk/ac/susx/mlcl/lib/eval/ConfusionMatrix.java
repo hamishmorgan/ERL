@@ -1,4 +1,4 @@
-package uk.ac.susx.mlcl.erl.tac.eval;
+package uk.ac.susx.mlcl.lib.eval;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -6,8 +6,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import uk.ac.susx.mlcl.erl.lib.Functions2;
-import uk.ac.susx.mlcl.erl.lib.reduce.Reducer;
+import uk.ac.susx.mlcl.lib.Functions2;
+import uk.ac.susx.mlcl.lib.reduce.Reducer;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;

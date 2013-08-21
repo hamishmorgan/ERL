@@ -13,7 +13,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
-import uk.ac.susx.mlcl.erl.lib.C14nCache;
+import uk.ac.susx.mlcl.lib.C14nCache;
 import uk.ac.susx.mlcl.erl.tac.kb.*;
 
 import javax.annotation.Nonnull;

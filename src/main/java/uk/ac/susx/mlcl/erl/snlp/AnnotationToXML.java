@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.xml;
+package uk.ac.susx.mlcl.erl.snlp;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
@@ -27,11 +27,11 @@ import nu.xom.*;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.susx.mlcl.erl.snlp.InstancePool;
-import uk.ac.susx.mlcl.erl.xml.XomB.DocumentBuilder;
-import uk.ac.susx.mlcl.erl.xml.XomB.ElementBuilder;
+import uk.ac.susx.mlcl.lib.xml.XomB;
+import uk.ac.susx.mlcl.lib.xml.XomB.DocumentBuilder;
+import uk.ac.susx.mlcl.lib.xml.XomB.ElementBuilder;
+import uk.ac.susx.mlcl.lib.xml.XomUtil;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;

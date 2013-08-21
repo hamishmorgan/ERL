@@ -55,7 +55,7 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import uk.ac.susx.mlcl.erl.xml.AnnotationToXML;
+import uk.ac.susx.mlcl.erl.snlp.AnnotationToXML;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 

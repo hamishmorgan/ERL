@@ -1,25 +1,18 @@
 package uk.ac.susx.mlcl.erl.tac.io;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-import com.google.common.io.Resources;
 import nu.xom.ParsingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.xml.sax.SAXException;
-import uk.ac.susx.mlcl.erl.lib.IOUtils;
-import uk.ac.susx.mlcl.erl.tac.queries.Query;
+import uk.ac.susx.mlcl.lib.IOUtils;
 import uk.ac.susx.mlcl.erl.tac.source.WebDocument;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
-import javax.annotation.concurrent.Immutable;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package uk.ac.susx.mlcl.erl.lib;
+package uk.ac.susx.mlcl.lib;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;

@@ -1,18 +1,11 @@
-package uk.ac.susx.mlcl.erl.tac.eval;
+package uk.ac.susx.mlcl.lib.eval;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Optional;
-import com.google.common.collect.*;
-import org.ejml.simple.SimpleMatrix;
-import uk.ac.susx.mlcl.erl.lib.Comparators;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.base.Preconditions.*;
 

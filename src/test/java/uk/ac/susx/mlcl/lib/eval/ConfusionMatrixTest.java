@@ -1,4 +1,4 @@
-package uk.ac.susx.mlcl.erl.tac.eval;
+package uk.ac.susx.mlcl.lib.eval;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -8,7 +8,7 @@ import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.susx.mlcl.erl.lib.reduce.Reducers;
+import uk.ac.susx.mlcl.lib.reduce.Reducers;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import java.util.Arrays;

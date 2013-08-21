@@ -12,10 +12,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.xml.sax.SAXException;
 import uk.ac.susx.mlcl.erl.tac.source.WebDocument;
-import uk.ac.susx.mlcl.erl.xml.XomUtil;
+import uk.ac.susx.mlcl.lib.xml.XomUtil;
 
 import javax.annotation.Nonnull;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;

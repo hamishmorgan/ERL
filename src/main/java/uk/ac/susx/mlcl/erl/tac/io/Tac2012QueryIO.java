@@ -2,7 +2,7 @@ package uk.ac.susx.mlcl.erl.tac.io;
 
 import nu.xom.Element;
 import uk.ac.susx.mlcl.erl.tac.queries.Query;
-import uk.ac.susx.mlcl.erl.xml.XomB;
+import uk.ac.susx.mlcl.lib.xml.XomB;
 
 import javax.annotation.Nonnull;
 
