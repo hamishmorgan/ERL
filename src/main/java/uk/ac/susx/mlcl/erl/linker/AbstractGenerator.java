@@ -25,7 +25,7 @@ public abstract class AbstractGenerator<Q, L> implements CandidateGenerator<Q, L
 
     @Nonnull
     @Override
-    public Map<Q, Set<L>> batchFindCandidates(@Nonnull Set<Q> queries)
+    public Map<Q, Set<L>> batchFindCandidates(@Nonnull Iterable<Q> queries)
             throws IOException, ExecutionException {
         ImmutableMap.Builder<Q, Set<L>> mapBuilder = ImmutableMap.builder();
         for (Q query : queries)

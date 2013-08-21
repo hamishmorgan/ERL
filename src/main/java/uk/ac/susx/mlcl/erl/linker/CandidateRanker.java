@@ -4,14 +4,30 @@
  */
 package uk.ac.susx.mlcl.erl.linker;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 /**
- * @author hiam20
+ * A <tt>CandidateRanker</tt> takes a sequence of candidate knowledgebase links and a query, returning the links
+ * ordered by how prausible they are for the given query.
+ *
+ * @param <Q> query type
+ * @param <L> link type
+ * @author Hamish Morgan
  */
-public interface CandidateRanker<Q,L> {
+public interface CandidateRanker<Q, L> {
 
-    List<L> ranked(Q query, Collection<L> candidates) throws IOException;
+    /**
+     * Takes a sequence of candidate knowledgebase links and a query, returning the links
+     * ordered by how prausible they are for the given query.
+     *
+     * @param query
+     * @param candidates
+     * @return
+     * @throws IOException
+     */
+    @Nonnull
+    List<L> rankCandidates(@Nonnull Q query, @Nonnull Iterable<L> candidates) throws IOException;
+
 }

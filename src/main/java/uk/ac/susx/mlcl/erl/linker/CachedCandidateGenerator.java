@@ -62,7 +62,7 @@ public class CachedCandidateGenerator<Q,L> implements CandidateGenerator<Q,L> {
     }
 
     @Override
-    public Map<Q, Set<L>> batchFindCandidates(Set<Q> queries)
+    public Map<Q, Set<L>> batchFindCandidates(Iterable<Q> queries)
             throws IOException, ExecutionException {
         return searchCache.getAll(queries);
     }

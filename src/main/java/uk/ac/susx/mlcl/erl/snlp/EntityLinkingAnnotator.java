@@ -112,7 +112,7 @@ public class EntityLinkingAnnotator implements Annotator {
                 Set<String> unrankedCandidateIds = results.get(query);
 
 
-                List<String> candidateIds = ranker.ranked(query, unrankedCandidateIds);
+                List<String> candidateIds = ranker.rankCandidates(query, unrankedCandidateIds);
 
 
                 // TODO: Implement a more sensible method of handling NILs

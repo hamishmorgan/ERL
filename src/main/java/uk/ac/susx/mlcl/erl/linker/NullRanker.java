@@ -4,21 +4,18 @@
  */
 package uk.ac.susx.mlcl.erl.linker;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author hiam20
  */
-public final class NullRanker<Q,L> implements CandidateRanker<Q,L> {
+public final class NullRanker<Q, L> implements CandidateRanker<Q, L> {
 
     @Override
-    public List<L> ranked(Q query, Collection<L> candidates) throws IOException {
-        return Lists.newArrayList(checkNotNull(candidates, "candidates"));
+    public List<L> rankCandidates(Q query, Iterable<L> candidates) throws IOException {
+        return ImmutableList.copyOf(candidates);
     }
 }

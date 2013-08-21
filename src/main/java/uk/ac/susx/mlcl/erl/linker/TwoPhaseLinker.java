@@ -1,9 +1,13 @@
 package uk.ac.susx.mlcl.erl.linker;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,7 +36,20 @@ public class TwoPhaseLinker<Q, L> implements Linker<Q, L> {
     @Nonnull
     public L link(@Nonnull Q query) throws IOException {
         final Set<L> candidates = generator.findCandidates(query);
-        final List<L> rankedCandidates = ranker.ranked(query, candidates);
+        final List<L> rankedCandidates = ranker.rankCandidates(query, candidates);
         return rankedCandidates.get(0);
+    }
+
+    @Nonnull
+    @Override
+    public Iterable<L> batchLink(@Nonnull Iterable<Q> queries) throws IOException, ExecutionException {
+        Map<Q, Set<L>> candidateSets = generator.batchFindCandidates(queries);
+        ImmutableList.Builder<L> links = ImmutableList.builder();
+        for (Q query : queries) {
+            Iterable<L> candidates = candidateSets.get(query);
+            List<L> rankedCandidates = ranker.rankCandidates(query, candidates);
+            links.add(rankedCandidates.get(0));
+        }
+        return links.build();
     }
 }

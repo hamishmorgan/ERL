@@ -57,7 +57,7 @@ public final class RandomRanker<Q,L> implements CandidateRanker<Q,L> {
     }
 
     @Override
-    public List<L> ranked(Q query, final Collection<L> candidates) throws IOException {
+    public List<L> rankCandidates(Q query, final Iterable<L> candidates) throws IOException {
         // Shallow the input List
         final List<L> result = Lists.newArrayList(checkNotNull(candidates, "candidates"));
 

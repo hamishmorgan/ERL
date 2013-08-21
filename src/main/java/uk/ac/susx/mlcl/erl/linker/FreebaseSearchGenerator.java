@@ -44,10 +44,10 @@ public class FreebaseSearchGenerator implements CandidateGenerator<String,String
 
     @Nonnull
     @Override
-    public Map<String, Set<String>> batchFindCandidates(@Nonnull Set<String> mentions)
+    public Map<String, Set<String>> batchFindCandidates(@Nonnull Iterable<String> mentions)
             throws IOException, ExecutionException {
         checkNotNull(mentions, "mentions");
-        final Map<String, List<String>> ids = freebase.batchSearchGetIds(mentions);
+        final Map<String, List<String>> ids = freebase.batchSearchGetIds(ImmutableSet.copyOf(mentions));
         final ImmutableMap.Builder<String, Set<String>> builder = ImmutableMap.builder();
         for (Map.Entry<String, List<String>> entry : ids.entrySet()) {
             builder.put(entry.getKey(), ImmutableSet.copyOf(entry.getValue()));

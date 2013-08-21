@@ -1,17 +1,20 @@
 package uk.ac.susx.mlcl.erl.linker;
 
-import uk.ac.susx.mlcl.erl.tac.queries.Link;
-import uk.ac.susx.mlcl.erl.tac.queries.Query;
-
+import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
- *
  * @param <Q> Query type
  * @param <L> Link type
  */
-public interface Linker<Q,L> {
+public interface Linker<Q, L> {
 
-    L link(Q query) throws IOException;
+    @Nonnull
+    L link(@Nonnull Q query) throws IOException;
+
+    @Nonnull
+    Iterable<L> batchLink(@Nonnull Iterable<Q> queries) throws IOException, ExecutionException;
+
 
 }

@@ -131,7 +131,7 @@ public class GeneratorCollection<Q,L>
 
     @Nonnull
     @Override
-    public Map<Q, Set<L>> batchFindCandidates(@Nonnull final Set<Q> queries)
+    public Map<Q, Set<L>> batchFindCandidates(@Nonnull final Iterable<Q> queries)
             throws IOException, ExecutionException {
         ImmutableMap.Builder<Q, Set<L>>  mapBuilder = ImmutableMap.builder();
         for (Q query : queries)
