@@ -1,123 +1,41 @@
 
 # ==================================
 # Java stuff
+# https://github.com/github/gitignore/blob/master/Java.gitignore
 # ==================================
 
 *.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
 *.jar
 *.war
 *.ear
 
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
 
 # ==================================
 # Maven
+# https://github.com/github/gitignore/blob/master/Maven.gitignore
 # ==================================
 
-/target/
-
-
-# ==================================
-# Eclipse
-# ==================================
-
-.settings
-.metadata
-Servers
-bin
-
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
 
 # ==================================
-# SpringSource Tool Suite
+# Project specific stuff (that really should be produced but is)
 # ==================================
 
-.springBeans
-
-# ==================================
-# Netbeans
-# ==================================
-
-/build/
-/dist/
-/nbproject/
-/nbproject/*
-nbbuild.xml
-nbactions.xml
-manifest.mf
-/libs/
-nb-configuration.xml
-
-# ==================================
-#IntelliJ
-# ==================================
-
-*.iml
-
-
-# ==================================
-# Emacs
-# ==================================
-
-\#*\#
-/.emacs.desktop
-/.emacs.desktop.lock
-.elc
-auto-save-list
-tramp
-
-
-# ==================================
-# Vi(m)
-# ==================================
-
-*.swp
-*.swo
-
-
-# ==================================
-# Textmate
-# ==================================
-
-*.tmproj
-tmtags
-
-
-# ==================================
-# *nix (Linux, Unix, OS X, BSD, et al.)
-# ==================================
-
-.*
-*~
-
-
-# ==================================
-# Apple OS X
-# ==================================
-
-.DS_Store
-Icon?
-._*
-.Spotlight-V100
-.Trashes
-
-
-# ==================================
-# Microsoft Windows
-# ==================================
-
-ehthumbs.db
-Thumbs.db
-Desktop.ini
-*.sw[a-p]
-
-
-
-# ==================================
-# KDE
-# ==================================
-
-.directory
-
-
+*.log.xml
+*.log
 
 # ==================================
 # Explicit includes (exceptions to previous rules)
