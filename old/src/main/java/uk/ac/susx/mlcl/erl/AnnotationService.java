@@ -32,7 +32,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.github.hamishmorgan.erl.snlp.annotators.EntityLinkingAnnotator.EntityKbIdAnnotation;
+import io.github.hamishmorgan.erl.snlp.annotations.EntityKbIdAnnotation;
 import io.github.hamishmorgan.erl.snlp.AnnotationToXML;
 import uk.ac.susx.mlcl.lib.xml.XMLToStringSerializer;
 import uk.ac.susx.mlcl.lib.xml.XomB;
@@ -446,7 +446,7 @@ public class AnnotationService {
         PARSE(ParserAnnotatorFactory.class, 5),
         ENTITY_RECOGNITION(NERAnnotatorFactory.class, 6),
         COREFERRENCE_RESOLUTION(CorefAnnotatorFactory.class, 7),
-        ENTITY_LINKING(EntityLinkingAnnotator.Factory.class, 8);
+        ENTITY_LINKING(EntityLinkingAnnotatorFactory.class, 8);
         /**
          *
          */

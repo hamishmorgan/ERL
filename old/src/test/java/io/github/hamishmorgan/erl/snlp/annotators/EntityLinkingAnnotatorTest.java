@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 import io.github.hamishmorgan.erl.snlp.AnnotationToXML;
-import io.github.hamishmorgan.erl.snlp.annotators.EntityLinkingAnnotator;
+import io.github.hamishmorgan.erl.snlp.annotations.EntityKbIdAnnotation;
 import org.junit.Test;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
@@ -44,7 +44,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
 //        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         
-        Annotator instance = new EntityLinkingAnnotator.Factory().create();
+        Annotator instance = new EntityLinkingAnnotatorFactory().create();
 
 //        pipeline.addAnnotator(instance);
 
@@ -70,7 +70,7 @@ public class EntityLinkingAnnotatorTest extends AbstractTest {
                 String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
                 String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
                 String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-                String el = token.get(EntityLinkingAnnotator.EntityKbIdAnnotation.class);
+                String el = token.get(EntityKbIdAnnotation.class);
 
 
                 System.out.printf("[%d,%d] %s\t%s\t%s\t%s\t%s%n",

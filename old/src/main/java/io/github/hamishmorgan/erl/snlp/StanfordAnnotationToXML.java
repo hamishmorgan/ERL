@@ -23,7 +23,7 @@ import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedCCP
 import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation;
 import edu.stanford.nlp.trees.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.util.CoreMap;
-import io.github.hamishmorgan.erl.snlp.annotators.EntityLinkingAnnotator;
+import io.github.hamishmorgan.erl.snlp.annotations.EntityKbIdAnnotation;
 import nu.xom.*;
 import javax.annotation.Nullable;
 
@@ -375,9 +375,9 @@ public class StanfordAnnotationToXML {
                     .get(NamedEntityTagAnnotation.class));
         }
 
-        if (token.containsKey(EntityLinkingAnnotator.EntityKbIdAnnotation.class)) {
+        if (token.containsKey(EntityKbIdAnnotation.class)) {
             setSingleElement(wordInfo, "ID", curNS, token
-                    .get(EntityLinkingAnnotator.EntityKbIdAnnotation.class));
+                    .get(EntityKbIdAnnotation.class));
         }
 
         if (token.containsKey(NormalizedNamedEntityTagAnnotation.class)) {

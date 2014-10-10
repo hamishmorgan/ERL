@@ -5,10 +5,10 @@ import com.google.common.base.CharMatcher;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
+import io.github.hamishmorgan.erl.snlp.annotations.EntityKbIdAnnotation;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Assert;
 import org.junit.Test;
-import io.github.hamishmorgan.erl.snlp.annotators.EntityLinkingAnnotator;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
 import javax.annotation.Nonnull;
@@ -141,7 +141,7 @@ public class AnnotationServiceTest extends AbstractTest {
                 final boolean isEntity = Character.isUpperCase(text.charAt(beginOffset));
                 token.set(CoreAnnotations.NamedEntityTagAnnotation.class, isEntity ? "Misc" : "O");
                 if (isEntity)
-                    token.set(EntityLinkingAnnotator.EntityKbIdAnnotation.class, "/nil");
+                    token.set(EntityKbIdAnnotation.class, "/nil");
                 tokens.add(token);
             }
         }
