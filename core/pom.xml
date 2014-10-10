@@ -16,6 +16,7 @@
     <properties>
         <stanford-corenlp-version>1.3.3</stanford-corenlp-version>
         <findbugs-version>3.0.0</findbugs-version>
+        <google-api-version>1.11.0-beta</google-api-version>
     </properties>
 
     <dependencies>
@@ -49,6 +50,25 @@
             <artifactId>annotations</artifactId>
             <version>${findbugs-version}</version>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-freebase</artifactId>
+            <version>v1-rev10-1.8.0-beta</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>google-api-client</artifactId>
+            <groupId>com.google.api-client</groupId>
+            <type>jar</type>
+            <version>${google-api-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson</artifactId>
+            <version>${google-api-version}</version>
         </dependency>
 
     </dependencies>

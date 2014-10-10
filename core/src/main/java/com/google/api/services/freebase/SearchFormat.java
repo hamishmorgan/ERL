@@ -13,9 +13,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-/**
- * @author hamish
- */
 @Nonnull
 public enum SearchFormat {
 

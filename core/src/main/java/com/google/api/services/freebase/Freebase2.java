@@ -42,8 +42,6 @@ import java.util.Set;
  * <
  * p/>
  * <p/>
- *
- * @author hamish
  */
 public class Freebase2 extends Freebase {
 
@@ -707,7 +705,7 @@ public class Freebase2 extends Freebase {
          */
         public Builder(HttpTransport transport, JsonFactory jsonFactory,
                        HttpRequestInitializer httpRequestInitializer) {
-            super(transport, jsonFactory, DEFAULT_ROOT_URL, DEFAULT_SERVICE_PATH,
+            super(transport, jsonFactory, Freebase.DEFAULT_ROOT_URL, Freebase.DEFAULT_SERVICE_PATH,
                     httpRequestInitializer);
         }
 
