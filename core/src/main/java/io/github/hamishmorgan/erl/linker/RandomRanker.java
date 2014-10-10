@@ -2,14 +2,13 @@
  * Copyright (c) 2012-2013, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.linker;
+package io.github.hamishmorgan.erl.linker;
 
 import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 

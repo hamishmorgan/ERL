@@ -1,4 +1,4 @@
-package uk.ac.susx.mlcl.erl.linker;
+package io.github.hamishmorgan.erl.linker;
 
 import com.google.common.collect.ImmutableMap;
 

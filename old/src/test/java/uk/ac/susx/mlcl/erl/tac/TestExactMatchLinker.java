@@ -8,7 +8,7 @@ import nu.xom.ParsingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.susx.mlcl.erl.linker.Linker;
+import io.github.hamishmorgan.erl.linker.Linker;
 import uk.ac.susx.mlcl.erl.tac.io.LinkIO;
 import uk.ac.susx.mlcl.erl.tac.io.QueryIO;
 import uk.ac.susx.mlcl.erl.tac.io.Tac2012LinkIO;

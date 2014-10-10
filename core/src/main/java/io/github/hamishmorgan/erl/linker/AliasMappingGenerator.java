@@ -1,19 +1,16 @@
-package uk.ac.susx.mlcl.erl.linker;
+package io.github.hamishmorgan.erl.linker;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import javax.annotation.Nullable;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * <tt>AliasMappingGenerator</tt> is an implementation of {@link uk.ac.susx.mlcl.erl.linker.CandidateGenerator} that
+ * <tt>AliasMappingGenerator</tt> is an implementation of {@link CandidateGenerator} that
  * looks up the given query in an alias map. If the key is found then the map value is passed to the encapsulated
  * delegate. Otherwise the query is passed to the delegate.
  * <p/>

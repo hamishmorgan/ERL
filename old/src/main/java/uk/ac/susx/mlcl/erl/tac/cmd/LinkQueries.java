@@ -4,7 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
 import nu.xom.ParsingException;
-import uk.ac.susx.mlcl.erl.linker.Linker;
+import io.github.hamishmorgan.erl.linker.Linker;
 import uk.ac.susx.mlcl.erl.tac.NilLinker;
 import uk.ac.susx.mlcl.erl.tac.io.LinkIO;
 import uk.ac.susx.mlcl.erl.tac.io.QueryIO;

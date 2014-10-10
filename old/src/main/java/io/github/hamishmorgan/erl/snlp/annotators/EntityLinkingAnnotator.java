@@ -17,9 +17,9 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.util.CoreMap;
+import io.github.hamishmorgan.erl.linker.*;
 import org.slf4j.LoggerFactory;
 import uk.ac.susx.mlcl.erl.MiscUtil;
-import uk.ac.susx.mlcl.erl.linker.*;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

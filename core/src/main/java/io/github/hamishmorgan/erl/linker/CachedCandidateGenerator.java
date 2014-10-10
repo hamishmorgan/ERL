@@ -2,7 +2,7 @@
  * Copyright (c) 2010, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.linker;
+package io.github.hamishmorgan.erl.linker;
 
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;

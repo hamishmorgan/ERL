@@ -1,16 +1,13 @@
-package uk.ac.susx.mlcl.erl.linker;
+package io.github.hamishmorgan.erl.linker;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 /**
- * <tt>NilGenerator</tt> is an implementation of {@link uk.ac.susx.mlcl.erl.linker.CandidateGenerator} which never
+ * <tt>NilGenerator</tt> is an implementation of {@link CandidateGenerator} which never
  * generates anything. Whenever candidates are requested the empty set is returned.
  *
  * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;

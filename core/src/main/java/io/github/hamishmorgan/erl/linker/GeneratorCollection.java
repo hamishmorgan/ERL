@@ -1,4 +1,4 @@
-package uk.ac.susx.mlcl.erl.linker;
+package io.github.hamishmorgan.erl.linker;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -15,9 +15,9 @@ import java.util.concurrent.ExecutionException;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * <tt>GeneratorCollection</tt> is an implementation of {@link uk.ac.susx.mlcl.erl.linker.CandidateGenerator} that
+ * <tt>GeneratorCollection</tt> is an implementation of {@link CandidateGenerator} that
  * forwards all method invocations to a collection of child generators. Depending on the
- * {@link uk.ac.susx.mlcl.erl.linker.GeneratorCollection.AggregationMethod} the results
+ * {@link GeneratorCollection.AggregationMethod} the results
  * are aggregated in various ways.
  *
  * @author Hamish Morgan &lt;hamish.morgan@sussex.ac.uk&gt;
@@ -97,7 +97,7 @@ public class GeneratorCollection<Q,L>
 
     /**
      * Protected dependency injection constructor. You should probably used the builder
-     * {@link uk.ac.susx.mlcl.erl.linker.GeneratorCollection#builder()} instead.
+     * {@link GeneratorCollection#builder()} instead.
      *
      * @param children
      * @param aggregationMethod

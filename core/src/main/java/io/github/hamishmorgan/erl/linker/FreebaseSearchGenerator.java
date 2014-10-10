@@ -2,7 +2,7 @@
  * Copyright (c) 2012-2013, Hamish Morgan.
  * All Rights Reserved.
  */
-package uk.ac.susx.mlcl.erl.linker;
+package io.github.hamishmorgan.erl.linker;
 
 import com.google.api.services.freebase.Freebase2;
 import com.google.common.collect.ImmutableMap;

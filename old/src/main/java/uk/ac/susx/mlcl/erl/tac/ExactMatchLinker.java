@@ -1,7 +1,7 @@
 package uk.ac.susx.mlcl.erl.tac;
 
 import com.google.common.collect.ImmutableList;
-import uk.ac.susx.mlcl.erl.linker.Linker;
+import io.github.hamishmorgan.erl.linker.Linker;
 import uk.ac.susx.mlcl.erl.tac.kb.Entity;
 import uk.ac.susx.mlcl.erl.tac.kb.TacKnowledgeBase;
 import uk.ac.susx.mlcl.erl.tac.queries.Link;
