@@ -23,7 +23,9 @@ public class AnnotationServiceFactory {
 
         JsonFactory jsonFactory = new JacksonFactory();
 
-        return new AnnotationServiceImpl(pool, jsonFactory);
+        JsonUtil jsonUtil = new JsonUtil(jsonFactory);
+
+        return new AnnotationServiceImpl(pool, jsonUtil);
     }
 
 }

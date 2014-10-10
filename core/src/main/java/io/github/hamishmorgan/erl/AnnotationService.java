@@ -16,7 +16,4 @@ public interface AnnotationService {
     @Nonnull
     Annotation link(@Nonnull String text);
 
-    @Nonnull String linkAsJson(@Nonnull String text);
-
-    void linkAsJson(@Nonnull String text, @Nonnull Writer writer) throws IOException;
 }

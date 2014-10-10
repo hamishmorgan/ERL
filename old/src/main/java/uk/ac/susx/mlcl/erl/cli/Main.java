@@ -135,7 +135,7 @@ public class Main {
                         anno.linkAsXml(text, out, charset);
                         break;
                     case JSON:
-                        anno.linkAsJson(text, out, charset);
+                        anno.linkAsJson(text, new OutputStreamWriter(out, charset));
                         break;
                     case TEXT_PLAIN:
                         throw new UnsupportedOperationException(

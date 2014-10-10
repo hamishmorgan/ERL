@@ -8,8 +8,9 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson.JacksonFactory;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotatorPool;
-import io.github.hamishmorgan.erl.Annotations;
 import io.github.hamishmorgan.erl.AnnotationServiceImpl;
+import io.github.hamishmorgan.erl.Annotations;
+import io.github.hamishmorgan.erl.JsonUtil;
 import io.github.hamishmorgan.erl.snlp.AnnotationToXML;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -43,10 +44,8 @@ public class AnnotationServiceImpl2 extends AnnotationServiceImpl {
     private final XomB xomb;
     private final AnnotationToXML xmler;
 
-    public AnnotationServiceImpl2(AnnotatorPool pool, AnnotationToXML xmler, XomB xomb,
-                                  JsonFactory jsonFactory) {
-        super(pool, jsonFactory);
-        ;
+    public AnnotationServiceImpl2(AnnotatorPool pool, AnnotationToXML xmler, XomB xomb, JsonUtil jsonUtil) {
+        super(pool, jsonUtil);
         this.xmler = xmler;
         this.xomb = xomb;
     }
@@ -65,8 +64,9 @@ public class AnnotationServiceImpl2 extends AnnotationServiceImpl {
         XomB xomb = new XomB();
 
         JsonFactory jsonFactory = new JacksonFactory();
+        JsonUtil jsonUtil = new JsonUtil(jsonFactory);
 
-        return new AnnotationServiceImpl2(pool, xmler, xomb, jsonFactory);
+        return new AnnotationServiceImpl2(pool, xmler, xomb, jsonUtil);
     }
 
     public Document linkAsXml(String text)

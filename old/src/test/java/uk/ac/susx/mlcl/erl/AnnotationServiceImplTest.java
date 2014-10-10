@@ -1,10 +1,13 @@
 package uk.ac.susx.mlcl.erl;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.base.CharMatcher;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
+import io.github.hamishmorgan.erl.JsonUtil;
 import io.github.hamishmorgan.erl.snlp.annotations.EntityKbIdAnnotation;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Assert;
@@ -111,7 +114,8 @@ public class AnnotationServiceImplTest extends AbstractTest {
             AnnotationServiceImpl2 instance = AnnotationServiceImpl2.newInstance(props);
             Annotation document = fakeAnnotator(input);
             StringWriter writer = new StringWriter();
-            instance.annotationToJson(document, writer);
+            JsonFactory jsonFactory = new JacksonFactory();
+            new JsonUtil(jsonFactory).annotationToJson(document, writer);
             String actual = writer.toString();
             Assert.assertEquals(expectedOutput, actual);
         } catch (IOException impossible) {

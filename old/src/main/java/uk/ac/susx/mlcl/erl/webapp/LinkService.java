@@ -21,6 +21,7 @@ import uk.ac.susx.mlcl.erl.AnnotationServiceImpl2;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
@@ -132,7 +133,7 @@ public class LinkService extends Route {
 
         try {
             response.type("application/json");
-            anno.linkAsJson(data.getText(), response.raw().getOutputStream(), charset);
+            anno.linkAsJson(data.getText(), new OutputStreamWriter(response.raw().getOutputStream(), charset));
             return "";
         } catch (Throwable ex) {
             LOG.error(ex.getLocalizedMessage(), ex);
@@ -167,7 +168,7 @@ public class LinkService extends Route {
         try {
             final String text = data.getDocuments().get(0).getText();
             response.type("application/json");
-            anno.linkAsJson(text, response.raw().getOutputStream(), charset);
+            anno.linkAsJson(text, new OutputStreamWriter(response.raw().getOutputStream(), charset));
             return "";
         } catch (Throwable ex) {
             LOG.error(ex.getLocalizedMessage(), ex);

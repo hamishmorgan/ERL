@@ -1,6 +1,8 @@
 package uk.ac.susx.mlcl.erl;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.common.io.Closer;
 import edu.jhu.agiga.*;
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -8,6 +10,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import edu.stanford.nlp.util.CoreMap;
+import io.github.hamishmorgan.erl.JsonUtil;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.junit.*;
@@ -52,7 +55,9 @@ public class AnnotationServiceImplIntegrationTest extends AbstractTest {
 
         Annotation document = instance.link(text);
 
-        instance.printAnnotationAsJson(document);
+        JsonFactory jsonFactory = new JacksonFactory();
+        JsonUtil jsonUtil = new JsonUtil(jsonFactory);
+        jsonUtil.printAnnotationAsJson(document);
     }
 
 
@@ -180,7 +185,9 @@ public class AnnotationServiceImplIntegrationTest extends AbstractTest {
                 snlpDocument.set(CoreAnnotations.SentencesAnnotation.class, snlpSentences);
 
                 Annotation result = instance.link(snlpDocument);
-                instance.printAnnotationAsJson(result);
+                JsonFactory jsonFactory = new JacksonFactory();
+                JsonUtil jsonUtil = new JsonUtil(jsonFactory);
+                jsonUtil.printAnnotationAsJson(result);
             }
             LOG.info("Number of docs: " + reader.getNumDocs());
         } catch (Throwable e) {
