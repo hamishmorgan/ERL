@@ -19,7 +19,7 @@ import org.apache.commons.configuration.tree.OverrideCombiner;
 import org.eclipse.jetty.http.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.susx.mlcl.erl.AnnotationService;
+import uk.ac.susx.mlcl.erl.AnnotationServiceImpl2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,8 +71,8 @@ public class Main {
             IOException, XSLException, ParsingException, InvocationTargetException, NoSuchMethodException {
         LOG.info("running");
 
-        final AnnotationService anno =
-                AnnotationService.newInstance(
+        final AnnotationServiceImpl2 anno =
+                AnnotationServiceImpl2.newInstance(
                         ConfigurationConverter.getProperties(config));
         anno.preloadLinker(false);
 

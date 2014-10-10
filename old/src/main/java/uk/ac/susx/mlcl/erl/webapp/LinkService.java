@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import uk.ac.susx.mlcl.erl.AnnotationService;
+import uk.ac.susx.mlcl.erl.AnnotationServiceImpl2;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -32,10 +32,10 @@ public class LinkService extends Route {
     private static final Logger LOG = LoggerFactory.getLogger(LinkService.class);
     private static final boolean DEBUG = true;
     private final JsonFactory jsonFactory = new JacksonFactory();
-    private final AnnotationService anno;
+    private final AnnotationServiceImpl2 anno;
     private Charset charset = Charset.forName("UTF-8");
 
-    public LinkService(AnnotationService anno, String path) {
+    public LinkService(AnnotationServiceImpl2 anno, String path) {
         super(path);
         this.anno = anno;
     }

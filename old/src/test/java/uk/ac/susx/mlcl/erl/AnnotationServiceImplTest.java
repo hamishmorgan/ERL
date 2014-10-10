@@ -25,7 +25,7 @@ import java.util.Properties;
  * Time: 13:27
  * To change this template use File | Settings | File Templates.
  */
-public class AnnotationServiceTest extends AbstractTest {
+public class AnnotationServiceImplTest extends AbstractTest {
 
     @Test
     public void testAnnotationToJson() throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -108,7 +108,7 @@ public class AnnotationServiceTest extends AbstractTest {
     private void doAnnotationToJsonTest(@Nonnull String input, String expectedOutput) throws ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         try {
             Properties props = new Properties();
-            AnnotationService instance = AnnotationService.newInstance(props);
+            AnnotationServiceImpl2 instance = AnnotationServiceImpl2.newInstance(props);
             Annotation document = fakeAnnotator(input);
             StringWriter writer = new StringWriter();
             instance.annotationToJson(document, writer);

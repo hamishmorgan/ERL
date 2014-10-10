@@ -3,7 +3,6 @@ package uk.ac.susx.mlcl.erl;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.io.Closer;
 import edu.jhu.agiga.*;
-import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -28,16 +27,16 @@ import static java.text.MessageFormat.format;
  * Time: 12:03
  * To change this template use File | Settings | File Templates.
  */
-public class AnnotationServiceIntegrationTest extends AbstractTest {
+public class AnnotationServiceImplIntegrationTest extends AbstractTest {
 
-    private static final Logger LOG = Logger.getLogger(AnnotationServiceIntegrationTest.class);
+    private static final Logger LOG = Logger.getLogger(AnnotationServiceImplIntegrationTest.class);
     private static final String GW5_SAMPLE_PATH = "src/test/resources/uk/ac/susx/mlcl/erl/nyt_eng_201012_sample.xml.gz";
-    private static AnnotationService instance;
+    private static AnnotationServiceImpl2 instance;
 
     @BeforeClass
     public static void setUpClass() throws IOException, ClassNotFoundException, InstantiationException, ConfigurationException, IllegalAccessException, InterruptedException, InvocationTargetException, NoSuchMethodException {
         final Properties props = new Properties();
-        instance = AnnotationService.newInstance(props);
+        instance = AnnotationServiceImpl2.newInstance(props);
     }
 
     @Test
