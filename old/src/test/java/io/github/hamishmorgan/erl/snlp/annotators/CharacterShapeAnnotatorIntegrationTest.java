@@ -7,6 +7,7 @@ package io.github.hamishmorgan.erl.snlp.annotators;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.*;
+import io.github.hamishmorgan.erl.snlp.annotations.CharacterShapeAnnotation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -14,7 +15,6 @@ import uk.ac.susx.mlcl.erl.test.AbstractTest;
 import uk.ac.susx.mlcl.erl.test.Categories;
 
 import java.io.IOException;
-import java.util.*;
 
 /**
  *
@@ -44,7 +44,7 @@ public class CharacterShapeAnnotatorIntegrationTest extends AbstractTest {
 
         for (CoreLabel token : document.get(CoreAnnotations.TokensAnnotation.class)) {
             String word = token.get(CoreAnnotations.TextAnnotation.class);
-            String clazz = token.get(CharacterShapeAnnotator.Annotation.class);
+            String clazz = token.get(CharacterShapeAnnotation.class);
 
             Assert.assertNotNull(word);
             Assert.assertNotNull(clazz);

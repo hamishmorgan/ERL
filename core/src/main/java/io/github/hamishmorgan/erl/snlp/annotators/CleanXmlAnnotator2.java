@@ -5,6 +5,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.util.XMLUtils;
+import io.github.hamishmorgan.erl.snlp.factories.AbstractAnnotatorFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -318,34 +319,4 @@ public class CleanXmlAnnotator2 implements Annotator {
         return newTokens;
     }
 
-    public static class Factory extends AbstractAnnotatorFactory implements Serializable {
-
-        public static final String NEWLINE_SPLITTER_PROPERTY = "ssplit.eolonly";
-
-        public Factory(Properties props) {
-            super(props);
-        }
-
-        private static final long serialVersionUID = 1L;
-
-        @Nonnull
-        public Annotator create() {
-            String xmlTags =
-                    props.getProperty("clean.xmltags",
-                            CleanXmlAnnotator2.DEFAULT_XML_TAGS);
-            String sentenceEndingTags = props.getProperty(
-                    "clean.sentenceendingtags",
-                    CleanXmlAnnotator2.DEFAULT_SENTENCE_ENDERS);
-            String allowFlawedString = props.getProperty("clean.allowflawedxml");
-            boolean allowFlawed = CleanXmlAnnotator2.DEFAULT_ALLOW_FLAWS;
-            if (allowFlawedString != null) {
-                allowFlawed = Boolean.valueOf(allowFlawedString);
-            }
-            String dateTags =
-                    props.getProperty("clean.datetags",
-                            CleanXmlAnnotator2.DEFAULT_DATE_TAGS);
-            return new CleanXmlAnnotator2(xmlTags, sentenceEndingTags, dateTags,
-                    allowFlawed);
-        }
-    }
 }

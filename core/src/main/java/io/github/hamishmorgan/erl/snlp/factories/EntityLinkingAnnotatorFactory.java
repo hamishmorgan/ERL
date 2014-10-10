@@ -1,12 +1,12 @@
-package io.github.hamishmorgan.erl.snlp.annotators;
+package io.github.hamishmorgan.erl.snlp.factories;
 
 import com.google.api.services.freebase.Freebase2;
 import edu.stanford.nlp.pipeline.Annotator;
 import io.github.hamishmorgan.erl.FreebaseInstanceSupplier;
 import io.github.hamishmorgan.erl.linker.*;
+import io.github.hamishmorgan.erl.snlp.annotators.EntityLinkingAnnotator;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
 import java.util.Random;

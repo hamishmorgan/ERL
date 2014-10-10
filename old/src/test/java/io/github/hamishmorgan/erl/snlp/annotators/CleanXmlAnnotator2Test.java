@@ -17,8 +17,8 @@ import java.io.Writer;
 import java.util.Properties;
 
 import io.github.hamishmorgan.erl.snlp.AnnotationToXML;
-import io.github.hamishmorgan.erl.snlp.annotators.CleanXmlAnnotator2;
-import io.github.hamishmorgan.erl.snlp.annotators.TokenizerAnnotatorFactory;
+import io.github.hamishmorgan.erl.snlp.factories.CleanXmlAnnotator2Factory;
+import io.github.hamishmorgan.erl.snlp.factories.TokenizerAnnotatorFactory;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Test;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
@@ -65,7 +65,7 @@ public class CleanXmlAnnotator2Test  extends AbstractTest {
 	
 	AnnotationPipeline pipeline = new AnnotationPipeline();
 	pipeline.addAnnotator(new TokenizerAnnotatorFactory(props).create());
-	pipeline.addAnnotator(new CleanXmlAnnotator2.Factory(props).create());
+	pipeline.addAnnotator(new CleanXmlAnnotator2Factory(props).create());
 
 	String text = readTestData("bbc.html");
 	

@@ -7,23 +7,18 @@ package io.github.hamishmorgan.erl.snlp.annotators;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.AnnotationPipeline;
-import edu.stanford.nlp.pipeline.PTBTokenizerAnnotator;
-import edu.stanford.nlp.pipeline.TokenizerAnnotator;
 import edu.stanford.nlp.pipeline.WhitespaceTokenizerAnnotator;
-import java.io.IOException;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import io.github.hamishmorgan.erl.snlp.annotators.CharacterShapeAnnotator;
+import io.github.hamishmorgan.erl.snlp.annotations.CharacterShapeAnnotation;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
-import uk.ac.susx.mlcl.erl.test.Categories;
 
 /**
  *
@@ -131,7 +126,7 @@ public class CharacterShapeAnnotatorTest extends AbstractTest {
             CoreLabel token = tokenList.get(i);
 
             String actualWord = token.get(CoreAnnotations.TextAnnotation.class);
-            String actualShape = token.get(CharacterShapeAnnotator.Annotation.class);
+            String actualShape = token.get(CharacterShapeAnnotation.class);
 
             Assert.assertEquals("token missmatch:",
                                 expectedTokens.get(i), actualWord);

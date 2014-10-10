@@ -21,7 +21,7 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.pipeline.AnnotatorPool;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Factory;
-import io.github.hamishmorgan.erl.snlp.annotators.*;
+import io.github.hamishmorgan.erl.snlp.factories.*;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
@@ -439,7 +439,7 @@ public class AnnotationService {
      */
     private enum Anno {
         TOKENIZE(TokenizerAnnotatorFactory.class, 0),
-        CLEAN_XML(CleanXmlAnnotator2.Factory.class, 1),
+        CLEAN_XML(CleanXmlAnnotator2Factory.class, 1),
         SENTENCE_SPLIT(SentenceSplitAnnotatorFactory.class, 2),
         LEMMATIZE(MorphaAnnotatorFactory.class, 3),
         POS_TAG(POSTaggerAnnotatorFactory.class, 4),

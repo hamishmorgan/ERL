@@ -11,6 +11,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotator;
+import io.github.hamishmorgan.erl.snlp.annotations.CharacterShapeAnnotation;
 
 import javax.annotation.Nonnull;
 import java.text.MessageFormat;
@@ -133,7 +134,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
      */
     @Nonnull
     public Set<Class<? extends CoreAnnotation<?>>> getSuppliedAnnotations() {
-        return Collections.<Class<? extends CoreAnnotation<?>>>singleton(Annotation.class);
+        return Collections.<Class<? extends CoreAnnotation<?>>>singleton(CharacterShapeAnnotation.class);
     }
 
     /**
@@ -191,7 +192,7 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
                 output.append(replacementForCodepoint(cp));
             }
 
-            token.set(CharacterShapeAnnotator.Annotation.class, output.toString());
+            token.set(CharacterShapeAnnotation.class, output.toString());
         }
     }
 
@@ -248,43 +249,4 @@ public class CharacterShapeAnnotator implements Annotator, Configurable {
         }
     }
 
-    /**
-     * Factory for {@code CharacterShapeAnnotator}, which is required by some components such as the
-     * {@link edu.stanford.nlp.pipeline.AnnotatorPool}.
-     */
-    public static final class Factory implements edu.stanford.nlp.util.Factory<CharacterShapeAnnotator> {
-
-        private static final long serialVersionUID = 1L;
-
-        private final Properties props;
-
-        public Factory() {
-            this.props = new Properties();
-        }
-
-        public Factory(Properties props) {
-            Preconditions.checkNotNull(props, "props");
-            this.props = props;
-        }
-
-        @Nonnull
-        public CharacterShapeAnnotator create() {
-            final CharacterShapeAnnotator csa = new CharacterShapeAnnotator();
-            csa.configure(props);
-            return csa;
-        }
-    }
-
-    /**
-     * The CoreMap key for getting the character shape strings contained by an annotation.
-     * <p/>
-     * This key is typically set only on token annotations.
-     */
-    public static final class Annotation implements CoreAnnotation<String> {
-
-        @Nonnull
-        public Class<String> getType() {
-            return String.class;
-        }
-    }
 }

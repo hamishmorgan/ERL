@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import io.github.hamishmorgan.erl.snlp.AnnotationToXML;
 import io.github.hamishmorgan.erl.snlp.annotations.EntityKbIdAnnotation;
+import io.github.hamishmorgan.erl.snlp.factories.EntityLinkingAnnotatorFactory;
 import org.junit.Test;
 import uk.ac.susx.mlcl.erl.test.AbstractTest;
 
